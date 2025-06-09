@@ -1,0 +1,174 @@
+### Extract token from signup response
+@authToken = {{signup.response.body.$.data.signup.accessToken}}
+
+### 2. Login Test
+# @name login
+POST {{graphqlUrl}}
+Content-Type: {{contentType}}
+
+{
+  "query": "mutation Login($loginInput: LoginInput!) { login(loginInput: $loginInput) { accessToken user { id firstName lastName email role status school { id name subdomain } } } }",
+  "variables": {
+    "loginInput": {
+      "email": "admin@greenvalley.edu",
+      "password": "SecurePass123!"
+    }
+  }
+}
+
+### 3. Get Current User Profile (Protected Route)
+POST {{graphqlUrl}}
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "query": "mutation Me { me { id firstName lastName email role status fullName school { id name subdomain status colorPalette { id name primary secondary success warning error } } } }"
+}
+
+### 4. Update School Profile
+POST {{graphqlUrl}}
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "query": "mutation UpdateSchool($id: String!, $updateSchoolInput: UpdateSchoolInput!) { updateSchool(id: $id, updateSchoolInput: $updateSchoolInput) { id name email phoneNumber address city state zipCode country website description colorPalette { id name primary secondary } } }",
+  "variables": {
+    "id": "{{signup.response.body.$.data.signup.user.school.id}}",
+    "updateSchoolInput": {
+      "email": "contact@greenvalley.edu",
+      "phoneNumber": "+1-555-0123",
+      "address": "123 Education Street",
+      "city": "Springfield",
+      "state": "CA",
+      "zipCode": "12345",
+      "country": "United States",
+      "website": "https://greenvalley.edu",
+      "description": "A premier educational institution focused on excellence and innovation."
+    }
+  }
+}
+
+### 5. Update Color Palette
+POST {{graphqlUrl}}
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "query": "mutation UpdateColorPalette($id: String!, $updateColorPaletteInput: UpdateColorPaletteInput!) { updateColorPalette(id: $id, updateColorPaletteInput: $updateColorPaletteInput) { id name primary secondary success warning error info background surface textPrimary textSecondary } }",
+  "variables": {
+    "id": "color-palette-id",
+    "updateColorPaletteInput": {
+      "name": "Green Valley Brand Colors",
+      "primary": "#2E7D32",
+      "secondary": "#FFA726", 
+      "success": "#4CAF50",
+      "warning": "#FF9800",
+      "error": "#F44336",
+      "info": "#2196F3",
+      "background": "#FAFAFA",
+      "surface": "#FFFFFF",
+      "textPrimary": "#212121",
+      "textSecondary": "#757575"
+    }
+  }
+}
+
+### 6. Get School by Subdomain (Public)
+POST {{graphqlUrl}}
+Content-Type: {{contentType}}
+
+{
+  "query": "query GetSchoolBySubdomain($subdomain: String!) { schoolBySubdomain(subdomain: $subdomain) { id name subdomain logo email phoneNumber website description status colorPalette { primary secondary success warning error background } } }",
+  "variables": {
+    "subdomain": "greenvalley"
+  }
+}
+
+### 7. Create New User (Teacher)
+POST {{graphqlUrl}}
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "query": "mutation CreateUser($createUserInput: CreateUserInput!) { createUser(createUserInput: $createUserInput) { id firstName lastName email role status school { name } } }",
+  "variables": {
+    "createUserInput": {
+      "firstName": "Jane",
+      "lastName": "Doe",
+      "email": "jane.doe@greenvalley.edu",
+      "role": "TEACHER",
+      "phoneNumber": "+1-555-0124"
+    }
+  }
+}
+
+### 8. Get All Users in School
+POST {{graphqlUrl}}
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "query": "query GetUsers($filters: UserFiltersInput) { users(filters: $filters) { id firstName lastName email role status fullName lastLoginAt createdAt } }",
+  "variables": {
+    "filters": {
+      "role": "TEACHER",
+      "status": "ACTIVE"
+    }
+  }
+}
+
+### 9. Update User Profile
+POST {{graphqlUrl}}
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "query": "mutation UpdateUser($id: String!, $updateUserInput: UpdateUserInput!) { updateUser(id: $id, updateUserInput: $updateUserInput) { id firstName lastName email phoneNumber bio avatar } }",
+  "variables": {
+    "id": "user-id-here",
+    "updateUserInput": {
+      "firstName": "John",
+      "lastName": "Smith",
+      "phoneNumber": "+1-555-0199",
+      "bio": "Experienced school administrator with 15+ years in education management."
+    }
+  }
+}
+
+### 10. Get School Dashboard Stats
+POST {{graphqlUrl}}
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "query": "query GetSchoolStats($schoolId: String!) { schoolStats(schoolId: $schoolId) { totalUsers activeUsers totalTeachers totalStudents totalParents recentLogins { userId userName lastLogin } usersByRole { role count } } }",
+  "variables": {
+    "schoolId": "{{signup.response.body.$.data.signup.user.school.id}}"
+  }
+}
+
+### 11. Logout
+POST {{graphqlUrl}}
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+  "query": "mutation Logout { logout }"
+}
+
+### 12. Test Invalid Token (Should fail)
+POST {{graphqlUrl}}
+Content-Type: {{contentType}}
+Authorization: Bearer invalid-token-here
+
+{
+  "query": "mutation Me { me { id email } }"
+}
+
+### 13. GraphQL Introspection (Development only)
+POST {{graphqlUrl}}
+Content-Type: {{contentType}}
+
+{
+  "query": "query IntrospectionQuery { __schema { types { name description fields { name type { name } } } } }"
+}
