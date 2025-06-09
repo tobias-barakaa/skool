@@ -10,6 +10,7 @@ import { UsersModule } from './users/users.module';
 import { SchoolModule } from './school/school.module';
 import { ColorPalletesModule } from './color-palletes/color-palletes.module';
 import { AuthModule } from './auth/auth.module';
+import { GraphQLModule } from '@nestjs/graphql';
 
 
 
@@ -45,6 +46,16 @@ const ENV = process.env.NODE_ENV;
         ssl: { rejectUnauthorized: false },
       }),
     }),
+
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      sortSchema: true,
+      playground: true,
+      introspection: true,
+      context: ({ req, res }) => ({ req, res }),
+    }),
+
     UsersModule,
     SchoolModule,
     ColorPalletesModule,

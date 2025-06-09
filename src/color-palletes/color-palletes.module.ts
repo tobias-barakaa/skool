@@ -1,8 +1,12 @@
 import { Module } from '@nestjs/common';
-import { ColorPalletesService } from './providers/color-palletes.service';
-import { ColorPalletesCreateProvider } from './providers/color-palletes-create.provider';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ColorPalettesService } from './color-palettes.service';
+import { ColorPalettesResolver } from './color-palettes.resolver';
+import { ColorPalette } from './entities/color-palette.entity';
 
 @Module({
-  providers: [ColorPalletesService, ColorPalletesCreateProvider]
+  imports: [TypeOrmModule.forFeature([ColorPalette])],
+  providers: [ColorPalettesService, ColorPalettesResolver],
+  exports: [ColorPalettesService],
 })
-export class ColorPalletesModule {}
+export class ColorPalettesModule {}
