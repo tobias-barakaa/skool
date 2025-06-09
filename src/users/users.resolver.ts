@@ -1,53 +1,43 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
-import { UsersService } from './providers/users.service';
+// src/user/user.resolver.ts
+import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { User } from './entities/user.entity';
-import { UserFiltersInput } from './dtos/user-filters.input';
-import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
-import { CreateUserInput } from './dtos/create-user.input';
-import { UpdateUserInput } from './dtos/update-user.input';
+import { UserService } from './providers/users.service';
+import { CreateUserInput } from './dtos/user-signup.input';
+import { SchoolService } from 'src/school/providers/school.service';
+import { UserRole } from './enums/user-role.enum';
 
 @Resolver(() => User)
-export class UsersResolver {
-  constructor(private usersService: UsersService) {}
+export class UserResolver {
+  constructor(
+    private readonly userService: UserService,
+    private readonly schoolService: SchoolService,
+  ) {}
 
-  @Query(() => [User])
-  async users(
-    @Args('filters', { nullable: true }) filters: UserFiltersInput,
-    @CurrentUser() user: User,
-  ): Promise<User[]> {
-    return this.usersService.findAll(filters || {}, user);
-  }
+  @Mutation(() => User, { description: 'Creates a new user and their associated school.' })
+  async createUser(@Args('createUserInput') createUserInput: CreateUserInput): Promise<User> {
+    // Destructure fields from input
+    const { schoolName, username, email, password, userRole } = createUserInput;
 
-  @Query(() => User)
-  async user(@Args('id') id: string): Promise<User> {
-    return this.usersService.findById(id);
-  }
+    // Validate schoolName (optional, but recommended)
+    if (!schoolName) {
+      throw new Error('School name is required');
+    }
 
-  @Mutation(() => User)
-  async createUser(
-    @Args('createUserInput') createUserInput: CreateUserInput,
-    @CurrentUser() user: User,
-  ): Promise<User> {
-    return this.usersService.create(createUserInput, user);
-  }
+    // Create a school by passing an object with actual data, NOT the class/type
+    const newSchool = await this.schoolService.create({ name: schoolName });
 
-  @Mutation(() => User)
-  async updateUser(
-    @Args('id') id: string,
-    @Args('updateUserInput') updateUserInput: UpdateUserInput,
-    @CurrentUser() user: User,
-  ): Promise<User> {
-    return this.usersService.update(id, updateUserInput, user);
-  }
+    // Create user with new school's id and other details
+    const newUser = await this.userService.create(
+      email,
+      username,
+      password,
+      newSchool.id,
+      userRole
+    );
 
-  @Mutation(() => Boolean)
-  async deleteUser(
-    @Args('id') id: string,
-    @CurrentUser() user: User,
-  ): Promise<boolean> {
-    return this.usersService.delete(id, user);
+    // Attach the newly created school entity to user before returning
+    newUser.school = newSchool;
+
+    return newUser;
   }
 }
-
-// src/user

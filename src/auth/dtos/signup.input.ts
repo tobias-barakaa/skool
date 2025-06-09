@@ -1,39 +1,24 @@
+// src/auth/dto/signup.input.ts
 import { InputType, Field } from '@nestjs/graphql';
-import { IsEmail, IsString, MinLength, MaxLength, IsOptional, Matches } from 'class-validator';
+import { IsEmail, IsNotEmpty, MinLength, IsString } from 'class-validator';
 
 @InputType()
 export class SignupInput {
   @Field()
+  @IsNotEmpty()
   @IsString()
-  @MaxLength(200)
   schoolName: string;
 
   @Field()
+  @IsNotEmpty()
   @IsString()
-  @MaxLength(100)
-  adminFirstName: string;
-
-  @Field()
-  @IsString()
-  @MaxLength(100)
-  adminLastName: string;
+  username: string; // This is the "Admin Name"
 
   @Field()
   @IsEmail()
   email: string;
 
   @Field()
-  @IsString()
-  @MinLength(6)
-  @MaxLength(100)
+  @MinLength(8)
   password: string;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  @MaxLength(50)
-  @Matches(/^[a-z0-9-]+$/, {
-    message: 'Subdomain can only contain lowercase letters, numbers, and hyphens'
-  })
-  subdomain?: string;
 }

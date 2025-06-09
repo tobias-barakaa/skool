@@ -1,15 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AuthResolver } from './auth.resolver';
 import { User } from '../users/entities/user.entity';
 import { ColorPalette } from 'src/color-palletes/entities/color-palette.entity';
-import { School } from 'src/school/entities/school.entity';
 import { AuthService } from './providers/auth.service';
+import { SchoolsModule } from 'src/school/school.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, School, ColorPalette]),
+    TypeOrmModule.forFeature([]),
     // JwtModule.registerAsync({
     //   imports: [ConfigModule],
     //   useFactory: async (configService: ConfigService) => ({
@@ -20,8 +18,9 @@ import { AuthService } from './providers/auth.service';
     //   }),
     //   inject: [ConfigService],
     // }),
+    SchoolsModule
   ],
-  providers: [AuthService, AuthResolver],
+  providers: [AuthService],
   exports: [AuthService],
 })
 export class AuthModule {}

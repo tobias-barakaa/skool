@@ -1,33 +1,16 @@
-import { InputType, Field } from '@nestjs/graphql';
-import { IsOptional, IsString, MaxLength } from 'class-validator';
+// src/user/dto/update-user.input.ts
+import { InputType, Field, PartialType, ID } from '@nestjs/graphql';
+import { CreateUserInput } from './user-signup.input';
+import { IsNotEmpty, IsUUID } from 'class-validator';
 
 @InputType()
-export class UpdateUserInput {
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  @MaxLength(100)
-  firstName?: string;
+export class UpdateUserInput extends PartialType(CreateUserInput) {
+  @Field(() => ID)
+  @IsUUID()
+  @IsNotEmpty()
+  id: string;
 
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  @MaxLength(100)
-  lastName?: string;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  @MaxLength(20)
-  phoneNumber?: string;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  bio?: string;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  avatar?: string;
+  @Field(() => ID, { nullable: true })
+  @IsUUID()
+  schoolId?: string; // School cannot be changed after creation easily
 }

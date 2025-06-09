@@ -23,7 +23,7 @@ export class ColorPalettesService {
   }
 
   async update(id: string, updateInput: UpdateColorPaletteInput, user: User): Promise<ColorPalette> {
-    if (user.role !== UserRole.SCHOOL_ADMIN) {
+    if (!UserRole.SCHOOL_ADMIN) {
       throw new ForbiddenException('Only school administrators can update color palettes');
     }
 

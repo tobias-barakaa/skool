@@ -1,0 +1,92 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type ColorPalette {
+  background: String!
+  createdAt: DateTime!
+  customCss: String
+  error: String!
+  id: ID!
+  info: String!
+  name: String!
+  primary: String!
+  secondary: String!
+  success: String!
+  surface: String!
+  textPrimary: String!
+  textSecondary: String!
+  updatedAt: DateTime!
+  warning: String!
+}
+
+input CreateUserInput {
+  email: String!
+  password: String!
+  schoolName: String!
+  userRole: UserRole! = SUPER_ADMIN
+  username: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Mutation {
+  """Creates a new user and their associated school."""
+  createUser(createUserInput: CreateUserInput!): User!
+  updateColorPalette(id: String!, updateColorPaletteInput: UpdateColorPaletteInput!): ColorPalette!
+}
+
+type Query {
+  hello: String!
+}
+
+type School {
+  colorPalette: ColorPalette
+  contactEmail: String
+  id: ID!
+  logoUrl: String
+  name: String!
+  secondaryColor: String!
+
+  """Optional unique subdomain for the school"""
+  subdomain: String
+
+  """Example: ["Fall 2024", "Spring 2025"]"""
+  termDates: [String!]
+}
+
+input UpdateColorPaletteInput {
+  background: String
+  customCss: String
+  error: String
+  info: String
+  name: String
+  primary: String
+  secondary: String
+  success: String
+  surface: String
+  textPrimary: String
+  textSecondary: String
+  warning: String
+}
+
+type User {
+  email: String!
+  id: ID!
+  school: School!
+  schoolId: ID!
+  userRole: UserRole!
+  username: String!
+}
+
+"""The role of the user"""
+enum UserRole {
+  PARENT
+  SCHOOL_ADMIN
+  STUDENT
+  SUPER_ADMIN
+  TEACHER
+}

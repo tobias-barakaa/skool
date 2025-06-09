@@ -8,9 +8,9 @@ Content-Type: application/json
       "schoolName": "Green Valley High School",
       "adminFirstName": "John",
       "adminLastName": "Smith",
-      "email": "admin@greenvalley.edu",
+      "email": "adfdfdf@gmail.com",
       "password": "SecurePass123!",
-      "subdomain": "greenvalley"
+      "subdomain": "greenvalleydfsd"
     }
   }
 }

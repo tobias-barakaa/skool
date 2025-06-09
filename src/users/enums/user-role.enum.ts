@@ -1,3 +1,4 @@
+import { registerEnumType } from '@nestjs/graphql';
 
 export enum UserRole {
     SUPER_ADMIN = 'SUPER_ADMIN',
@@ -7,3 +8,8 @@ export enum UserRole {
     PARENT = 'PARENT',
   }
   
+
+  registerEnumType(UserRole, {
+    name: 'UserRole', // This one must match the GraphQL enum name
+    description: 'The role of the user',
+  });

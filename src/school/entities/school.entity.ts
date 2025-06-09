@@ -1,116 +1,51 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { ObjectType, Field, ID, registerEnumType } from '@nestjs/graphql';
-import { User } from '../../users/entities/user.entity';
-import { SchoolStatus } from '../enums/school-status.enum';
-import { SubscriptionPlan } from '../enums/subscription.enum';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, Unique, OneToOne, JoinColumn } from 'typeorm';
+import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { User } from 'src/users/entities/user.entity';
 import { ColorPalette } from 'src/color-palletes/entities/color-palette.entity';
 
-
-registerEnumType(SchoolStatus, { name: 'SchoolStatus' });
-registerEnumType(SubscriptionPlan, { name: 'SubscriptionPlan' });
-
+@Entity('schools') // Table name in PostgreSQL
+@Unique(['subdomain']) // Ensure subdomain is unique
 @ObjectType()
-@Entity('schools')
 export class School {
-  @Field(() => ID)
   @PrimaryGeneratedColumn('uuid')
+  @Field(() => ID)
   id: string;
 
+  @Column({ unique: true })
   @Field()
-  @Column({ length: 200 })
   name: string;
 
-  @Field({ nullable: true })
-  @Column({ unique: true, nullable: true })
-  subdomain?: string;
-
-  @Field({ nullable: true })
   @Column({ nullable: true })
-  logo?: string;
+  @Field({ nullable: true, description: 'Optional unique subdomain for the school' })
+  subdomain: string;
 
-  @Field({ nullable: true })
-  @Column({ length: 255, nullable: true })
-  email?: string;
-
-  @Field({ nullable: true })
-  @Column({ length: 20, nullable: true })
-  phoneNumber?: string;
-
-  @Field({ nullable: true })
-  @Column({ type: 'text', nullable: true })
-  address?: string;
-
-  @Field({ nullable: true })
-  @Column({ length: 100, nullable: true })
-  city?: string;
-
-  @Field({ nullable: true })
-  @Column({ length: 100, nullable: true })
-  state?: string;
-
-  @Field({ nullable: true })
-  @Column({ length: 20, nullable: true })
-  zipCode?: string;
-
-  @Field({ nullable: true })
-  @Column({ length: 100, nullable: true })
-  country?: string;
-
-  @Field({ nullable: true })
   @Column({ nullable: true })
-  website?: string;
-
   @Field({ nullable: true })
-  @Column({ type: 'text', nullable: true })
-  description?: string;
-
-  @Field(() => SchoolStatus)
-  @Column({
-    type: 'enum',
-    enum: SchoolStatus,
-    default: SchoolStatus.TRIAL,
-  })
-  status: SchoolStatus;
-
-  @Field(() => SubscriptionPlan)
-  @Column({
-    type: 'enum',
-    enum: SubscriptionPlan,
-    default: SubscriptionPlan.BASIC,
-  })
-  subscriptionPlan: SubscriptionPlan;
-
-  @Field({ nullable: true })
-  @Column({ type: 'timestamp', nullable: true })
-  subscriptionExpiresAt?: Date;
-
-  @Field({ nullable: true })
-  @Column({ type: 'date', nullable: true })
-  academicYearStart?: Date;
-
-  @Field({ nullable: true })
-  @Column({ type: 'date', nullable: true })
-  academicYearEnd?: Date;
-
-  @Field(() => [User])
-  @OneToMany(() => User, user => user.school)
-  users: User[];
+  logoUrl: string;
 
   @Field(() => ColorPalette, { nullable: true })
   @OneToOne(() => ColorPalette, { cascade: true })
   @JoinColumn()
   colorPalette?: ColorPalette;
 
+  @Column({ default: '#ffffff' }) // Default secondary color (White)
   @Field()
-  @CreateDateColumn()
-  createdAt: Date;
+  secondaryColor: string;
 
-  @Field()
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  contactEmail: string;
 
-  @Field()
-  get totalUsers(): number {
-    return this.users?.length || 0;
-  }
+  @Column({ type: 'jsonb', nullable: true }) 
+  @Field(() => [String], { nullable: true, description: 'Example: ["Fall 2024", "Spring 2025"]' })
+  termDates: string[]; 
+
+  @OneToMany(() => User, user => user.school)
+  users: User[]; // This side does not need @Field() unless you want to query users from school directly
 }
+
+
+
+
+
+

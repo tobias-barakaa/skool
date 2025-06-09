@@ -5,13 +5,14 @@ import databaseConfig from './config/database.config';
 import environmentValidation from './config/environment.validation';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join as pathJoin } from 'path';
 import { SchoolsModule } from './school/school.module';
 import { ColorPalettesModule } from './color-palletes/color-palletes.module';
+import { UserModule } from './users/users.module';
+import { AppResolver } from './app.resolver';
 
 
 
@@ -57,7 +58,7 @@ const ENV = process.env.NODE_ENV;
       context: ({ req, res }) => ({ req, res }),
     }),
 
-    UsersModule,
+    UserModule,
     SchoolsModule,
     ColorPalettesModule,
     AuthModule,
@@ -66,7 +67,7 @@ const ENV = process.env.NODE_ENV;
     
   ],
   controllers: [],
-  providers: [AppService],
+  providers: [AppService, AppResolver],
 })
 export class AppModule {}
 function join(arg0: string, arg1: string): import("@nestjs/graphql").AutoSchemaFileValue {
