@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ColorPalettesService } from './color-palettes.service';
 import { ColorPalettesResolver } from './color-palettes.resolver';
 import { ColorPalette } from './entities/color-palette.entity';
+import { ColorPalettesService } from './dtos/color-palettes.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ColorPalette])],

@@ -1,9 +1,11 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ColorPalette } from './entities/color-palette.entity';
-import { UpdateColorPaletteInput } from './dto/update-color-palette.input';
-import { User, UserRole } from '../users/entities/user.entity';
+import { ColorPalette } from '../entities/color-palette.entity';
+import { UpdateColorPaletteInput } from './update-color-palette.input';
+import { User } from 'src/users/entities/user.entity';
+import { UserRole } from 'src/users/enums/user-role.enum';
+
 
 @Injectable()
 export class ColorPalettesService {

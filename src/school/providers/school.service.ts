@@ -1,8 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { School } from './entities/school.entity';
-import { UpdateSchoolInput } from './dto/update-school.input';
+import { School } from '../entities/school.entity';
 
 @Injectable()
 export class SchoolsService {
@@ -24,13 +23,13 @@ export class SchoolsService {
     return school;
   }
 
-  async update(id: string, updateSchoolInput: UpdateSchoolInput): Promise<School> {
-    const school = await this.findById(id);
+//   async update(id: string, updateSchoolInput: UpdateSchoolInput): Promise<School> {
+//     const school = await this.findById(id);
     
-    Object.assign(school, updateSchoolInput);
+//     Object.assign(school, updateSchoolInput);
     
-    return this.schoolsRepository.save(school);
-  }
+//     return this.schoolsRepository.save(school);
+//   }
 
   async findBySubdomain(subdomain: string): Promise<School> {
     const school = await this.schoolsRepository.findOne({

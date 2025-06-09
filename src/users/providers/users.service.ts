@@ -2,10 +2,13 @@ import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/commo
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
-import { User, UserRole, UserStatus } from './entities/user.entity';
-import { CreateUserInput } from './dto/create-user.input';
-import { UpdateUserInput } from './dto/update-user.input';
-import { UserFiltersInput } from './dto/user-filters.input';
+import { User } from '../entities/user.entity';
+import { CreateUserInput } from '../dtos/create-user.input';
+import { UserRole } from '../enums/user-role.enum';
+import { UserStatus } from '../enums/user-status.enum';
+import { UserFiltersInput } from '../dtos/user-filters.input';
+import { UpdateUserInput } from '../dtos/update-user.input';
+
 
 @Injectable()
 export class UsersService {

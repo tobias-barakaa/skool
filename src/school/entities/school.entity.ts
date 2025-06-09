@@ -1,9 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { ObjectType, Field, ID, registerEnumType } from '@nestjs/graphql';
 import { User } from '../../users/entities/user.entity';
-import { ColorPalette } from '../../color-palettes/entities/color-palette.entity';
 import { SchoolStatus } from '../enums/school-status.enum';
 import { SubscriptionPlan } from '../enums/subscription.enum';
+import { ColorPalette } from 'src/color-palletes/entities/color-palette.entity';
 
 
 registerEnumType(SchoolStatus, { name: 'SchoolStatus' });

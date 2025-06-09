@@ -1,14 +1,17 @@
 import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
-import { User, UserRole, UserStatus } from '../users/entities/user.entity';
-import { School, SchoolStatus } from '../schools/entities/school.entity';
-import { ColorPalette } from '../color-palettes/entities/color-palette.entity';
-import { SignupInput } from './dto/signup.input';
-import { LoginInput } from './dto/login.input';
-import { AuthResponse } from './dto/auth-response.dto';
+import { User } from 'src/users/entities/user.entity';
+import { School } from 'src/school/entities/school.entity';
+import { ColorPalette } from 'src/color-palletes/entities/color-palette.entity';
+import { SignupInput } from '../dtos/signup.input';
+import { AuthResponse } from '../dtos/auth-response.dto';
+import { SchoolStatus } from 'src/school/enums/school-status.enum';
+import { UserRole } from 'src/users/enums/user-role.enum';
+import { UserStatus } from 'src/users/enums/user-status.enum';
+import { LoginInput } from '../dtos/login.input';
+
 
 @Injectable()
 export class AuthService {
@@ -19,10 +22,10 @@ export class AuthService {
     private schoolsRepository: Repository<School>,
     @InjectRepository(ColorPalette)
     private colorPalettesRepository: Repository<ColorPalette>,
-    private jwtService: JwtService,
+    // private jwtService: JwtService,
   ) {}
 
-  async signup(signupInput: SignupInput): Promise<AuthResponse> {
+  async signup(signupInput: SignupInput) {
     const { schoolName, adminFirstName, adminLastName, email, password, subdomain } = signupInput;
 
     // Check if user already exists
@@ -72,18 +75,18 @@ export class AuthService {
 
     // Generate JWT token
     const payload = { sub: savedUser.id, email: savedUser.email, role: savedUser.role };
-    const accessToken = this.jwtService.sign(payload);
+    // const accessToken = this.jwtService.sign(payload);
 
     // TODO: Send welcome email
     await this.sendWelcomeEmail(savedUser, savedSchool);
 
-    return {
-      accessToken,
-      user: savedUser,
-    };
+    // return {
+    //   accessToken,
+    //   user: savedUser,
+    // };
   }
 
-  async login(loginInput: LoginInput): Promise<AuthResponse> {
+  async login(loginInput: LoginInput) {
     const { email, password } = loginInput;
 
     const user = await this.usersRepository.findOne({
@@ -103,12 +106,12 @@ export class AuthService {
     await this.usersRepository.update(user.id, { lastLoginAt: new Date() });
 
     const payload = { sub: user.id, email: user.email, role: user.role };
-    const accessToken = this.jwtService.sign(payload);
+    // const accessToken = this.jwtService.sign(payload);
 
-    return {
-      accessToken,
-      user,
-    };
+    // return {
+    //   accessToken,
+    //   user,
+    // };
   }
 
   private async sendWelcomeEmail(user: User, school: School): Promise<void> {
@@ -116,10 +119,10 @@ export class AuthService {
     console.log(`Welcome email sent to ${user.email} for school ${school.name}`);
   }
 
-  async validateUser(userId: string): Promise<User> {
-    return this.usersRepository.findOne({
-      where: { id: userId },
-      relations: ['school'],
-    });
-  }
+//   async validateUser(userId: string): Promise<User> {
+//     return this.usersRepository.findOne({
+//       where: { id: userId },
+//       relations: ['school'],
+//     });
+//   }
 }
