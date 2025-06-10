@@ -34,13 +34,14 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 type Mutation {
-  """Creates a new user and their associated school."""
-  createUser(createUserInput: CreateUserInput!): User!
+  """Create a new user account with associated school"""
+  createUser(input: CreateUserInput!): UserResponse!
   updateColorPalette(id: String!, updateColorPaletteInput: UpdateColorPaletteInput!): ColorPalette!
 }
 
 type Query {
-  hello: String!
+  """Retrieves all users"""
+  users: [User!]!
 }
 
 type School {
@@ -82,10 +83,17 @@ type User {
   username: String!
 }
 
-"""The role of the user"""
+type UserResponse {
+  email: String!
+  id: ID!
+  schoolId: ID!
+  userRole: UserRole!
+  username: String!
+}
+
+"""Available user roles in the system"""
 enum UserRole {
-  PARENT
-  SCHOOL_ADMIN
+  ADMIN
   STUDENT
   SUPER_ADMIN
   TEACHER

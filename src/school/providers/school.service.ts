@@ -1,55 +1,36 @@
-// src/school/school.service.ts
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateSchoolInput } from '../dtos/create-school.input';
 import { School } from '../entities/school.entity';
 
 @Injectable()
 export class SchoolService {
+  private readonly logger = new Logger(SchoolService.name);
+
   constructor(
     @InjectRepository(School)
     private readonly schoolRepository: Repository<School>,
   ) {}
 
-  async create(createSchoolInput: CreateSchoolInput): Promise<School> {
-    if (createSchoolInput.subdomain) {
-      const existingSchool = await this.schoolRepository.findOne({
-        where: { subdomain: createSchoolInput.subdomain },
-      });
-      if (existingSchool) {
-        throw new ConflictException(`Subdomain '${createSchoolInput.subdomain}' is already taken.`);
-      }
-    }
+  async findSchoolByName(name: string): Promise<School | null> {
+    this.logger.log(`Searching for school with name: ${name}`);
+    
+    return this.schoolRepository.findOne({
+      where: { name: name.trim() },
+    });
+  }
+
+  async createSchool(name: string, description?: string): Promise<School> {
+    this.logger.log(`Creating new school: ${name}`);
 
     const school = this.schoolRepository.create({
-      ...createSchoolInput,
-      // Ensure termDates is stored as stringified JSON if it's an array
+      name: name.trim(),
     });
-    return this.schoolRepository.save(school);
-  }
 
-  async findOne(id: string): Promise<School> {
-    const school = await this.schoolRepository.findOne({ where: { id } });
-    if (!school) {
-      throw new NotFoundException(`School with ID "${id}" not found.`);
-    }
-    // Parse termDates back to array of strings when fetching
-    if (school.termDates && typeof school.termDates === 'string') {
-        school.termDates = JSON.parse(school.termDates as any);
-    }
-    return school;
-  }
-
-  async findBySubdomain(subdomain: string): Promise<School> {
-    const school = await this.schoolRepository.findOne({ where: { subdomain } });
-    if (!school) {
-      throw new NotFoundException(`School with subdomain "${subdomain}" not found.`);
-    }
-    if (school.termDates && typeof school.termDates === 'string') {
-        school.termDates = JSON.parse(school.termDates as any);
-    }
-    return school;
+    const savedSchool = await this.schoolRepository.save(school);
+    this.logger.log(`School created successfully with ID: ${savedSchool.id}`);
+    
+    return savedSchool;
   }
 
   

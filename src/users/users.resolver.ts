@@ -1,43 +1,61 @@
-// src/user/user.resolver.ts
-import { Resolver, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, Query, Int } from '@nestjs/graphql';
+import { Logger, UseFilters, ValidationPipe } from '@nestjs/common';
+import { UsersService } from './providers/users.service';
 import { User } from './entities/user.entity';
-import { UserService } from './providers/users.service';
+import { SchoolService } from '../school/providers/school.service';
+import { UserResponse } from './dtos/user.response';
+import { GraphQLBusinessExceptionFilter } from '../common/filters/graphql-exception.filter';
 import { CreateUserInput } from './dtos/user-signup.input';
-import { SchoolService } from 'src/school/providers/school.service';
-import { UserRole } from './enums/user-role.enum';
 
 @Resolver(() => User)
-export class UserResolver {
+@UseFilters(GraphQLBusinessExceptionFilter)
+export class UsersResolver {
+  private readonly logger = new Logger(UsersResolver.name);
+
   constructor(
-    private readonly userService: UserService,
+    private readonly usersService: UsersService,
     private readonly schoolService: SchoolService,
   ) {}
 
-  @Mutation(() => User, { description: 'Creates a new user and their associated school.' })
-  async createUser(@Args('createUserInput') createUserInput: CreateUserInput): Promise<User> {
-    // Destructure fields from input
-    const { schoolName, username, email, password, userRole } = createUserInput;
+  @Mutation(() => UserResponse, {
+    description: 'Create a new user account with associated school'
+  })
+  async createUser(
+    @Args('input', new ValidationPipe({ transform: true })) input: CreateUserInput,
+  ): Promise<UserResponse> {
+    this.logger.log(`Creating user with email: ${input.email}`);
 
-    // Validate schoolName (optional, but recommended)
-    if (!schoolName) {
-      throw new Error('School name is required');
+    const { schoolName, email, username, password, userRole } = input;
+
+    // Find or create school
+    let school = await this.schoolService.findSchoolByName(schoolName);
+    if (!school) {
+      this.logger.log(`School '${schoolName}' not found, creating new school`);
+      school = await this.schoolService.createSchool(schoolName);
     }
 
-    // Create a school by passing an object with actual data, NOT the class/type
-    const newSchool = await this.schoolService.create({ name: schoolName });
-
-    // Create user with new school's id and other details
-    const newUser = await this.userService.create(
+    // Create user
+    const user = await this.usersService.create(
       email,
       username,
       password,
-      newSchool.id,
-      userRole
+      school.id,
+      userRole,
     );
 
-    // Attach the newly created school entity to user before returning
-    newUser.school = newSchool;
+    this.logger.log(`User created successfully with ID: ${user.id}`);
 
-    return newUser;
+    return {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      userRole: user.userRole,
+      schoolId: user.schoolId,
+    };
   }
+  @Query(() => [User], { name: 'users', description: 'Retrieves all users' })
+  async getUsers(): Promise<User[]> {
+    return this.usersService.findAll(); // Assuming you have a findAll method in your UserService
+  }
+
 }

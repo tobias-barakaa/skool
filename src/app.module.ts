@@ -5,20 +5,14 @@ import databaseConfig from './config/database.config';
 import environmentValidation from './config/environment.validation';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AuthModule } from './auth/auth.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join as pathJoin } from 'path';
 import { SchoolsModule } from './school/school.module';
 import { ColorPalettesModule } from './color-palletes/color-palletes.module';
 import { UserModule } from './users/users.module';
-import { AppResolver } from './app.resolver';
 
 
-
-/* 
-User created Modules
-*/
 
 const ENV = process.env.NODE_ENV;
 
@@ -27,7 +21,6 @@ const ENV = process.env.NODE_ENV;
    
     ConfigModule.forRoot({
       isGlobal: true,
-      // envFilePath: ['.env.development']
       envFilePath: !ENV ? '.env.development' : `.env.${ENV}`,
       load: [appConfig, databaseConfig],
       validationSchema: environmentValidation,
@@ -37,7 +30,6 @@ const ENV = process.env.NODE_ENV;
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        // entities: [User],
         autoLoadEntities: configService.get('database.autoLoadEntities'),
         synchronize: configService.get('database.synchronize'),
         port: +configService.get('database.port'),
@@ -61,13 +53,13 @@ const ENV = process.env.NODE_ENV;
     UserModule,
     SchoolsModule,
     ColorPalettesModule,
-    AuthModule,
+
 
    
     
   ],
   controllers: [],
-  providers: [AppService, AppResolver],
+  providers: [AppService],
 })
 export class AppModule {}
 function join(arg0: string, arg1: string): import("@nestjs/graphql").AutoSchemaFileValue {

@@ -3,8 +3,8 @@ import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { User } from 'src/users/entities/user.entity';
 import { ColorPalette } from 'src/color-palletes/entities/color-palette.entity';
 
-@Entity('schools') // Table name in PostgreSQL
-@Unique(['subdomain']) // Ensure subdomain is unique
+@Entity('schools') 
+@Unique(['subdomain']) 
 @ObjectType()
 export class School {
   @PrimaryGeneratedColumn('uuid')
@@ -28,7 +28,7 @@ export class School {
   @JoinColumn()
   colorPalette?: ColorPalette;
 
-  @Column({ default: '#ffffff' }) // Default secondary color (White)
+  @Column({ default: '#ffffff' }) 
   @Field()
   secondaryColor: string;
 
@@ -41,7 +41,7 @@ export class School {
   termDates: string[]; 
 
   @OneToMany(() => User, user => user.school)
-  users: User[]; // This side does not need @Field() unless you want to query users from school directly
+  users: User[]; 
 }
 
 

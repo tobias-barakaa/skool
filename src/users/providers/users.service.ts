@@ -1,36 +1,40 @@
-// src/user/user.service.ts
-import { Injectable, ConflictException } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
+import { Repository, FindManyOptions } from 'typeorm';
 import { User } from '../entities/user.entity';
+import { UsersCreateProvider } from './users-create.provider';
 import { UserRole } from '../enums/user-role.enum';
 
 @Injectable()
-export class UserService {
+export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
+
   constructor(
+    private readonly usersCreateProvider: UsersCreateProvider,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
 
-  /**
-   * Directly creates a new user record in the database.
-   * This is a utility function used by the resolver.
-   */
-  async create(email: string, username: string, passwordPlain: string, schoolId: string, userRole: UserRole): Promise<User> {
-    const existingUser = await this.userRepository.findOne({ where: { email } });
-    if (existingUser) {
-      throw new ConflictException(`User with email '${email}' already exists.`);
-    }
-
-    const password_hash = await bcrypt.hash(passwordPlain, 10);
-    const newUser = this.userRepository.create({
+  async create(
+    email: string,
+    username: string,
+    password: string,
+    schoolId: string,
+    userRole: UserRole,
+  ): Promise<User> {
+    return this.usersCreateProvider.createUser(
       email,
       username,
-      password_hash,
+      password,
       schoolId,
       userRole,
-    });
-    return this.userRepository.save(newUser);
+    );
   }
+
+  async findAll(): Promise<User[]> {
+    return this.userRepository.find({ relations: ['school'] }); // Include school relationship if needed
+  }
+
+   
+
 }

@@ -13,43 +13,43 @@ export class ColorPalette {
   name: string;
 
   @Field()
-  @Column({ length: 7, default: '#1976D2' }) // Primary blue
+  @Column({ length: 7, default: '#1976D2' }) 
   primary: string;
 
   @Field()
-  @Column({ length: 7, default: '#DC004E' }) // Secondary pink
+  @Column({ length: 7, default: '#DC004E' }) 
   secondary: string;
 
   @Field()
-  @Column({ length: 7, default: '#4CAF50' }) // Success green
+  @Column({ length: 7, default: '#4CAF50' })
   success: string;
 
   @Field()
-  @Column({ length: 7, default: '#FF9800' }) // Warning orange
+  @Column({ length: 7, default: '#FF9800' }) 
   warning: string;
 
   @Field()
-  @Column({ length: 7, default: '#F44336' }) // Error red
+  @Column({ length: 7, default: '#F44336' }) 
   error: string;
 
   @Field()
-  @Column({ length: 7, default: '#9E9E9E' }) // Info gray
+  @Column({ length: 7, default: '#9E9E9E' }) 
   info: string;
 
   @Field()
-  @Column({ length: 7, default: '#FFFFFF' }) // Background white
+  @Column({ length: 7, default: '#FFFFFF' }) 
   background: string;
 
   @Field()
-  @Column({ length: 7, default: '#FAFAFA' }) // Surface light gray
+  @Column({ length: 7, default: '#FAFAFA' }) 
   surface: string;
 
   @Field()
-  @Column({ length: 7, default: '#212121' }) // Text dark
+  @Column({ length: 7, default: '#212121' }) 
   textPrimary: string;
 
   @Field()
-  @Column({ length: 7, default: '#757575' }) // Text secondary gray
+  @Column({ length: 7, default: '#757575' }) 
   textSecondary: string;
 
   @Field({ nullable: true })

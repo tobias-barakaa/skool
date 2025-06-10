@@ -22,13 +22,7 @@ export class ColorPalettesService {
     return palette;
   }
 
-  async update(id: string, updateInput: UpdateColorPaletteInput, user: User): Promise<ColorPalette> {
-    if (!UserRole.SCHOOL_ADMIN) {
-      throw new ForbiddenException('Only school administrators can update color palettes');
-    }
+  
 
-    const palette = await this.findById(id);
-    Object.assign(palette, updateInput);
-    return this.colorPalettesRepository.save(palette);
-  }
+   
 }

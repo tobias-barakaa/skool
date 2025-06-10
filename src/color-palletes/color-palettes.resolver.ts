@@ -1,7 +1,6 @@
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { ColorPalette } from './entities/color-palette.entity';
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { User } from '../users/entities/user.entity';
 import { ColorPalettesService } from './dtos/color-palettes.service';
 import { UpdateColorPaletteInput } from './dtos/update-color-palette.input';
@@ -14,8 +13,7 @@ export class ColorPalettesResolver {
   async updateColorPalette(
     @Args('id') id: string,
     @Args('updateColorPaletteInput') updateColorPaletteInput: UpdateColorPaletteInput,
-    @CurrentUser() user: User,
-  ): Promise<ColorPalette> {
-    return this.colorPalettesService.update(id, updateColorPaletteInput, user);
+  ) {
+    
   }
 }

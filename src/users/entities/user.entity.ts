@@ -1,8 +1,7 @@
-// src/user/entities/user.entity.ts
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { UserRole } from '../enums/user-role.enum';
-import { School } from '../../school/entities/school.entity'; // Relative path to School entity
+import { School } from '../../school/entities/school.entity'; 
 
 @Entity('users')
 @ObjectType()
@@ -17,7 +16,7 @@ export class User {
 
   @Column()
   @Field()
-  username: string; // This is the "Admin Name" you requested
+  username: string; 
 
   @Column({ select: false })
   password_hash: string;

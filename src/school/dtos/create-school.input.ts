@@ -12,7 +12,7 @@ export class CreateSchoolInput {
   logoUrl?: string;
 
   @Field({ nullable: true })
-  secondaryColor?: string; // Optional, fallback to default in service
+  secondaryColor?: string;
 
   @Field({ nullable: true })
   contactEmail?: string;
@@ -21,5 +21,5 @@ export class CreateSchoolInput {
   termDates?: string[];
 
   @Field(() => String, { nullable: true })
-  colorPaletteId?: string; // Optional: pass an existing ColorPalette by ID
+  colorPaletteId?: string; 
 }

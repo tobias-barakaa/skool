@@ -1,4 +1,3 @@
-// src/user/dto/create-user.input.ts
 import { InputType, Field } from '@nestjs/graphql';
 import { IsEmail, IsNotEmpty, MinLength, IsString, IsEnum } from 'class-validator';
 import { UserRole } from '../enums/user-role.enum';
@@ -8,12 +7,12 @@ export class CreateUserInput {
   @Field()
   @IsNotEmpty()
   @IsString()
-  schoolName: string; // "School Name" from your request
+  schoolName: string; 
 
   @Field()
   @IsNotEmpty()
   @IsString()
-  username: string; // "Admin Name" from your request
+  username: string; 
 
   @Field()
   @IsEmail()
@@ -23,7 +22,7 @@ export class CreateUserInput {
   @MinLength(8)
   password: string;
 
-  @Field(() => UserRole, { defaultValue: UserRole.SUPER_ADMIN }) // Default to SCHOOL_ADMIN as requested
+  @Field(() => UserRole, { defaultValue: UserRole.SUPER_ADMIN }) 
   @IsEnum(UserRole)
-  userRole: UserRole; // Allows choosing, but defaults to admin
+  userRole: UserRole; 
 }
