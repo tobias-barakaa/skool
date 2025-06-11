@@ -16,6 +16,10 @@ import { UserBranchModule } from './user-branch/user-branch.module';
 import { TeacherModule } from './teacher/teacher.module';
 import { ParentModule } from './parent/parent.module';
 import { StudentModule } from './student/student.module';
+import { GradeModule } from './grade/grade.module';
+import { AttendanceModule } from './attendance/attendance.module';
+import { SubjectModule } from './subject/subject.module';
+import { ClassModule } from './class/class.module';
 
 
 
@@ -63,6 +67,10 @@ const ENV = process.env.NODE_ENV;
     UserBranchModule,
     ParentModule,
     StudentModule,
+    GradeModule,
+    AttendanceModule,
+    SubjectModule,
+    ClassModule,
  
     
   ],

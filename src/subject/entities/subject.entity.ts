@@ -1,0 +1,204 @@
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    CreateDateColumn,
+    UpdateDateColumn,
+    ManyToOne,
+    ManyToMany,
+    JoinTable,
+    OneToMany,
+  } from 'typeorm';
+  import { ObjectType, Field, ID, registerEnumType } from '@nestjs/graphql';
+import { School } from 'src/school/entities/school.entity';
+import { Attendance } from 'src/attendance/entities/attendance.entity';
+import { Grade } from 'src/grade/entities/grade.entity';
+//   import { School } from 'src/schools/entities/school.entity';
+//   import { ClassSubject } from 'src/class-subjects/entities/class-subject.entity';
+//   import { TeacherSubject } from 'src/teacher-subjects/entities/teacher-subject.entity';
+//   import { StudentSubject } from 'src/student-subjects/entities/student-subject.entity';
+//   import { Grade } from 'src/grades/entities/grade.entity';
+//   import { TimetableSlot } from 'src/timetable/entities/timetable-slot.entity';
+//   import { ExamSchedule } from 'src/exams/entities/exam-schedule.entity';
+  
+  export enum SubjectCategory {
+    CORE = 'CORE',
+    ELECTIVE = 'ELECTIVE',
+    OPTIONAL = 'OPTIONAL',
+    EXTRA_CURRICULAR = 'EXTRA_CURRICULAR',
+  }
+  
+  export enum SubjectType {
+    ACADEMIC = 'ACADEMIC',
+    PRACTICAL = 'PRACTICAL',
+    THEORY = 'THEORY',
+    MIXED = 'MIXED',
+  }
+  
+  registerEnumType(SubjectCategory, { name: 'SubjectCategory' });
+  registerEnumType(SubjectType, { name: 'SubjectType' });
+  
+  @ObjectType()
+  @Entity()
+  export class Subject {
+    @Field(() => ID)
+    @PrimaryGeneratedColumn('uuid')
+    subjectId: string;
+  
+    @Field()
+    @Column({ unique: true })
+    subjectCode: string;
+  
+    @Field()
+    @Column()
+    subjectName: string;
+  
+    @Field()
+    @Column()
+    shortName: string;
+  
+    // Classification
+    @Field(() => SubjectCategory)
+    @Column({ type: 'enum', enum: SubjectCategory })
+    category: SubjectCategory;
+  
+    @Field()
+    @Column()
+    department: string;
+  
+    @Field(() => SubjectType)
+    @Column({ type: 'enum', enum: SubjectType })
+    subjectType: SubjectType;
+  
+    // Grade Levels Offered
+    @Field(() => [String])
+    @Column("text", { array: true })
+    gradeLevel: string[];
+  
+    @Field()
+    @Column({ default: false })
+    isCompulsory: boolean;
+  
+    // Academic Configuration
+    @Field()
+    @Column('int')
+    totalMarks: number;
+  
+    @Field()
+    @Column('int')
+    passingMarks: number;
+  
+    @Field()
+    @Column('int')
+    creditHours: number;
+  
+    @Field({ nullable: true })
+    @Column('int', { nullable: true })
+    practicalHours?: number;
+  
+    // Curriculum
+    @Field(() => [String])
+    @Column("text", { array: true })
+    curriculum: string[];
+  
+    @Field({ nullable: true })
+    @Column({ nullable: true })
+    syllabus?: string;
+  
+    @Field(() => [String])
+    @Column("text", { array: true })
+    learningOutcomes: string[];
+  
+    // Resources
+    @Field(() => [String])
+    @Column("text", { array: true })
+    textbooks: string[];
+  
+    @Field(() => [String])
+    @Column("text", { array: true })
+    materials: string[];
+  
+    // Prerequisites
+    @Field(() => [String])
+    @Column("text", { array: true })
+    prerequisiteSubjects: string[];
+  
+    // School reference
+    @Field()
+    @Column()
+    schoolId: string;
+  
+    // Status flags
+    @Field()
+    @Column({ default: true })
+    isActive: boolean;
+  
+    @Field()
+    @Column({ default: true })
+    isOffered: boolean;
+  
+    // Metadata
+    @Field()
+    @CreateDateColumn()
+    createdAt: Date;
+  
+    @Field()
+    @UpdateDateColumn()
+    updatedAt: Date;
+  
+    @Field()
+    @Column()
+    createdBy: string;
+  
+    // Relations
+    @Field(() => School)
+    @ManyToOne(() => School, (school) => school.subject)
+    school: School;
+
+    @Field(() => [Attendance])
+    @OneToMany(() => Attendance, (attendance) => attendance.subject)
+    attendance: Attendance[];
+
+  
+    @Field({ nullable: true })
+    @Column({
+        default: [],
+        type: 'array',
+    })
+    classes: string[];
+  
+    @Field()
+    @Column({
+        type: 'text',
+        array: true,
+        default: [],
+    })
+    teachers: string[];
+  
+    @Field({ nullable: true })
+    @Column({
+        default: [],
+    })
+    students: string[];
+  
+    @Field(() => [Grade], { nullable: true })
+    @OneToMany(() => Grade, (grade) => grade.subject)
+    grades: Grade[];
+  
+    @Field( { nullable: true })
+    @Column({
+        type: 'text',
+        array: true,
+        default: [],
+    })
+    timetableSlots: string[];
+  
+    @Field({ nullable: true })
+    @Column({
+        type: 'text',
+        array: true,
+        default: []
+    })
+    examSchedules: string[];
+  }
+  

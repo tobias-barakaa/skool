@@ -8,12 +8,15 @@ import {
     JoinColumn,
     ManyToMany,
     JoinTable,
+    OneToMany,
   } from 'typeorm';
   import { ObjectType, Field, ID } from '@nestjs/graphql';
   import { User } from 'src/users/entities/user.entity';
   
 import { School } from 'src/school/entities/school.entity';
 import { Branch } from 'src/branch/entities/branch.entity';
+import { Class } from 'src/class/entities/class.entity';
+import { Grade } from 'src/grade/entities/grade.entity';
   
   @ObjectType()
   @Entity()
@@ -100,5 +103,19 @@ import { Branch } from 'src/branch/entities/branch.entity';
     @ManyToMany(() => Branch, (branch: Branch) => branch.teachers)
     @JoinTable()
     branches: Branch[];
+
+    @Field(() => [Class])
+    @OneToMany(() => Class, (cls) => cls.classTeacher)
+    primaryClasses: Class[];
+
+    @Field(() => [Grade])
+    @OneToMany(() => Grade, (grade) => grade.teacher)
+    grades: Grade[];
+
+      // One teacher can assist multiple classes
+     @Field(() => [Class])
+    @OneToMany(() => Class, (cls) => cls.assistantTeacher)
+     assistantClasses: Class[];
+
   }
   

@@ -5,11 +5,15 @@ import {
   Column,
   CreateDateColumn,
   OneToMany,
+  ManyToOne,
 } from 'typeorm';
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { User } from 'src/users/entities/user.entity';
 import { Teacher } from 'src/teacher/entities/teacher.entity';
 import { Branch } from 'src/branch/entities/branch.entity';
+import { Parent } from 'src/parent/entities/parent.entity';
+import { Subject } from 'src/subject/entities/subject.entity';
+import { Class } from 'src/class/entities/class.entity';
 
 @ObjectType()
 @Entity()
@@ -53,4 +57,15 @@ export class School {
   @Field(() => [User], { nullable: true })
   @OneToMany(() => User, (user) => user.school)
   users: User[];
+
+  @OneToMany(() => Parent, (parent) => parent.school)
+  parents: Parent[];
+
+  @Field(() => Subject)
+  @ManyToOne(() => Subject, (subject: Subject) => subject.subjectId)
+  subject: Subject;
+
+  @Field(() => [Class])
+  @OneToMany(() => Class, (cls) => cls.school)
+  classes: Class[];
 }
