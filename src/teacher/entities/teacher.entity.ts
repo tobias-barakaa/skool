@@ -85,7 +85,7 @@ import { Attendance } from 'src/attendance/entities/attendance.entity';
     @JoinColumn()
     user: User;
   
-    @Field()
+    @Field(() => [String])
     @Column({
     type: 'text',
     array: true,
@@ -93,7 +93,7 @@ import { Attendance } from 'src/attendance/entities/attendance.entity';
     })
     classes: string[];
   
-    @Field()
+    @Field(() => [String])
     @Column({
     type: 'varchar',
     default: 'Math'

@@ -211,5 +211,5 @@ students: string[];
     })
     examSchedules: string[];
   }
-//   () => [String],
+
   

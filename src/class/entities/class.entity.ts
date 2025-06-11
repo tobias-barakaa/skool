@@ -126,7 +126,7 @@ import { Student } from 'src/student/entities/student.entity';
     @Column()
     schoolDayEnd: string;
   
-    @Field()
+    @Field(() => [String], { nullable: true })
     @Column({
         type: 'jsonb',
         default: [],
@@ -166,11 +166,11 @@ import { Student } from 'src/student/entities/student.entity';
     createdBy: string;
   
     // Relations
-    @Field(() => School)
+    @Field(() => [School])
     @ManyToOne(() => School, (school) => school.classes)
     school: School;
   
-    @Field(() => Branch)
+    @Field(() => [Branch])
     @ManyToOne(() => Branch, (branch) => branch.classes)
     branch: Branch;
 
@@ -179,17 +179,17 @@ import { Student } from 'src/student/entities/student.entity';
     grades: Grade[];
 
   
-    @Field(() => Teacher)
+    @Field(() => [Teacher])
     @ManyToOne(() => Teacher, (t) => t.primaryClasses)
     @JoinColumn({ name: 'classTeacherId' })
     classTeacher: Teacher;
   
-    @Field(() => Teacher, { nullable: true })
+    @Field(() => [Teacher], { nullable: true })
     @ManyToOne(() => Teacher, (t) => t.assistantClasses, { nullable: true })
     @JoinColumn({ name: 'assistantTeacherId' })
     assistantTeacher?: Teacher;
   
-    @Field(() => Student, { nullable: true })
+    @Field(() => [Student], { nullable: true })
     @ManyToOne(() => Student, (s) => s.monitorOf, { nullable: true })
     @JoinColumn({ name: 'classMonitorId' })
     classMonitor?: Student;
@@ -198,19 +198,18 @@ import { Student } from 'src/student/entities/student.entity';
     @OneToMany(() => Student, (student) => student.class)
     students: Student[];
   
-    @Field({ nullable: true })
-    @Field({ nullable: true })
+    @Field(() => [String], { nullable: true })
 @Column({ type: 'text', array: true, default: [] })
 subjects: string[];
 
   
-    @Field({nullable: true })
+    @Field(() => [String], { nullable: true })
     @Column({ nullable: true, type: 'text', array: true, default: [] })
     teachers: string[];
 
     // teachers: TeacherClass[];
   
-    @Field({ nullable: true })
+    @Field(() => [String], { nullable: true })
     @Column({ type: 'jsonb', default: [] })
     timetable: string[];
   
@@ -218,17 +217,17 @@ subjects: string[];
     @OneToMany(() => Attendance, (a) => a.class)
     attendance: Attendance[];
   
-    @Field({nullable: true })
+    @Field(() => [String], { nullable: true })
     @Column({ type: 'text', array: true, default: [] })
     // exams: Exam[];
     exams: string[];
 
   
-    @Field({ nullable: true })
+    @Field(() => [String], { nullable: true })
     @Column({  type: 'text', array: true, default: [] })
     assignments: string[];
   
-    @Field({ nullable: true })
+    @Field(() => [String], { nullable: true })
     @Column({ type: 'text', array: true, default: [] })
     classEvents: string[];
   }

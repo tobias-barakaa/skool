@@ -24,6 +24,7 @@ import { Class } from 'src/class/entities/class.entity';
 import { truncate } from 'fs';
 import { Parent } from 'src/parent/entities/parent.entity';
 import { Grade } from 'src/grade/entities/grade.entity';
+import { Subject } from 'src/subject/entities/subject.entity';
   
   @ObjectType()
   @Entity()
@@ -227,9 +228,10 @@ import { Grade } from 'src/grade/entities/grade.entity';
     @JoinColumn()
     user?: User;
   
-    @Field()
+    @Field(() => [Subject], { nullable: true })
     @Column('text', { array: true, default: [] })
-    subjects: string[];
+    subjects: Subject[];
+
 
   
     @Field(() => [Grade])
@@ -240,22 +242,22 @@ import { Grade } from 'src/grade/entities/grade.entity';
     @OneToMany(() => Attendance, (attendance) => attendance.student)
     attendance: Attendance[];
   
-    @Field()
+    @Field(() => [String], { nullable: true })
     @Column('text', { array: true, nullable: true, default: [] })
 disciplinaryRecords?: string[];
 
   
-    @Field({nullable: true})
+    @Field(() => [String], { nullable: true })
     @Column('text', { array: true, nullable: true, default: [] })
 medicalRecords?: string[];
 
   
-    @Field()
+    @Field(() => [String], { nullable: true })
     @Column('text', { array: true, default: [] })
 feePayments: string[];
 
   
-    @Field()
+    @Field(() => [String], { nullable: true })
     @Column('text', { array: true, nullable: true, default: [] })
 invoices?: string[];
 

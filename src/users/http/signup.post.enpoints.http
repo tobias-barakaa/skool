@@ -1,15 +1,16 @@
 POST http://localhost:3000/graphql
 Content-Type: application/json
 
+
 {
-  "query": "mutation CreateUser($input: CreateUserInput!) { createUser(input: $input) { id email username userRole schoolId  } }",
+  "query": "mutation CreateUser($createUserInput: CreateUserInput!) { createUser(createUserInput: $createUserInput) { id email name userRole } }",
   "variables": {
-    "input": {
-      "schoolName": "Skool Acadeeweede",
-      "username": "admiwernudsses",
-      "email": "adminuweredsee@example.com",
-      "password": "StroerngesPass123!",
-      "userRole": "SUPER_ADMIN"
+    "createUserInput": {
+      "email": "userr@example.com",
+      "password": "seecure123",
+      "name": "John Doe",
+      "userRole": "SUPER_ADMIN",
+      "schoolName": "Test School"
     }
   }
 }

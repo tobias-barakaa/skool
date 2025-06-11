@@ -19,9 +19,11 @@ export class User {
   @Field()
   email: string;
 
+  @Field()
   @Column()
   password: string;
 
+  @Field()
   @Column()
   name: string;
 
@@ -32,6 +34,7 @@ export class User {
   @Field(() => String)
   userRole: string;
 
+  @Field(() => [UserBranch], { nullable: true })
   @OneToMany(() => UserBranch, (userBranch) => userBranch.user)
   userBranches: UserBranch[];
 
