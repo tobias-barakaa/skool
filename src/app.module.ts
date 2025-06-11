@@ -9,8 +9,13 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join as pathJoin } from 'path';
 import { SchoolsModule } from './school/school.module';
-import { ColorPalettesModule } from './color-palletes/color-palletes.module';
 import { UserModule } from './users/users.module';
+import { BranchModule } from './branch/branch.module';
+import { SchoolTypeModule } from './school-type/school-type.module';
+import { UserBranchModule } from './user-branch/user-branch.module';
+import { TeacherModule } from './teacher/teacher.module';
+import { ParentModule } from './parent/parent.module';
+import { StudentModule } from './student/student.module';
 
 
 
@@ -52,10 +57,13 @@ const ENV = process.env.NODE_ENV;
 
     UserModule,
     SchoolsModule,
-    ColorPalettesModule,
-
-
-   
+    BranchModule,
+    TeacherModule,
+    SchoolTypeModule,
+    UserBranchModule,
+    ParentModule,
+    StudentModule,
+ 
     
   ],
   controllers: [],

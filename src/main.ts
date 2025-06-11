@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
+import { GraphQLBusinessExceptionFilter } from './common/filters/graphql-exception.filter';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
@@ -36,6 +37,7 @@ async function bootstrap() {
 
   // Add Global Interceptor
   // app.useGlobalInterceptors(new DataResponseInterceptor())
+  app.useGlobalFilters(new GraphQLBusinessExceptionFilter());
 
   await app.listen(process.env.PORT ?? 3000);
   console.log(`Application is running on: ${await app.getUrl()}`);

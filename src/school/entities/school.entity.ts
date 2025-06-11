@@ -1,51 +1,56 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, Unique, OneToOne, JoinColumn } from 'typeorm';
-import { ObjectType, Field, ID } from '@nestjs/graphql';
+// src/schools/entities/school.entity.ts
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  OneToMany,
+} from 'typeorm';
+import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { User } from 'src/users/entities/user.entity';
-import { ColorPalette } from 'src/color-palletes/entities/color-palette.entity';
+import { Teacher } from 'src/teacher/entities/teacher.entity';
+import { Branch } from 'src/branch/entities/branch.entity';
 
-@Entity('schools') 
-@Unique(['subdomain']) 
 @ObjectType()
+@Entity()
 export class School {
-  @PrimaryGeneratedColumn('uuid')
   @Field(() => ID)
-  id: string;
+  @PrimaryGeneratedColumn('uuid')
+  schoolId: string;
 
-  @Column({ unique: true })
   @Field()
-  name: string;
+  @Column()
+  schoolName: string;
 
-  @Column({ nullable: true })
-  @Field({ nullable: true, description: 'Optional unique subdomain for the school' })
+  @Field()
+  @Column({ unique: true })
   subdomain: string;
 
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  logoUrl: string;
-
-  @Field(() => ColorPalette, { nullable: true })
-  @OneToOne(() => ColorPalette, { cascade: true })
-  @JoinColumn()
-  colorPalette?: ColorPalette;
-
-  @Column({ default: '#ffffff' }) 
   @Field()
-  secondaryColor: string;
+  @Column({
+    type: 'varchar',
+    default: 'CBC'
+  })
+  schoolType: string;
 
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  contactEmail: string;
+  @Field()
+  @Column({ default: true })
+  isActive: boolean;
 
-  @Column({ type: 'jsonb', nullable: true }) 
-  @Field(() => [String], { nullable: true, description: 'Example: ["Fall 2024", "Spring 2025"]' })
-  termDates: string[]; 
+  @Field(() => Date)
+  @CreateDateColumn()
+  createdAt: Date;
 
-  @OneToMany(() => User, user => user.school)
-  users: User[]; 
+  // Relations
+
+  @Field(() => [Branch], { nullable: true })
+  @OneToMany(() => Branch, (branch: Branch) => branch.school)
+  branches: Branch[];
+
+  @OneToMany(() => Teacher, (teacher) => teacher.school)
+ teachers: Teacher[];
+
+  @Field(() => [User], { nullable: true })
+  @OneToMany(() => User, (user) => user.school)
+  users: User[];
 }
-
-
-
-
-
-

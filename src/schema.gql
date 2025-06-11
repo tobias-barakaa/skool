@@ -2,24 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type ColorPalette {
-  background: String!
-  createdAt: DateTime!
-  customCss: String
-  error: String!
-  id: ID!
-  info: String!
-  name: String!
-  primary: String!
-  secondary: String!
-  success: String!
-  surface: String!
-  textPrimary: String!
-  textSecondary: String!
-  updatedAt: DateTime!
-  warning: String!
-}
-
 input CreateUserInput {
   email: String!
   password: String!
@@ -28,15 +10,9 @@ input CreateUserInput {
   username: String!
 }
 
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
 type Mutation {
   """Create a new user account with associated school"""
   createUser(input: CreateUserInput!): UserResponse!
-  updateColorPalette(id: String!, updateColorPaletteInput: UpdateColorPaletteInput!): ColorPalette!
 }
 
 type Query {
@@ -45,7 +21,6 @@ type Query {
 }
 
 type School {
-  colorPalette: ColorPalette
   contactEmail: String
   id: ID!
   logoUrl: String
@@ -57,21 +32,6 @@ type School {
 
   """Example: ["Fall 2024", "Spring 2025"]"""
   termDates: [String!]
-}
-
-input UpdateColorPaletteInput {
-  background: String
-  customCss: String
-  error: String
-  info: String
-  name: String
-  primary: String
-  secondary: String
-  success: String
-  surface: String
-  textPrimary: String
-  textSecondary: String
-  warning: String
 }
 
 type User {
