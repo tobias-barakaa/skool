@@ -4,9 +4,12 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config'; // Make sure this is imported if used
 import { Logger } from '@nestjs/common'; // <-- Import Logger
+import { GqlAllExceptionsFilter } from './common/filters/gql-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.useGlobalFilters(new GqlAllExceptionsFilter());
+
   
   // Improved CORS configuration
   app.enableCors({

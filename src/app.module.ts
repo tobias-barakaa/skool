@@ -22,7 +22,7 @@ import { SubjectModule } from './subject/subject.module';
 import { ClassModule } from './class/class.module';
 import { SchoolmanagerModule } from './schoolmanager/schoolmanager.module';
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
-import { SchoolAlreadyExistsException, UserAlreadyExistsException } from './common/exceptions/business.exception';
+import { BusinessException, SchoolAlreadyExistsException, UserAlreadyExistsException } from './common/exceptions/business.exception';
 
 
 const ENV = process.env.NODE_ENV;
@@ -54,77 +54,127 @@ const ENV = process.env.NODE_ENV;
 
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      // Use path.join for schema file path
       autoSchemaFile: path.join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
-      // playground: true, // Enable playground in development
-      introspection: true, // Enable introspection in development
-      context: ({ req, res }) => ({ req, res }), // Ensure context is passed
-
+      introspection: true,
+      // ... other config
       formatError: (error: GraphQLError) => {
-        const originalError = error.originalError; // The actual exception instance
-
-        // Log the original error for debugging. This will show up in your NestJS console.
-        Logger.error(
-          `GraphQL Error: ${originalError?.name || error.name} - ${error.message}`,
-          originalError?.stack || error.stack,
-          'GraphQL'
-        );
-
-        let extensions: Record<string, any> = {
-          code: error.extensions?.code || 'INTERNAL_SERVER_ERROR', // Default GraphQL error code
-        };
-        let message = error.message;
-        
-        // Handle your custom business exceptions
-        if (originalError instanceof UserAlreadyExistsException) {
-          message = originalError.message;
-          extensions.code = 'USER_ALREADY_EXISTS';
-          extensions.customType = originalError.name;
-          extensions.httpStatus = 409; 
-        } else if (originalError instanceof SchoolAlreadyExistsException) {
-          message = originalError.message;
-          extensions.code = 'SCHOOL_ALREADY_EXISTS';
-          extensions.customType = originalError.name;
-          extensions.httpStatus = 409;
-        } 
-        // Handle validation errors from class-validator/ValidationPipe
-        else if (error.extensions?.code === 'BAD_USER_INPUT' && error.extensions?.exception) {
-            // Check if 'response' exists and is an object, then access 'message'
-            const validationResponse = (error.extensions.exception as any)?.response;
-            if (validationResponse && typeof validationResponse === 'object' && 'message' in validationResponse) {
-                message = 'Input validation failed.';
-                extensions.validationErrors = validationResponse.message;
-            }
-            extensions.code = 'VALIDATION_ERROR';
-            extensions.httpStatus = 400;
-        } 
-        // Catch-all for any other unexpected errors
-        else if (originalError) {
-            // For general errors, provide a generic message to clients
-            message = 'An unexpected server error occurred.';
-            extensions.code = 'UNEXPECTED_ERROR';
-            // Include stack trace and original error details only in non-production environments
-            if (process.env.NODE_ENV !== 'production') {
-                extensions.originalErrorDetails = originalError.message;
-                extensions.stack = originalError.stack;
-            }
+        const originalError = error.extensions?.originalError || error;
+        const extensions = error.extensions || {};
+    
+        // Handle business exceptions
+        if (originalError instanceof BusinessException) {
+          return {
+            message: originalError.message,
+            extensions: {
+              code: originalError.code,
+              httpStatus: originalError.getStatus(),
+              type: originalError.name,
+              ...originalError.metadata, // Include any additional metadata
+            },
+            locations: error.locations,
+            path: error.path,
+          };
         }
-
-        // Return the formatted error structure that will be sent to the client
-        const formattedError: GraphQLFormattedError = {
-          message: message,
+    
+        // Handle validation errors
+        if (extensions.code === 'BAD_USER_INPUT') {
+          const validationErrors = 
+            extensions.exception && 
+            typeof extensions.exception === 'object' && 
+            'response' in extensions.exception 
+              ? (extensions.exception.response as { message?: any })?.message 
+              : null;
+          if (validationErrors) {
+            return {
+              message: 'Validation error',
+              extensions: {
+                code: 'VALIDATION_ERROR',
+                httpStatus: 400,
+                validationErrors,
+              },
+              locations: error.locations,
+              path: error.path,
+            };
+          }
+        }
+    
+        // Default error format
+        return {
+          message: process.env.NODE_ENV === 'production' 
+            ? 'Internal server error' 
+            : error.message,
+          extensions: {
+            code: extensions.code || 'INTERNAL_SERVER_ERROR',
+            httpStatus: extensions.httpStatus || 500,
+            ...(process.env.NODE_ENV !== 'production' && { 
+              stack: extensions.stack 
+            }),
+          },
           locations: error.locations,
           path: error.path,
-          extensions: extensions,
         };
-
-        return formattedError;
       },
-      // Debug and playground should be true in development
-      debug: process.env.NODE_ENV !== 'production',
-      playground: process.env.NODE_ENV !== 'production',
     }),
+    // GraphQLModule.forRoot<ApolloDriverConfig>({
+    //   driver: ApolloDriver,
+    //   autoSchemaFile: path.join(process.cwd(), 'src/schema.gql'),
+    //   sortSchema: true,
+    //   introspection: true,
+    //   context: ({ req, res }) => ({ req, res }),
+      
+    //   formatError: (error: GraphQLError) => {
+    //     const originalError = error.extensions?.originalError || error;
+    //     const extensions = error.extensions || {};
+        
+    //     // Handle business exceptions
+    //     if (originalError instanceof BusinessException) {
+    //       return {
+    //         message: originalError.message,
+    //         extensions: {
+    //           code: originalError.code,
+    //           httpStatus: originalError.getStatus(),
+    //           type: originalError.name,
+    //         },
+    //         locations: error.locations,
+    //         path: error.path,
+    //       };
+    //     }
+    
+    //     // Handle validation errors
+    //     if (extensions.code === 'BAD_USER_INPUT') {
+    //       const validationErrors = 
+    //         extensions.exception && 
+    //         typeof extensions.exception === 'object' && 
+    //         'response' in extensions.exception 
+    //           ? (extensions.exception.response as { message?: any })?.message || null 
+    //           : null;
+    //       if (validationErrors) {
+    //         return {
+    //           message: 'Validation error',
+    //           extensions: {
+    //             code: 'VALIDATION_ERROR',
+    //             httpStatus: 400,
+    //             validationErrors,
+    //           },
+    //           locations: error.locations,
+    //           path: error.path,
+    //         };
+    //       }
+    //     }
+    
+    //     // Default error format
+    //     return {
+    //       message: error.message,
+    //       extensions: {
+    //         code: extensions.code || 'INTERNAL_SERVER_ERROR',
+    //         httpStatus: extensions.httpStatus || 500,
+    //       },
+    //       locations: error.locations,
+    //       path: error.path,
+    //     };
+    //   },
+    // }),
 
     UserModule,
     SchoolsModule,
