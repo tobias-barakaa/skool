@@ -1,19 +1,14 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
-
-export class BusinessException extends HttpException {
-  constructor(message: string, statusCode: HttpStatus = HttpStatus.BAD_REQUEST) {
-    super(message, statusCode);
-  }
-}
-
-export class UserAlreadyExistsException extends BusinessException {
+// src/common/exceptions/business.exception.ts
+export class UserAlreadyExistsException extends Error {
   constructor(email: string) {
-    super(`User with email '${email}' already exists`, HttpStatus.CONFLICT);
+    super(`User with email ${email} already exists`);
+    this.name = 'UserAlreadyExistsException';
   }
 }
 
-export class SchoolNotFoundException extends BusinessException {
-  constructor(schoolName: string) {
-    super(`School '${schoolName}' not found`, HttpStatus.NOT_FOUND);
+export class SchoolAlreadyExistsException extends Error {
+  constructor(subdomain: string) {
+    super(`School with subdomain ${subdomain} already exists`);
+    this.name = 'SchoolAlreadyExistsException';
   }
 }

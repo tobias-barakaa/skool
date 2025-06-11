@@ -6,6 +6,9 @@ import {
   CreateDateColumn,
   OneToMany,
   ManyToOne,
+  OneToOne,
+  JoinColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { User } from 'src/users/entities/user.entity';
@@ -14,6 +17,8 @@ import { Branch } from 'src/branch/entities/branch.entity';
 import { Parent } from 'src/parent/entities/parent.entity';
 import { Subject } from 'src/subject/entities/subject.entity';
 import { Class } from 'src/class/entities/class.entity';
+import { Student } from 'src/student/entities/student.entity';
+import { SchoolManager } from 'src/schoolmanager/entities/school-manager.entity';
 
 @ObjectType()
 @Entity()
@@ -68,4 +73,23 @@ export class School {
   @Field(() => [Class])
   @OneToMany(() => Class, (cls) => cls.school)
   classes: Class[];
+
+  @OneToOne(() => SchoolManager, (manager) => manager.school, {
+    cascade: true,
+    nullable: true,
+    eager: true,
+  })
+  @JoinColumn()
+  @Field(() => SchoolManager, { nullable: true })
+  manager?: SchoolManager;
+  
+
+  @Field(() => [Student])
+  @OneToMany(() => Student, (student) => student.school)
+  students: Student[];
+
+  @UpdateDateColumn()
+  @Field(() => Date)
+  updatedAt: Date;
+
 }

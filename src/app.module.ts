@@ -20,6 +20,7 @@ import { GradeModule } from './grade/grade.module';
 import { AttendanceModule } from './attendance/attendance.module';
 import { SubjectModule } from './subject/subject.module';
 import { ClassModule } from './class/class.module';
+import { SchoolmanagerModule } from './schoolmanager/schoolmanager.module';
 
 
 
@@ -71,6 +72,7 @@ const ENV = process.env.NODE_ENV;
     AttendanceModule,
     SubjectModule,
     ClassModule,
+    SchoolmanagerModule,
  
     
   ],

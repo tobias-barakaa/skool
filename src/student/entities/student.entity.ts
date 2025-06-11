@@ -14,17 +14,16 @@ import {
   import { ObjectType, Field, ID, registerEnumType } from '@nestjs/graphql';
   import { User } from 'src/users/entities/user.entity';
 //   import { StudentSubject } from 'src/student-subjects/entities/student-subject.entity';
-  import { Grade } from 'src/grades/entities/grade.entity';
   import { Attendance } from 'src/attendance/entities/attendance.entity';
-  import { DisciplinaryRecord } from 'src/discipline/entities/disciplinary.entity';
-  import { MedicalRecord } from 'src/medical/entities/medical.entity';
-  import { FeePayment } from 'src/fees/entities/fee-payment.entity';
-  import { Invoice } from 'src/fees/entities/invoice.entity';
+ 
 import { Gender } from '../enums/student.gender.enum';
 import { AcademicStatus } from '../enums/student.academic.status.enum';
 import { School } from 'src/school/entities/school.entity';
 import { Branch } from 'src/branch/entities/branch.entity';
 import { Class } from 'src/class/entities/class.entity';
+import { truncate } from 'fs';
+import { Parent } from 'src/parent/entities/parent.entity';
+import { Grade } from 'src/grade/entities/grade.entity';
   
   @ObjectType()
   @Entity()
@@ -208,51 +207,53 @@ import { Class } from 'src/class/entities/class.entity';
     @Field(() => Class, { nullable: true })
     @ManyToOne(() => Class, (cls) => cls.students, { nullable: true })
     currentClass?: Class;
-  
+
+    @Field(() => Class)
+    @ManyToOne(() => Class, (cls) => cls.students)
+    class: Class;
+
     @Field(() => Parent)
     @ManyToOne(() => Parent, (parent) => parent.children)
-    primaryParent: Parent;
-  
+    parent: Parent;
+
+    
     @Field(() => Parent, { nullable: true })
     @ManyToOne(() => Parent, { nullable: true })
     secondaryParent?: Parent;
   
-    @Field(() => Guardian, { nullable: true })
-    @ManyToOne(() => Guardian, (guardian) => guardian.students, { nullable: true })
-    guardian?: Guardian;
   
     @Field(() => User, { nullable: true })
     @OneToOne(() => User, { nullable: true })
     @JoinColumn()
     user?: User;
   
-    @Field(() => [StudentSubject])
-    @OneToMany(() => StudentSubject, (ss) => ss.student)
-    subjects: StudentSubject[];
+    @Field()
+    @Column({ default: true })
+    subjects: string[];
   
     @Field(() => [Grade])
-    @OneToMany(() => Grade, (grade) => grade.student)
+    @OneToMany(() => Grade, (grade: Grade) => grade.student)
     grades: Grade[];
   
     @Field(() => [Attendance])
     @OneToMany(() => Attendance, (attendance) => attendance.student)
     attendance: Attendance[];
   
-    @Field(() => [DisciplinaryRecord])
-    @OneToMany(() => DisciplinaryRecord, (record) => record.student)
-    disciplinaryRecords: DisciplinaryRecord[];
+    @Field()
+    @Column({ nullable: true })
+    disciplinaryRecords: string[];
   
-    @Field(() => [MedicalRecord])
-    @OneToMany(() => MedicalRecord, (record) => record.student)
-    medicalRecords: MedicalRecord[];
+    @Field({nullable: true})
+    @Column()
+    medicalRecords: string[];
   
-    @Field(() => [FeePayment])
-    @OneToMany(() => FeePayment, (fp) => fp.student)
-    feePayments: FeePayment[];
+    @Field()
+    @Column({ default: true })
+    feePayments: string[];
   
-    @Field(() => [Invoice])
-    @OneToMany(() => Invoice, (inv) => inv.student)
-    invoices: Invoice[];
+    @Field()
+    @Column({nullable: true})
+    invoices: string[];
   }
   
   registerEnumType(Gender, {

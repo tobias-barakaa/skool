@@ -12,6 +12,7 @@ import { School } from 'src/school/entities/school.entity';
 import { UserBranch } from 'src/user-branch/entities/user-branch.entity';
 import { Teacher } from 'src/teacher/entities/teacher.entity';
 import { Class } from 'src/class/entities/class.entity';
+import { Student } from 'src/student/entities/student.entity';
   
   @ObjectType()
   @Entity()
@@ -57,6 +58,10 @@ import { Class } from 'src/class/entities/class.entity';
    @Field(() => [Class])
    @OneToMany(() => Class, (cls) => cls.branch)
    classes: Class[];
+
+   @Field(() => [Student])
+   @OneToMany(() => Student, (student) => student.branch)
+   students: Student[];
 
   }
   

@@ -1,9 +1,11 @@
+// src/users/services/users.service.ts
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, FindManyOptions } from 'typeorm';
+import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
-import { UsersCreateProvider } from './users-create.provider';
-import { UserRole } from '../enums/user-role.enum';
+import { UsersCreateProvider } from '../providers/users-create.provider';
+import { School } from '../../school/entities/school.entity';
+import { CreateUserInput } from '../dtos/create-user.input';
 
 @Injectable()
 export class UsersService {
@@ -15,26 +17,19 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async create(
-    email: string,
-    username: string,
-    password: string,
-    schoolId: string,
-    userRole: UserRole,
-  ): Promise<User> {
+  async create(createUserInput: CreateUserInput): Promise<{ user: User; school: School }> {
     return this.usersCreateProvider.createUser(
-      email,
-      username,
-      password,
-      schoolId,
-      userRole,
+      createUserInput.name,
+      createUserInput.email,
+      createUserInput.password,
+      createUserInput.schoolName,
+      createUserInput.userRole
+
+      
     );
   }
 
   async findAll(): Promise<User[]> {
-    return this.userRepository.find({ relations: ['school'] }); // Include school relationship if needed
+    return this.userRepository.find({ relations: ['school'] });
   }
-
-   
-
 }

@@ -9,6 +9,7 @@ import {
 import { Student } from 'src/student/entities/student.entity';
 import { Class } from 'src/class/entities/class.entity';
 import { Subject } from 'src/subject/entities/subject.entity';
+import { Teacher } from 'src/teacher/entities/teacher.entity';
 //   import { Student } from 'src/students/entities/student.entity';
 //   import { Class } from 'src/classes/entities/class.entity';
 //   import { Subject } from 'src/subjects/entities/subject.entity';

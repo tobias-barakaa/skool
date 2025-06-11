@@ -17,6 +17,7 @@ import { School } from 'src/school/entities/school.entity';
 import { Branch } from 'src/branch/entities/branch.entity';
 import { Class } from 'src/class/entities/class.entity';
 import { Grade } from 'src/grade/entities/grade.entity';
+import { Attendance } from 'src/attendance/entities/attendance.entity';
   
   @ObjectType()
   @Entity()
@@ -116,6 +117,13 @@ import { Grade } from 'src/grade/entities/grade.entity';
      @Field(() => [Class])
     @OneToMany(() => Class, (cls) => cls.assistantTeacher)
      assistantClasses: Class[];
+
+     @Field(() => [Attendance])
+    @OneToMany(() => Attendance, (attendance) => attendance.markedBy)
+    attendance: Attendance[];
+
+    
+ 
 
   }
   

@@ -101,6 +101,7 @@ import { Teacher } from 'src/teacher/entities/teacher.entity';
     @Field(() => Student)
     @ManyToOne(() => Student, (student) => student.grades)
     student: Student;
+
   
     @Field(() => Subject)
     @ManyToOne(() => Subject, (subject) => subject.grades)
@@ -113,5 +114,7 @@ import { Teacher } from 'src/teacher/entities/teacher.entity';
     @Field(() => Teacher)
     @ManyToOne(() => Teacher, (teacher) => teacher.grades)
     teacher: Teacher;
+
+
   }
   

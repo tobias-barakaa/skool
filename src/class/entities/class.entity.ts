@@ -198,32 +198,39 @@ import { Student } from 'src/student/entities/student.entity';
     @OneToMany(() => Student, (student) => student.class)
     students: Student[];
   
-    @Field(() => [ClassSubject])
-    @OneToMany(() => ClassSubject, (cs) => cs.class)
-    subjects: ClassSubject[];
+    @Field({ nullable: true })
+    @Column({
+        nullable: true,
+        default: [],
+    })
+    subjects: string[];
   
-    @Field(() => [TeacherClass])
-    @OneToMany(() => TeacherClass, (tc) => tc.class)
-    teachers: TeacherClass[];
+    @Field({nullable: true })
+    @Column({ nullable: true, type: 'text', array: true, default: [] })
+    teachers: string[];
+
+    // teachers: TeacherClass[];
   
-    @Field(() => [TimetableSlot])
-    @OneToMany(() => TimetableSlot, (ts) => ts.class)
-    timetable: TimetableSlot[];
+    @Field({ nullable: true })
+    @Column({ type: 'jsonb', default: [] })
+    timetable: string[];
   
     @Field(() => [Attendance])
     @OneToMany(() => Attendance, (a) => a.class)
     attendance: Attendance[];
   
-    @Field(() => [Exam])
-    @OneToMany(() => Exam, (exam) => exam.class)
-    exams: Exam[];
+    @Field({nullable: true })
+    @Column({ type: 'text', array: true, default: [] })
+    // exams: Exam[];
+    exams: string[];
+
   
-    @Field(() => [Assignment])
-    @OneToMany(() => Assignment, (as) => as.class)
-    assignments: Assignment[];
+    @Field({ nullable: true })
+    @Column({  type: 'text', array: true, default: [] })
+    assignments: string[];
   
-    @Field(() => [ClassEvent])
-    @OneToMany(() => ClassEvent, (event) => event.class)
-    classEvents: ClassEvent[];
+    @Field({ nullable: true })
+    @Column({ type: 'text', array: true, default: [] })
+    classEvents: string[];
   }
   

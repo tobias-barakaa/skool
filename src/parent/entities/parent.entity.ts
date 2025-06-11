@@ -12,6 +12,7 @@ import {
   import { ObjectType, Field, ID } from '@nestjs/graphql';
   import { User } from 'src/users/entities/user.entity';
 import { School } from 'src/school/entities/school.entity';
+import { Student } from 'src/student/entities/student.entity';
   
   @ObjectType()
   @Entity()
@@ -58,7 +59,7 @@ import { School } from 'src/school/entities/school.entity';
     @OneToOne(() => User, { cascade: true })
     @JoinColumn()
     user: User;
-  
+
     @Field(() => [Student])
     @OneToMany(() => Student, (student) => student.parent)
     children: Student[];
