@@ -16,7 +16,7 @@ async function bootstrap() {
     
     // Enhanced CORS configuration
     app.enableCors({
-      origin: ['http://localhost:3001', 'http://localhost:3000','https://squll.zelisline.com/', 'http://localhost:5173'],
+      origin: ['http://localhost:3001', 'http://localhost:3000','https://squll.zelisline.com', 'http://localhost:5173'],
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
       credentials: true,
     });
