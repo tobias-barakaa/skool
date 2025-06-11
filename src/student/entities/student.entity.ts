@@ -228,8 +228,9 @@ import { Grade } from 'src/grade/entities/grade.entity';
     user?: User;
   
     @Field()
-    @Column({ default: true })
+    @Column('text', { array: true, default: [] })
     subjects: string[];
+
   
     @Field(() => [Grade])
     @OneToMany(() => Grade, (grade: Grade) => grade.student)
@@ -240,20 +241,24 @@ import { Grade } from 'src/grade/entities/grade.entity';
     attendance: Attendance[];
   
     @Field()
-    @Column({ nullable: true })
-    disciplinaryRecords: string[];
+    @Column('text', { array: true, nullable: true, default: [] })
+disciplinaryRecords?: string[];
+
   
     @Field({nullable: true})
-    @Column()
-    medicalRecords: string[];
+    @Column('text', { array: true, nullable: true, default: [] })
+medicalRecords?: string[];
+
   
     @Field()
-    @Column({ default: true })
-    feePayments: string[];
+    @Column('text', { array: true, default: [] })
+feePayments: string[];
+
   
     @Field()
-    @Column({nullable: true})
-    invoices: string[];
+    @Column('text', { array: true, nullable: true, default: [] })
+invoices?: string[];
+
   }
   
   registerEnumType(Gender, {
@@ -263,3 +268,5 @@ import { Grade } from 'src/grade/entities/grade.entity';
   registerEnumType(AcademicStatus, {
     name: 'AcademicStatus',
   });
+
+  

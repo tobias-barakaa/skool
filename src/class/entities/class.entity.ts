@@ -199,11 +199,10 @@ import { Student } from 'src/student/entities/student.entity';
     students: Student[];
   
     @Field({ nullable: true })
-    @Column({
-        nullable: true,
-        default: [],
-    })
-    subjects: string[];
+    @Field({ nullable: true })
+@Column({ type: 'text', array: true, default: [] })
+subjects: string[];
+
   
     @Field({nullable: true })
     @Column({ nullable: true, type: 'text', array: true, default: [] })

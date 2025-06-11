@@ -4,10 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from '../entities/user.entity';
-import { School } from '../../school/entities/school.entity';
 import { UserAlreadyExistsException } from '../../common/exceptions/business.exception';
-import { UserRole } from '../enums/user-role.enum';
-import { SchoolAlreadyExistsException } from '../../common/exceptions/business.exception';
+import { SchoolCreateProvider } from '../../school/providers/school-create.provider';
+import { School } from 'src/school/entities/school.entity';
 
 @Injectable()
 export class UsersCreateProvider {
@@ -16,26 +15,15 @@ export class UsersCreateProvider {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    @InjectRepository(School)
-    private readonly schoolRepository: Repository<School>,
+    private readonly schoolCreateProvider: SchoolCreateProvider,
   ) {}
-
-  private slugifySchoolName(schoolName: string): string {
-    // Remove 'school' from the end if it exists (case insensitive)
-    const cleanedName = schoolName.replace(/\bschool\b/gi, '').trim();
-    // Convert to lowercase and replace spaces with hyphens
-    return cleanedName
-      .toLowerCase()
-      .replace(/\s+/g, '-')
-      .replace(/[^\w-]+/g, '');
-  }
 
   async createUser(
     name: string,
     email: string,
     passwordPlain: string,
     schoolName: string,
-    userRole: string,
+    userRole: string 
   ): Promise<{ user: User; school: School }> {
     this.logger.log(`Attempting to create user with email: ${email}`);
 
@@ -50,29 +38,9 @@ export class UsersCreateProvider {
       throw new UserAlreadyExistsException(email);
     }
 
-    // Generate subdomain from school name
-    const subdomain = this.slugifySchoolName(schoolName);
-
-    // Check if school with subdomain already exists
-    const existingSchool = await this.schoolRepository.findOne({
-      where: { subdomain },
-      select: ['schoolId', 'subdomain']
-    });
-
-    if (existingSchool) {
-      this.logger.warn(`School creation failed: School with subdomain ${subdomain} already exists`);
-      throw new SchoolAlreadyExistsException(subdomain);
-    }
-
     try {
-      // Create the school first
-      const newSchool = this.schoolRepository.create({
-        schoolName,
-        subdomain,
-        isActive: true,
-      });
-      const savedSchool = await this.schoolRepository.save(newSchool);
-      this.logger.log(`School created successfully with ID: ${savedSchool.schoolId}`);
+      // Create the school using SchoolCreateProvider
+      const school = await this.schoolCreateProvider.createSchool(schoolName);
 
       // Hash the password
       const saltRounds = 12;
@@ -83,16 +51,16 @@ export class UsersCreateProvider {
         name,
         email,
         password,
-        school: savedSchool,
+        school,
         userRole,
       });
 
       const savedUser = await this.userRepository.save(newUser);
       this.logger.log(`User created successfully with ID: ${savedUser.id}`);
 
-      return { user: savedUser, school: savedSchool };
+      return { user: savedUser, school };
     } catch (error) {
-      this.logger.error(`Failed to create user or school: ${error.message}`, error.stack);
+      this.logger.error(`Failed to create user: ${error.message}`, error.stack);
       throw error;
     }
   }

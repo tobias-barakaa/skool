@@ -160,40 +160,50 @@ import { Grade } from 'src/grade/entities/grade.entity';
     attendance: Attendance[];
 
   
-    @Field({ nullable: true })
-    @Column({
-        default: [],
-        type: 'array',
-    })
-    classes: string[];
+    @Field(() => [String], { nullable: true })
+@Column({
+    type: 'text',
+    array: true,
+    default: [],
+})
+classes: string[];
+
   
-    @Field()
-    @Column({
-        type: 'text',
-        array: true,
-        default: [],
-    })
-    teachers: string[];
+   
+
+    @Field(() => [String])
+@Column({
+  type: 'text',
+  array: true,
+  default: [],
+})
+teachers: string[];
+
   
-    @Field({ nullable: true })
-    @Column({
-        default: [],
-    })
-    students: string[];
+    @Field(() => [String], { nullable: true })
+@Column({
+    type: 'text',
+    array: true,
+    default: [],
+})
+students: string[];
+
   
     @Field(() => [Grade], { nullable: true })
     @OneToMany(() => Grade, (grade) => grade.subject)
     grades: Grade[];
   
-    @Field( { nullable: true })
+
+    @Field(() => [String], { nullable: true })
     @Column({
         type: 'text',
         array: true,
         default: [],
     })
     timetableSlots: string[];
+
   
-    @Field({ nullable: true })
+    @Field(() => [String],{ nullable: true })
     @Column({
         type: 'text',
         array: true,
@@ -201,4 +211,5 @@ import { Grade } from 'src/grade/entities/grade.entity';
     })
     examSchedules: string[];
   }
+//   () => [String],
   

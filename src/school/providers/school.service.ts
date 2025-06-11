@@ -2,35 +2,25 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { School } from '../entities/school.entity';
+import { SchoolCreateProvider } from './school-create.provider';
 
 @Injectable()
 export class SchoolService {
   private readonly logger = new Logger(SchoolService.name);
 
+
   constructor(
     @InjectRepository(School)
     private readonly schoolRepository: Repository<School>,
+
+    private readonly schoolCreateProvider: SchoolCreateProvider,
   ) {}
 
-  async findSchoolByName(name: string): Promise<School | null> {
-    this.logger.log(`Searching for school with name: ${name}`);
-    
-    return this.schoolRepository.findOne({
-      where: { name: name.trim() },
-    });
-  }
-
-  async createSchool(name: string, description?: string): Promise<School> {
+  
+  async createSchool(name: string): Promise<School> {
     this.logger.log(`Creating new school: ${name}`);
-
-    const school = this.schoolRepository.create({
-      name: name.trim(),
-    });
-
-    const savedSchool = await this.schoolRepository.save(school);
-    this.logger.log(`School created successfully with ID: ${savedSchool.id}`);
+    return this.schoolCreateProvider.createSchool(name);
     
-    return savedSchool;
   }
 
   
