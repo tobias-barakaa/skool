@@ -1,10 +1,11 @@
-// app.controller.ts
-import { Controller, Get } from '@nestjs/common';
+// src/app.controller.ts
+import { Controller, Get, Redirect } from '@nestjs/common';
 
 @Controller()
 export class AppController {
   @Get()
-  getRoot(): string {
-    return 'Welcome to the NestJS GraphQL API!';
+  @Redirect('/graphql') // Redirect to GraphQL playground
+  getRoot() {
+    return;
   }
 }

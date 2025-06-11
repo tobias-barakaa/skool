@@ -13,6 +13,7 @@ async function bootstrap() {
     // Global error filter for GraphQL
     app.useGlobalFilters(new GraphQLExceptionsFilter());
     
+    
     // Enhanced CORS configuration
     app.enableCors({
       origin: ['http://localhost:3001', 'http://localhost:3000', 'http://localhost:5173'],
