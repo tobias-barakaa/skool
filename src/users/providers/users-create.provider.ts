@@ -27,7 +27,7 @@ export class UsersCreateProvider {
     email: string,
     passwordPlain: string,
     schoolName: string,
-    userRole: string 
+    userRole: 'SUPER_ADMIN' 
   ): Promise<{ user: User; school: School }> {
     this.logger.log(`Attempting to create user with email: ${email}`);
   
@@ -45,16 +45,12 @@ export class UsersCreateProvider {
     }
 
     try {
-      // Check if user already exists
       await this.checkUserExists(email);
       
-      // Create the school first
       const school = await this.schoolCreateProvider.createSchool(schoolName);
   
-      // Hash the password
       const password = await this.hashPassword(passwordPlain);
   
-      // Create and save the user
       const user = await this.saveUser({
         name: name.trim(),
         email: email.toLowerCase().trim(),

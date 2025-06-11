@@ -2,8 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ConfigService } from '@nestjs/config';
-import { GraphQLFormattedError } from 'graphql';
 import { GraphQLExceptionsFilter } from './common/filters/gql-exception.filter';
 
 async function bootstrap() {

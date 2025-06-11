@@ -23,7 +23,7 @@ export class UsersService {
       createUserInput.email,
       createUserInput.password,
       createUserInput.schoolName,
-      createUserInput.userRole
+      createUserInput.userRole as 'SUPER_ADMIN'
 
       
     );

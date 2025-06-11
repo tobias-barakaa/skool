@@ -21,7 +21,7 @@ import { AttendanceModule } from './attendance/attendance.module';
 import { SubjectModule } from './subject/subject.module';
 import { ClassModule } from './class/class.module';
 import { SchoolmanagerModule } from './schoolmanager/schoolmanager.module';
-import { GraphQLFormattedError } from 'graphql';
+import { AppController } from './app.controller';
 
 
 
@@ -59,12 +59,7 @@ const ENV = process.env.NODE_ENV;
       playground: true,
       introspection: true,
       context: ({ req, res }) => ({ req, res }),
-      formatError: (error: GraphQLFormattedError) => {
-        // Additional formatting can be done here if needed
-        return error;
-      },
     }),
-
     
 
     UserModule,
@@ -83,7 +78,7 @@ const ENV = process.env.NODE_ENV;
  
     
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
