@@ -18,15 +18,23 @@ export class UsersService {
   ) {}
 
   async create(createUserInput: CreateUserInput): Promise<{ user: User; school: School }> {
-    return this.usersCreateProvider.createUser(
+    const result = await this.usersCreateProvider.createUser(
       createUserInput.name,
       createUserInput.email,
       createUserInput.password,
       createUserInput.schoolName,
-      createUserInput.userRole as 'SUPER_ADMIN'
-
-      
+      createUserInput.userRole
     );
+
+    if (!result) {
+      throw new Error('Failed to create user');
+    }
+
+    if (!result.user || !result.school) {
+      throw new Error('Invalid result structure');
+    }
+
+    return { user: result.user, school: result.school };
   }
 
   async findAll(): Promise<User[]> {

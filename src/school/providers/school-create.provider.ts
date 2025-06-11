@@ -1,8 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, QueryFailedError } from 'typeorm';
 import { School } from '../entities/school.entity';
-import { SchoolAlreadyExistsException, DatabaseException, ValidationException, BusinessException } from '../../common/exceptions/business.exception';
+import { BusinessException, SchoolAlreadyExistsException } from 'src/common/exceptions/business.exception';
 
 @Injectable()
 export class SchoolCreateProvider {
@@ -14,88 +14,94 @@ export class SchoolCreateProvider {
   ) {}
 
   private slugifySchoolName(schoolName: string): string {
-    if (!schoolName?.trim()) {
-      throw new ValidationException('School name cannot be empty');
-    }
-
     // Remove 'school' from the end if it exists (case insensitive)
     const cleanedName = schoolName.replace(/\bschool\b/gi, '').trim();
     
-    if (!cleanedName) {
-      throw new ValidationException('School name must contain more than just "school"');
-    }
-
     // Convert to lowercase and replace spaces with hyphens
-    const subdomain = cleanedName
+    let slug = cleanedName
       .toLowerCase()
-      .replace(/\s+/g, '-')
-      .replace(/[^\w-]+/g, '');
+      .replace(/\s+/g, '-')           // Replace spaces with hyphens
+      .replace(/[^\w-]+/g, '')        // Remove special characters except hyphens
+      .replace(/--+/g, '-')           // Replace multiple hyphens with single hyphen
+      .replace(/^-+|-+$/g, '');       // Remove leading/trailing hyphens
 
-    if (subdomain.length < 2) {
-      throw new ValidationException('School name too short to generate valid subdomain');
+    // Ensure slug is not empty and has minimum length
+    if (!slug || slug.length < 2) {
+      slug = `school-${Date.now()}`;
     }
 
-    return subdomain;
+    return slug;
+  }
+
+  private async generateUniqueSubdomain(baseSubdomain: string): Promise<string> {
+    let subdomain = baseSubdomain;
+    let counter = 1;
+
+    while (true) {
+      const existingSchool = await this.schoolRepository.findOne({
+        where: { subdomain },
+        select: ['schoolId', 'subdomain']
+      });
+
+      if (!existingSchool) {
+        return subdomain;
+      }
+
+      subdomain = `${baseSubdomain}-${counter}`;
+      counter++;
+
+      // Prevent infinite loop - limit to 100 attempts
+      if (counter > 100) {
+        throw new BusinessException(
+          'Unable to generate unique subdomain',
+          'SUBDOMAIN_GENERATION_FAILED',
+          HttpStatus.INTERNAL_SERVER_ERROR
+        );
+      }
+    }
   }
 
   async createSchool(schoolName: string): Promise<School> {
+    this.logger.log(`Attempting to create school: ${schoolName}`);
+
     try {
-      const subdomain = this.slugifySchoolName(schoolName);
+      const baseSubdomain = this.slugifySchoolName(schoolName);
+      const uniqueSubdomain = await this.generateUniqueSubdomain(baseSubdomain);
 
-      // Check if school already exists
-      await this.checkSchoolExists(subdomain);
-
-      // Create and save school
-      const school = await this.saveSchool({
+      const newSchool = this.schoolRepository.create({
         schoolName: schoolName.trim(),
-        subdomain,
+        subdomain: uniqueSubdomain,
         isActive: true,
       });
 
-      this.logger.log(`School created successfully with ID: ${school.schoolId}`);
-      return school;
-
+      const savedSchool = await this.schoolRepository.save(newSchool);
+      this.logger.log(`School created successfully with ID: ${savedSchool.schoolId} and subdomain: ${uniqueSubdomain}`);
+      
+      return savedSchool;
     } catch (error) {
       this.logger.error(`Failed to create school: ${error.message}`, error.stack);
       
+      // Re-throw business exceptions as-is
       if (error instanceof BusinessException) {
         throw error;
       }
-
+      
+      // Handle database constraint violations
       if (error instanceof QueryFailedError) {
-        throw new DatabaseException(error.message, error);
-      }
-
-      throw new DatabaseException(
-        `Unexpected error during school creation: ${error.message}`,
-        error
-      );
-    }
-  }
-
-  private async checkSchoolExists(subdomain: string): Promise<void> {
-    const existingSchool = await this.schoolRepository.findOne({
-      where: { subdomain },
-      select: ['schoolId', 'subdomain']
-    });
-
-    if (existingSchool) {
-      this.logger.warn(`School creation failed: School with subdomain ${subdomain} already exists`);
-      throw new SchoolAlreadyExistsException(subdomain);
-    }
-  }
-
-  private async saveSchool(schoolData: Partial<School>): Promise<School> {
-    try {
-      const newSchool = this.schoolRepository.create(schoolData);
-      return await this.schoolRepository.save(newSchool);
-    } catch (error) {
-      if (error instanceof QueryFailedError) {
-        if (error.message.includes('duplicate key')) {
-          throw new SchoolAlreadyExistsException(schoolData.subdomain!);
+        if (error.message.includes('duplicate key') || error.message.includes('unique constraint')) {
+          // If it's a subdomain constraint, we shouldn't reach here due to our uniqueness check
+          // but handle it just in case
+          throw new SchoolAlreadyExistsException(this.slugifySchoolName(schoolName));
         }
       }
-      throw error;
+      
+      // Wrap other errors in a generic business exception
+      throw new BusinessException(
+        'Failed to create school',
+        'SCHOOL_CREATION_FAILED',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        { originalError: error.message, schoolName }
+      );
     }
   }
 }

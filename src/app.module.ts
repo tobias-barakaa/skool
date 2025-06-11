@@ -21,7 +21,6 @@ import { AttendanceModule } from './attendance/attendance.module';
 import { SubjectModule } from './subject/subject.module';
 import { ClassModule } from './class/class.module';
 import { SchoolmanagerModule } from './schoolmanager/schoolmanager.module';
-import { AppController } from './app.controller';
 
 
 
@@ -78,7 +77,7 @@ const ENV = process.env.NODE_ENV;
  
     
   ],
-  controllers: [AppController],
+  controllers: [],
   providers: [AppService],
 })
 export class AppModule {}

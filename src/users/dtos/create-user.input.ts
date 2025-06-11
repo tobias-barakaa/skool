@@ -1,6 +1,14 @@
-// create-user.input.ts
 import { InputType, Field } from '@nestjs/graphql';
 import { IsEmail, IsString, MinLength, IsNotEmpty, IsEnum } from 'class-validator';
+
+// Define user roles enum for better type safety
+export enum UserRole {
+  ADMIN = 'admin',
+  TEACHER = 'teacher',
+  STUDENT = 'student',
+  PARENT = 'parent',
+  SCHOOL_MANAGER = 'school_manager'
+}
 
 @InputType()
 export class CreateUserInput {
@@ -18,10 +26,9 @@ export class CreateUserInput {
   @IsNotEmpty({ message: 'Name is required' })
   name: string;
 
-  
   @Field()
-  @IsNotEmpty()
-  userRole: string;
+  @IsNotEmpty({ message: 'User role is required' })
+  userRole: UserRole;
 
   @Field()
   @IsString()
