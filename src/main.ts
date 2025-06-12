@@ -27,6 +27,9 @@ async function bootstrap() {
         'http://localhost:3001',
         'http://localhost:5173',
         'https://squll.zelisline.com',
+        'https://zelisline.com',
+        'https://www.zelisline.com',
+        /^https:\/\/.*\.zelisline\.com$/ 
       ],
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
       credentials: true,
