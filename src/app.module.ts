@@ -55,6 +55,8 @@ const ENV = process.env.NODE_ENV;
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      path: '/graphql',
+      playground: true,
       sortSchema: true,
       // This is the key part for error formatting
       formatError: (error: GraphQLError) => {
