@@ -22,6 +22,7 @@ import { SubjectModule } from './subject/subject.module';
 import { ClassModule } from './class/class.module';
 import { SchoolmanagerModule } from './schoolmanager/schoolmanager.module';
 import { GraphQLError } from 'graphql';
+import { AppController } from './app.controller';
 
 
 
@@ -105,7 +106,7 @@ const ENV = process.env.NODE_ENV;
  
     
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
