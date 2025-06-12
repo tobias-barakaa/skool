@@ -76,6 +76,7 @@ export class SchoolCreateProvider {
 
       const savedSchool = await this.schoolRepository.save(newSchool);
       this.logger.log(`School created successfully with ID: ${savedSchool.schoolId} and subdomain: ${uniqueSubdomain}`);
+      console.log(`School created successfully: ${savedSchool.schoolName} with subdomain: ${savedSchool.subdomain}`);
       
       return savedSchool;
     } catch (error) {

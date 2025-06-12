@@ -34,6 +34,7 @@ export class UsersService {
       throw new Error('Invalid result structure');
     }
 
+    console.log(`User created successfully::::: ${result.user.email} for school: ${result.school.schoolName}`);
     return { user: result.user, school: result.school };
   }
 

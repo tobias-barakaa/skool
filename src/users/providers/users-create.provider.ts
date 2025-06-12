@@ -27,26 +27,22 @@ export class UsersCreateProvider {
   ): Promise<{ user: User; school: School }> {
     this.logger.log(`Attempting to create user with email: ${email}`);
   
-    // Check if user with email already exists
-    const existingUser = await this.userRepository.findOne({ 
+    const existingUser = await this.userRepository.findOne({
       where: { email },
       select: ['id', 'email']
     });
   
     if (existingUser) {
-      this.logger.warn(`User creation failed: User with email ${email} already exists`);
+      // this.logger.warn(`User creation failed: User with email ${email} already exists`);
       throw new UserAlreadyExistsException(email);
     }
   
     try {
-      // Create the school using SchoolCreateProvider
       const school = await this.schoolCreateProvider.createSchool(schoolName);
   
-      // Hash the password
       const saltRounds = 12;
       const password = await bcrypt.hash(passwordPlain, saltRounds);
   
-      // Create the user
       const newUser = this.userRepository.create({
         name,
         email,
@@ -62,19 +58,16 @@ export class UsersCreateProvider {
     } catch (error) {
       this.logger.error(`Failed to create user: ${error.message}`, error.stack);
       
-      // Re-throw business exceptions as-is
       if (error instanceof BusinessException) {
         throw error;
       }
       
-      // Handle database constraint violations
       if (error instanceof QueryFailedError) {
         if (error.message.includes('duplicate key') || error.message.includes('unique constraint')) {
           throw new UserAlreadyExistsException(email);
         }
       }
       
-      // Wrap other errors in a generic business exception
       throw new BusinessException(
         'Failed to create user',
         'USER_CREATION_FAILED',

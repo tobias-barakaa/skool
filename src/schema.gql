@@ -115,6 +115,12 @@ input CreateUserInput {
   userRole: String!
 }
 
+type CreateUserResponse {
+  school: School!
+  subdomainUrl: String!
+  user: User!
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
@@ -150,7 +156,7 @@ type Grade {
 }
 
 type Mutation {
-  createUser(createUserInput: CreateUserInput!): User!
+  createUser(createUserInput: CreateUserInput!): CreateUserResponse!
 }
 
 type Parent {

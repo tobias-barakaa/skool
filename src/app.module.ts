@@ -21,6 +21,7 @@ import { AttendanceModule } from './attendance/attendance.module';
 import { SubjectModule } from './subject/subject.module';
 import { ClassModule } from './class/class.module';
 import { SchoolmanagerModule } from './schoolmanager/schoolmanager.module';
+import { GraphQLError } from 'graphql';
 
 
 
@@ -55,9 +56,33 @@ const ENV = process.env.NODE_ENV;
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
-      playground: true,
-      introspection: true,
-      context: ({ req, res }) => ({ req, res }),
+      // This is the key part for error formatting
+      formatError: (error: GraphQLError) => {
+        // You can conditionally format errors based on environment
+        if (process.env.NODE_ENV === 'production') {
+          // In production, strip sensitive information like stack traces
+          // and only include what your custom filter explicitly provides.
+          const graphQLFormattedError = {
+            message: error.message,
+            locations: error.locations,
+            path: error.path,
+            extensions: {
+              code: error.extensions?.code,
+              httpStatus: error.extensions?.httpStatus,
+              type: error.extensions?.type,
+              // Only include other specific metadata you want to expose
+              ...(error.extensions?.email ? { email: error.extensions.email } : {}),
+              // ... any other safe metadata from your custom extensions
+            },
+          };
+          return graphQLFormattedError;
+        } else {
+          // In development, return the full error for debugging
+          // This will include the stacktrace provided by Apollo Server
+          return error;
+        }
+      },
+      // Other configurations like subscriptions, playground etc.
     }),
     
 
@@ -74,6 +99,7 @@ const ENV = process.env.NODE_ENV;
     SubjectModule,
     ClassModule,
     SchoolmanagerModule,
+    
  
     
   ],
