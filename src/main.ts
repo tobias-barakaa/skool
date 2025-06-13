@@ -70,6 +70,8 @@ async function bootstrap() {
     // Start application
     const port = process.env.PORT || 3000;
     await app.listen(port);
+    console.log('ENV TEST::::::g', process.env.PORT);
+
 
     const url = await app.getUrl();
     logger.log(`🚀 Application is running on: ${url}`);
@@ -83,7 +85,7 @@ async function bootstrap() {
 }
 
 void bootstrap();
-
+// {{pr_id}}.squll.zelisline.com
 // import { NestFactory } from '@nestjs/core';
 // import { AppModule } from './app.module';
 // import { ValidationPipe, Logger } from '@nestjs/common';
@@ -151,7 +153,6 @@ void bootstrap();
 // }
 
 // void bootstrap();
-
 
 
 
