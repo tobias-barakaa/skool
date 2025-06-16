@@ -15,9 +15,6 @@ export class CreateUserResponse {
   @Field(() => String) // Add the generated subdomain string
   subdomainUrl: string;
 
-  @Field(() => TokensOutput)
-  tokens: {
-    accessToken: string;
-    refreshToken: string;
-  };
+  @Field(() => TokensOutput) // ✅ Use the class directly here
+  tokens: TokensOutput;
 }

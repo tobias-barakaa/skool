@@ -6,9 +6,9 @@ Content-Type: application/json
   "query": "mutation CreateUser($createUserInput: CreateUserInput!) { createUser(createUserInput: $createUserInput) { id email name userRole } }",
   "variables": {
     "createUserInput": {
-      "email": "mubaddier@example.com",
-      "password": "seedddcure123",
-      "name": "Johddn Doe",
+      "email": "mubadfddier@example.com",
+      "password": "seedddfdcure123",
+      "name": "Johddn Dodfe",
       "userRole": "SUPER_ADMIN",
       "schoolName": "Tessdst School"
     }
