@@ -30,6 +30,7 @@ export class UsersResolver {
       sameSite: 'Strict',
       secure: process.env.NODE_ENV === 'production',
       maxAge: 1000 * 60 * 15,
+      domain: '.squl.co.ke',
     });
   
     context.res.cookie('refresh_token', tokens.refreshToken, {
@@ -37,10 +38,12 @@ export class UsersResolver {
       sameSite: 'Strict',
       secure: process.env.NODE_ENV === 'production',
       maxAge: 1000 * 60 * 60 * 24 * 7,
+      domain: '.squl.co.ke',
     });
     const subdomainUrl = `${school.subdomain}.squl.co.ke`;
+    this.logger.log('they say what.....',{ accessToken: tokens.accessToken, refreshToken: tokens.refreshToken });
 
-    return { user, school, subdomainUrl };
+    return { user, school, subdomainUrl, tokens: { accessToken: tokens.accessToken, refreshToken: tokens.refreshToken } };
   }
 
   @Query(() => [User], { name: 'users' })

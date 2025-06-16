@@ -2,6 +2,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { User } from '../entities/user.entity';
 import { School } from '../../school/entities/school.entity';
+import { Tokens } from './tokens.output';
 
 @ObjectType()
 export class CreateUserResponse {
@@ -13,4 +14,10 @@ export class CreateUserResponse {
 
   @Field(() => String) // Add the generated subdomain string
   subdomainUrl: string;
+
+  @Field(() => Tokens)
+  tokens: {
+    accessToken: string;
+    refreshToken: string;
+  };
 }
