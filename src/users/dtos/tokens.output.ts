@@ -1,11 +1,10 @@
-// src/users/dtos/tokens.output.ts
-import { Field, ObjectType } from '@nestjs/graphql';
+import { ObjectType, Field } from '@nestjs/graphql';
 
 @ObjectType()
-export class Tokens {
-  @Field()
+export class TokensOutput {
+  @Field(() => String)
   accessToken: string;
 
-  @Field()
+  @Field(() => String)
   refreshToken: string;
 }

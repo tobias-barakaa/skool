@@ -118,7 +118,7 @@ input CreateUserInput {
 type CreateUserResponse {
   school: School!
   subdomainUrl: String!
-  tokens: Tokens!
+  tokens: TokensOutput!
   user: User!
 }
 
@@ -341,7 +341,7 @@ type Teacher {
   user: User!
 }
 
-type Tokens {
+type TokensOutput {
   accessToken: String!
   refreshToken: String!
 }
