@@ -1,5 +1,5 @@
 // users-create.provider.ts
-import { HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, QueryFailedError } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -7,6 +7,8 @@ import { User } from '../entities/user.entity';
 import { SchoolCreateProvider } from '../../school/providers/school-create.provider';
 import { School } from 'src/school/entities/school.entity';
 import { BusinessException, UserAlreadyExistsException } from 'src/common/exceptions/business.exception';
+import { HashingProvider } from 'src/auth/providers/hashing.provider';
+import { GenerateTokenProvider } from 'src/auth/providers/generate-token.provider';
 
 @Injectable()
 export class UsersCreateProvider {
@@ -16,6 +18,15 @@ export class UsersCreateProvider {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly schoolCreateProvider: SchoolCreateProvider,
+    @Inject(forwardRef(() => HashingProvider))
+        private readonly hashingProvider: HashingProvider,
+
+         /**
+    * Inject generateTokensProvider
+    * 
+    */
+  @Inject(forwardRef(() => GenerateTokenProvider))
+   private readonly generateTokensProvider: GenerateTokenProvider,
   ) {}
 
   async createUser(
@@ -24,7 +35,7 @@ export class UsersCreateProvider {
     passwordPlain: string,
     schoolName: string,
     userRole: string 
-  ): Promise<{ user: User; school: School }> {
+  ): Promise<{ user: User; school: School; tokens: { accessToken: string; refreshToken: string } }> {
     this.logger.log(`Attempting to create user with email: ${email}`);
   
     const existingUser = await this.userRepository.findOne({
@@ -39,22 +50,30 @@ export class UsersCreateProvider {
   
     try {
       const school = await this.schoolCreateProvider.createSchool(schoolName);
-  
-      const saltRounds = 12;
-      const password = await bcrypt.hash(passwordPlain, saltRounds);
-  
+   
       const newUser = this.userRepository.create({
         name,
         email,
-        password,
+        password: await this.hashingProvider.hashPassword(passwordPlain),
         school,
         userRole,
       });
   
       const savedUser = await this.userRepository.save(newUser);
       this.logger.log(`User created successfully with ID: ${savedUser.id}`);
-  
-      return { user: savedUser, school };
+      const tokens = await this.generateTokensProvider.generateTokens(savedUser);
+      const { accessToken, refreshToken } = tokens;
+
+      console.log(`tokens::::: ${JSON.stringify(tokens)}`);
+      return {
+        user: savedUser,
+        school,
+        tokens: {
+          accessToken,
+          refreshToken,
+        }
+      };
+      // return { user: savedUser, school };
     } catch (error) {
       this.logger.error(`Failed to create user: ${error.message}`, error.stack);
       

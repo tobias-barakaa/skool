@@ -1,11 +1,13 @@
 // src/users/users.resolver.ts
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
 import { CreateUserInput } from './dtos/create-user.input';
 import { UsersService } from './providers/users.service';
 import { User } from './entities/user.entity';
 import { Logger, UseFilters } from '@nestjs/common';
 import { GraphQLExceptionsFilter } from 'src/common/filter/graphQLException.filter';
 import { CreateUserResponse } from './dtos/create-user-response';
+import { Auth } from 'src/auth/decorator/auth.decorator';
+import { AuthType } from 'src/auth/enums/auth-type.enum';
 
 @Resolver(() => User)
 @UseFilters(GraphQLExceptionsFilter)
@@ -15,14 +17,28 @@ export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
   @Mutation(() => CreateUserResponse) // Change the return type here
+  @Auth(AuthType.None)
   async createUser(
     @Args('createUserInput') createUserInput: CreateUserInput,
+    @Context() context,
   ): Promise<CreateUserResponse> { // Adjust the return type here
-    const { user, school } = await this.usersService.create(createUserInput);
+    const { user, school, tokens } = await this.usersService.create(createUserInput);
     this.logger.log(`User created successfully with ID: ${user.id} for school: ${school.schoolName}`);
-
     // Construct the full URL for redirection
-    const subdomainUrl = `${school.subdomain}.zelisline.com`;
+    context.res.cookie('access_token', tokens.accessToken, {
+      httpOnly: true,
+      sameSite: 'Strict',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 1000 * 60 * 15,
+    });
+  
+    context.res.cookie('refresh_token', tokens.refreshToken, {
+      httpOnly: true,
+      sameSite: 'Strict',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    });
+    const subdomainUrl = `${school.subdomain}.squl.co.ke`;
 
     return { user, school, subdomainUrl };
   }

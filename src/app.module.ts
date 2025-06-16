@@ -23,6 +23,13 @@ import { ClassModule } from './class/class.module';
 import { SchoolmanagerModule } from './schoolmanager/schoolmanager.module';
 import { GraphQLError } from 'graphql';
 import { AppController } from './app.controller';
+import { AuthModule } from './auth/auth.module';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { AuthenticationGuard } from './auth/guards/authentication.guard';
+import { DataResponseInterceptor } from './common/interceptor/data-response/data-response.interceptor';
+import { AccessTokenGuard } from './auth/guards/access-token.guard';
+import jwtConfig from './auth/config/jwt.config';
+import { JwtModule } from '@nestjs/jwt';
 
 
 
@@ -53,12 +60,17 @@ const ENV = process.env.NODE_ENV;
       }),
     }),
 
+    ConfigModule.forFeature(jwtConfig),
+        JwtModule.registerAsync(jwtConfig.asProvider()),
+
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       path: '/graphql',
       playground: true,
       sortSchema: true,
+      context: ({ req, res }) => ({ req, res }),
+      // context: ({ req }) => ({ req }),
       // This is the key part for error formatting
       formatError: (error: GraphQLError) => {
         // You can conditionally format errors based on environment
@@ -102,12 +114,24 @@ const ENV = process.env.NODE_ENV;
     SubjectModule,
     ClassModule,
     SchoolmanagerModule,
+    AuthModule,
     
  
     
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthenticationGuard
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: DataResponseInterceptor
+    },
+    AccessTokenGuard
+  
+  ],
 })
 export class AppModule {}
 function join(arg0: string, arg1: string): import("@nestjs/graphql").AutoSchemaFileValue {
