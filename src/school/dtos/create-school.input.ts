@@ -13,9 +13,6 @@ export class CreateSchoolInput {
 
 
   @Field({ nullable: true })
-  schoolUrl?: string;
-
-  @Field({ nullable: true })
   secondaryColor?: string;
 
   @Field({ nullable: true })

@@ -11,8 +11,6 @@ export class SchoolService {
 
   constructor(
     @InjectRepository(School)
-    private readonly schoolRepository: Repository<School>,
-
     private readonly schoolCreateProvider: SchoolCreateProvider,
   ) {}
 

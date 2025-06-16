@@ -118,7 +118,6 @@ input CreateUserInput {
 
 type CreateUserResponse {
   school: School!
-  schoolUrl: String!
   subdomainUrl: String!
   tokens: TokensOutput!
   user: User!
@@ -189,7 +188,6 @@ type School {
   schoolId: ID!
   schoolName: String!
   schoolType: String!
-  schoolUrl: String!
   students: [Student!]!
   subdomain: String!
   subject: Subject!
@@ -359,7 +357,7 @@ type User {
   parentProfile: Parent
   password: String!
   school: School!
-  schoolUrl: String!
+  schoolUrl: String
   teacherProfile: Teacher
   updatedAt: DateTime!
   userBranches: [UserBranch!]

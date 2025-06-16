@@ -70,7 +70,6 @@ export class SchoolCreateProvider {
 
       const newSchool = this.schoolRepository.create({
 
-        schoolUrl: 'tobby', // Replace 'any' with a default value like an empty string
         schoolName: schoolName.trim(),
         subdomain: uniqueSubdomain,
         isActive: true,

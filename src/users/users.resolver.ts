@@ -53,7 +53,6 @@ export class UsersResolver {
         accessToken: tokens.accessToken, 
         refreshToken: tokens.refreshToken 
       }, 
-      schoolUrl: ''
     };
   }
 

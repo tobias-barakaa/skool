@@ -23,8 +23,9 @@ export class UsersService {
       createUserInput.email,
       createUserInput.password,
       createUserInput.schoolName,
+      createUserInput.userRole,
       createUserInput.schoolUrl,
-      createUserInput.userRole
+
     );
 
 

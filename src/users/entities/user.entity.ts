@@ -34,10 +34,7 @@ export class User {
   @Field(() => String)
   userRole: string;
 
-  @Field(() => String)
-  schoolUrl: string;
-
-
+ 
   @Field(() => [UserBranch], { nullable: true })
   @OneToMany(() => UserBranch, (userBranch) => userBranch.user)
   userBranches: UserBranch[];
@@ -45,6 +42,10 @@ export class User {
   @ManyToOne(() => School, (school) => school.users)
   @Field(() => School)
   school: School;
+
+  @Column({ type: 'text', nullable: true }) 
+  @Field({ nullable: true })               
+  schoolUrl?: string;
 
   @ManyToOne(() => Branch, { nullable: true })
   @Field(() => Branch, { nullable: true })

@@ -17,6 +17,4 @@ export class CreateUserResponse {
   @Field(() => TokensOutput)
   tokens: TokensOutput;
 
-  @Field(() => String)
-  schoolUrl: School['schoolUrl'];
 }

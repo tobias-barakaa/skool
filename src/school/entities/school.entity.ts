@@ -74,9 +74,6 @@ export class School {
   @OneToMany(() => Class, (cls) => cls.school)
   classes: Class[];
 
-   @Field()
-   @Column()
-   schoolUrl: string;
 
   @OneToOne(() => SchoolManager, (manager) => manager.school, {
     cascade: true,
@@ -97,3 +94,5 @@ export class School {
   updatedAt: Date;
 
 }
+
+
