@@ -1,5 +1,5 @@
 import { InputType, Field } from '@nestjs/graphql';
-import { IsEmail, IsString, MinLength, IsNotEmpty, IsEnum } from 'class-validator';
+import { IsEmail, IsString, MinLength, IsNotEmpty, IsEnum, IsEmpty } from 'class-validator';
 
 // Define user roles enum for better type safety
 export enum UserRole {
@@ -34,4 +34,10 @@ export class CreateUserInput {
   @IsString()
   @IsNotEmpty({ message: 'School name is required' })
   schoolName: string;
+
+
+  @Field()
+  @IsString()
+  schoolUrl: string;
+
 }

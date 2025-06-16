@@ -5,9 +5,9 @@ import { UsersService } from './providers/users.service';
 import { User } from './entities/user.entity';
 import { Logger, UseFilters } from '@nestjs/common';
 import { GraphQLExceptionsFilter } from 'src/common/filter/graphQLException.filter';
-import { CreateUserResponse } from './dtos/create-user-response';
 import { Auth } from 'src/auth/decorator/auth.decorator';
 import { AuthType } from 'src/auth/enums/auth-type.enum';
+import { CreateUserResponse } from './dtos/create-user-response';
 
 @Resolver(() => User)
 @UseFilters(GraphQLExceptionsFilter)
@@ -16,15 +16,16 @@ export class UsersResolver {
 
   constructor(private readonly usersService: UsersService) {}
 
-  @Mutation(() => CreateUserResponse) // Change the return type here
+  @Mutation(() => CreateUserResponse, { name: 'createUser' })
   @Auth(AuthType.None)
   async createUser(
     @Args('createUserInput') createUserInput: CreateUserInput,
     @Context() context,
-  ): Promise<CreateUserResponse> { // Adjust the return type here
+  ): Promise<CreateUserResponse> {
     const { user, school, tokens } = await this.usersService.create(createUserInput);
     this.logger.log(`User created successfully with ID: ${user.id} for school: ${school.schoolName}`);
-    // Construct the full URL for redirection
+    
+    // Set cookies
     context.res.cookie('access_token', tokens.accessToken, {
       httpOnly: true,
       sameSite: 'Strict',
@@ -40,10 +41,20 @@ export class UsersResolver {
       maxAge: 1000 * 60 * 60 * 24 * 7,
       domain: '.squl.co.ke',
     });
+    
     const subdomainUrl = `${school.subdomain}.squl.co.ke`;
-    this.logger.log('they say what.....',{ accessToken: tokens.accessToken, refreshToken: tokens.refreshToken });
+    this.logger.log('Tokens created:', { accessToken: tokens.accessToken, refreshToken: tokens.refreshToken });
 
-    return { user, school, subdomainUrl, tokens: { accessToken: tokens.accessToken, refreshToken: tokens.refreshToken } };
+    return { 
+      user, 
+      school, 
+      subdomainUrl, 
+      tokens: { 
+        accessToken: tokens.accessToken, 
+        refreshToken: tokens.refreshToken 
+      }, 
+      schoolUrl: ''
+    };
   }
 
   @Query(() => [User], { name: 'users' })

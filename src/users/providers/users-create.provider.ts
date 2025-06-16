@@ -34,7 +34,8 @@ export class UsersCreateProvider {
     email: string,
     passwordPlain: string,
     schoolName: string,
-    userRole: string 
+    userRole: string,
+    schoolUrl: string
   ): Promise<{ user: User; school: School; tokens: { accessToken: string; refreshToken: string } }> {
     this.logger.log(`Attempting to create user with email: ${email}`);
   
@@ -49,15 +50,16 @@ export class UsersCreateProvider {
     }
   
     try {
-      const school = await this.schoolCreateProvider.createSchool(schoolName);
-   
-      const newUser = this.userRepository.create({
-        name,
-        email,
-        password: await this.hashingProvider.hashPassword(passwordPlain),
-        school,
-        userRole,
-      });
+  const school = await this.schoolCreateProvider.createSchool(schoolName);
+
+  const newUser = this.userRepository.create({
+    name,
+    email,
+    password: await this.hashingProvider.hashPassword(passwordPlain),
+    school,
+    userRole,
+    schoolUrl
+  });
   
       const savedUser = await this.userRepository.save(newUser);
       this.logger.log(`User created successfully with ID: ${savedUser.id}`);

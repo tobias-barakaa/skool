@@ -69,6 +69,8 @@ export class SchoolCreateProvider {
       const uniqueSubdomain = await this.generateUniqueSubdomain(baseSubdomain);
 
       const newSchool = this.schoolRepository.create({
+
+        schoolUrl: 'tobby', // Replace 'any' with a default value like an empty string
         schoolName: schoolName.trim(),
         subdomain: uniqueSubdomain,
         isActive: true,

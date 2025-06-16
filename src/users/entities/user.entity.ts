@@ -34,6 +34,10 @@ export class User {
   @Field(() => String)
   userRole: string;
 
+  @Field(() => String)
+  schoolUrl: string;
+
+
   @Field(() => [UserBranch], { nullable: true })
   @OneToMany(() => UserBranch, (userBranch) => userBranch.user)
   userBranches: UserBranch[];
