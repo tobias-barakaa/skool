@@ -42,7 +42,7 @@ export class UsersResolver {
       domain: '.squl.co.ke',
     });
     
-    const subdomainUrl = `https://${school.subdomain}.squl.co.ke`;
+    const subdomainUrl = `${school.subdomain}.squl.co.ke`;
     this.logger.log('Tokens created:', { accessToken: tokens.accessToken, refreshToken: tokens.refreshToken });
 
     return { 
