@@ -5,6 +5,9 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { EntityNotFoundFilter } from './common/filter/entity-not-found.filter';
 import { GraphQLExceptionsFilter } from './common/filter/graphQLException.filter';
 import { CustomLogger } from './common/custom-logger.service';
+import * as express from 'express';
+import { join } from 'path';
+
 
 async function bootstrap() {
   const logger = new CustomLogger('Bootstrap');
@@ -53,6 +56,10 @@ async function bootstrap() {
         },
       }),
     );
+
+    app.use('/favicon.ico', express.static(join(__dirname, '..', 'public', 'favicon.ico')));
+
+
 
     // Swagger setup
     const swaggerConfig = new DocumentBuilder()

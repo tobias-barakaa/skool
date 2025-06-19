@@ -1,11 +1,12 @@
 import { Field, ID, ObjectType } from "@nestjs/graphql";
 import { Branch } from "src/branch/entities/branch.entity";
+import { Organization } from "src/organizations/entities/organizations-entity";
 import { Parent } from "src/parent/entities/parent.entity";
 import { School } from "src/school/entities/school.entity";
 import { SchoolManager } from "src/schoolmanager/entities/school-manager.entity";
 import { Teacher } from "src/teacher/entities/teacher.entity";
 import { UserBranch } from "src/user-branch/entities/user-branch.entity";
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 // src/users/entities/user.entity.ts
 @ObjectType()
@@ -33,6 +34,16 @@ export class User {
   })
   @Field(() => String)
   userRole: string;
+
+
+  @Field()
+  @Column({ nullable: true }) 
+  organizationId: string;
+
+  @ManyToOne(() => Organization, org => org.users)
+  @JoinColumn({ name: 'organizationId' })
+  organization: Organization;
+
 
  
   @Field(() => [UserBranch], { nullable: true })

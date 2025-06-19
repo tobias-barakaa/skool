@@ -47,9 +47,10 @@ public async signToken<T>(userId: number, expiresIn: number, payload?: T) {
 
 
 public async generateTokens(user: User) {
-    const tenantContext: any = {
-      email: user.email,
-    };
+  const tenantContext: Partial<ActiveUserData> = {
+    email: user.email,
+    organizationId: user.organizationId, 
+  };
   
     if (user.school) {
       tenantContext.schoolId = user.school.schoolId;

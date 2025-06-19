@@ -30,6 +30,8 @@ import { DataResponseInterceptor } from './common/interceptor/data-response/data
 import { AccessTokenGuard } from './auth/guards/access-token.guard';
 import jwtConfig from './auth/config/jwt.config';
 import { JwtModule } from '@nestjs/jwt';
+import { OrganizationsModule } from './organizations/organizations.module';
+import { TenantsModule } from './tenants/tenants.module';
 
 
 
@@ -115,6 +117,8 @@ const ENV = process.env.NODE_ENV;
     ClassModule,
     SchoolmanagerModule,
     AuthModule,
+    OrganizationsModule,
+    TenantsModule,
     
  
     

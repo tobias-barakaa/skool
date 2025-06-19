@@ -3,4 +3,9 @@ export interface ActiveUserData {
     sub: number;
     // email user
     email: string
+
+    organizationId: string;
+
+    schoolId?: string;
+    schoolSubdomain?: string;
 }

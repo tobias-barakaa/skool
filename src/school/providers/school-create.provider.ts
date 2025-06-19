@@ -1,8 +1,11 @@
-import { Injectable, Logger, HttpStatus } from '@nestjs/common';
+import { Injectable, Logger, HttpStatus, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, QueryFailedError } from 'typeorm';
 import { School } from '../entities/school.entity';
 import { BusinessException, SchoolAlreadyExistsException } from 'src/common/exceptions/business.exception';
+import { Organization } from 'src/organizations/entities/organizations-entity';
+import { Student } from 'src/student/entities/student.entity';
+import { SCHOOL_TYPES_CONFIG } from '../config/school-type.config';
 
 @Injectable()
 export class SchoolCreateProvider {
@@ -11,6 +14,13 @@ export class SchoolCreateProvider {
   constructor(
     @InjectRepository(School)
     private readonly schoolRepository: Repository<School>,
+
+
+    @InjectRepository(Organization)
+    private readonly organizationRepository: Repository<Organization>,
+    
+    @InjectRepository(Student)
+    private readonly studentRepository: Repository<Student>
   ) {}
 
   private slugifySchoolName(schoolName: string): string {
@@ -106,4 +116,54 @@ export class SchoolCreateProvider {
       );
     }
   }
+
+
+
+  async getOrganizationById(id: string) {
+    return this.organizationRepository.findOne({
+      where: { id },
+      relations: ['users', 'students', 'teachers']
+    });
+  }
+
+  async updateSchoolConfiguration(
+    organizationId: string,
+    schoolType: string,
+    selectedLevels: string[]
+  ){
+    const config = SCHOOL_TYPES_CONFIG[schoolType];
+    const schoolConfig = {
+      type: schoolType,
+      selectedLevels,
+      menuItems: config.menuItems,
+      levels: selectedLevels.reduce((acc, level) => {
+        acc[level] = config.levels[level];
+        return acc;
+      }, {})
+    };
+
+    await this.organizationRepository.update(organizationId, {
+      schoolType,
+      schoolConfig: schoolConfig as any
+    });
+
+    return this.getOrganizationById(organizationId);
+  }
+
+  async getStudentsByLevel(
+    organizationId: string,
+    academicLevel: string,
+    gradeLevel: string
+  ): Promise<Student[]> {
+    return this.studentRepository.find({
+      where: {
+        organizationId,
+        academicLevel,
+        gradeLevel
+      },
+      relations: ['organization']
+    });
+  }
+
+
 }

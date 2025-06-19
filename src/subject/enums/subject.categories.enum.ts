@@ -1,8 +1,16 @@
+import { registerEnumType } from '@nestjs/graphql';
+
 export enum SubjectCategory {
-    CORE = "core"  ,                  // Core/Compulsory subjects
-    ELECTIVE = "elective" ,           // Elective subjects
-    OPTIONAL = "optional"  ,          // Optional subjects
-    EXTRA_CURRICULAR = "extra_curricular" ,// Sports, Music, etc.
-    REMEDIAL = "remedial" ,           // Remedial classes
-    ADVANCED = "advanced"            // Advanced/Honors classes
-  }
+  CORE = "core",
+  ELECTIVE = "elective",
+  OPTIONAL = "optional",
+  EXTRA_CURRICULAR = "extra_curricular",
+  REMEDIAL = "remedial",
+  ADVANCED = "advanced"
+}
+
+// ✅ Register it for GraphQL
+registerEnumType(SubjectCategory, {
+  name: 'SubjectCategory', // GraphQL name
+  description: 'The category of the subject', // optional
+});

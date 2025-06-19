@@ -5,38 +5,15 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     ManyToOne,
-    ManyToMany,
-    JoinTable,
     OneToMany,
   } from 'typeorm';
   import { ObjectType, Field, ID, registerEnumType } from '@nestjs/graphql';
 import { School } from 'src/school/entities/school.entity';
 import { Attendance } from 'src/attendance/entities/attendance.entity';
 import { Grade } from 'src/grade/entities/grade.entity';
-//   import { School } from 'src/schools/entities/school.entity';
-//   import { ClassSubject } from 'src/class-subjects/entities/class-subject.entity';
-//   import { TeacherSubject } from 'src/teacher-subjects/entities/teacher-subject.entity';
-//   import { StudentSubject } from 'src/student-subjects/entities/student-subject.entity';
-//   import { Grade } from 'src/grades/entities/grade.entity';
-//   import { TimetableSlot } from 'src/timetable/entities/timetable-slot.entity';
-//   import { ExamSchedule } from 'src/exams/entities/exam-schedule.entity';
+import { SubjectType } from '../enums/subject.type.enum';
+import { SubjectCategory } from '../enums/subject.categories.enum';
   
-  export enum SubjectCategory {
-    CORE = 'CORE',
-    ELECTIVE = 'ELECTIVE',
-    OPTIONAL = 'OPTIONAL',
-    EXTRA_CURRICULAR = 'EXTRA_CURRICULAR',
-  }
-  
-  export enum SubjectType {
-    ACADEMIC = 'ACADEMIC',
-    PRACTICAL = 'PRACTICAL',
-    THEORY = 'THEORY',
-    MIXED = 'MIXED',
-  }
-  
-  registerEnumType(SubjectCategory, { name: 'SubjectCategory' });
-  registerEnumType(SubjectType, { name: 'SubjectType' });
   
   @ObjectType()
   @Entity()

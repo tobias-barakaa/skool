@@ -11,6 +11,11 @@ enum AcademicStatus {
   TRANSFERRED
 }
 
+input AddCBCConfigInput {
+  levels: [String!]!
+  schoolDomain: String
+}
+
 enum AssessmentType {
   ASSIGNMENT
   CAT
@@ -54,6 +59,18 @@ type Branch {
   students: [Student!]!
   teachers: [Teacher!]!
   userBranches: [UserBranch!]
+}
+
+type CBCLevelSelectionDto {
+  levelKey: String!
+  selectedGrades: [String!]!
+  selectedSubjects: [String!]!
+}
+
+input CBCLevelSelectionInput {
+  levelKey: String!
+  selectedGrades: [String!]!
+  selectedSubjects: [String!]!
 }
 
 type Class {
@@ -158,7 +175,20 @@ type Grade {
 }
 
 type Mutation {
+  addCBCConfiguration(input: AddCBCConfigInput!): [Subject!]!
   createUser(createUserInput: CreateUserInput!): CreateUserResponse!
+  updateSchoolConfiguration(data: UpdateSchoolConfigurationInput!): Organization!
+}
+
+type Organization {
+  createdAt: DateTime!
+  id: ID!
+  isActive: Boolean!
+  name: String!
+  schoolConfig: SchoolTypeConfig!
+  schoolType: String!
+  subdomain: String!
+  updatedAt: DateTime!
 }
 
 type Parent {
@@ -176,6 +206,9 @@ type Parent {
 }
 
 type Query {
+  getCurrentOrganization: Organization!
+  getSchoolTypes: [SchoolTypeConfig!]!
+  getStudentsByLevel(grade: String!, level: String!): [Student!]!
   users: [User!]!
 }
 
@@ -208,7 +241,29 @@ type SchoolManager {
   user: User!
 }
 
+type SchoolTypeConfig {
+  description: String!
+  icon: String!
+  levels: [SchoolTypeLevel!]!
+  menuItems: [String!]!
+  name: String!
+  priority: Float!
+  type: String!
+}
+
+type SchoolTypeGrade {
+  age: Float!
+  name: String!
+}
+
+type SchoolTypeLevel {
+  description: String!
+  grades: [SchoolTypeGrade!]!
+  name: String!
+}
+
 type Student {
+  academicLevel: String!
   academicStatus: AcademicStatus!
   address: String!
   admissionDate: DateTime!
@@ -233,6 +288,7 @@ type Student {
   firstName: String!
   gender: Gender!
   gpa: Float
+  gradeLevel: String!
   grades: [Grade!]!
   graduationDate: DateTime
   guardianId: String
@@ -247,6 +303,7 @@ type Student {
   middleName: String
   monitorOf: [Class!]!
   nationality: String!
+  organizationId: String!
   overallGrade: String
   parent: Parent!
   phoneNumber: String
@@ -303,18 +360,25 @@ type Subject {
   updatedAt: DateTime!
 }
 
+"""The category of the subject"""
 enum SubjectCategory {
+  ADVANCED
   CORE
   ELECTIVE
   EXTRA_CURRICULAR
   OPTIONAL
+  REMEDIAL
 }
 
+"""The type of the subject"""
 enum SubjectType {
   ACADEMIC
+  ARTS
   MIXED
   PRACTICAL
+  SPORTS
   THEORY
+  VOCATIONAL
 }
 
 type Teacher {
@@ -330,6 +394,7 @@ type Teacher {
   hireDate: DateTime!
   isActive: Boolean!
   lastName: String!
+  organization: [Organization!]!
   phoneNumber: String
   primaryClasses: [Class!]!
   qualifications: [String!]!
@@ -347,6 +412,11 @@ type TokensOutput {
   refreshToken: String!
 }
 
+input UpdateSchoolConfigurationInput {
+  schoolType: String!
+  selectedLevels: [String!]!
+}
+
 type User {
   branch: Branch
   createdAt: DateTime!
@@ -354,6 +424,7 @@ type User {
   id: ID!
   managerProfile: SchoolManager
   name: String!
+  organizationId: String!
   parentProfile: Parent
   password: String!
   school: School!

@@ -28,7 +28,7 @@ export class UsersResolver {
     // Set cookies
     context.res.cookie('access_token', tokens.accessToken, {
       httpOnly: true,
-      sameSite: 'Strict',
+      sameSite: 'None',
       secure: process.env.NODE_ENV === 'production',
       maxAge: 1000 * 60 * 15,
       domain: '.squl.co.ke',
@@ -36,7 +36,7 @@ export class UsersResolver {
   
     context.res.cookie('refresh_token', tokens.refreshToken, {
       httpOnly: true,
-      sameSite: 'Strict',
+      sameSite: 'None',
       secure: process.env.NODE_ENV === 'production',
       maxAge: 1000 * 60 * 60 * 24 * 7,
       domain: '.squl.co.ke',

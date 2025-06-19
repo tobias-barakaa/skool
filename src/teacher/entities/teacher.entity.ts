@@ -18,6 +18,7 @@ import { Branch } from 'src/branch/entities/branch.entity';
 import { Class } from 'src/class/entities/class.entity';
 import { Grade } from 'src/grade/entities/grade.entity';
 import { Attendance } from 'src/attendance/entities/attendance.entity';
+import { Organization } from 'src/organizations/entities/organizations-entity';
   
   @ObjectType()
   @Entity()
@@ -112,6 +113,11 @@ import { Attendance } from 'src/attendance/entities/attendance.entity';
     @Field(() => [Grade])
     @OneToMany(() => Grade, (grade) => grade.teacher)
     grades: Grade[];
+
+
+    @Field(() => [Organization])
+    @OneToMany(() => Organization, (organization) => organization.teachers)
+    organization: Organization[];
 
       // One teacher can assist multiple classes
      @Field(() => [Class])
