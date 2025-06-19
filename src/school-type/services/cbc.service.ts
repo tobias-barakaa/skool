@@ -177,19 +177,24 @@ export class SubjectService {
   async addCBCConfiguration(input: AddCBCConfigInput, host: string, userId: string): Promise<Subject[]> {
     try {
       // Extract school name from host/domain
-      const domain = host || input.schoolDomain;
+      const domain = host;
       if (!domain) {
         throw new BadRequestException('Unable to determine school domain');
       }
 
+      console.log(domain, 'this is the host domain.........................')
+
       // Extract school name from domain (e.g., 'whats' from 'whats.squl.co.ke')
-      const schoolName = domain.split('.')[0];
+    //  let schoolName = 'tessdst-66.squl.co.ke'; // For testing purposes, hardcoded to 'whats.squl.co.ke'
+     let schoolName = domain.split('.')[0];
+
       
       // Find school in database
       const school = await this.schoolRepository.findOne({
         where: { subdomain: schoolName }
       });
 
+      console.log(school)
       if (!school) {
         throw new NotFoundException(`School with name '${schoolName}' not found`);
       }
