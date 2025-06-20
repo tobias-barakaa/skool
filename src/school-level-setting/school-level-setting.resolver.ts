@@ -22,15 +22,15 @@ export class SchoolLevelSettingResolver {
       }
 
       const req = context.req;
-    //   const host = req?.headers?.host ?? 'localhost';
+      const host = req?.headers?.host ?? 'localhost';
     // const host = "what.squl.co.ke";
 
       
     //   console.log('🌐 Host from request:', host);
       
       // For testing, let's use a fixed host if needed
-      const testHost = 'what.squl.co.ke';
-      const subdomain = this.extractSubdomain(testHost);
+    //   const testHost = 'what.squl.co.ke';
+      const subdomain = this.extractSubdomain(host);
 
       console.log('🏢 Extracted subdomain:', subdomain);
 
@@ -52,8 +52,8 @@ export class SchoolLevelSettingResolver {
     @Context() context: any,
   ): Promise<SchoolLevelSetting | null> {
     const req = context.req;
-    // const host = req?.headers?.host ?? 'localhost';
-    const host = "neww.squl.co.ke";
+    const host = req?.headers?.host ?? 'localhost';
+    // const host = "what.squl.co.ke";
 
     const subdomain = this.extractSubdomain(host);
 
@@ -100,4 +100,4 @@ export class SchoolLevelSettingResolver {
     if (parts.length < 3) return '';
     return parts[0];
   }
-} 
+}
