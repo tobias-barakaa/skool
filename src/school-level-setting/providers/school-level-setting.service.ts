@@ -21,6 +21,10 @@ export class SchoolLevelSettingService {
       where: { subdomain },
       relations: ['levelSettings'],
     });
+
+    if (!levelNames || levelNames.length === 0) {
+        throw new Error('At least one level name must be provided.');
+      }
   
     const levels = await this.levelRepo
       .createQueryBuilder("level")

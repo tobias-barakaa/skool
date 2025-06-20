@@ -39,7 +39,12 @@ export class GraphQLExceptionsFilter implements GqlExceptionFilter {
         statusCode: 500,
       },
     });
+
+    
   }
+
+
+  
 }
 
 // import { Catch, ArgumentsHost, Logger } from '@nestjs/common';
