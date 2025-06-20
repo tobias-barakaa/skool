@@ -8,14 +8,13 @@ import { CBCSchoolSelectionEntity } from './entities/cbc_school_selections';
 import { Subject } from 'src/subject/entities/subject.entity';
 import { SubjectModule } from 'src/subject/subject.module';
 import { SchoolSetup } from './entities/school-setup.entity';
-import { SubjectService } from './services/cbc.service';
 import { SchoolsModule } from 'src/school/school.module';
 import { SubjectResolver } from './resolvers/cbc-setup.resolver';
 import { SchoolType } from './entities/school-type';
 
 @Module({
   imports: [TypeOrmModule.forFeature([CBCSchoolSelectionEntity, SchoolSetup, SchoolType]), SubjectModule, SchoolsModule],
-  providers: [SchoolTypeService, SubjectService, SchoolTypeResolver, SubjectResolver,SchoolTypeProvider, CbcProvider],
-  exports: [SchoolTypeService, SubjectService]
+  providers: [SchoolTypeService,  SchoolTypeResolver, SubjectResolver,SchoolTypeProvider, CbcProvider],
+  exports: [SchoolTypeService]
 })
 export class SchoolTypeModule {}

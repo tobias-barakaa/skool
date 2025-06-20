@@ -11,11 +11,6 @@ enum AcademicStatus {
   TRANSFERRED
 }
 
-input AddCBCConfigInput {
-  levels: [String!]!
-  schoolDomain: String
-}
-
 enum AssessmentType {
   ASSIGNMENT
   CAT
@@ -174,19 +169,26 @@ type Grade {
   totalMarks: Float!
 }
 
+type GradeLevel {
+  age: Float!
+  id: ID!
+  name: String!
+}
+
 type Level {
   description: String
+  gradeLevels: [GradeLevel!]
   grades: [Grade!]!
   id: ID!
   name: String!
   schoolType: SchoolTypeConfig!
-  subjects: [Subject!]!
+  subjects: [Subject!]
 }
 
 type Mutation {
-  addCBCConfiguration(input: AddCBCConfigInput!): [Subject!]!
   configureSchoolLevelsByNames(levelNames: [String!]!): SchoolLevelSetting!
   createUser(createUserInput: CreateUserInput!): CreateUserResponse!
+  removeLevelFromSchool(levelName: String!): SchoolLevelSetting!
   updateSchoolConfiguration(data: UpdateSchoolConfigurationInput!): Organization!
 }
 
@@ -216,7 +218,9 @@ type Parent {
 }
 
 type Query {
+  getAvailableLevelsForSchool: [Level!]!
   getCurrentOrganization: Organization!
+  getSchoolLevelConfiguration: SchoolLevelSetting
   getSchoolTypes: [SchoolTypeConfig!]!
   getStudentsByLevel(grade: String!, level: String!): [Student!]!
   users: [User!]!
@@ -230,7 +234,7 @@ type School {
   manager: SchoolManager
   schoolId: ID!
   schoolName: String!
-  schoolType: String!
+  schoolType: SchoolType!
   students: [Student!]!
   subdomain: String!
   subject: Subject!
@@ -241,8 +245,10 @@ type School {
 type SchoolLevelSetting {
   createdAt: DateTime!
   id: ID!
+  isActive: Boolean!
   school: School!
   selectedLevels: [Level!]!
+  updatedAt: DateTime!
 }
 
 type SchoolManager {
@@ -256,6 +262,16 @@ type SchoolManager {
   title: String
   updatedAt: DateTime!
   user: User!
+}
+
+type SchoolType {
+  description: String
+  icon: String
+  id: ID!
+  levels: [Level!]
+  name: String!
+  priority: Float
+  schools: [School!]
 }
 
 type SchoolTypeConfig {

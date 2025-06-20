@@ -17,6 +17,7 @@ import { SchoolManager } from '../../schoolmanager/entities/school-manager.entit
 import { User } from '../../users/entities/user.entity';
 import { Organization } from '../../organizations/entities/organizations-entity';
 import { Parent } from '../../parent/entities/parent.entity';
+import { SchoolLevelSetting } from '../../school-level-setting/entities/school-level-setting.entity';
 
 // Adjust to your actual credentials
 const AppDataSource = new DataSource({
@@ -42,7 +43,8 @@ const AppDataSource = new DataSource({
         SchoolManager,
         User,
         Organization,
-        Parent
+        Parent,
+        SchoolLevelSetting
         
         
         
@@ -208,106 +210,256 @@ const cbcLevels = {
 };
 
 async function seedCBC() {
-  await AppDataSource.initialize();
-
-  const schoolTypeRepo = AppDataSource.getRepository(SchoolType);
-  const levelRepo = AppDataSource.getRepository(Level);
-  const gradeRepo = AppDataSource.getRepository(Grade);
-  const subjectRepo = AppDataSource.getRepository(Subject);
-  const gradeLevelRepo = AppDataSource.getRepository(GradeLevel);
-
-
-  const cbc = schoolTypeRepo.create({
-    name: 'CBC School',
-    description: 'A complete school offering education from pre-primary through senior secondary under the CBC',
-    icon: '🏫',
-    priority: 4
-  });
-  await schoolTypeRepo.save(cbc);
-
-  for (const key of Object.keys(cbcLevels)) {
-    const levelData = cbcLevels[key];
+    await AppDataSource.initialize();
   
-    const level = levelRepo.create({
-      name: levelData.name,
-      description: levelData.description,
-      schoolType: cbc
-    });
-    await levelRepo.save(level);
+    const schoolTypeRepo = AppDataSource.getRepository(SchoolType);
+    const levelRepo = AppDataSource.getRepository(Level);
+    const gradeRepo = AppDataSource.getRepository(Grade);
+    const subjectRepo = AppDataSource.getRepository(Subject);
+    const gradeLevelRepo = AppDataSource.getRepository(GradeLevel);
   
-    for (const gradeData of levelData.grades) {
-      const gradeLevel = gradeLevelRepo.create({
-        name: gradeData.name,
-        age: gradeData.age,
-        level: level,
+    // Check if CBC school type already exists
+    let cbc = await schoolTypeRepo.findOne({ where: { name: 'CBC School' } });
+    
+    if (!cbc) {
+      cbc = schoolTypeRepo.create({
+        name: 'CBC School',
+        description: 'A complete school offering education from pre-primary through senior secondary under the CBC',
+        icon: '🏫',
+        priority: 4
       });
-      await gradeLevelRepo.save(gradeLevel);
+      await schoolTypeRepo.save(cbc);
     }
   
-    // ✅ Normalize subject names to flat array
-    let subjectNames: string[] = [];
+    for (const key of Object.keys(cbcLevels)) {
+      const levelData = cbcLevels[key];
+      
+      // Check if level already exists for this school type
+      let level = await levelRepo.findOne({
+        where: { 
+          name: levelData.name,
+          schoolType: { id: cbc.id }
+        },
+        relations: ['schoolType']
+      });
   
-    if (Array.isArray(levelData.subjects)) {
-      subjectNames = levelData.subjects;
-    } else if (typeof levelData.subjects === 'object') {
-      if (levelData.subjects.core) {
-        subjectNames.push(...levelData.subjects.core);
+      if (!level) {
+        level = levelRepo.create({
+          name: levelData.name,
+          description: levelData.description,
+          schoolType: cbc // ✅ Properly set the relationship
+        });
+        await levelRepo.save(level);
       }
   
-      if (Array.isArray(levelData.subjects.optional)) {
-        subjectNames.push(...levelData.subjects.optional);
-      }
-  
-      if (levelData.subjects.pathways) {
-        for (const path of Object.values(levelData.subjects.pathways)) {
-          if (Array.isArray(path)) {
-            subjectNames.push(...path);
+      // Create grades for this level
+      for (const gradeData of levelData.grades) {
+        let gradeLevel = await gradeLevelRepo.findOne({
+          where: {
+            name: gradeData.name,
+            level: { id: level.id }
           }
+        });
+  
+        if (!gradeLevel) {
+          gradeLevel = gradeLevelRepo.create({
+            name: gradeData.name,
+            age: gradeData.age,
+            level: level,
+          });
+          await gradeLevelRepo.save(gradeLevel);
+        }
+      }
+  
+      // Normalize subject names to flat array
+      let subjectNames: string[] = [];
+  
+      if (Array.isArray(levelData.subjects)) {
+        subjectNames = levelData.subjects;
+      } else if (typeof levelData.subjects === 'object') {
+        if (levelData.subjects.core) {
+          subjectNames.push(...levelData.subjects.core);
+        }
+  
+        if (Array.isArray(levelData.subjects.optional)) {
+          subjectNames.push(...levelData.subjects.optional);
+        }
+  
+        if (levelData.subjects.pathways) {
+          for (const path of Object.values(levelData.subjects.pathways)) {
+            if (Array.isArray(path)) {
+              subjectNames.push(...path);
+            }
+          }
+        }
+      }
+  
+      // Create subjects for this level
+      for (const subjectName of subjectNames) {
+        let subject = await subjectRepo.findOne({
+          where: {
+            subjectName,
+            level: { id: level.id }
+          }
+        });
+  
+        if (!subject) {
+          subject = subjectRepo.create({
+            subjectName,
+            shortName: subjectName.split(' ')[0],
+            category: SubjectCategory.CORE,
+            department: 'General Studies',
+            subjectType: SubjectType.THEORY,
+            gradeLevel: [],
+            isCompulsory: levelData.subjects.core?.includes(subjectName) || Array.isArray(levelData.subjects),
+            totalMarks: 100,
+            passingMarks: 40,
+            creditHours: 3,
+            curriculum: ['CBC'],
+            syllabus: '',
+            learningOutcomes: [],
+            textbooks: [],
+            materials: [],
+            prerequisiteSubjects: [],
+            schoolId: 'default-school-id-here',
+            level, // ✅ Properly set the level relationship
+            isActive: true,
+            isOffered: true,
+            createdBy: 'system',
+            classes: [],
+            teachers: [],
+            students: [],
+            timetableSlots: [],
+            name: subjectName,
+            examSchedules: [],
+          });
+  
+          await subjectRepo.save(subject);
         }
       }
     }
   
-    for (const subjectName of subjectNames) {
-      const subject = subjectRepo.create({
-        subjectName,
-        shortName: subjectName.split(' ')[0],
-        category: SubjectCategory.CORE,
-        department: 'General Studies',
-        subjectType: SubjectType.THEORY,
-        gradeLevel: [],
-        isCompulsory: true,
-        totalMarks: 100,
-        passingMarks: 40,
-        creditHours: 3,
-        curriculum: ['CBC'],
-        syllabus: '',
-        learningOutcomes: [],
-        textbooks: [],
-        materials: [],
-        prerequisiteSubjects: [],
-        schoolId: 'default-school-id-here',
-        level,
-        isActive: true,
-        isOffered: true,
-        createdBy: 'system',
-        classes: [],
-        teachers: [],
-        students: [],
-        timetableSlots: [],
-        name: subjectName,
-        examSchedules: [],
-      });
-  
-      await subjectRepo.save(subject);
-    }
+    console.log('✅ CBC School type and levels seeded successfully!');
+    
+    // Log what was created for verification
+    const createdLevels = await levelRepo.find({
+      where: { schoolType: { id: cbc.id } },
+      relations: ['schoolType']
+    });
+    
+    console.log(`Created ${createdLevels.length} levels for CBC:`);
+    createdLevels.forEach(level => {
+      console.log(`- ${level.name}`);
+    });
+    
+    await AppDataSource.destroy();
   }
   
+  seedCBC().catch(err => {
+    console.error('❌ Error during CBC seed:', err);
+    process.exit(1);
+  });
+// async function seedCBC() {
+//   await AppDataSource.initialize();
 
-  console.log('✅ CBC School type and levels seeded!');
-  process.exit();
-}
+//   const schoolTypeRepo = AppDataSource.getRepository(SchoolType);
+//   const levelRepo = AppDataSource.getRepository(Level);
+//   const gradeRepo = AppDataSource.getRepository(Grade);
+//   const subjectRepo = AppDataSource.getRepository(Subject);
+//   const gradeLevelRepo = AppDataSource.getRepository(GradeLevel);
 
-seedCBC().catch(err => {
-  console.error('❌ Error during CBC seed:', err);
-  process.exit(1);
-});
+
+//   const cbc = schoolTypeRepo.create({
+//     name: 'CBC School',
+//     description: 'A complete school offering education from pre-primary through senior secondary under the CBC',
+//     icon: '🏫',
+//     priority: 4
+//   });
+//   await schoolTypeRepo.save(cbc);
+
+//   for (const key of Object.keys(cbcLevels)) {
+//     const levelData = cbcLevels[key];
+  
+//     const level = levelRepo.create({
+//       name: levelData.name,
+//       description: levelData.description,
+//       schoolType: cbc
+//     });
+//     await levelRepo.save(level);
+  
+//     for (const gradeData of levelData.grades) {
+//       const gradeLevel = gradeLevelRepo.create({
+//         name: gradeData.name,
+//         age: gradeData.age,
+//         level: level,
+//       });
+//       await gradeLevelRepo.save(gradeLevel);
+//     }
+  
+//     // ✅ Normalize subject names to flat array
+//     let subjectNames: string[] = [];
+  
+//     if (Array.isArray(levelData.subjects)) {
+//       subjectNames = levelData.subjects;
+//     } else if (typeof levelData.subjects === 'object') {
+//       if (levelData.subjects.core) {
+//         subjectNames.push(...levelData.subjects.core);
+//       }
+  
+//       if (Array.isArray(levelData.subjects.optional)) {
+//         subjectNames.push(...levelData.subjects.optional);
+//       }
+  
+//       if (levelData.subjects.pathways) {
+//         for (const path of Object.values(levelData.subjects.pathways)) {
+//           if (Array.isArray(path)) {
+//             subjectNames.push(...path);
+//           }
+//         }
+//       }
+//     }
+  
+//     for (const subjectName of subjectNames) {
+//       const subject = subjectRepo.create({
+//         subjectName,
+//         shortName: subjectName.split(' ')[0],
+//         category: SubjectCategory.CORE,
+//         department: 'General Studies',
+//         subjectType: SubjectType.THEORY,
+//         gradeLevel: [],
+//         isCompulsory: true,
+//         totalMarks: 100,
+//         passingMarks: 40,
+//         creditHours: 3,
+//         curriculum: ['CBC'],
+//         syllabus: '',
+//         learningOutcomes: [],
+//         textbooks: [],
+//         materials: [],
+//         prerequisiteSubjects: [],
+//         schoolId: 'default-school-id-here',
+//         level,
+//         isActive: true,
+//         isOffered: true,
+//         createdBy: 'system',
+//         classes: [],
+//         teachers: [],
+//         students: [],
+//         timetableSlots: [],
+//         name: subjectName,
+//         examSchedules: [],
+//       });
+  
+//       await subjectRepo.save(subject);
+//     }
+//   }
+  
+
+//   console.log('✅ CBC School type and levels seeded!');
+//   process.exit();
+// }
+
+// seedCBC().catch(err => {
+//   console.error('❌ Error during CBC seed:', err);
+//   process.exit(1);
+// });

@@ -19,7 +19,8 @@ import { Subject } from '../../subject/entities/subject.entity';
 import { Class } from '../../class/entities/class.entity';
 import { Student } from '../../student/entities/student.entity';
 import { SchoolManager } from '../../schoolmanager/entities/school-manager.entity';
-import { SchoolLevelSetting } from 'src/school-level-setting/entities/school-level-setting.entity';
+import { SchoolLevelSetting } from '../../school-level-setting/entities/school-level-setting.entity';
+import { SchoolType } from '../../school-type/entities/school-type';
 
 @ObjectType()
 @Entity()
@@ -36,12 +37,9 @@ export class School {
   @Column({ unique: true })
   subdomain: string;
 
-  @Field()
-  @Column({
-    type: 'varchar',
-    default: 'CBC'
-  })
-  schoolType: string;
+  @Field(() => SchoolType)
+  @ManyToOne(() => SchoolType, (type) => type.schools)
+  schoolType: SchoolType;
 
   @Field()
   @Column({ default: true })

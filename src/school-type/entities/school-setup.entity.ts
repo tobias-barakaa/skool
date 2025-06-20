@@ -7,7 +7,7 @@ import {
     OneToMany,
   } from 'typeorm';
   import { ObjectType, Field, ID } from '@nestjs/graphql';
-import { CBCLevelSelectionDto } from 'src/school-type/dtos/create-school-setup.dto';
+import { CBCLevelSelectionDto } from '../../school-type/dtos/create-school-setup.dto';
 import { Subject } from '../../subject/entities/subject.entity';
   
   @ObjectType()

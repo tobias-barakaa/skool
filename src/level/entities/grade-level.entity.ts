@@ -21,3 +21,4 @@ export class GradeLevel {
   @ManyToOne(() => Level, (level) => level.gradeLevels)
   level: Level;
 }
+
