@@ -8,11 +8,12 @@ import {
     OneToMany,
   } from 'typeorm';
   import { ObjectType, Field, ID, registerEnumType } from '@nestjs/graphql';
-import { School } from 'src/school/entities/school.entity';
-import { Attendance } from 'src/attendance/entities/attendance.entity';
-import { Grade } from 'src/grade/entities/grade.entity';
+import { School } from '../../school/entities/school.entity';
+import { Attendance } from '../../attendance/entities/attendance.entity';
+import { Grade } from '../../grade/entities/grade.entity';
 import { SubjectType } from '../enums/subject.type.enum';
 import { SubjectCategory } from '../enums/subject.categories.enum';
+import { Level } from '../../level/entities/level.entities';
   
   
   @ObjectType()
@@ -22,9 +23,9 @@ import { SubjectCategory } from '../enums/subject.categories.enum';
     @PrimaryGeneratedColumn('uuid')
     subjectId: string;
   
-    @Field()
-    @Column({ unique: true })
-    subjectCode: string;
+    // @Field()
+    // @Column({ unique: true })
+    // subjectCode: string;
   
     @Field()
     @Column()
@@ -69,9 +70,9 @@ import { SubjectCategory } from '../enums/subject.categories.enum';
     @Column('int')
     creditHours: number;
   
-    @Field({ nullable: true })
-    @Column('int', { nullable: true })
-    practicalHours?: number;
+    // @Field({ nullable: true })
+    // @Column('int', { nullable: true })
+    // practicalHours?: number;
   
     // Curriculum
     @Field(() => [String])
@@ -104,6 +105,9 @@ import { SubjectCategory } from '../enums/subject.categories.enum';
     @Field()
     @Column()
     schoolId: string;
+
+    @ManyToOne(() => Level, level => level.subjects)
+    level: Level;
   
     // Status flags
     @Field()
@@ -178,6 +182,9 @@ students: string[];
         default: [],
     })
     timetableSlots: string[];
+
+    @Column()
+    name: string;
 
   
     @Field(() => [String],{ nullable: true })

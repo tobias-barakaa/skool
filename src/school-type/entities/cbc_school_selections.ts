@@ -1,6 +1,6 @@
 // If using TypeORM:
 import { Field, HideField, ID } from '@nestjs/graphql';
-import { User } from 'src/users/entities/user.entity';
+import { User } from '../../users/entities/user.entity';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { CBCLevelSelectionDto } from '../dtos/create-school-setup.dto';
 

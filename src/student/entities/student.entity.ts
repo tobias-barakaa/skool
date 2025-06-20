@@ -12,20 +12,20 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { ObjectType, Field, ID, registerEnumType } from '@nestjs/graphql';
-import { User } from 'src/users/entities/user.entity';
-//   import { StudentSubject } from 'src/student-subjects/entities/student-subject.entity';
-import { Attendance } from 'src/attendance/entities/attendance.entity';
+import { User } from '../../users/entities/user.entity';
+//   import { StudentSubject } from '../../student-subjects/entities/student-subject.entity';
+import { Attendance } from '../../attendance/entities/attendance.entity';
 
 import { Gender } from '../enums/student.gender.enum';
 import { AcademicStatus } from '../enums/student.academic.status.enum';
-import { School } from 'src/school/entities/school.entity';
-import { Branch } from 'src/branch/entities/branch.entity';
-import { Class } from 'src/class/entities/class.entity';
+import { School } from '../../school/entities/school.entity';
+import { Branch } from '../../branch/entities/branch.entity';
+import { Class } from '../../class/entities/class.entity';
 import { truncate } from 'fs';
-import { Parent } from 'src/parent/entities/parent.entity';
-import { Grade } from 'src/grade/entities/grade.entity';
-import { Subject } from 'src/subject/entities/subject.entity';
-import { Organization } from 'src/organizations/entities/organizations-entity';
+import { Parent } from '../../parent/entities/parent.entity';
+import { Grade } from '../../grade/entities/grade.entity';
+import { Subject } from '../../subject/entities/subject.entity';
+import { Organization } from '../../organizations/entities/organizations-entity';
 
 @ObjectType()
 @Entity()

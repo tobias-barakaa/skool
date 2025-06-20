@@ -6,10 +6,11 @@ import {
     CreateDateColumn,
   } from 'typeorm';
   import { ObjectType, Field, ID, registerEnumType } from '@nestjs/graphql';
-import { Student } from 'src/student/entities/student.entity';
-import { Subject } from 'src/subject/entities/subject.entity';
-import { Class } from 'src/class/entities/class.entity';
-import { Teacher } from 'src/teacher/entities/teacher.entity';
+import { Student } from '../../student/entities/student.entity';
+import { Subject } from '../../subject/entities/subject.entity';
+import { Class } from '../../class/entities/class.entity';
+import { Teacher } from '../../teacher/entities/teacher.entity';
+import { Level } from '../../level/entities/level.entities';
 //   import { Student } from 'src/students/entities/student.entity';
 //   import { Subject } from 'src/subjects/entities/subject.entity';
 //   import { Class } from 'src/classes/entities/class.entity';
@@ -45,6 +46,9 @@ import { Teacher } from 'src/teacher/entities/teacher.entity';
     @Field()
     @Column()
     classId: string;
+
+    @ManyToOne(() => Level, level => level.grades)
+    level: Level;
   
     // — Assessment Info —
     @Field(() => AssessmentType)
@@ -88,6 +92,7 @@ import { Teacher } from 'src/teacher/entities/teacher.entity';
     @Field()
     @CreateDateColumn()
     dateRecorded: Date;
+    
   
     @Field()
     @Column()

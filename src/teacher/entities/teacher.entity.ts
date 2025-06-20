@@ -11,14 +11,14 @@ import {
     OneToMany,
   } from 'typeorm';
   import { ObjectType, Field, ID } from '@nestjs/graphql';
-  import { User } from 'src/users/entities/user.entity';
+  import { User } from '../../users/entities/user.entity';
   
-import { School } from 'src/school/entities/school.entity';
-import { Branch } from 'src/branch/entities/branch.entity';
-import { Class } from 'src/class/entities/class.entity';
-import { Grade } from 'src/grade/entities/grade.entity';
-import { Attendance } from 'src/attendance/entities/attendance.entity';
-import { Organization } from 'src/organizations/entities/organizations-entity';
+import { School } from '../../school/entities/school.entity';
+import { Branch } from '../../branch/entities/branch.entity';
+import { Class } from '../../class/entities/class.entity';
+import { Grade } from '../../grade/entities/grade.entity';
+import { Attendance } from '../../attendance/entities/attendance.entity';
+import { Organization } from '../../organizations/entities/organizations-entity';
   
   @ObjectType()
   @Entity()

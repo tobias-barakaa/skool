@@ -174,8 +174,18 @@ type Grade {
   totalMarks: Float!
 }
 
+type Level {
+  description: String
+  grades: [Grade!]!
+  id: ID!
+  name: String!
+  schoolType: SchoolTypeConfig!
+  subjects: [Subject!]!
+}
+
 type Mutation {
   addCBCConfiguration(input: AddCBCConfigInput!): [Subject!]!
+  configureSchoolLevelsByNames(levelNames: [String!]!): SchoolLevelSetting!
   createUser(createUserInput: CreateUserInput!): CreateUserResponse!
   updateSchoolConfiguration(data: UpdateSchoolConfigurationInput!): Organization!
 }
@@ -226,6 +236,13 @@ type School {
   subject: Subject!
   updatedAt: DateTime!
   users: [User!]
+}
+
+type SchoolLevelSetting {
+  createdAt: DateTime!
+  id: ID!
+  school: School!
+  selectedLevels: [Level!]!
 }
 
 type SchoolManager {
@@ -342,13 +359,11 @@ type Subject {
   learningOutcomes: [String!]!
   materials: [String!]!
   passingMarks: Float!
-  practicalHours: Float
   prerequisiteSubjects: [String!]!
   school: School!
   schoolId: String!
   shortName: String!
   students: [String!]
-  subjectCode: String!
   subjectId: ID!
   subjectName: String!
   subjectType: SubjectType!

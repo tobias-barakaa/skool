@@ -8,11 +8,11 @@ import {
     JoinTable,
   } from 'typeorm';
   import { Field, ObjectType, ID } from '@nestjs/graphql';
-import { School } from 'src/school/entities/school.entity';
-import { UserBranch } from 'src/user-branch/entities/user-branch.entity';
-import { Teacher } from 'src/teacher/entities/teacher.entity';
-import { Class } from 'src/class/entities/class.entity';
-import { Student } from 'src/student/entities/student.entity';
+import { School } from '../../school/entities/school.entity';
+import { UserBranch } from '../../user-branch/entities/user-branch.entity';
+import { Teacher } from '../../teacher/entities/teacher.entity';
+import { Class } from '../../class/entities/class.entity';
+import { Student } from '../../student/entities/student.entity';
   
   @ObjectType()
   @Entity()

@@ -11,14 +11,15 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Field, ObjectType, ID } from '@nestjs/graphql';
-import { User } from 'src/users/entities/user.entity';
-import { Teacher } from 'src/teacher/entities/teacher.entity';
-import { Branch } from 'src/branch/entities/branch.entity';
-import { Parent } from 'src/parent/entities/parent.entity';
-import { Subject } from 'src/subject/entities/subject.entity';
-import { Class } from 'src/class/entities/class.entity';
-import { Student } from 'src/student/entities/student.entity';
-import { SchoolManager } from 'src/schoolmanager/entities/school-manager.entity';
+import { User } from '../../users/entities/user.entity';
+import { Teacher } from '../../teacher/entities/teacher.entity';
+import { Branch } from '../../branch/entities/branch.entity';
+import { Parent } from '../../parent/entities/parent.entity';
+import { Subject } from '../../subject/entities/subject.entity';
+import { Class } from '../../class/entities/class.entity';
+import { Student } from '../../student/entities/student.entity';
+import { SchoolManager } from '../../schoolmanager/entities/school-manager.entity';
+import { SchoolLevelSetting } from 'src/school-level-setting/entities/school-level-setting.entity';
 
 @ObjectType()
 @Entity()
@@ -92,6 +93,9 @@ export class School {
   @UpdateDateColumn()
   @Field(() => Date)
   updatedAt: Date;
+
+  @OneToMany(() => SchoolLevelSetting, setting => setting.school)
+  levelSettings: SchoolLevelSetting[];
 
 }
 

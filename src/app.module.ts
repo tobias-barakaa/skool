@@ -32,6 +32,9 @@ import jwtConfig from './auth/config/jwt.config';
 import { JwtModule } from '@nestjs/jwt';
 import { OrganizationsModule } from './organizations/organizations.module';
 import { TenantsModule } from './tenants/tenants.module';
+import { LevelModule } from './level/level.module';
+import { LevelService } from './level/providers/level.service';
+import { SchoolLevelSettingModule } from './school-level-setting/school-level-setting.module';
 
 
 
@@ -119,6 +122,8 @@ const ENV = process.env.NODE_ENV;
     AuthModule,
     OrganizationsModule,
     TenantsModule,
+    LevelModule,
+    SchoolLevelSettingModule,
     
  
     
@@ -133,7 +138,8 @@ const ENV = process.env.NODE_ENV;
       provide: APP_INTERCEPTOR,
       useClass: DataResponseInterceptor
     },
-    AccessTokenGuard
+    AccessTokenGuard,
+    LevelService
   
   ],
 })

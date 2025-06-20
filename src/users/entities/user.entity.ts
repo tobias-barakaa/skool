@@ -1,11 +1,11 @@
 import { Field, ID, ObjectType } from "@nestjs/graphql";
-import { Branch } from "src/branch/entities/branch.entity";
-import { Organization } from "src/organizations/entities/organizations-entity";
-import { Parent } from "src/parent/entities/parent.entity";
-import { School } from "src/school/entities/school.entity";
-import { SchoolManager } from "src/schoolmanager/entities/school-manager.entity";
-import { Teacher } from "src/teacher/entities/teacher.entity";
-import { UserBranch } from "src/user-branch/entities/user-branch.entity";
+import { Branch } from "../../branch/entities/branch.entity";
+import { Organization } from "../../organizations/entities/organizations-entity";
+import { Parent } from "../../parent/entities/parent.entity";
+import { School } from "../../school/entities/school.entity";
+import { SchoolManager } from "../../schoolmanager/entities/school-manager.entity";
+import { Teacher } from "../../teacher/entities/teacher.entity";
+import { UserBranch } from "../../user-branch/entities/user-branch.entity";
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 // src/users/entities/user.entity.ts

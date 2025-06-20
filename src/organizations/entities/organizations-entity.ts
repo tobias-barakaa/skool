@@ -1,9 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { Field, ObjectType, ID } from '@nestjs/graphql';
-import { User } from 'src/users/entities/user.entity';
-import { Student } from 'src/student/entities/student.entity';
-import { Teacher } from 'src/teacher/entities/teacher.entity';
-import { SchoolTypeConfig } from 'src/school/dtos/school-type-config';
+import { User } from '../../users/entities/user.entity';
+import { Student } from '../../student/entities/student.entity';
+import { Teacher } from '../../teacher/entities/teacher.entity';
+import { SchoolTypeConfig } from '../../school/dtos/school-type-config';
 
 @ObjectType()
 @Entity('organizations')

@@ -5,8 +5,8 @@ import {
     PrimaryColumn,
   } from 'typeorm';
   import { Field, ObjectType } from '@nestjs/graphql';
-  import { User } from 'src/users/entities/user.entity';
-import { Branch } from 'src/branch/entities/branch.entity';
+  import { User } from '../../users/entities/user.entity';
+import { Branch } from '../../branch/entities/branch.entity';
   
   @ObjectType()
   @Entity()

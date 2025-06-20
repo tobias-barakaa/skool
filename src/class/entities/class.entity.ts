@@ -18,12 +18,12 @@ import {
 //   import { ClassSubject } from 'src/class-subjects/entities/class-subject.entity';
 //   import { TeacherClass } from 'src/teacher-classes/entities/teacher-class.entity';
 //   import { TimetableSlot } from 'src/timetable/entities/timetable-slot.entity';
-  import { Attendance } from 'src/attendance/entities/attendance.entity';
-import { School } from 'src/school/entities/school.entity';
-import { Branch } from 'src/branch/entities/branch.entity';
-import { Grade } from 'src/grade/entities/grade.entity';
-import { Teacher } from 'src/teacher/entities/teacher.entity';
-import { Student } from 'src/student/entities/student.entity';
+  import { Attendance } from '../../attendance/entities/attendance.entity';
+import { School } from '../../school/entities/school.entity';
+import { Branch } from '../../branch/entities/branch.entity';
+import { Grade } from '../../grade/entities/grade.entity';
+import { Teacher } from '../../teacher/entities/teacher.entity';
+import { Student } from '../../student/entities/student.entity';
 //   import { Exam } from 'src/exams/entities/exam.entity';
 //   import { Assignment } from 'src/assignments/entities/assignment.entity';
 //   import { ClassEvent } from 'src/events/entities/class-event.entity';

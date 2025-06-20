@@ -223,7 +223,7 @@ export class SubjectService {
 
           if (!existingSubject) {
             const subject = this.subjectRepository.create({
-              subjectCode: this.generateSubjectCode(subjectData.name, levelKey),
+              // subjectCode: this.generateSubjectCode(subjectData.name, levelKey),
               subjectName: subjectData.name,
               shortName: this.generateShortName(subjectData.name),
               category: this.determineCategory(subjectData.name, subjectData.type),
@@ -234,7 +234,7 @@ export class SubjectService {
               totalMarks: 100,
               passingMarks: 50,
               creditHours: 4,
-              practicalHours: subjectData.practicalHours || null,
+              // practicalHours: subjectData.practicalHours || null,
               curriculum: [`CBC ${levelConfig.name}`],
               syllabus: `CBC ${levelConfig.name} Syllabus`,
               learningOutcomes: [],
@@ -309,11 +309,11 @@ export class SubjectService {
     return subjects;
   }
 
-  private generateSubjectCode(subjectName: string, level: string): string {
-    const levelCode = level.toUpperCase().replace('-', '');
-    const subjectCode = subjectName.replace(/[^A-Z]/g, '').substring(0, 3);
-    return `${levelCode}-${subjectCode}-${Math.floor(Math.random() * 1000)}`;
-  }
+  // private generateSubjectCode(subjectName: string, level: string): string {
+  //   const levelCode = level.toUpperCase().replace('-', '');
+  //   const subjectCode = subjectName.replace(/[^A-Z]/g, '').substring(0, 3);
+  //   return `${levelCode}-${subjectCode}-${Math.floor(Math.random() * 1000)}`;
+  // }
 
   private generateShortName(subjectName: string): string {
     return subjectName.split(' ').map(word => word.charAt(0).toUpperCase()).join('').substring(0, 5);

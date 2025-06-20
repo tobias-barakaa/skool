@@ -10,9 +10,9 @@ import {
     OneToMany,
   } from 'typeorm';
   import { ObjectType, Field, ID } from '@nestjs/graphql';
-  import { User } from 'src/users/entities/user.entity';
-import { School } from 'src/school/entities/school.entity';
-import { Student } from 'src/student/entities/student.entity';
+  import { User } from '../../users/entities/user.entity';
+import { School } from '../../school/entities/school.entity';
+import { Student } from '../../student/entities/student.entity';
   
   @ObjectType()
   @Entity()

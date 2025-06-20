@@ -8,7 +8,7 @@ import {
   } from 'typeorm';
   import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { CBCLevelSelectionDto } from 'src/school-type/dtos/create-school-setup.dto';
-import { Subject } from 'src/subject/entities/subject.entity';
+import { Subject } from '../../subject/entities/subject.entity';
   
   @ObjectType()
   @Entity()
