@@ -22,8 +22,8 @@ export class SchoolLevelSettingResolver {
       }
 
       const req = context.req;
-      const host = req?.headers?.host ?? 'localhost';
-    // const host = "what.squl.co.ke";
+    //   const host = req?.headers?.host ?? 'localhost';
+    const host = "what.squl.co.ke";
 
       
     //   console.log('🌐 Host from request:', host);
@@ -52,8 +52,8 @@ export class SchoolLevelSettingResolver {
     @Context() context: any,
   ): Promise<SchoolLevelSetting | null> {
     const req = context.req;
-    const host = req?.headers?.host ?? 'localhost';
-    // const host = "what.squl.co.ke";
+    // const host = req?.headers?.host ?? 'localhost';
+    const host = "what.squl.co.ke";
 
     const subdomain = this.extractSubdomain(host);
 
