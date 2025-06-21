@@ -59,6 +59,8 @@ export class SchoolLevelSettingService {
       console.log('🔍 Searching for levels with names:', levelNames);
       console.log('🎯 School type ID:', school.schoolType.id);
 
+      
+
       // First, let's check what levels exist for this school type
       const allLevelsForSchoolType = await this.levelRepo.find({
         where: { schoolType: { id: school.schoolType.id } },
@@ -69,7 +71,10 @@ export class SchoolLevelSettingService {
         allLevelsForSchoolType.map(l => l.name)
       );
 
-      // Find levels that belong to the school's curriculum type (school type)
+      console.log('📚 Levels in this schoolType:', allLevelsForSchoolType.map(l => `${l.name} [${l.schoolType?.name}]`));
+
+
+      
       const levels = await this.levelRepo
         .createQueryBuilder("level")
         .leftJoinAndSelect("level.schoolType", "schoolType")
@@ -95,6 +100,8 @@ export class SchoolLevelSettingService {
     const missingLevels = levelNames.filter(name => 
       !foundLevelNames.includes(name.toLowerCase())
     );
+
+
 
     if (missingLevels.length > 0) {
       throw new BusinessException(
@@ -196,6 +203,7 @@ export class SchoolLevelSettingService {
     return availableLevels;
   }
 
+  
   async removeLevelFromSchool(subdomain: string, levelName: string): Promise<SchoolLevelSetting> {
     const setting = await this.getSchoolLevelConfiguration(subdomain);
     
