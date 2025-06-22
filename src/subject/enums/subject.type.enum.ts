@@ -1,5 +1,6 @@
 import { registerEnumType } from '@nestjs/graphql';
 
+
 export enum SubjectType {
   ACADEMIC = "academic",
   PRACTICAL = "practical",
@@ -7,9 +8,12 @@ export enum SubjectType {
   MIXED = "mixed",
   VOCATIONAL = "vocational",
   ARTS = "arts",
-  SPORTS = "sports"
+  SPORTS = "sports",
+  CORE = 'core',
+  ELECTIVE = 'elective', 
+  COMPULSORY = 'compulsory',
+  OPTIONAL = 'optional'
 }
-
 // ✅ Register for GraphQL
 registerEnumType(SubjectType, {
   name: 'SubjectType',

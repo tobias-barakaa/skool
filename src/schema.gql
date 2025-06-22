@@ -29,7 +29,6 @@ type Attendance {
   status: AttendanceStatus!
   student: Student!
   studentId: String!
-  subject: Subject
   subjectId: String
   timeIn: DateTime
   timeOut: DateTime
@@ -54,18 +53,6 @@ type Branch {
   students: [Student!]!
   teachers: [Teacher!]!
   userBranches: [UserBranch!]
-}
-
-type CBCLevelSelectionDto {
-  levelKey: String!
-  selectedGrades: [String!]!
-  selectedSubjects: [String!]!
-}
-
-input CBCLevelSelectionInput {
-  levelKey: String!
-  selectedGrades: [String!]!
-  selectedSubjects: [String!]!
 }
 
 type Class {
@@ -135,6 +122,28 @@ type CreateUserResponse {
   user: User!
 }
 
+type Curriculum {
+  code: String!
+  curriculumSubjects: [CurriculumSubject]!
+  display_name: String!
+  gradeLevels: [GradeLevel]!
+  id: ID!
+  name: String!
+  schoolLevels: [SchoolLevel]!
+  schoolType: SchoolType
+}
+
+type CurriculumSubject {
+  availableGrades: [GradeLevel!]
+  curriculum: Curriculum!
+  displayOrder: Float
+  id: ID!
+  isActive: Boolean!
+  schoolLevel: SchoolLevel
+  subject: Subject!
+  subjectType: SubjectType!
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
@@ -162,7 +171,6 @@ type Grade {
   recordedBy: String!
   student: Student!
   studentId: String!
-  subject: Subject!
   subjectId: String!
   teacher: Teacher!
   term: String!
@@ -170,9 +178,18 @@ type Grade {
 }
 
 type GradeLevel {
-  age: Float!
+  code: String!
   id: ID!
   name: String!
+  order: Float!
+}
+
+type GradeLevelResponse {
+  age: String
+  code: String
+  id: ID!
+  name: String!
+  order: Float
 }
 
 type Level {
@@ -182,13 +199,11 @@ type Level {
   id: ID!
   name: String!
   schoolType: SchoolTypeConfig!
-  subjects: [Subject!]
 }
 
 type Mutation {
-  configureSchoolLevelsByNames(levelNames: [String!]!): SchoolLevelSetting!
+  configureSchoolLevelsByNames(levelNames: [String!]!): SchoolConfigurationResponse!
   createUser(createUserInput: CreateUserInput!): CreateUserResponse!
-  removeLevelFromSchool(levelName: String!): SchoolLevelSetting!
   updateSchoolConfiguration(data: UpdateSchoolConfigurationInput!): Organization!
 }
 
@@ -218,9 +233,9 @@ type Parent {
 }
 
 type Query {
-  getAvailableLevelsForSchool: [Level!]!
+  getAvailableLevelNames: [String!]!
   getCurrentOrganization: Organization!
-  getSchoolLevelConfiguration: SchoolLevelSetting
+  getSchoolConfiguration: SchoolConfigurationResponse
   getSchoolTypes: [SchoolTypeConfig!]!
   getStudentsByLevel(grade: String!, level: String!): [Student!]!
   users: [User!]!
@@ -237,18 +252,25 @@ type School {
   schoolType: SchoolType!
   students: [Student!]!
   subdomain: String!
-  subject: Subject!
   updatedAt: DateTime!
-  users: [User!]
 }
 
-type SchoolLevelSetting {
+type SchoolConfigurationResponse {
   createdAt: DateTime!
   id: ID!
-  isActive: Boolean!
-  school: School!
-  selectedLevels: [Level!]!
+  school: SchoolResponse!
+  schoolType: SchoolTypeResponse
+  selectedLevels: [SelectedLevelResponse!]!
   updatedAt: DateTime!
+}
+
+type SchoolLevel {
+  curriculum: Curriculum
+  curriculumSubjects: [CurriculumSubject!]
+  gradeLevels: [GradeLevel!]
+  id: ID!
+  name: String!
+  schoolType: SchoolType!
 }
 
 type SchoolManager {
@@ -264,13 +286,21 @@ type SchoolManager {
   user: User!
 }
 
+type SchoolResponse {
+  schoolId: ID!
+  schoolName: String!
+  subdomain: String!
+}
+
 type SchoolType {
+  code: String
   description: String
   icon: String
   id: ID!
   levels: [Level!]
   name: String!
   priority: Float
+  schoolLevels: [SchoolLevel!]
   schools: [School!]
 }
 
@@ -293,6 +323,23 @@ type SchoolTypeLevel {
   description: String!
   grades: [SchoolTypeGrade!]!
   name: String!
+}
+
+type SchoolTypeResponse {
+  displayName: String!
+  id: ID!
+  name: String!
+}
+
+type SelectedLevelResponse {
+  ageRange: String
+  code: String
+  description: String
+  displayName: String
+  gradeLevels: [GradeLevelResponse!]
+  id: ID!
+  name: String!
+  subjects: [SubjectResponse!]
 }
 
 type Student {
@@ -358,54 +405,37 @@ type Student {
 }
 
 type Subject {
-  attendance: [Attendance!]!
-  category: SubjectCategory!
-  classes: [String!]
-  createdAt: DateTime!
-  createdBy: String!
-  creditHours: Float!
-  curriculum: [String!]!
-  department: String!
-  examSchedules: [String!]
-  gradeLevel: [String!]!
-  grades: [Grade!]
-  isActive: Boolean!
-  isCompulsory: Boolean!
-  isOffered: Boolean!
-  learningOutcomes: [String!]!
-  materials: [String!]!
-  passingMarks: Float!
-  prerequisiteSubjects: [String!]!
-  school: School!
-  schoolId: String!
-  shortName: String!
-  students: [String!]
-  subjectId: ID!
-  subjectName: String!
-  subjectType: SubjectType!
-  syllabus: String
-  teachers: [String!]!
-  textbooks: [String!]!
-  timetableSlots: [String!]
-  totalMarks: Float!
-  updatedAt: DateTime!
+  code: String!
+  curriculumSubjects: [CurriculumSubject]
+  description: String
+  id: ID!
+  name: String!
 }
 
-"""The category of the subject"""
-enum SubjectCategory {
-  ADVANCED
-  CORE
-  ELECTIVE
-  EXTRA_CURRICULAR
-  OPTIONAL
-  REMEDIAL
+type SubjectResponse {
+  category: String
+  code: String!
+  creditHours: Float
+  curriculum: String
+  department: String
+  id: ID!
+  isCompulsory: Boolean
+  name: String!
+  passingMarks: Float
+  shortName: String
+  subjectType: String
+  totalMarks: Float
 }
 
 """The type of the subject"""
 enum SubjectType {
   ACADEMIC
   ARTS
+  COMPULSORY
+  CORE
+  ELECTIVE
   MIXED
+  OPTIONAL
   PRACTICAL
   SPORTS
   THEORY
@@ -458,7 +488,7 @@ type User {
   organizationId: String!
   parentProfile: Parent
   password: String!
-  school: School!
+  school: School
   schoolUrl: String
   teacherProfile: Teacher
   updatedAt: DateTime!

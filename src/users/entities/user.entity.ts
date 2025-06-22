@@ -50,6 +50,7 @@ export class User {
   @OneToMany(() => UserBranch, (userBranch) => userBranch.user)
   userBranches: UserBranch[];
 
+  @Field(() => School, { nullable: true })
   @ManyToOne(() => School, (school) => school.users)
   @Field(() => School)
   school: School;
@@ -73,6 +74,13 @@ export class User {
   @OneToOne(() => SchoolManager, (manager) => manager.user, { nullable: true })
   @Field(() => SchoolManager, { nullable: true })
   managerProfile: SchoolManager | null;
+
+  
+  // @ManyToOne(() => School, (school) => school.users, {
+  //   nullable: true,
+  //   onDelete: 'SET NULL',
+  // })
+  // school: School;
 
   @CreateDateColumn()
   @Field(() => Date)

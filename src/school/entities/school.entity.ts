@@ -58,16 +58,15 @@ export class School {
   @OneToMany(() => Teacher, (teacher) => teacher.school)
  teachers: Teacher[];
 
-  @Field(() => [User], { nullable: true })
-  @OneToMany(() => User, (user) => user.school)
-  users: User[];
+ @OneToMany(() => User, (user) => user.school)
+ users: User[];
 
   @OneToMany(() => Parent, (parent) => parent.school)
   parents: Parent[];
 
-  @Field(() => Subject)
-  @ManyToOne(() => Subject, (subject: Subject) => subject.subjectId)
-  subject: Subject;
+  // @Field(() => Subject)
+  // @ManyToOne(() => Subject, (subject: Subject) => subject.subjectId)
+  // subject: Subject;
 
   @Field(() => [Class])
   @OneToMany(() => Class, (cls) => cls.school)

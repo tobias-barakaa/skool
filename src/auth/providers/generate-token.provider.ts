@@ -29,7 +29,9 @@ export class GenerateTokenProvider {
     ) {}
 
 
-public async signToken<T>(userId: number, expiresIn: number, payload?: T) {
+public async signToken<T>(userId: string, expiresIn: number, payload?: T) {
+  console.log('Signing token with payload:', payload, 'userId:', userId, 'expiresIn:', expiresIn);
+
     return await this.jwtService.signAsync({
                 sub: userId,
                 ...payload,
@@ -59,12 +61,12 @@ public async generateTokens(user: User) {
   
     const [accessToken, refreshToken] = await Promise.all([
       this.signToken<Partial<ActiveUserData>>(
-        parseInt(user.id),
+        user.id,
         this.jwtConfiguration.accessTOKENTtl,
         tenantContext
       ),
       this.signToken(
-        parseInt(user.id),
+        user.id,
         this.jwtConfiguration.refreshTokenTtl,
         tenantContext
       ),

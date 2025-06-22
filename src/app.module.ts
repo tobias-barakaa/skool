@@ -35,6 +35,8 @@ import { TenantsModule } from './tenants/tenants.module';
 import { LevelModule } from './level/level.module';
 import { LevelService } from './level/providers/level.service';
 import { SchoolLevelSettingModule } from './school-level-setting/school-level-setting.module';
+import { CurriculumModule } from './curriculum/curriculum.module';
+import { REQUEST_USER_KEY } from './auth/constants/auth.constants';
 
 
 
@@ -42,6 +44,7 @@ const ENV = process.env.NODE_ENV;
 
 @Module({
   imports: [
+    
    
     ConfigModule.forRoot({
       isGlobal: true,
@@ -74,7 +77,17 @@ const ENV = process.env.NODE_ENV;
       path: '/graphql',
       playground: true,
       sortSchema: true,
-      context: ({ req, res }) => ({ req, res }),
+      // context: ({ req }) => ({
+      //   req,
+      //   [REQUEST_USER_KEY]: req?.user, 
+      // }),
+
+      context: ({ req, res }) => ({
+        req,
+        res, // ✅ <---- this is what fixes your issue
+        user: req.user, // optional
+      }),
+      // context: ({ req, res }) => ({ req, res }),
       // context: ({ req }) => ({ req }),
       // This is the key part for error formatting
       formatError: (error: GraphQLError) => {
@@ -124,6 +137,7 @@ const ENV = process.env.NODE_ENV;
     TenantsModule,
     LevelModule,
     SchoolLevelSettingModule,
+    CurriculumModule,
     
  
     

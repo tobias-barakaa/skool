@@ -8,7 +8,6 @@ import {
   import { ObjectType, Field, ID, registerEnumType } from '@nestjs/graphql';
 import { Student } from '../../student/entities/student.entity';
 import { Class } from '../../class/entities/class.entity';
-import { Subject } from '../../subject/entities/subject.entity';
 import { Teacher } from '../../teacher/entities/teacher.entity';
 //   import { Student } from 'src/students/entities/student.entity';
 //   import { Class } from 'src/classes/entities/class.entity';
@@ -75,9 +74,6 @@ import { Teacher } from '../../teacher/entities/teacher.entity';
     @ManyToOne(() => Class, (cls) => cls.attendance, { nullable: true })
     class?: Class;
   
-    @Field(() => Subject, { nullable: true })
-    @ManyToOne(() => Subject, (subject) => subject.attendance, { nullable: true })
-    subject?: Subject;
   
     @Field(() => Teacher)
     @ManyToOne(() => Teacher, (teacher) => teacher.attendance)

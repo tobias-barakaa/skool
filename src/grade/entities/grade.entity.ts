@@ -7,7 +7,6 @@ import {
   } from 'typeorm';
   import { ObjectType, Field, ID, registerEnumType } from '@nestjs/graphql';
 import { Student } from '../../student/entities/student.entity';
-import { Subject } from '../../subject/entities/subject.entity';
 import { Class } from '../../class/entities/class.entity';
 import { Teacher } from '../../teacher/entities/teacher.entity';
 import { Level } from '../../level/entities/level.entities';
@@ -107,11 +106,7 @@ import { Level } from '../../level/entities/level.entities';
     @ManyToOne(() => Student, (student) => student.grades)
     student: Student;
 
-  
-    @Field(() => Subject)
-    @ManyToOne(() => Subject, (subject) => subject.grades)
-    subject: Subject;
-  
+   
     @Field(() => Class)
     @ManyToOne(() => Class, (cls) => cls.grades)
     class: Class;

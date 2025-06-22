@@ -2,7 +2,7 @@ import { IsArray, IsString, IsOptional, IsBoolean, ValidateNested } from 'class-
 import { Type } from 'class-transformer';
 import { InputType, Field, ObjectType } from '@nestjs/graphql';
 
-@InputType('CBCLevelSelectionInput') // <-- For GraphQL Input use
+@InputType('CBCLevelSelectionInput') 
 @ObjectType()
 export class CBCLevelSelectionDto {
     @Field()

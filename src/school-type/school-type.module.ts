@@ -1,20 +1,24 @@
 import { Module } from '@nestjs/common';
-import { SchoolTypeService } from './services/school-type.service';
-import { SchoolTypeResolver } from './resolvers/school-type.resolver';
 import { SchoolTypeProvider } from './providers/school-type-provider';
 import { CbcProvider } from './providers/cbc-provider';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CBCSchoolSelectionEntity } from './entities/cbc_school_selections';
-import { Subject } from 'src/subject/entities/subject.entity';
 import { SubjectModule } from 'src/subject/subject.module';
-import { SchoolSetup } from './entities/school-setup.entity';
 import { SchoolsModule } from 'src/school/school.module';
-import { SubjectResolver } from './resolvers/cbc-setup.resolver';
 import { SchoolType } from './entities/school-type';
+import { SchoolTypeService } from './services/school-type.service';
+import { CurriculumModule } from 'src/curriculum/curriculum.module';
+import { UserSchoolSelection } from './entities/user.school-selection.entity';
+import { GradeLevel } from 'src/level/entities/grade-level.entity';
+import { SchoolTypeResolver } from './resolvers/school-type.resolver';
+import { SchoolLevel } from './entities/school_level.entity';
+import { SchoolConfig } from './entities/school-config.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CBCSchoolSelectionEntity, SchoolSetup, SchoolType]), SubjectModule, SchoolsModule],
-  providers: [SchoolTypeService,  SchoolTypeResolver, SubjectResolver,SchoolTypeProvider, CbcProvider],
+  imports: [TypeOrmModule.forFeature([CBCSchoolSelectionEntity, SchoolType,GradeLevel, UserSchoolSelection, SchoolLevel,SchoolConfig ]), SubjectModule,CurriculumModule, SchoolsModule],
+  providers: [SchoolTypeProvider, CbcProvider, SchoolTypeService, SchoolTypeResolver],
   exports: [SchoolTypeService]
 })
 export class SchoolTypeModule {}
+
+

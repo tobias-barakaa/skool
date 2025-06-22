@@ -1,0 +1,57 @@
+import { ObjectType, Field, ID } from '@nestjs/graphql';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn
+} from 'typeorm';
+import { GradeLevel } from 'src/level/entities/grade-level.entity';
+import { Curriculum } from './curicula.entity';
+import { Subject } from 'src/subject/entities/subject.entity';
+import { SubjectType } from 'src/subject/enums/subject.type.enum';
+import { SchoolLevel } from 'src/school-type/entities/school_level.entity';
+
+@ObjectType() 
+@Entity('curriculum_subjects')
+export class CurriculumSubject {
+  @Field(() => ID)
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Field(() => Curriculum)
+  @ManyToOne(() => Curriculum, curriculum => curriculum.curriculumSubjects)
+  curriculum: Curriculum;
+
+  @Field(() => Subject)
+  @ManyToOne(() => Subject, subject => subject.curriculumSubjects)
+  subject: Subject;
+
+  @Field(() => SubjectType)
+  @Column({
+    type: 'enum',
+    enum: SubjectType
+  })
+  subjectType: SubjectType;
+
+  @Field()
+  @Column({ default: true })
+  isActive: boolean;
+
+  @Field({ nullable: true })
+  @Column({ type: 'int', nullable: true })
+  displayOrder: number;
+
+  @Field(() => [GradeLevel], { nullable: true })
+  @ManyToMany(() => GradeLevel)
+  @JoinTable({ name: 'curriculum_subject_grades' })
+  availableGrades: GradeLevel[];
+
+  @Field(() => SchoolLevel, { nullable: true })
+@ManyToOne(() => SchoolLevel, (level) => level.curriculumSubjects, {
+  nullable: true,
+  onDelete: 'SET NULL',
+})
+schoolLevel: SchoolLevel;
+}

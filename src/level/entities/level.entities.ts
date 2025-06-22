@@ -32,14 +32,6 @@ export class Level {
   @OneToMany(() => Grade, grade => grade.level, { cascade: true })
   grades: Grade[];
 
-  @Field(() => [Subject], { nullable: true })
-  @OneToMany(() => Subject, subject => subject.level, { cascade: true })
-  subjects: Subject[];
-
-
-//   @Field(() => [GradeLevel])
-//   @OneToMany(() => GradeLevel, (grade) => grade.level)
-//    gradeLevels: GradeLevel[];
 
    @Field(() => [GradeLevel], { nullable: true }) 
 @OneToMany(() => GradeLevel, grade => grade.level, { cascade: true })
