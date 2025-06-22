@@ -69,7 +69,7 @@ export class SchoolTypeResolver {
   private extractSubdomain(request: any): string {
     // Extract subdomain from Host header
     const host = request?.headers?.host || request?.headers?.Host || "sawa.squl.co.ke";
-    // const host = "sawa-2.squl.co.ke"
+    // const host = "sawa-4.squl.co.ke"
     
     console.log('Host:', host);
     

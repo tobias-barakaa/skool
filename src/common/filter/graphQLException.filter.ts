@@ -4,6 +4,7 @@ import {
   Logger,
   ForbiddenException,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { GqlExceptionFilter } from '@nestjs/graphql';
 import { GraphQLError } from 'graphql';
@@ -14,17 +15,17 @@ export class GraphQLExceptionsFilter implements GqlExceptionFilter {
   private readonly logger = new Logger(GraphQLExceptionsFilter.name);
 
   catch(exception: any, host: ArgumentsHost): GraphQLError {
-    const gqlContext = host.getArgByIndex(2); // GraphQL context (3rd argument in resolver)
+    const gqlContext = host.getArgByIndex(2);
     const operationName = gqlContext?.operation?.operationName || 'UnknownOperation';
-
-    // ✅ 1. Handle known BusinessException
+  
+    // Handle BusinessException
     if (exception instanceof BusinessException) {
       this.logger.warn(
         `[BusinessException] ${exception.name}: ${exception.message} | Metadata: ${JSON.stringify(
           exception.metadata,
         )}`,
       );
-
+  
       return new GraphQLError(exception.message, {
         extensions: {
           code: exception.code,
@@ -33,11 +34,15 @@ export class GraphQLExceptionsFilter implements GqlExceptionFilter {
         },
       });
     }
-
-    // ✅ 2. Handle ForbiddenException and NotFoundException
-    if (exception instanceof ForbiddenException || exception instanceof NotFoundException) {
+  
+    // Handle Forbidden, NotFound, BadRequest
+    if (
+      exception instanceof ForbiddenException ||
+      exception instanceof NotFoundException ||
+      exception instanceof BadRequestException
+    ) {
       this.logger.warn(`[${exception.name}] ${exception.message}`);
-
+  
       return new GraphQLError(exception.message, {
         extensions: {
           code: exception.name,
@@ -45,14 +50,14 @@ export class GraphQLExceptionsFilter implements GqlExceptionFilter {
         },
       });
     }
-
-    // ❌ 3. Handle unexpected or unknown exceptions
+  
+    // Fallback for unknown exceptions
     const errorMessage = exception.message || 'Unknown error';
     const errorStack = exception.stack || 'No stack trace available';
-
+  
     this.logger.error(`[UnexpectedError] GraphQL Error in ${operationName}: ${errorMessage}`);
     this.logger.error(errorStack);
-
+  
     return new GraphQLError('Internal server error', {
       extensions: {
         code: 'INTERNAL_SERVER_ERROR',
@@ -60,6 +65,7 @@ export class GraphQLExceptionsFilter implements GqlExceptionFilter {
       },
     });
   }
+  
 }
 
 
