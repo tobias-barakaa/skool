@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, ForbiddenException } from '@nestjs/common';
+import { Injectable, BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Curriculum } from 'src/curriculum/entities/curicula.entity';
 import { CurriculumSubject } from 'src/curriculum/entities/curriculum_subjects.entity';
@@ -274,7 +274,7 @@ export class SchoolTypeService {
     });
 
     if (!school) {
-    throw new BadRequestException('School not found');
+    throw new NotFoundException('School not found');
   }
 
   // ✅ Add these debug logs
