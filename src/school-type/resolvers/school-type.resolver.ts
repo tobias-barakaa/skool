@@ -38,11 +38,12 @@ export class SchoolTypeResolver {
     // 🔍 Log decoded user from ActiveUser decorator
     logger.debug(`👤 Decoded User: ${JSON.stringify(user, null, 2)}`);
 
-    const subdomain = this.extractSubdomain(context.req);
+    // const subdomain = this.extractSubdomain(context.req);
+    const subdomain = user.schoolSubdomain;
     
     return await this.schoolTypeService.configureSchoolLevelsByNames(
       levelNames,
-      subdomain,
+      subdomain || 'default', // Provide a fallback value or handle undefined
       String(user.sub) // Convert user.sub to string to match the expected parameter type
     );
   }
@@ -54,10 +55,11 @@ export class SchoolTypeResolver {
     @ActiveUser() user: ActiveUserData
   ) {
     // Extract subdomain from request headers or context
-    const subdomain = this.extractSubdomain(context.req);
+    const subdomain = user.schoolSubdomain;
+
     
     return await this.schoolTypeService.getSchoolConfiguration(
-      subdomain,
+      subdomain || 'default',
       String(user.sub) // Convert user.sub to string to match the expected parameter type
     );
   }
@@ -87,32 +89,34 @@ export class SchoolTypeResolver {
   }
 
   private extractSubdomain(request: any): string {
-    const host =
-      request?.headers?.['x-forwarded-host'] ||
-      request?.headers?.host ||
-      request?.hostname;
-  
+    // Extract subdomain from Host header
+    // const host = request.headers.host 
+    // const host = request?.headers?.host || request?.headers?.Host || "sawa.squl.co.ke";
+
+    const host = "barakaa.squl.co.ke"
+    
     console.log('Host:', host);
-  
+    
     if (!host) {
       throw new Error('Host header is required');
     }
-  
+
+    // Handle different formats: subdomain.domain.com or subdomain.localhost:3000
     const hostParts = host.split('.');
-  
-    // Local dev (e.g. barakaa.localhost:3000)
+    
+    // For development (localhost)
     if (host.includes('localhost')) {
-      return hostParts.length > 1 ? hostParts[0] : 'default';
+      const subdomain = hostParts[0];
+      return subdomain === 'localhost' ? 'default' : subdomain;
     }
-  
-    // Prod (e.g. barakaa.squl.co.ke)
+    
+    // For production (subdomain.squl.co.ke)
     if (hostParts.length >= 3) {
       return hostParts[0];
     }
-  
+    
     throw new Error('Invalid subdomain format');
   }
-  
 }
 
 // import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
