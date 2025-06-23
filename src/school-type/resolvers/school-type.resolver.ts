@@ -40,6 +40,8 @@ export class SchoolTypeResolver {
 
     // const subdomain = this.extractSubdomain(context.req);
     const subdomain = user.schoolSubdomain;
+    console.log('Extracted subdomain:', subdomain);
+
     
     return await this.schoolTypeService.configureSchoolLevelsByNames(
       levelNames,
@@ -51,7 +53,6 @@ export class SchoolTypeResolver {
   @Auth(AuthType.Bearer)
   @Query(() => SchoolConfigurationResponse, { nullable: true })
   async getSchoolConfiguration(
-    @Context() context: any,
     @ActiveUser() user: ActiveUserData
   ) {
     // Extract subdomain from request headers or context
@@ -88,35 +89,6 @@ export class SchoolTypeResolver {
     ];
   }
 
-  private extractSubdomain(request: any): string {
-    // Extract subdomain from Host header
-    // const host = request.headers.host 
-    // const host = request?.headers?.host || request?.headers?.Host || "sawa.squl.co.ke";
-
-    const host = "barakaa.squl.co.ke"
-    
-    console.log('Host:', host);
-    
-    if (!host) {
-      throw new Error('Host header is required');
-    }
-
-    // Handle different formats: subdomain.domain.com or subdomain.localhost:3000
-    const hostParts = host.split('.');
-    
-    // For development (localhost)
-    if (host.includes('localhost')) {
-      const subdomain = hostParts[0];
-      return subdomain === 'localhost' ? 'default' : subdomain;
-    }
-    
-    // For production (subdomain.squl.co.ke)
-    if (hostParts.length >= 3) {
-      return hostParts[0];
-    }
-    
-    throw new Error('Invalid subdomain format');
-  }
 }
 
 // import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';

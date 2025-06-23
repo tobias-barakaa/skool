@@ -62,7 +62,7 @@ public async generateTokens(user: User) {
     const [accessToken, refreshToken] = await Promise.all([
       this.signToken<Partial<ActiveUserData>>(
         user.id,
-        this.jwtConfiguration.accessTOKENTtl,
+        this.jwtConfiguration.accessTokenTtl,
         tenantContext
       ),
       this.signToken(
