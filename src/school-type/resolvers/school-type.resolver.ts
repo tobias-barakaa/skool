@@ -12,7 +12,6 @@ import { AuthType } from 'src/auth/enums/auth-type.enum';
 export class SchoolTypeResolver {
   constructor(private readonly schoolTypeService: SchoolTypeService) {}
 
-  @Auth(AuthType.Bearer)
   @Mutation(() => SchoolConfigurationResponse)
   async configureSchoolLevelsByNames(
     @Args('levelNames', { type: () => [String] }) levelNames: string[],
