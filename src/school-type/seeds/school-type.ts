@@ -7,6 +7,7 @@ import { Subject } from "src/subject/entities/subject.entity";
 import { SubjectType } from "src/subject/enums/subject.type.enum";
 import { Curriculum } from "src/curriculum/entities/curicula.entity";
 import { CurriculumSubject } from "src/curriculum/entities/curriculum_subjects.entity";
+import { Level } from "src/level/entities/level.entities";
 
 
 @Injectable()
@@ -16,24 +17,60 @@ export class SeedingService {
     @InjectRepository(Curriculum) private curriculumRepo: Repository<Curriculum>,
     @InjectRepository(GradeLevel) private gradeLevelRepo: Repository<GradeLevel>,
     @InjectRepository(Subject) private subjectRepo: Repository<Subject>,
+    @InjectRepository(Level) private levelRepo: Repository<Level>,
+
     @InjectRepository(CurriculumSubject) private curriculumSubjectRepo: Repository<CurriculumSubject>,
   ) {}
 
   // Main seeding method - creates all school types and their data
   async seedAllSchoolTypes(): Promise<void> {
     console.log('Starting comprehensive school seeding...');
-    
-    // Create all unique subjects first
+  
     const allSubjects = await this.createAllUniqueSubjects();
-    
-    // Seed each school type
-    await this.seedCBCSchool(allSubjects);
-    await this.seedInternationalSchool(allSubjects);
-    await this.seedMadrasaSchool(allSubjects);
-    await this.seedHomeschoolSystem(allSubjects);
-    
-    console.log('All school types seeded successfully!');
+  
+    // STEP 1: Seed SchoolTypes only (no levels yet)
+    const cbcSchoolType = await this.schoolTypeRepo.save({ name: 'CBC', code: 'CBC' });
+    const internationalSchool = await this.schoolTypeRepo.save({ name: 'International', code: 'INTL' });
+    const madrasaSchool = await this.schoolTypeRepo.save({ name: 'Madrasa', code: 'MDR' });
+    const homeschoolType = await this.schoolTypeRepo.save({ name: 'Homeschool', code: 'HMS' });
+  
+    // STEP 2: Seed Levels (reference schoolType in each)
+    await this.levelRepo.save([
+      { name: 'Pre-Primary', schoolType: cbcSchoolType },
+      { name: 'Lower Primary', schoolType: cbcSchoolType },
+      { name: 'Upper Primary', schoolType: cbcSchoolType },
+      { name: 'Junior Secondary', schoolType: cbcSchoolType },
+      { name: 'Senior Secondary', schoolType: cbcSchoolType },
+  
+      { name: 'IGCSE Early Years', schoolType: internationalSchool },
+      { name: 'IGCSE Primary', schoolType: internationalSchool },
+      { name: 'IGCSE Lower Secondary', schoolType: internationalSchool },
+      { name: 'IGCSE Upper Secondary', schoolType: internationalSchool },
+      { name: 'A Level', schoolType: internationalSchool },
+  
+      { name: 'Madrasa Beginners', schoolType: madrasaSchool },
+      { name: 'Madrasa Lower', schoolType: madrasaSchool },
+      { name: 'Madrasa Upper', schoolType: madrasaSchool },
+      { name: 'Madrasa Secondary', schoolType: madrasaSchool },
+      { name: 'Madrasa Advanced Alim', schoolType: madrasaSchool },
+  
+      { name: 'Homeschool Early Years', schoolType: homeschoolType },
+      { name: 'Homeschool Lower Primary', schoolType: homeschoolType },
+      { name: 'Homeschool Upper Primary', schoolType: homeschoolType },
+      { name: 'Homeschool Junior Secondary', schoolType: homeschoolType },
+      { name: 'Homeschool Senior Secondary', schoolType: homeschoolType }
+    ]);
+  
+    // STEP 3: Seed each school’s full structure
+   
+    await this.seedCBCSchool(cbcSchoolType, allSubjects);
+    await this.seedInternationalSchool(internationalSchool, allSubjects);
+    await this.seedMadrasaSchool(madrasaSchool,allSubjects);
+    await this.seedHomeschoolSystem(homeschoolType, allSubjects);
+  
+    console.log('✅ All school types and levels seeded successfully!');
   }
+  
 
   // Creates all unique subjects across all school systems
   private async createAllUniqueSubjects(): Promise<Subject[]> {
@@ -107,7 +144,7 @@ export class SeedingService {
       "Comparative Fiqh (Shafi'i, Hanafi, etc.)", "Philosophical Theology (Kalam)",
       "Fatwa Writing & Research", "Khutbah Training & Da'wah Methodology"
     ];
-
+    
     // Homeschool Subjects
     const homeschoolSubjects = [
       "Literacy (Reading & Phonics)", "Numeracy (Counting & Basic Math)",
@@ -149,11 +186,12 @@ export class SeedingService {
   }
 
   // CBC School Seeding
-  async seedCBCSchool(allSubjects: Subject[]): Promise<void> {
-    const cbcSchool = await this.schoolTypeRepo.save({
-      name: 'CBC (Competency Based Curriculum)',
-      code: 'CBC'
-    });
+
+  async seedCBCSchool(
+    cbcSchool: SchoolType, // 👈 receives SchoolType from main seeder
+    allSubjects: Subject[]
+  ): Promise<void> {
+ 
 
     const cbcCurricula = await this.curriculumRepo.save([
       { name: 'PrePrimary', code: 'PP', display_name: 'Pre-Primary', schoolType: cbcSchool },
@@ -163,43 +201,59 @@ export class SeedingService {
       { name: 'SeniorSecondary', code: 'SS', display_name: 'Senior Secondary', schoolType: cbcSchool }
     ]);
 
-    // Create grade levels
-    await this.gradeLevelRepo.save([
-      // Pre-Primary
-      { name: 'PP1', code: 'PP1', order: 1, curriculum: cbcCurricula[0] },
-      { name: 'PP2', code: 'PP2', order: 2, curriculum: cbcCurricula[0] },
-      
-      // Lower Primary
-      { name: 'Grade 1', code: 'G1', order: 3, curriculum: cbcCurricula[1] },
-      { name: 'Grade 2', code: 'G2', order: 4, curriculum: cbcCurricula[1] },
-      { name: 'Grade 3', code: 'G3', order: 5, curriculum: cbcCurricula[1] },
-      
-      // Upper Primary
-      { name: 'Grade 4', code: 'G4', order: 6, curriculum: cbcCurricula[2] },
-      { name: 'Grade 5', code: 'G5', order: 7, curriculum: cbcCurricula[2] },
-      { name: 'Grade 6', code: 'G6', order: 8, curriculum: cbcCurricula[2] },
-      
-      // Junior Secondary
-      { name: 'Grade 7', code: 'G7', order: 9, curriculum: cbcCurricula[3] },
-      { name: 'Grade 8', code: 'G8', order: 10, curriculum: cbcCurricula[3] },
-      { name: 'Grade 9', code: 'G9', order: 11, curriculum: cbcCurricula[3] },
-      
-      // Senior Secondary
-      { name: 'Grade 10', code: 'G10', order: 12, curriculum: cbcCurricula[4] },
-      { name: 'Grade 11', code: 'G11', order: 13, curriculum: cbcCurricula[4] },
-      { name: 'Grade 12', code: 'G12', order: 14, curriculum: cbcCurricula[4] }
-    ]);
+    // 1. Fetch SchoolLevels
+// 1. Fetch Levels (not SchoolLevels anymore)
+const prePrimary = await this.levelRepo.findOneByOrFail({ name: 'Pre-Primary' });
+const lowerPrimary = await this.levelRepo.findOneByOrFail({ name: 'Lower Primary' });
+const upperPrimary = await this.levelRepo.findOneByOrFail({ name: 'Upper Primary' });
+const juniorSecondary = await this.levelRepo.findOneByOrFail({ name: 'Junior Secondary' });
+const seniorSecondary = await this.levelRepo.findOneByOrFail({ name: 'Senior Secondary' });
+
+
+// 2. Save GradeLevels with level field
+await this.gradeLevelRepo.save([
+  // Pre-Primary
+  { name: 'PP1', code: 'PP1', order: 1, curriculum: cbcCurricula[0], level: prePrimary },
+  { name: 'PP2', code: 'PP2', order: 2, curriculum: cbcCurricula[0], level: prePrimary },
+  
+  // Lower Primary
+  { name: 'Grade 1', code: 'G1', order: 3, curriculum: cbcCurricula[1], level: lowerPrimary },
+  { name: 'Grade 2', code: 'G2', order: 4, curriculum: cbcCurricula[1], level: lowerPrimary },
+  { name: 'Grade 3', code: 'G3', order: 5, curriculum: cbcCurricula[1], level: lowerPrimary },
+  
+  // Upper Primary
+  { name: 'Grade 4', code: 'G4', order: 6, curriculum: cbcCurricula[2], level: upperPrimary },
+  { name: 'Grade 5', code: 'G5', order: 7, curriculum: cbcCurricula[2], level: upperPrimary },
+  { name: 'Grade 6', code: 'G6', order: 8, curriculum: cbcCurricula[2], level: upperPrimary },
+  
+  // Junior Secondary
+  { name: 'Grade 7', code: 'G7', order: 9, curriculum: cbcCurricula[3], level: juniorSecondary },
+  { name: 'Grade 8', code: 'G8', order: 10, curriculum: cbcCurricula[3], level: juniorSecondary },
+  { name: 'Grade 9', code: 'G9', order: 11, curriculum: cbcCurricula[3], level: juniorSecondary },
+  
+  // Senior Secondary
+  { name: 'Grade 10', code: 'G10', order: 12, curriculum: cbcCurricula[4], level: seniorSecondary },
+  { name: 'Grade 11', code: 'G11', order: 13, curriculum: cbcCurricula[4], level: seniorSecondary },
+  { name: 'Grade 12', code: 'G12', order: 14, curriculum: cbcCurricula[4], level: seniorSecondary }
+]);
 
     // Create curriculum subjects for CBC
-    await this.createCBCCurriculumSubjects(cbcCurricula, allSubjects);
+    // await this.createCBCCurriculumSubjects(cbcCurricula, allSubjects);
+    // Fetch all grade levels from the database
+        const allGradeLevels = await this.gradeLevelRepo.find({
+  relations: ['curriculum'],
+});
+        await this.createCBCCurriculumSubjects(cbcCurricula, allSubjects, allGradeLevels);
+
   }
 
   // IGCSE School Seeding (International)
-  async seedInternationalSchool(allSubjects: Subject[]): Promise<void> {
-    const internationalSchool = await this.schoolTypeRepo.save({
-      name: 'International',
-      code: 'INTL'
-    });
+
+
+  // async seedInternationalSchool(allSubjects: Subject[]): Promise<void> {
+  async seedInternationalSchool(internationalSchool: SchoolType, allSubjects: Subject[]): Promise<void> {
+   
+  
 
     const curricula = await this.curriculumRepo.save([
       { name: 'IGCSE_EarlyYears', code: 'IGCSE_EY', display_name: 'IGCSE Early Years', schoolType: internationalSchool },
@@ -209,43 +263,53 @@ export class SeedingService {
       { name: 'A_Level', code: 'A_LVL', display_name: 'A Level', schoolType: internationalSchool }
     ]);
 
+      // 2. Fetch level entities
+  const earlyYears = await this.levelRepo.findOneByOrFail({ name: 'IGCSE Early Years' });
+  const primary = await this.levelRepo.findOneByOrFail({ name: 'IGCSE Primary' });
+  const lowerSecondary = await this.levelRepo.findOneByOrFail({ name: 'IGCSE Lower Secondary' });
+  const upperSecondary = await this.levelRepo.findOneByOrFail({ name: 'IGCSE Upper Secondary' });
+  const aLevel = await this.levelRepo.findOneByOrFail({ name: 'A Level' });
+
     // Create grade levels
     await this.gradeLevelRepo.save([
       // Early Years
-      { name: 'Nursery', code: 'NUR', order: 1, curriculum: curricula[0] },
-      { name: 'Reception', code: 'REC', order: 2, curriculum: curricula[0] },
-      
+      { name: 'Nursery', code: 'NUR', order: 1, curriculum: curricula[0], level: earlyYears },
+      { name: 'Reception', code: 'REC', order: 2, curriculum: curricula[0], level: earlyYears },
+  
       // Primary
-      { name: 'Year 1', code: 'Y1', order: 3, curriculum: curricula[1] },
-      { name: 'Year 2', code: 'Y2', order: 4, curriculum: curricula[1] },
-      { name: 'Year 3', code: 'Y3', order: 5, curriculum: curricula[1] },
-      { name: 'Year 4', code: 'Y4', order: 6, curriculum: curricula[1] },
-      { name: 'Year 5', code: 'Y5', order: 7, curriculum: curricula[1] },
-      { name: 'Year 6', code: 'Y6', order: 8, curriculum: curricula[1] },
-      
+      { name: 'Year 1', code: 'Y1', order: 3, curriculum: curricula[1], level: primary },
+      { name: 'Year 2', code: 'Y2', order: 4, curriculum: curricula[1], level: primary },
+      { name: 'Year 3', code: 'Y3', order: 5, curriculum: curricula[1], level: primary },
+      { name: 'Year 4', code: 'Y4', order: 6, curriculum: curricula[1], level: primary },
+      { name: 'Year 5', code: 'Y5', order: 7, curriculum: curricula[1], level: primary },
+      { name: 'Year 6', code: 'Y6', order: 8, curriculum: curricula[1], level: primary },
+  
       // Lower Secondary
-      { name: 'Year 7', code: 'Y7', order: 9, curriculum: curricula[2] },
-      { name: 'Year 8', code: 'Y8', order: 10, curriculum: curricula[2] },
-      { name: 'Year 9', code: 'Y9', order: 11, curriculum: curricula[2] },
-      
+      { name: 'Year 7', code: 'Y7', order: 9, curriculum: curricula[2], level: lowerSecondary },
+      { name: 'Year 8', code: 'Y8', order: 10, curriculum: curricula[2], level: lowerSecondary },
+      { name: 'Year 9', code: 'Y9', order: 11, curriculum: curricula[2], level: lowerSecondary },
+  
       // Upper Secondary
-      { name: 'Year 10', code: 'Y10', order: 12, curriculum: curricula[3] },
-      { name: 'Year 11', code: 'Y11', order: 13, curriculum: curricula[3] },
-      
+      { name: 'Year 10', code: 'Y10', order: 12, curriculum: curricula[3], level: upperSecondary },
+      { name: 'Year 11', code: 'Y11', order: 13, curriculum: curricula[3], level: upperSecondary },
+  
       // A Level
-      { name: 'Year 12', code: 'Y12', order: 14, curriculum: curricula[4] },
-      { name: 'Year 13', code: 'Y13', order: 15, curriculum: curricula[4] }
+      { name: 'Year 12', code: 'Y12', order: 14, curriculum: curricula[4], level: aLevel },
+      { name: 'Year 13', code: 'Y13', order: 15, curriculum: curricula[4], level: aLevel },
     ]);
+  
 
-    await this.createIGCSECurriculumSubjects(curricula, allSubjects);
+    
+    const allGradeLevels = await this.gradeLevelRepo.find({
+  relations: ['curriculum'],
+});
+    await this.createIGCSECurriculumSubjects(curricula, allSubjects, allGradeLevels);
+    
   }
 
   // Madrasa School Seeding
-  async seedMadrasaSchool(allSubjects: Subject[]): Promise<void> {
-    const madrasaSchool = await this.schoolTypeRepo.save({
-      name: 'Madrasa',
-      code: 'MDR'
-    });
+  async seedMadrasaSchool(madrasaSchool:SchoolType, allSubjects:Subject[]): Promise<void> {
+    
 
     const madrasaCurricula = await this.curriculumRepo.save([
       { name: 'Madrasa_Beginners', code: 'MDR_BEG', display_name: 'Madrasa Beginners', schoolType: madrasaSchool },
@@ -255,44 +319,55 @@ export class SeedingService {
       { name: 'Madrasa_AdvancedAlim', code: 'MDR_ALM', display_name: 'Madrasa Advanced Alim', schoolType: madrasaSchool }
     ]);
 
+
+    const beginners = await this.levelRepo.findOneByOrFail({ name: 'Madrasa Beginners' });
+const lower = await this.levelRepo.findOneByOrFail({ name: 'Madrasa Lower' });
+const upper = await this.levelRepo.findOneByOrFail({ name: 'Madrasa Upper' });
+const secondary = await this.levelRepo.findOneByOrFail({ name: 'Madrasa Secondary' });
+const advancedAlim = await this.levelRepo.findOneByOrFail({ name: 'Madrasa Advanced Alim' });
+
+
     // Create grade levels
     await this.gradeLevelRepo.save([
       // Beginners
-      { name: 'Duksi 1', code: 'DUK1', order: 1, curriculum: madrasaCurricula[0] },
-      { name: 'Duksi 2', code: 'DUK2', order: 2, curriculum: madrasaCurricula[0] },
-      { name: 'Duksi 3', code: 'DUK3', order: 3, curriculum: madrasaCurricula[0] },
+        // Beginners
+        { name: 'Duksi 1', code: 'DUK1', order: 1, curriculum: madrasaCurricula[0], level: beginners },
+        { name: 'Duksi 2', code: 'DUK2', order: 2, curriculum: madrasaCurricula[0], level: beginners },
+        { name: 'Duksi 3', code: 'DUK3', order: 3, curriculum: madrasaCurricula[0], level: beginners },
       
-      // Lower
-      { name: 'Level 1', code: 'L1', order: 4, curriculum: madrasaCurricula[1] },
-      { name: 'Level 2', code: 'L2', order: 5, curriculum: madrasaCurricula[1] },
-      { name: 'Level 3', code: 'L3', order: 6, curriculum: madrasaCurricula[1] },
+        // Lower
+        { name: 'Level 1', code: 'L1', order: 4, curriculum: madrasaCurricula[1], level: lower },
+        { name: 'Level 2', code: 'L2', order: 5, curriculum: madrasaCurricula[1], level: lower },
+        { name: 'Level 3', code: 'L3', order: 6, curriculum: madrasaCurricula[1], level: lower },
       
-      // Upper
-      { name: 'Level 4', code: 'L4', order: 7, curriculum: madrasaCurricula[2] },
-      { name: 'Level 5', code: 'L5', order: 8, curriculum: madrasaCurricula[2] },
-      { name: 'Level 6', code: 'L6', order: 9, curriculum: madrasaCurricula[2] },
+        // Upper
+        { name: 'Level 4', code: 'L4', order: 7, curriculum: madrasaCurricula[2], level: upper },
+        { name: 'Level 5', code: 'L5', order: 8, curriculum: madrasaCurricula[2], level: upper },
+        { name: 'Level 6', code: 'L6', order: 9, curriculum: madrasaCurricula[2], level: upper },
       
-      // Secondary
-      { name: 'Level 7', code: 'L7', order: 10, curriculum: madrasaCurricula[3] },
-      { name: 'Level 8', code: 'L8', order: 11, curriculum: madrasaCurricula[3] },
-      { name: 'Level 9', code: 'L9', order: 12, curriculum: madrasaCurricula[3] },
+        // Secondary
+        { name: 'Level 7', code: 'L7', order: 10, curriculum: madrasaCurricula[3], level: secondary },
+        { name: 'Level 8', code: 'L8', order: 11, curriculum: madrasaCurricula[3], level: secondary },
+        { name: 'Level 9', code: 'L9', order: 12, curriculum: madrasaCurricula[3], level: secondary },
       
-      // Advanced Alim
-      { name: 'Alim Year 1', code: 'ALM1', order: 13, curriculum: madrasaCurricula[4] },
-      { name: 'Alim Year 2', code: 'ALM2', order: 14, curriculum: madrasaCurricula[4] },
-      { name: 'Alim Year 3', code: 'ALM3', order: 15, curriculum: madrasaCurricula[4] },
-      { name: 'Final Year', code: 'FIN', order: 16, curriculum: madrasaCurricula[4] }
-    ]);
+        // Advanced Alim
+        { name: 'Alim Year 1', code: 'ALM1', order: 13, curriculum: madrasaCurricula[4], level: advancedAlim },
+        { name: 'Alim Year 2', code: 'ALM2', order: 14, curriculum: madrasaCurricula[4], level: advancedAlim },
+        { name: 'Alim Year 3', code: 'ALM3', order: 15, curriculum: madrasaCurricula[4], level: advancedAlim },
+        { name: 'Final Year', code: 'FIN', order: 16, curriculum: madrasaCurricula[4], level: advancedAlim }
+      ]);
+      
 
-    await this.createMadrasaCurriculumSubjects(madrasaCurricula, allSubjects);
+    const allGradeLevels = await this.gradeLevelRepo.find({
+  relations: ['curriculum'],
+});
+    await this.createMadrasaCurriculumSubjects(madrasaCurricula, allSubjects, allGradeLevels);
+
   }
 
   // Homeschool System Seeding
-  async seedHomeschoolSystem(allSubjects: Subject[]): Promise<void> {
-    const homeschoolType = await this.schoolTypeRepo.save({
-      name: 'Homeschool',
-      code: 'HMS'
-    });
+  async seedHomeschoolSystem(homeschoolType:SchoolType, allSubjects: Subject[]): Promise<void> {
+   
 
     const homeschoolCurricula = await this.curriculumRepo.save([
       { name: 'Homeschool_EarlyYears', code: 'HMS_EY', display_name: 'Homeschool Early Years', schoolType: homeschoolType },
@@ -302,624 +377,995 @@ export class SeedingService {
       { name: 'Homeschool_SeniorSecondary', code: 'HMS_SS', display_name: 'Homeschool Senior Secondary', schoolType: homeschoolType }
     ]);
 
-    // Create grade levels
-    await this.gradeLevelRepo.save([
-      // Early Years
-      { name: 'Pre-K', code: 'PRK', order: 1, curriculum: homeschoolCurricula[0] },
-      { name: 'Kindergarten', code: 'KIN', order: 2, curriculum: homeschoolCurricula[0] },
-      
-      // Lower Primary
-      { name: 'Grade 1', code: 'HG1', order: 3, curriculum: homeschoolCurricula[1] },
-      { name: 'Grade 2', code: 'HG2', order: 4, curriculum: homeschoolCurricula[1] },
-      { name: 'Grade 3', code: 'HG3', order: 5, curriculum: homeschoolCurricula[1] },
-      
-      // Upper Primary
-      { name: 'Grade 4', code: 'HG4', order: 6, curriculum: homeschoolCurricula[2] },
-      { name: 'Grade 5', code: 'HG5', order: 7, curriculum: homeschoolCurricula[2] },
-      { name: 'Grade 6', code: 'HG6', order: 8, curriculum: homeschoolCurricula[2] },
-      
-      // Junior Secondary
-      { name: 'Grade 7', code: 'HG7', order: 9, curriculum: homeschoolCurricula[3] },
-      { name: 'Grade 8', code: 'HG8', order: 10, curriculum: homeschoolCurricula[3] },
-      { name: 'Grade 9', code: 'HG9', order: 11, curriculum: homeschoolCurricula[3] },
-      
-      // Senior Secondary
-      { name: 'Grade 10', code: 'HG10', order: 12, curriculum: homeschoolCurricula[4] },
-      { name: 'Grade 11', code: 'HG11', order: 13, curriculum: homeschoolCurricula[4] },
-      { name: 'Grade 12', code: 'HG12', order: 14, curriculum: homeschoolCurricula[4] }
-    ]);
+    // 1. Fetch Levels (assumes Level table already seeded)
+const earlyYears = await this.levelRepo.findOneByOrFail({ name: 'Homeschool Early Years' });
+const lowerPrimary = await this.levelRepo.findOneByOrFail({ name: 'Homeschool Lower Primary' });
+const upperPrimary = await this.levelRepo.findOneByOrFail({ name: 'Homeschool Upper Primary' });
+const juniorSecondary = await this.levelRepo.findOneByOrFail({ name: 'Homeschool Junior Secondary' });
+const seniorSecondary = await this.levelRepo.findOneByOrFail({ name: 'Homeschool Senior Secondary' });
 
-    await this.createHomeschoolCurriculumSubjects(homeschoolCurricula, allSubjects);
+
+
+// 2. Save GradeLevels with level field
+await this.gradeLevelRepo.save([
+  // Early Years
+  { name: 'Pre-K', code: 'PRK', order: 1, curriculum: homeschoolCurricula[0], level: earlyYears },
+  { name: 'Kindergarten', code: 'KIN', order: 2, curriculum: homeschoolCurricula[0], level: earlyYears },
+  
+  // Lower Primary
+  { name: 'Grade 1', code: 'HG1', order: 3, curriculum: homeschoolCurricula[1], level: lowerPrimary },
+  { name: 'Grade 2', code: 'HG2', order: 4, curriculum: homeschoolCurricula[1], level: lowerPrimary },
+  { name: 'Grade 3', code: 'HG3', order: 5, curriculum: homeschoolCurricula[1], level: lowerPrimary },
+  
+  // Upper Primary
+  { name: 'Grade 4', code: 'HG4', order: 6, curriculum: homeschoolCurricula[2], level: upperPrimary },
+  { name: 'Grade 5', code: 'HG5', order: 7, curriculum: homeschoolCurricula[2], level: upperPrimary },
+  { name: 'Grade 6', code: 'HG6', order: 8, curriculum: homeschoolCurricula[2], level: upperPrimary },
+  
+  // Junior Secondary
+  { name: 'Grade 7', code: 'HG7', order: 9, curriculum: homeschoolCurricula[3], level: juniorSecondary },
+  { name: 'Grade 8', code: 'HG8', order: 10, curriculum: homeschoolCurricula[3], level: juniorSecondary },
+  { name: 'Grade 9', code: 'HG9', order: 11, curriculum: homeschoolCurricula[3], level: juniorSecondary },
+  
+  // Senior Secondary
+  { name: 'Grade 10', code: 'HG10', order: 12, curriculum: homeschoolCurricula[4], level: seniorSecondary },
+  { name: 'Grade 11', code: 'HG11', order: 13, curriculum: homeschoolCurricula[4], level: seniorSecondary },
+  { name: 'Grade 12', code: 'HG12', order: 14, curriculum: homeschoolCurricula[4], level: seniorSecondary }
+]);
+
+    const allGradeLevels = await this.gradeLevelRepo.find({
+  relations: ['curriculum'],
+});
+
+    await this.createHomeschoolCurriculumSubjects(homeschoolCurricula, allSubjects, allGradeLevels);
   }
-
+  
   // CBC Curriculum Subjects Creation
-  private async createCBCCurriculumSubjects(curricula: Curriculum[], allSubjects: Subject[]): Promise<void> {
-    const curriculumSubjects: { curriculum: Curriculum; subject: Subject; subjectType: SubjectType }[] = [];
+  private async createCBCCurriculumSubjects(curricula: Curriculum[], allSubjects: Subject[], allGradeLevels: GradeLevel[]): Promise<void> {
+    const toSave: CurriculumSubject[] = [];
+  
+    const mapSubjects = async (
+      curriculumIndex: number,
+      subjectNames: string[],
+      subjectType: SubjectType
+    ) => {
+      const curriculum = curricula[curriculumIndex];
+      // const grades = allGradeLevels.filter(g => g.curriculum.id === curriculum.id);
+      const grades = allGradeLevels.filter(g => g.curriculum?.id === curriculum.id);
 
-    // Pre-Primary subjects (all core)
-    const prePrimarySubjects = [
+  
+      for (const name of subjectNames) {
+        const subject = this.findSubjectByName(allSubjects, name);
+        if (!subject) continue;
+  
+        const curriculumSubject = this.curriculumSubjectRepo.create({
+          subject,
+          curriculum,
+          subjectType,
+          isCompulsory: true,
+          totalMarks: 100,
+          passingMarks: 40,
+          creditHours: 3,
+          availableGrades: grades,
+        });
+  
+        toSave.push(curriculumSubject);
+      }
+    };
+  
+    // Pre-Primary
+    await mapSubjects(0, [
       "Language Activities", "Mathematical Activities", "Environmental Activities",
       "Psychomotor and Creative Activities", "Religious Education Activities"
-    ];
-    prePrimarySubjects.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[0],
-          subject,
-          subjectType: SubjectType.CORE
-        });
-      }
-    });
-
-    // Lower Primary subjects (all core)
-    const lowerPrimarySubjects = [
+    ], SubjectType.CORE);
+  
+    // Lower Primary
+    await mapSubjects(1, [
       "Literacy", "Kiswahili Language Activities", "English Language Activities",
       "Indigenous Language Activities", "Mathematical Activities", "Environmental Activities",
       "Hygiene and Nutrition Activities", "Religious Education Activities", "Movement and Creative Activities"
-    ];
-    lowerPrimarySubjects.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[1],
-          subject,
-          subjectType: SubjectType.CORE
-        });
-      }
-    });
-
-    // Upper Primary subjects
-    const upperPrimaryCore = [
+    ], SubjectType.CORE);
+  
+    // Upper Primary
+    await mapSubjects(2, [
       "English", "Kiswahili", "Mathematics", "Science and Technology",
       "Agriculture and Nutrition", "Social Studies", "Religious Education (CRE, IRE, HRE)",
       "Creative Arts", "Physical and Health Education"
-    ];
-    upperPrimaryCore.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[2],
-          subject,
-          subjectType: SubjectType.CORE
-        });
-      }
-    });
-
-    const upperPrimaryElectives = ["Optional Foreign Languages (e.g. French, Arabic, Mandarin)"];
-    upperPrimaryElectives.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[2],
-          subject,
-          subjectType: SubjectType.ELECTIVE
-        });
-      }
-    });
-
-    // Junior Secondary subjects
-    const juniorSecondaryCore = [
+    ], SubjectType.CORE);
+  
+    await mapSubjects(2, [
+      "Optional Foreign Languages (e.g. French, Arabic, Mandarin)"
+    ], SubjectType.ELECTIVE);
+  
+    // Junior Secondary
+    await mapSubjects(3, [
       "English", "Kiswahili or Kenya Sign Language", "Mathematics", "Integrated Science",
       "Social Studies", "Agriculture", "Religious Education", "Health Education",
       "Life Skills Education", "Pre-Technical and Pre-Career Education", "Sports and Physical Education"
-    ];
-    juniorSecondaryCore.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[3],
-          subject,
-          subjectType: SubjectType.CORE
-        });
-      }
-    });
-
-    const juniorSecondaryElectives = [
+    ], SubjectType.CORE);
+  
+    await mapSubjects(3, [
       "Visual Arts", "Performing Arts", "Home Science", "Computer Science",
       "Foreign Languages (German, French, Mandarin, Arabic)", "Indigenous Languages", "Kenyan Sign Language"
-    ];
-    juniorSecondaryElectives.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[3],
-          subject,
-          subjectType: SubjectType.ELECTIVE
-        });
-      }
-    });
-
-    // Senior Secondary subjects
-    const seniorSecondaryCore = [
+    ], SubjectType.ELECTIVE);
+  
+    // Senior Secondary – Core
+    await mapSubjects(4, [
       "English", "Kiswahili or Kenya Sign Language", "Community Service Learning", "Physical Education"
-    ];
-    seniorSecondaryCore.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[4],
-          subject,
-          subjectType: SubjectType.CORE
-        });
-      }
-    });
-
-    // STEM pathway subjects
-    const stemSubjects = [
+    ], SubjectType.CORE);
+  
+    // Senior Secondary – STEM
+    await mapSubjects(4, [
       "Mathematics / Advanced Math", "Biology", "Chemistry", "Physics", "General Science",
       "Agriculture", "Computer Science", "Home Science", "Drawing and Design", "Aviation Technology",
       "Building and Construction", "Electrical Technology", "Metal Technology", "Power Mechanics",
       "Wood Technology", "Media Technology", "Marine and Fisheries Technology"
-    ];
-    stemSubjects.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[4],
-          subject,
-          subjectType: SubjectType.ELECTIVE
-        });
-      }
-    });
-
-    // Social Sciences pathway subjects
-    const socialSciencesSubjects = [
+    ], SubjectType.ELECTIVE);
+  
+    // Senior Secondary – Social Sciences
+    await mapSubjects(4, [
       "Literature in English", "Advanced English", "Indigenous Languages", "Kiswahili Kipevu",
       "History and Citizenship", "Geography", "Business Studies", "Religious Studies (CRE, IRE, HRE)",
       "Foreign Languages (German, French, Mandarin, Arabic)", "Kenyan Sign Language"
-    ];
-    socialSciencesSubjects.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[4],
-          subject,
-          subjectType: SubjectType.ELECTIVE
-        });
-      }
-    });
-
-    // Arts and Sports pathway subjects
-    const artsAndSportsSubjects = [
+    ], SubjectType.ELECTIVE);
+  
+    // Senior Secondary – Arts & Sports
+    await mapSubjects(4, [
       "Music and Dance", "Fine Art", "Theatre and Film", "Sports and Recreation", "Creative Writing"
-    ];
-    artsAndSportsSubjects.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[4],
-          subject,
-          subjectType: SubjectType.ELECTIVE
-        });
-      }
-    });
-
-    await this.curriculumSubjectRepo.save(curriculumSubjects.filter(cs => cs.subject));
+    ], SubjectType.ELECTIVE);
+  
+    await this.curriculumSubjectRepo.save(toSave);
   }
 
   // IGCSE Curriculum Subjects Creation
-  private async createIGCSECurriculumSubjects(curricula: Curriculum[], allSubjects: Subject[]): Promise<void> {
-    const curriculumSubjects: Array<{ curriculum: Curriculum; subject: Subject; subjectType: SubjectType }> = [];
-
-    // Early Years subjects (all core)
-    const earlyYearsSubjects = [
-      "Personal, Social and Emotional Development", "Communication and Language",
-      "Literacy", "Mathematics", "Understanding the World", "Expressive Arts and Design", "Physical Development"
-    ];
-    earlyYearsSubjects.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[0],
+  private async createIGCSECurriculumSubjects(
+    curricula: Curriculum[],
+    allSubjects: Subject[],
+    allGradeLevels: GradeLevel[]
+  ): Promise<void> {
+    const toSave: CurriculumSubject[] = [];
+  
+    const mapSubjects = async (
+      curriculumIndex: number,
+      subjectNames: string[],
+      subjectType: SubjectType
+    ) => {
+      const curriculum = curricula[curriculumIndex];
+      const grades = allGradeLevels.filter(g => g.curriculum.id === curriculum.id);
+  
+      for (const name of subjectNames) {
+        const subject = this.findSubjectByName(allSubjects, name);
+        if (!subject) continue;
+  
+        const curriculumSubject = this.curriculumSubjectRepo.create({
           subject,
-          subjectType: SubjectType.CORE
+          curriculum,
+          subjectType,
+          isCompulsory: subjectType === SubjectType.CORE || subjectType === SubjectType.COMPULSORY,
+          totalMarks: 100,
+          passingMarks: 40,
+          creditHours: 3,
+          availableGrades: grades,
         });
+  
+        toSave.push(curriculumSubject);
       }
-    });
-
-    // Primary subjects
-    const primarySubjects = [
+    };
+  
+    // Early Years
+    await mapSubjects(0, [
+      "Personal, Social and Emotional Development", "Communication and Language",
+      "Literacy", "Mathematics", "Understanding the World",
+      "Expressive Arts and Design", "Physical Development"
+    ], SubjectType.CORE);
+  
+    // Primary
+    await mapSubjects(1, [
       "English", "Mathematics", "Science", "Global Perspectives", "ICT Starters",
       "Art and Design", "Music", "Physical Education", "Religious Education", "History", "Geography"
-    ];
-    primarySubjects.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[1],
-          subject,
-          subjectType: SubjectType.CORE
-        });
-      }
-    });
-
-    // Primary elective subjects
-    const primaryElectives = ["Modern Foreign Languages (e.g. French, German, Mandarin)"];
-    primaryElectives.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[1],
-          subject,
-          subjectType: SubjectType.ELECTIVE
-        });
-      }
-    });
-
-    // Lower Secondary subjects
-    const lowerSecondarySubjects = [
+    ], SubjectType.CORE);
+  
+    await mapSubjects(1, [
+      "Modern Foreign Languages (e.g. French, German, Mandarin)"
+    ], SubjectType.ELECTIVE);
+  
+    // Lower Secondary
+    await mapSubjects(2, [
       "English", "Mathematics", "Science", "ICT / Computer Science", "History",
       "Geography", "Global Perspectives", "Art and Design", "Music", "Physical Education",
       "Religious Studies", "Modern Foreign Languages (e.g. French, German, Mandarin)"
-    ];
-    lowerSecondarySubjects.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[2],
-          subject,
-          subjectType: SubjectType.CORE
-        });
-      }
-    });
-
-    // Upper Secondary core subjects
-    const upperSecondaryCore = [
-      "English Language", "English Literature", "Mathematics", "Biology",
-      "Chemistry", "Physics", "ICT / Computer Science"
-    ];
-    upperSecondaryCore.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[3],
-          subject,
-          subjectType: SubjectType.CORE
-        });
-      }
-    });
-
-    // Upper Secondary elective subjects
-    const upperSecondaryElectives = [
+    ], SubjectType.CORE);
+  
+    // Upper Secondary
+    await mapSubjects(3, [
+      "English Language", "English Literature", "Mathematics",
+      "Biology", "Chemistry", "Physics", "ICT / Computer Science"
+    ], SubjectType.CORE);
+  
+    await mapSubjects(3, [
       "Business Studies", "Economics", "Accounting", "History", "Geography",
       "Art and Design", "Design and Technology", "Drama", "Music", "Religious Studies",
-      "Global Perspectives", "Physical Education", "Foreign Languages (French, German, Arabic, Mandarin, etc.)"
-    ];
-    upperSecondaryElectives.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[3],
-          subject,
-          subjectType: SubjectType.ELECTIVE
-        });
-      }
-    });
-
-    // A Level compulsory subjects
-    const aLevelCompulsory = ["English Language or Literature", "Mathematics or Further Math (for STEM students)"];
-    aLevelCompulsory.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[4],
-          subject,
-          subjectType: SubjectType.COMPULSORY
-        });
-      }  
-    });
-
-    // A Level subject options
-    const aLevelOptions = [
+      "Global Perspectives", "Physical Education",
+      "Foreign Languages (French, German, Arabic, Mandarin, etc.)"
+    ], SubjectType.ELECTIVE);
+  
+    // A Level
+    await mapSubjects(4, [
+      "English Language or Literature", "Mathematics or Further Math (for STEM students)"
+    ], SubjectType.COMPULSORY);
+  
+    await mapSubjects(4, [
       "Biology", "Chemistry", "Physics", "Computer Science", "Economics", "Business",
       "Accounting", "Geography", "History", "Psychology", "Sociology", "Law",
       "Art and Design", "Media Studies", "Drama and Theatre", "Music", "Physical Education",
       "French", "German", "Arabic", "Mandarin", "Global Perspectives & Research"
-    ];
-    aLevelOptions.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[4],
-          subject,
-          subjectType: SubjectType.ELECTIVE
-        });
-      }
-    });
-
-    await this.curriculumSubjectRepo.save(curriculumSubjects.filter(cs => cs.subject));
+    ], SubjectType.ELECTIVE);
+  
+    await this.curriculumSubjectRepo.save(toSave);
   }
 
-  // Madrasa Curriculum Subjects Creation
-  private async createMadrasaCurriculumSubjects(curricula: Curriculum[], allSubjects: Subject[]): Promise<void> {
-    const curriculumSubjects: { curriculum: Curriculum; subject: Subject; subjectType: SubjectType }[] = [];
-
-    // Beginners subjects (all core)
-    const beginnersSubjects = [
+  private async createMadrasaCurriculumSubjects(
+    curricula: Curriculum[],
+    allSubjects: Subject[],
+    allGradeLevels: GradeLevel[]
+  ): Promise<void> {
+    const toSave: CurriculumSubject[] = [];
+  
+    const mapSubjects = async (
+      curriculumIndex: number,
+      subjectNames: string[],
+      subjectType: SubjectType
+    ) => {
+      const curriculum = curricula[curriculumIndex];
+      const grades = allGradeLevels.filter(g => g.curriculum.id === curriculum.id);
+  
+      for (const name of subjectNames) {
+        const subject = this.findSubjectByName(allSubjects, name);
+        if (!subject) continue;
+  
+        const curriculumSubject = this.curriculumSubjectRepo.create({
+          subject,
+          curriculum,
+          subjectType,
+          isCompulsory: subjectType === SubjectType.CORE || subjectType === SubjectType.COMPULSORY,
+          totalMarks: 100,
+          passingMarks: 40,
+          creditHours: 3,
+          availableGrades: grades
+        });
+  
+        toSave.push(curriculumSubject);
+      }
+    };
+  
+    // Beginners
+    await mapSubjects(0, [
       "Qur'an Recitation (Juz Amma)", "Qaida (Arabic Alphabet)", "Basic Duas (Supplications)",
       "Short Surahs (Fatiha to Nas)", "Salah Movements (Physical Practice)",
       "Adab (Islamic Manners)", "Simple Arabic Vocabulary"
-    ];
-    beginnersSubjects.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[0],
-          subject,
-          subjectType: SubjectType.CORE
-        });
-      }
-    });
-
-    // Lower level subjects (all core)
-    const lowerSubjects = [
+    ], SubjectType.CORE);
+  
+    // Lower
+    await mapSubjects(1, [
       "Qur'an Memorization (Juz 1–5)", "Tajweed Basics", "Arabic Reading & Writing",
       "Seerah (Prophet Muhammad's Life)", "Fiqh Basics (Purity, Wudhu, Prayer)",
       "Aqeedah (Pillars of Faith)", "Daily Duas", "Hadith Memorization (40 Nawawi)"
-    ];
-    lowerSubjects.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[1],
-          subject,
-          subjectType: SubjectType.CORE
-        });
-      }
-    });
-
-    // Upper level subjects (all core)
-    const upperSubjects = [
+    ], SubjectType.CORE);
+  
+    // Upper
+    await mapSubjects(2, [
       "Qur'an Memorization (Juz 6–15)", "Tajweed Advanced", "Arabic Grammar (Nahw & Sarf Basics)",
       "Fiqh (Prayer, Fasting, Zakat, Hajj)", "Aqeedah (Names & Attributes of Allah)",
       "Seerah (Makkan & Madinan Period)", "Hadith Interpretation", "Islamic History (Sahaba & Khilafah)",
       "Islamic Etiquette (Adab)"
-    ];
-    upperSubjects.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[2],
-          subject,
-          subjectType: SubjectType.CORE
-        });
-      }
-    });
-
-    // Secondary core subjects
-    const secondaryCore = [
+    ], SubjectType.CORE);
+  
+    // Secondary core
+    await mapSubjects(3, [
       "Qur'an Memorization (Juz 16–30)", "Tafsir (Selected Surahs)",
       "Advanced Arabic Reading & Composition", "Fiqh (Madh-hab Introduction)",
       "Usool al-Fiqh (Jurisprudence Principles)", "Aqeedah (Tawheed vs Shirk)",
       "Hadith Sciences", "Islamic Morals & Ethics", "Public Speaking / Khutbah Practice"
-    ];
-    secondaryCore.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[3],
-          subject,
-          subjectType: SubjectType.CORE
-        });
-      }
-    });
-
-    // Secondary optional subjects
-    const secondaryOptional = [
+    ], SubjectType.CORE);
+  
+    // Secondary electives
+    await mapSubjects(3, [
       "Islamic Leadership & Da'wah", "Comparative Religion", "Islamic Banking & Finance", "Arabic Calligraphy"
-    ];
-    secondaryOptional.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[3],
-          subject,
-          subjectType: SubjectType.ELECTIVE
-        });
-      }
-    });
-
-    // Advanced Alim subjects (all core)
-    const alimSubjects = [
+    ], SubjectType.ELECTIVE);
+  
+    // Alim
+    await mapSubjects(4, [
       "Advanced Tafsir (Ibn Kathir, Jalalayn)", "Uloom al-Hadith (Science of Hadith)",
       "Usool al-Tafsir", "Arabic Rhetoric (Balagha)", "Advanced Nahw & Sarf",
       "Islamic Jurisprudence (Detailed Fiqh)", "Comparative Fiqh (Shafi'i, Hanafi, etc.)",
       "Philosophical Theology (Kalam)", "Fatwa Writing & Research", "Khutbah Training & Da'wah Methodology"
-    ];
-    alimSubjects.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[4],
-          subject,
-          subjectType: SubjectType.CORE
-        });
-      }
-    });
-
-    await this.curriculumSubjectRepo.save(curriculumSubjects.filter(cs => cs.subject));
+    ], SubjectType.CORE);
+  
+    await this.curriculumSubjectRepo.save(toSave);
   }
+  
 
-  // Homeschool Curriculum Subjects Creation
-  private async createHomeschoolCurriculumSubjects(curricula: Curriculum[], allSubjects: Subject[]): Promise<void> {
-    const curriculumSubjects: { curriculum: Curriculum; subject: Subject; subjectType: SubjectType }[] = [];
-
-    // Early Years subjects (all core)
-    const earlyYearsSubjects = [
+  private async createHomeschoolCurriculumSubjects(
+    curricula: Curriculum[],
+    allSubjects: Subject[],
+    allGradeLevels: GradeLevel[]
+  ): Promise<void> {
+    const toSave: CurriculumSubject[] = [];
+  
+    const mapSubjects = async (
+      curriculumIndex: number,
+      subjectNames: string[],
+      subjectType: SubjectType
+    ) => {
+      const curriculum = curricula[curriculumIndex];
+      const grades = allGradeLevels.filter(g => g.curriculum.id === curriculum.id);
+      
+  
+      for (const name of subjectNames) {
+        const subject = this.findSubjectByName(allSubjects, name);
+        if (!subject) continue;
+  
+        const curriculumSubject = this.curriculumSubjectRepo.create({
+          subject,
+          curriculum,
+          subjectType,
+          isCompulsory: subjectType === SubjectType.CORE || subjectType === SubjectType.COMPULSORY,
+          totalMarks: 100,
+          passingMarks: 40,
+          creditHours: 3,
+          availableGrades: grades
+        });
+  
+        toSave.push(curriculumSubject);
+      }
+    };
+  
+    // Early Years
+    await mapSubjects(0, [
       "Literacy (Reading & Phonics)", "Numeracy (Counting & Basic Math)",
       "Creative Arts (Drawing, Coloring, Singing)", "Life Skills (Toileting, Dressing, Manners)",
       "Religious Foundations (Optional)", "Nature & Environment Awareness", "Story Time / Read-Alouds"
-    ];
-    earlyYearsSubjects.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[0],
-          subject,
-          subjectType: SubjectType.CORE
-        });
-      }
-    });
-
-    // Lower Primary subjects (all core)
-    const lowerPrimarySubjects = [
+    ], SubjectType.CORE);
+  
+    // Lower Primary
+    await mapSubjects(1, [
       "English Language", "Kiswahili / Indigenous Language", "Mathematics",
       "Environmental Studies / Science Basics", "Religious Education (Christian / Islamic / Other)",
       "Life Skills", "Creative Arts & Crafts", "Reading Comprehension", "Storytelling & Narration"
-    ];
-    lowerPrimarySubjects.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[1],
-          subject,
-          subjectType: SubjectType.CORE
-        });
-      }
-    });
-
-    // Upper Primary subjects (all core)
-    const upperPrimarySubjects = [
+    ], SubjectType.CORE);
+  
+    // Upper Primary
+    await mapSubjects(2, [
       "English", "Kiswahili / KSL", "Mathematics", "Science & Technology",
       "Social Studies (Kenya & the World)", "Religious Education", "Creative & Performing Arts",
       "Physical Education", "Digital Literacy / ICT", "Home Science / Cooking"
-    ];
-    upperPrimarySubjects.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[2],
-          subject,
-          subjectType: SubjectType.CORE
-        });
-      }
-    });
-
-    // Junior Secondary core subjects
-    const juniorSecondaryCore = [
+    ], SubjectType.CORE);
+  
+    // Junior Secondary core
+    await mapSubjects(3, [
       "English", "Kiswahili / KSL", "Mathematics", "Integrated Science",
       "Social Studies", "Agriculture", "Religious Education", "Life Skills",
       "Pre-Tech Studies", "Physical Education"
-    ];
-    juniorSecondaryCore.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[3],
-          subject,
-          subjectType: SubjectType.CORE
-        });
-      }
-    });
-
-    // Junior Secondary optional subjects
-    const juniorSecondaryOptional = [
+    ], SubjectType.CORE);
+  
+    // Junior Secondary optional
+    await mapSubjects(3, [
       "Computer Science", "Visual/Performing Arts", "Home Science",
       "Foreign Language (French, Arabic, etc.)", "Coding & Robotics"
-    ];
-    juniorSecondaryOptional.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[3],
-          subject,
-          subjectType: SubjectType.ELECTIVE
-        });
-      }
-    });
-
-    // Senior Secondary core subjects
-    const seniorSecondaryCore = [
+    ], SubjectType.ELECTIVE);
+  
+    // Senior Secondary core
+    await mapSubjects(4, [
       "English", "Mathematics", "Religious Studies", "Physical Education", "Service Learning"
-    ];
-    seniorSecondaryCore.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[4],
-          subject,
-          subjectType: SubjectType.CORE
-        });
-      }
-    });
-
-    // Senior Secondary STEM pathway
-    const stemPathway = ["Biology", "Chemistry", "Physics", "Computer Science", "Advanced Math"];
-    stemPathway.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[4],
-          subject,
-          subjectType: SubjectType.ELECTIVE
-        });
-      }
-    });
-
-    // Senior Secondary Humanities pathway
-    const humanitiesPathway = [
+    ], SubjectType.CORE);
+  
+    // Senior Secondary STEM
+    await mapSubjects(4, [
+      "Biology", "Chemistry", "Physics", "Computer Science", "Advanced Math"
+    ], SubjectType.ELECTIVE);
+  
+    // Senior Secondary Humanities
+    await mapSubjects(4, [
       "Geography", "History", "Business Studies", "Literature", "Sociology", "Economics"
-    ];
-    humanitiesPathway.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[4],
-          subject,
-          subjectType: SubjectType.ELECTIVE
-        });
-      }
-    });
-
-    // Senior Secondary Creative pathway
-    const creativePathway = [
+    ], SubjectType.ELECTIVE);
+  
+    // Senior Secondary Creative Pathway
+    await mapSubjects(4, [
       "Fine Art", "Music", "Film and Theatre", "Creative Writing", "Photography"
-    ];
-    creativePathway.forEach(subjectName => {
-      const subject = this.findSubjectByName(allSubjects, subjectName);
-      if (subject) {
-        curriculumSubjects.push({
-          curriculum: curricula[4],
-          subject,
-          subjectType: SubjectType.ELECTIVE
-        });
-      }
-    });
-
-    await this.curriculumSubjectRepo.save(curriculumSubjects.filter(cs => cs.subject));
+    ], SubjectType.ELECTIVE);
+  
+    await this.curriculumSubjectRepo.save(toSave);
   }
-}
+  
+  
+  // private async createCBCCurriculumSubjects(curricula: Curriculum[], allSubjects: Subject[]): Promise<void> {
+  //   const curriculumSubjects: { curriculum: Curriculum; subject: Subject; subjectType: SubjectType }[] = [];
 
-@Injectable()
-export class SeedCommand {
-  constructor(private seedingService: SeedingService) {}
+  //   // Pre-Primary subjects (all core)
+  //   const prePrimarySubjects = [
+  //     "Language Activities", "Mathematical Activities", "Environmental Activities",
+  //     "Psychomotor and Creative Activities", "Religious Education Activities"
+  //   ];
+  //   prePrimarySubjects.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[0],
+  //         subject,
+  //         subjectType: SubjectType.CORE
+  //       });
+  //     }
+  //   });
 
-  async run(): Promise<void> {
-    console.log('Starting comprehensive school system seeding...');
-    console.log('This will create:');
-    console.log('- CBC (Kenyan Competency Based Curriculum)');
-    console.log('- IGCSE/International School System');
-    console.log('- Madrasa Education System');
-    console.log('- Homeschool System');
-    console.log('');
+  //   // Lower Primary subjects (all core)
+  //   const lowerPrimarySubjects = [
+  //     "Literacy", "Kiswahili Language Activities", "English Language Activities",
+  //     "Indigenous Language Activities", "Mathematical Activities", "Environmental Activities",
+  //     "Hygiene and Nutrition Activities", "Religious Education Activities", "Movement and Creative Activities"
+  //   ];
+  //   lowerPrimarySubjects.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[1],
+  //         subject,
+  //         subjectType: SubjectType.CORE
+  //       });
+  //     }
+  //   });
     
-    try {
-      await this.seedingService.seedAllSchoolTypes();
-      console.log('✅ All school systems seeded successfully!');
-      console.log('');
-      console.log('Created:');
-      console.log('- 4 School Types');
-      console.log('- 20 Curricula');
-      console.log('- 60+ Grade Levels');
-      console.log('- 100+ Unique Subjects');
-      console.log('- 500+ Curriculum-Subject Relationships');
-    } catch (error) {
-      console.error('❌ Seeding failed:', error);
-      throw error;
-    }
-  }
+  //   // Upper Primary subjects
+  //   const upperPrimaryCore = [
+  //     "English", "Kiswahili", "Mathematics", "Science and Technology",
+  //     "Agriculture and Nutrition", "Social Studies", "Religious Education (CRE, IRE, HRE)",
+  //     "Creative Arts", "Physical and Health Education"
+  //   ];
+  //   upperPrimaryCore.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[2],
+  //         subject,
+  //         subjectType: SubjectType.CORE
+  //       });
+  //     }
+  //   });
+
+  //   const upperPrimaryElectives = ["Optional Foreign Languages (e.g. French, Arabic, Mandarin)"];
+  //   upperPrimaryElectives.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[2],
+  //         subject,
+  //         subjectType: SubjectType.ELECTIVE
+  //       });
+  //     }
+  //   });
+
+  //   // Junior Secondary subjects
+  //   const juniorSecondaryCore = [
+  //     "English", "Kiswahili or Kenya Sign Language", "Mathematics", "Integrated Science",
+  //     "Social Studies", "Agriculture", "Religious Education", "Health Education",
+  //     "Life Skills Education", "Pre-Technical and Pre-Career Education", "Sports and Physical Education"
+  //   ];
+  //   juniorSecondaryCore.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[3],
+  //         subject,
+  //         subjectType: SubjectType.CORE
+  //       });
+  //     }
+  //   });
+
+  //   const juniorSecondaryElectives = [
+  //     "Visual Arts", "Performing Arts", "Home Science", "Computer Science",
+  //     "Foreign Languages (German, French, Mandarin, Arabic)", "Indigenous Languages", "Kenyan Sign Language"
+  //   ];
+  //   juniorSecondaryElectives.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[3],
+  //         subject,
+  //         subjectType: SubjectType.ELECTIVE
+  //       });
+  //     }
+  //   });
+
+  //   // Senior Secondary subjects
+  //   const seniorSecondaryCore = [
+  //     "English", "Kiswahili or Kenya Sign Language", "Community Service Learning", "Physical Education"
+  //   ];
+  //   seniorSecondaryCore.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[4],
+  //         subject,
+  //         subjectType: SubjectType.CORE
+  //       });
+  //     }
+  //   });
+
+  //   // STEM pathway subjects
+  //   const stemSubjects = [
+  //     "Mathematics / Advanced Math", "Biology", "Chemistry", "Physics", "General Science",
+  //     "Agriculture", "Computer Science", "Home Science", "Drawing and Design", "Aviation Technology",
+  //     "Building and Construction", "Electrical Technology", "Metal Technology", "Power Mechanics",
+  //     "Wood Technology", "Media Technology", "Marine and Fisheries Technology"
+  //   ];
+  //   stemSubjects.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[4],
+  //         subject,
+  //         subjectType: SubjectType.ELECTIVE
+  //       });
+  //     }
+  //   });
+
+  //   // Social Sciences pathway subjects
+  //   const socialSciencesSubjects = [
+  //     "Literature in English", "Advanced English", "Indigenous Languages", "Kiswahili Kipevu",
+  //     "History and Citizenship", "Geography", "Business Studies", "Religious Studies (CRE, IRE, HRE)",
+  //     "Foreign Languages (German, French, Mandarin, Arabic)", "Kenyan Sign Language"
+  //   ];
+  //   socialSciencesSubjects.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[4],
+  //         subject,
+  //         subjectType: SubjectType.ELECTIVE
+  //       });
+  //     }
+  //   });
+
+  //   // Arts and Sports pathway subjects
+  //   const artsAndSportsSubjects = [
+  //     "Music and Dance", "Fine Art", "Theatre and Film", "Sports and Recreation", "Creative Writing"
+  //   ];
+  //   artsAndSportsSubjects.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[4],
+  //         subject,
+  //         subjectType: SubjectType.ELECTIVE
+  //       });
+  //     }
+  //   });
+
+  //   await this.curriculumSubjectRepo.save(curriculumSubjects.filter(cs => cs.subject));
+  // }
+
+  
+  
+  // private async createIGCSECurriculumSubjects(curricula: Curriculum[], allSubjects: Subject[]): Promise<void> {
+  //   const curriculumSubjects: Array<{ curriculum: Curriculum; subject: Subject; subjectType: SubjectType }> = [];
+
+  //   // Early Years subjects (all core)
+  //   const earlyYearsSubjects = [
+  //     "Personal, Social and Emotional Development", "Communication and Language",
+  //     "Literacy", "Mathematics", "Understanding the World", "Expressive Arts and Design", "Physical Development"
+  //   ];
+  //   earlyYearsSubjects.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[0],
+  //         subject,
+  //         subjectType: SubjectType.CORE
+  //       });
+  //     }
+  //   });
+
+  //   // Primary subjects
+  //   const primarySubjects = [
+  //     "English", "Mathematics", "Science", "Global Perspectives", "ICT Starters",
+  //     "Art and Design", "Music", "Physical Education", "Religious Education", "History", "Geography"
+  //   ];
+  //   primarySubjects.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[1],
+  //         subject,
+  //         subjectType: SubjectType.CORE
+  //       });
+  //     }
+  //   });
+
+  //   // Primary elective subjects
+  //   const primaryElectives = ["Modern Foreign Languages (e.g. French, German, Mandarin)"];
+  //   primaryElectives.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[1],
+  //         subject,
+  //         subjectType: SubjectType.ELECTIVE
+  //       });
+  //     }
+  //   });
+
+  //   // Lower Secondary subjects
+  //   const lowerSecondarySubjects = [
+  //     "English", "Mathematics", "Science", "ICT / Computer Science", "History",
+  //     "Geography", "Global Perspectives", "Art and Design", "Music", "Physical Education",
+  //     "Religious Studies", "Modern Foreign Languages (e.g. French, German, Mandarin)"
+  //   ];
+  //   lowerSecondarySubjects.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[2],
+  //         subject,
+  //         subjectType: SubjectType.CORE
+  //       });
+  //     }
+  //   });
+
+  //   // Upper Secondary core subjects
+  //   const upperSecondaryCore = [
+  //     "English Language", "English Literature", "Mathematics", "Biology",
+  //     "Chemistry", "Physics", "ICT / Computer Science"
+  //   ];
+  //   upperSecondaryCore.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[3],
+  //         subject,
+  //         subjectType: SubjectType.CORE
+  //       });
+  //     }
+  //   });
+
+  //   // Upper Secondary elective subjects
+  //   const upperSecondaryElectives = [
+  //     "Business Studies", "Economics", "Accounting", "History", "Geography",
+  //     "Art and Design", "Design and Technology", "Drama", "Music", "Religious Studies",
+  //     "Global Perspectives", "Physical Education", "Foreign Languages (French, German, Arabic, Mandarin, etc.)"
+  //   ];
+  //   upperSecondaryElectives.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[3],
+  //         subject,
+  //         subjectType: SubjectType.ELECTIVE
+  //       });
+  //     }
+  //   });
+
+  //   // A Level compulsory subjects
+  //   const aLevelCompulsory = ["English Language or Literature", "Mathematics or Further Math (for STEM students)"];
+  //   aLevelCompulsory.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[4],
+  //         subject,
+  //         subjectType: SubjectType.COMPULSORY
+  //       });
+  //     }  
+  //   });
+
+  //   // A Level subject options
+  //   const aLevelOptions = [
+  //     "Biology", "Chemistry", "Physics", "Computer Science", "Economics", "Business",
+  //     "Accounting", "Geography", "History", "Psychology", "Sociology", "Law",
+  //     "Art and Design", "Media Studies", "Drama and Theatre", "Music", "Physical Education",
+  //     "French", "German", "Arabic", "Mandarin", "Global Perspectives & Research"
+  //   ];
+  //   aLevelOptions.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[4],
+  //         subject,
+  //         subjectType: SubjectType.ELECTIVE
+  //       });
+  //     }
+  //   });
+
+  //   await this.curriculumSubjectRepo.save(curriculumSubjects.filter(cs => cs.subject));
+  // }
+
+  // // Madrasa Curriculum Subjects Creation
+  // private async createMadrasaCurriculumSubjects(curricula: Curriculum[], allSubjects: Subject[]): Promise<void> {
+  //   const curriculumSubjects: { curriculum: Curriculum; subject: Subject; subjectType: SubjectType }[] = [];
+
+  //   // Beginners subjects (all core)
+  //   const beginnersSubjects = [
+  //     "Qur'an Recitation (Juz Amma)", "Qaida (Arabic Alphabet)", "Basic Duas (Supplications)",
+  //     "Short Surahs (Fatiha to Nas)", "Salah Movements (Physical Practice)",
+  //     "Adab (Islamic Manners)", "Simple Arabic Vocabulary"
+  //   ];
+  //   beginnersSubjects.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[0],
+  //         subject,
+  //         subjectType: SubjectType.CORE
+  //       });
+  //     }
+  //   });
+
+  //   // Lower level subjects (all core)
+  //   const lowerSubjects = [
+  //     "Qur'an Memorization (Juz 1–5)", "Tajweed Basics", "Arabic Reading & Writing",
+  //     "Seerah (Prophet Muhammad's Life)", "Fiqh Basics (Purity, Wudhu, Prayer)",
+  //     "Aqeedah (Pillars of Faith)", "Daily Duas", "Hadith Memorization (40 Nawawi)"
+  //   ];
+  //   lowerSubjects.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[1],
+  //         subject,
+  //         subjectType: SubjectType.CORE
+  //       });
+  //     }
+  //   });
+
+  //   // Upper level subjects (all core)
+  //   const upperSubjects = [
+  //     "Qur'an Memorization (Juz 6–15)", "Tajweed Advanced", "Arabic Grammar (Nahw & Sarf Basics)",
+  //     "Fiqh (Prayer, Fasting, Zakat, Hajj)", "Aqeedah (Names & Attributes of Allah)",
+  //     "Seerah (Makkan & Madinan Period)", "Hadith Interpretation", "Islamic History (Sahaba & Khilafah)",
+  //     "Islamic Etiquette (Adab)"
+  //   ];
+  //   upperSubjects.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[2],
+  //         subject,
+  //         subjectType: SubjectType.CORE
+  //       });
+  //     }
+  //   });
+
+  //   // Secondary core subjects
+  //   const secondaryCore = [
+  //     "Qur'an Memorization (Juz 16–30)", "Tafsir (Selected Surahs)",
+  //     "Advanced Arabic Reading & Composition", "Fiqh (Madh-hab Introduction)",
+  //     "Usool al-Fiqh (Jurisprudence Principles)", "Aqeedah (Tawheed vs Shirk)",
+  //     "Hadith Sciences", "Islamic Morals & Ethics", "Public Speaking / Khutbah Practice"
+  //   ];
+  //   secondaryCore.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[3],
+  //         subject,
+  //         subjectType: SubjectType.CORE
+  //       });
+  //     }
+  //   });
+
+  //   // Secondary optional subjects
+  //   const secondaryOptional = [
+  //     "Islamic Leadership & Da'wah", "Comparative Religion", "Islamic Banking & Finance", "Arabic Calligraphy"
+  //   ];
+  //   secondaryOptional.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[3],
+  //         subject,
+  //         subjectType: SubjectType.ELECTIVE
+  //       });
+  //     }
+  //   });
+
+  //   // Advanced Alim subjects (all core)
+  //   const alimSubjects = [
+  //     "Advanced Tafsir (Ibn Kathir, Jalalayn)", "Uloom al-Hadith (Science of Hadith)",
+  //     "Usool al-Tafsir", "Arabic Rhetoric (Balagha)", "Advanced Nahw & Sarf",
+  //     "Islamic Jurisprudence (Detailed Fiqh)", "Comparative Fiqh (Shafi'i, Hanafi, etc.)",
+  //     "Philosophical Theology (Kalam)", "Fatwa Writing & Research", "Khutbah Training & Da'wah Methodology"
+  //   ];
+  //   alimSubjects.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[4],
+  //         subject,
+  //         subjectType: SubjectType.CORE
+  //       });
+  //     }
+  //   });
+
+  //   await this.curriculumSubjectRepo.save(curriculumSubjects.filter(cs => cs.subject));
+  // }
+
+  // Homeschool Curriculum Subjects Creation
+  // private async createHomeschoolCurriculumSubjects(curricula: Curriculum[], allSubjects: Subject[]): Promise<void> {
+  //   const curriculumSubjects: { curriculum: Curriculum; subject: Subject; subjectType: SubjectType }[] = [];
+
+  //   // Early Years subjects (all core)
+  //   const earlyYearsSubjects = [
+  //     "Literacy (Reading & Phonics)", "Numeracy (Counting & Basic Math)",
+  //     "Creative Arts (Drawing, Coloring, Singing)", "Life Skills (Toileting, Dressing, Manners)",
+  //     "Religious Foundations (Optional)", "Nature & Environment Awareness", "Story Time / Read-Alouds"
+  //   ];
+  //   earlyYearsSubjects.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[0],
+  //         subject,
+  //         subjectType: SubjectType.CORE
+  //       });
+  //     }
+  //   });
+
+  //   // Lower Primary subjects (all core)
+  //   const lowerPrimarySubjects = [
+  //     "English Language", "Kiswahili / Indigenous Language", "Mathematics",
+  //     "Environmental Studies / Science Basics", "Religious Education (Christian / Islamic / Other)",
+  //     "Life Skills", "Creative Arts & Crafts", "Reading Comprehension", "Storytelling & Narration"
+  //   ];
+  //   lowerPrimarySubjects.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[1],
+  //         subject,
+  //         subjectType: SubjectType.CORE
+  //       });
+  //     }
+  //   });
+
+  //   // Upper Primary subjects (all core)
+  //   const upperPrimarySubjects = [
+  //     "English", "Kiswahili / KSL", "Mathematics", "Science & Technology",
+  //     "Social Studies (Kenya & the World)", "Religious Education", "Creative & Performing Arts",
+  //     "Physical Education", "Digital Literacy / ICT", "Home Science / Cooking"
+  //   ];
+  //   upperPrimarySubjects.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[2],
+  //         subject,
+  //         subjectType: SubjectType.CORE
+  //       });
+  //     }
+  //   });
+
+  //   // Junior Secondary core subjects
+  //   const juniorSecondaryCore = [
+  //     "English", "Kiswahili / KSL", "Mathematics", "Integrated Science",
+  //     "Social Studies", "Agriculture", "Religious Education", "Life Skills",
+  //     "Pre-Tech Studies", "Physical Education"
+  //   ];
+  //   juniorSecondaryCore.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[3],
+  //         subject,
+  //         subjectType: SubjectType.CORE
+  //       });
+  //     }
+  //   });
+
+  //   // Junior Secondary optional subjects
+  //   const juniorSecondaryOptional = [
+  //     "Computer Science", "Visual/Performing Arts", "Home Science",
+  //     "Foreign Language (French, Arabic, etc.)", "Coding & Robotics"
+  //   ];
+  //   juniorSecondaryOptional.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[3],
+  //         subject,
+  //         subjectType: SubjectType.ELECTIVE
+  //       });
+  //     }
+  //   });
+
+  //   // Senior Secondary core subjects
+  //   const seniorSecondaryCore = [
+  //     "English", "Mathematics", "Religious Studies", "Physical Education", "Service Learning"
+  //   ];
+  //   seniorSecondaryCore.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[4],
+  //         subject,
+  //         subjectType: SubjectType.CORE
+  //       });
+  //     }
+  //   });
+
+  //   // Senior Secondary STEM pathway
+  //   const stemPathway = ["Biology", "Chemistry", "Physics", "Computer Science", "Advanced Math"];
+  //   stemPathway.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[4],
+  //         subject,
+  //         subjectType: SubjectType.ELECTIVE
+  //       });
+  //     }
+  //   });
+
+  //   // Senior Secondary Humanities pathway
+  //   const humanitiesPathway = [
+  //     "Geography", "History", "Business Studies", "Literature", "Sociology", "Economics"
+  //   ];
+  //   humanitiesPathway.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[4],
+  //         subject,
+  //         subjectType: SubjectType.ELECTIVE
+  //       });
+  //     }
+  //   });
+
+  //   // Senior Secondary Creative pathway
+  //   const creativePathway = [
+  //     "Fine Art", "Music", "Film and Theatre", "Creative Writing", "Photography"
+  //   ];
+  //   creativePathway.forEach(subjectName => {
+  //     const subject = this.findSubjectByName(allSubjects, subjectName);
+  //     if (subject) {
+  //       curriculumSubjects.push({
+  //         curriculum: curricula[4],
+  //         subject,
+  //         subjectType: SubjectType.ELECTIVE
+  //       });
+  //     }
+  //   });
+
+  //   await this.curriculumSubjectRepo.save(curriculumSubjects.filter(cs => cs.subject));
+  // }
 }
+
+// @Injectable()
+// export class SeedCommand {
+//   constructor(private seedingService: SeedingService) {}
+
+//   async run(): Promise<void> {
+//     console.log('Starting comprehensive school system seeding...');
+//     console.log('This will create:');
+//     console.log('- CBC (Kenyan Competency Based Curriculum)');
+//     console.log('- IGCSE/International School System');
+//     console.log('- Madrasa Education System');
+//     console.log('- Homeschool System');
+//     console.log('');
+    
+//     try {
+//       await this.seedingService.seedAllSchoolTypes();
+//       console.log('✅ All school systems seeded successfully!');
+//       console.log('');
+//       console.log('Created:');
+//       console.log('- 4 School Types');
+//       console.log('- 20 Curricula');
+//       console.log('- 60+ Grade Levels');
+//       console.log('- 100+ Unique Subjects');
+//       console.log('- 500+ Curriculum-Subject Relationships');
+//     } catch (error) {
+//       console.error('❌ Seeding failed:', error);
+//       throw error;
+//     }
+//   }
+// }
 
   // Method to seed individual school types if needed
   // async seedCBCOnly(): Promise<void> {

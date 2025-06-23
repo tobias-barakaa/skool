@@ -4,8 +4,10 @@ import { Curriculum } from 'src/curriculum/entities/curicula.entity';
 import { CurriculumSubject } from 'src/curriculum/entities/curriculum_subjects.entity';
 import { GradeLevel } from 'src/level/entities/grade-level.entity';
 import { School } from 'src/school/entities/school.entity';
-import { Equal, Repository } from 'typeorm';
+import { Equal,In, Repository } from 'typeorm';
 import { SchoolConfig } from '../entities/school-config.entity';
+import { SchoolLevel } from '../entities/school_level.entity';
+
 
 @Injectable()
 export class SchoolTypeService {
@@ -20,6 +22,8 @@ export class SchoolTypeService {
     private readonly curriculumSubjectRepo: Repository<CurriculumSubject>,
     @InjectRepository(SchoolConfig)
     private readonly schoolConfigRepo: Repository<SchoolConfig>,
+    @InjectRepository(SchoolLevel)
+    private readonly schoolLevelRepo: Repository<SchoolLevel>,
   ) {}
 
   async configureSchoolLevelsByNames(
@@ -27,83 +31,142 @@ export class SchoolTypeService {
     subdomain: string,
     userId: string
   ): Promise<any> {
-    // Validate school and user access
     const school = await this.validateSchoolAccess(subdomain, userId);
-    
-    // Normalize level names for case-insensitive matching
-    const normalizedLevelNames = levelNames.map(name => 
+  
+    const normalizedLevelNames = levelNames.map(name =>
       name.toLowerCase().trim().replace(/\s+/g, ' ')
     );
-    
-    // Find curricula that match the provided level names
+  
     const matchingCurricula = await this.curriculumRepo
       .createQueryBuilder('curriculum')
       .leftJoinAndSelect('curriculum.schoolType', 'schoolType')
       .leftJoinAndSelect('curriculum.gradeLevels', 'gradeLevels')
       .leftJoinAndSelect('gradeLevels.level', 'level')
-
+      .leftJoinAndSelect('curriculum.curriculumSubjects', 'curriculumSubjects')
+      .leftJoinAndSelect('curriculumSubjects.subject', 'subject')
+      .leftJoinAndSelect('curriculum.schoolLevels', 'schoolLevels')
       .where('LOWER(REPLACE(curriculum.display_name, \' \', \' \')) IN (:...levelNames)', {
-        levelNames: normalizedLevelNames
+        levelNames: normalizedLevelNames,
       })
       .getMany();
-
+  
     if (matchingCurricula.length === 0) {
       throw new BadRequestException('No matching curriculum levels found');
     }
-
-    // Validate that all selected levels belong to the same school type
+  
     const schoolTypes = [...new Set(matchingCurricula.map(c => c.schoolType.id))];
     if (schoolTypes.length > 1) {
       throw new BadRequestException(
         'Cannot select levels from different school types. Please select levels from the same school type only.'
       );
     }
-
-    // // Check if school already has a configuration
-    // let schoolConfig = await this.schoolConfigRepo.findOne({
-    //   where: { id: school.schoolId },
-    //   relations: ['selectedLevels', 'selectedLevels.gradeLevels']
-    // });
-
-    let schoolConfig = await this.schoolConfigRepo.findOne({
-        where: { school: Equal(school.schoolId) },
-        relations: ['selectedLevels', 'selectedLevels.gradeLevels']
+  
+    const schoolLevels: SchoolLevel[] = [];
+  
+    for (const curriculum of matchingCurricula) {
+      const gradeLevelIds = curriculum.gradeLevels?.map(gl => gl.id) || [];
+  
+      const validGradeLevels = await this.gradeLevelRepo.find({
+        where: { id: In(gradeLevelIds) },
+        relations: ['level'],
       });
-
-    if (schoolConfig) {
-      // Update existing configuration
-      schoolConfig.selectedLevels = matchingCurricula.map(curriculum => ({
-        id: curriculum.id, // Assuming curriculum.id exists
-        curriculum,
-        gradeLevels: curriculum.gradeLevels,
-        schoolType: curriculum.schoolType,
-        name: curriculum.display_name,
-        curriculumSubjects: curriculum.curriculumSubjects || [], 
-      }));
-      schoolConfig.updatedAt = new Date();
-    } else {
-      // Create new configuration
-      schoolConfig = this.schoolConfigRepo.create({
-        school,
-        selectedLevels: matchingCurricula,
-        createdAt: new Date(),
-        updatedAt: new Date()
+  
+      for (const gl of validGradeLevels) {
+        if (!gl.level?.id) {
+          throw new Error(`GradeLevel ${gl.id} is missing a valid Level`);
+        }
+      }
+  
+      // Check if a SchoolLevel already exists for this curriculum
+      let schoolLevel = await this.schoolLevelRepo.findOne({
+        where: {
+          curriculum: { id: curriculum.id },
+        },
+        relations: ['curriculumSubjects'],
       });
+  
+      if (schoolLevel) {
+        // Update existing one
+        schoolLevel.name = curriculum.display_name;
+        schoolLevel.curriculumSubjects = curriculum.curriculumSubjects || [];
+        schoolLevel = await this.schoolLevelRepo.save(schoolLevel);
+      } else {
+        // Create a new one
+        schoolLevel = this.schoolLevelRepo.create({
+          name: curriculum.display_name,
+          schoolType: curriculum.schoolType,
+          curriculum: curriculum,
+          curriculumSubjects: curriculum.curriculumSubjects || [],
+        });
+        schoolLevel = await this.schoolLevelRepo.save(schoolLevel);
+      }
+  
+      schoolLevels.push(schoolLevel);
     }
-
-    await this.schoolConfigRepo.save(schoolConfig);
-
-    // Return the configuration with all related data
-    return await this.schoolConfigRepo.findOne({
+  
+    if (schoolLevels.length === 0) {
+      throw new BadRequestException('No school levels could be created or found');
+    }
+  
+    let schoolConfig = await this.schoolConfigRepo.findOne({
+      where: { school: Equal(school.schoolId) },
+      relations: ['selectedLevels'],
+    });
+  
+    if (schoolConfig) {
+      // Remove previous relations if they exist
+      if (schoolConfig.selectedLevels?.length) {
+        await this.schoolConfigRepo
+          .createQueryBuilder()
+          .relation('SchoolConfig', 'selectedLevels')
+          .of(schoolConfig.id)
+          .remove(schoolConfig.selectedLevels.map(sl => sl.id));
+      }
+  
+      // Add updated levels
+      await this.schoolConfigRepo
+        .createQueryBuilder()
+        .relation('SchoolConfig', 'selectedLevels')
+        .of(schoolConfig.id)
+        .add(schoolLevels.map(sl => sl.id));
+  
+      schoolConfig.updatedAt = new Date();
+      await this.schoolConfigRepo.save(schoolConfig);
+    } else {
+      // Create a new config and relate the levels
+      schoolConfig = await this.schoolConfigRepo.save({
+        school,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+  
+      await this.schoolConfigRepo
+        .createQueryBuilder()
+        .relation('SchoolConfig', 'selectedLevels')
+        .of(schoolConfig.id)
+        .add(schoolLevels.map(sl => sl.id));
+    }
+  
+    // Return full config with deep relations
+    const result = await this.schoolConfigRepo.findOne({
       where: { id: schoolConfig.id },
       relations: [
         'school',
         'selectedLevels',
         'selectedLevels.gradeLevels',
-        'selectedLevels.schoolType'
-      ]
+        'selectedLevels.gradeLevels.level',
+        'selectedLevels.curriculum',
+        'selectedLevels.curriculumSubjects',
+        'selectedLevels.curriculumSubjects.subject',
+        'selectedLevels.curriculum.schoolType',
+      ],
     });
+  
+    return result;
   }
+  
+
+  
 
 
   async getSchoolConfiguration(subdomain: string, userId: string): Promise<any> {
@@ -126,19 +189,18 @@ export class SchoolTypeService {
       return null;
     }
   
-    // Debug logging
+   
     console.log('School Config Debug:', {
-      id: schoolConfig.id,
-      selectedLevelsCount: schoolConfig.selectedLevels?.length,
-      levels: schoolConfig.selectedLevels?.map(level => ({
-        id: level.id,
-        name: level.name,
-        gradeLevelsCount: level.gradeLevels?.length || 0,
-        curriculumSubjectsCount: level.curriculumSubjects?.length || 0,
-        gradeLevels: level.gradeLevels?.map(gl => gl.name) || [],
-        subjects: level.curriculumSubjects?.map(cs => cs.subject?.name) || []
-      }))
-    });
+        id: schoolConfig.id,
+        selectedLevelsCount: schoolConfig.selectedLevels?.length,
+        levels: schoolConfig.selectedLevels?.map(level => ({
+          id: level.id,
+          name: level.name,
+         
+          curriculumSubjectsCount: level.curriculumSubjects?.length || 0,
+          subjects: level.curriculumSubjects?.map(cs => cs.subject?.name) || []
+        }))
+      });
   
     // Organize the data structure for frontend consumption
     const configurationData = {
@@ -154,12 +216,7 @@ export class SchoolTypeService {
         name: level.name,
         description: this.getCurriculumDescription(level.name),
         ageRange: this.getAgeRange(level.name),
-        gradeLevels: level.gradeLevels?.map(grade => ({
-          id: grade.id,
-          name: grade.name,
-          code: grade.code,
-          order: grade.order
-        })) || [],
+       
         subjects: level.curriculumSubjects?.map(cs => ({
           id: cs.subject?.id,
           name: cs.subject?.name,
@@ -209,63 +266,7 @@ export class SchoolTypeService {
       selectedLevelsCount: config?.selectedLevels?.length || 0
     });
   }
-//   async getSchoolConfiguration(subdomain: string, userId: string): Promise<any> {
-//     // Validate school and user access
-//     const school = await this.validateSchoolAccess(subdomain, userId);
 
-//     const schoolConfig = await this.schoolConfigRepo.findOne({
-//         where: { school: Equal(school.schoolId) },
-//       relations: [
-//         'school',
-//         'selectedLevels',
-//         'selectedLevels.gradeLevels',
-//         'selectedLevels.schoolType',
-//         'selectedLevels.curriculumSubjects',
-//         'selectedLevels.curriculumSubjects.subject'
-//       ]
-//     });
-
-    
-
-//     if (!schoolConfig) {
-//       return null;
-//     }
-
-//     // Organize the data structure for frontend consumption
-//     const configurationData = {
-//       id: schoolConfig.id,
-//       school: {
-//         schoolId: school.schoolId,
-//         schoolName: school.schoolName,
-//         subdomain: school.subdomain
-//       },
-//       schoolType: schoolConfig.selectedLevels[0]?.schoolType,
-//       selectedLevels: schoolConfig.selectedLevels.map(level => ({
-//         id: level.id,
-//         name: level.name,
-//         displayName: level.curriculum?.display_name,
-//         code: level.curriculum?.code,
-//         description: this.getCurriculumDescription(level.curriculum?.name),
-//         ageRange: this.getAgeRange(level.curriculum?.name),
-//         gradeLevels: level.gradeLevels.map(grade => ({
-//           id: grade.id,
-//           name: grade.name,
-//           code: grade.code,
-//           order: grade.order
-//         })),
-//         subjects: level.curriculum?.curriculumSubjects?.map(cs => ({
-//           id: cs.subject.id,
-//           name: cs.subject.name,
-//           code: cs.subject.code,
-//           subjectType: cs.subjectType
-//         })) || []
-//       })),
-//       createdAt: schoolConfig.createdAt,
-//       updatedAt: schoolConfig.updatedAt
-//     };
-
-//     return configurationData;
-//   }
 
   private async validateSchoolAccess(subdomain: string, userId: string): Promise<School> {
     const school = await this.schoolRepo.findOne({

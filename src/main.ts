@@ -7,6 +7,7 @@ import { GraphQLExceptionsFilter } from './common/filter/graphQLException.filter
 import { CustomLogger } from './common/custom-logger.service';
 import * as express from 'express';
 import { join } from 'path';
+import { SeedingService } from './school-type/seeds/school-type';
 
 
 async function bootstrap() {
@@ -76,7 +77,10 @@ async function bootstrap() {
 
     // Start application
     const port = process.env.PORT || 3000
-    
+
+//     const seedingService = app.get(SeedingService);
+// await seedingService.seedAllSchoolTypes();
+
     await app.listen(port, '0.0.0.0');
     console.log('ENV TEST::::::g', process.env.PORT);
 

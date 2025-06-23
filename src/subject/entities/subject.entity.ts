@@ -21,6 +21,11 @@ export class Subject {
   @Column({ nullable: true })
   description: string;
 
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  shortName?: string;
+
+
   @Field(() => [CurriculumSubject], { nullable: 'itemsAndList' }) 
   @OneToMany(() => CurriculumSubject, curriculumSubject => curriculumSubject.subject)
   curriculumSubjects: CurriculumSubject[];

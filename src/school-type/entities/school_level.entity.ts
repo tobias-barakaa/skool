@@ -6,10 +6,10 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
 } from 'typeorm';
-import { GradeLevel } from 'src/level/entities/grade-level.entity';
 import { SchoolType } from './school-type';
 import { Curriculum } from 'src/curriculum/entities/curicula.entity';
 import { CurriculumSubject } from 'src/curriculum/entities/curriculum_subjects.entity';
+import { GradeLevel } from 'src/level/entities/grade-level.entity';
 
 @ObjectType()
 @Entity()
@@ -26,9 +26,12 @@ export class SchoolLevel {
   @ManyToOne(() => SchoolType, (type) => type.schoolLevels, { onDelete: 'CASCADE' })
   schoolType: SchoolType;
 
+  @OneToMany(() => GradeLevel, gradeLevel => gradeLevel.schoolLevel, {
+    cascade: true,
+    eager: false,
+  })
   @Field(() => [GradeLevel], { nullable: true })
-  @OneToMany(() => GradeLevel, (grade) => grade.level, { cascade: true })
-  gradeLevels: GradeLevel[];
+  gradeLevels?: GradeLevel[];
 
   @Field(() => Curriculum, { nullable: true })
   @ManyToOne(() => Curriculum, (curriculum) => curriculum.schoolLevels, {

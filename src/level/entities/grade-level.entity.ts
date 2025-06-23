@@ -1,7 +1,8 @@
 import { Field, ID, ObjectType } from "@nestjs/graphql";
 import { Level } from "../../level/entities/level.entities";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Curriculum } from "src/curriculum/entities/curicula.entity";
+import { SchoolLevel } from "src/school-type/entities/school_level.entity";
 
 // grade-level.entity.ts
 @ObjectType()
@@ -16,11 +17,28 @@ export class GradeLevel {
   name: string; 
 
 
-  @ManyToOne(() => Level, (level) => level.gradeLevels)
+  @ManyToOne(() => Level, (level) => level.gradeLevels, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'level_id' })
   level: Level;
 
-  @ManyToOne(() => Curriculum, curriculum => curriculum.gradeLevels)
+  @ManyToOne(() => SchoolLevel, schoolLevel => schoolLevel.gradeLevels, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  schoolLevel?: SchoolLevel;
+
+  @ManyToOne(() => Curriculum, curriculum => curriculum.gradeLevels, {
+    nullable: false,
+    onDelete: 'CASCADE', 
+  })
+  @JoinColumn({ name: 'curriculum_id' })
   curriculum: Curriculum;
+
+  // @ManyToOne(() => Curriculum, curriculum => curriculum.gradeLevels)
+  // curriculum: Curriculum;
 
   @Field()
   @Column()
@@ -31,21 +49,3 @@ export class GradeLevel {
   order: number; // For sorting/progression
 }
 
-
-// @Entity('grade_levels')
-// export class GradeLevel {
-//   @PrimaryGeneratedColumn('uuid')
-//   id: string;
-
-//   @Column()
-//   name: string; // 'Year 1', 'Year 10', 'Nursery'
-
-//   @Column()
-//   code: string; // 'Y1', 'Y10', 'NUR'
-
-//   @Column({ type: 'int' })
-//   order: number; // For sorting/progression
-
-//   @ManyToOne(() => Curriculum, curriculum => curriculum.gradeLevels)
-//   curriculum: Curriculum;
-// }

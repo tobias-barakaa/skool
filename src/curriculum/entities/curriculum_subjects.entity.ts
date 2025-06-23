@@ -13,7 +13,7 @@ import { Subject } from 'src/subject/entities/subject.entity';
 import { SubjectType } from 'src/subject/enums/subject.type.enum';
 import { SchoolLevel } from 'src/school-type/entities/school_level.entity';
 
-@ObjectType() 
+@ObjectType()
 @Entity('curriculum_subjects')
 export class CurriculumSubject {
   @Field(() => ID)
@@ -49,9 +49,26 @@ export class CurriculumSubject {
   availableGrades: GradeLevel[];
 
   @Field(() => SchoolLevel, { nullable: true })
-@ManyToOne(() => SchoolLevel, (level) => level.curriculumSubjects, {
-  nullable: true,
-  onDelete: 'SET NULL',
-})
-schoolLevel: SchoolLevel;
+  @ManyToOne(() => SchoolLevel, (level) => level.curriculumSubjects, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  schoolLevel: SchoolLevel;
+
+  // ✅ ADD THESE:
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  isCompulsory?: boolean;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  totalMarks?: number;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  passingMarks?: number;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  creditHours?: number;
 }

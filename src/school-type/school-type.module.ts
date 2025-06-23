@@ -13,9 +13,10 @@ import { GradeLevel } from 'src/level/entities/grade-level.entity';
 import { SchoolTypeResolver } from './resolvers/school-type.resolver';
 import { SchoolLevel } from './entities/school_level.entity';
 import { SchoolConfig } from './entities/school-config.entity';
+import { Level } from 'src/level/entities/level.entities';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CBCSchoolSelectionEntity, SchoolType,GradeLevel, UserSchoolSelection, SchoolLevel,SchoolConfig ]), SubjectModule,CurriculumModule, SchoolsModule],
+  imports: [TypeOrmModule.forFeature([CBCSchoolSelectionEntity, SchoolType,GradeLevel, Level,UserSchoolSelection, SchoolLevel,SchoolConfig ]), SubjectModule,CurriculumModule, SchoolsModule],
   providers: [SchoolTypeProvider, CbcProvider, SchoolTypeService, SchoolTypeResolver],
   exports: [SchoolTypeService]
 })

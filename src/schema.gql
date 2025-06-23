@@ -135,13 +135,17 @@ type Curriculum {
 
 type CurriculumSubject {
   availableGrades: [GradeLevel!]
+  creditHours: Float
   curriculum: Curriculum!
   displayOrder: Float
   id: ID!
   isActive: Boolean!
+  isCompulsory: Boolean
+  passingMarks: Float
   schoolLevel: SchoolLevel
   subject: Subject!
   subjectType: SubjectType!
+  totalMarks: Float
 }
 
 """
@@ -410,6 +414,7 @@ type Subject {
   description: String
   id: ID!
   name: String!
+  shortName: String
 }
 
 type SubjectResponse {
