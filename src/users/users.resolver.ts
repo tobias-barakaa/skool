@@ -23,7 +23,7 @@ export class UsersResolver {
     @Context() context,
   ): Promise<CreateUserResponse> {
     const { user, school, tokens } = await this.usersService.create(createUserInput);
-    this.logger.log(`User created successfully with ID: ${user.id} for school: ${school.schoolName}`);
+    // this.logger.log(`User created successfully with ID: ${user.id} for school: ${school.schoolName}`);
     
     // Set cookies
     context.res.cookie('access_token', tokens.accessToken, {
@@ -43,7 +43,7 @@ export class UsersResolver {
     });
     
     const subdomainUrl = `${school.subdomain}.squl.co.ke`;
-    this.logger.log('Tokens created:', { accessToken: tokens.accessToken, refreshToken: tokens.refreshToken });
+    // this.logger.log('Tokens created:', { accessToken: tokens.accessToken, refreshToken: tokens.refreshToken });
 
     return { 
       user, 
@@ -58,7 +58,7 @@ export class UsersResolver {
 
   @Query(() => [User], { name: 'users' })
   async findAll(): Promise<User[]> {
-    this.logger.log('Fetching all users');
+    // this.logger.log('Fetching all users');
     return await this.usersService.findAll();
   }
 }

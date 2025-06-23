@@ -37,7 +37,7 @@ export class UsersCreateProvider {
     userRole: string,
     schoolUrl: string
   ): Promise<{ user: User; school: School; tokens: { accessToken: string; refreshToken: string } }> {
-    this.logger.log(`Attempting to create user with email: ${email}`);
+    // this.logger.log(`Attempting to create user with email: ${email}`);
   
     const existingUser = await this.userRepository.findOne({
       where: { email },
@@ -62,7 +62,7 @@ export class UsersCreateProvider {
   });
   
       const savedUser = await this.userRepository.save(newUser);
-      this.logger.log(`User created successfully with ID: ${savedUser.id}`);
+      // this.logger.log(`User created successfully with ID: ${savedUser.id}`);
       const tokens = await this.generateTokensProvider.generateTokens(savedUser);
       const { accessToken, refreshToken } = tokens;
 
@@ -77,7 +77,7 @@ export class UsersCreateProvider {
       };
       // return { user: savedUser, school };
     } catch (error) {
-      this.logger.error(`Failed to create user: ${error.message}`, error.stack);
+      // this.logger.error(`Failed to create user: ${error.message}`, error.stack);
       
       if (error instanceof BusinessException) {
         throw error;

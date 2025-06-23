@@ -72,50 +72,58 @@ export class SchoolCreateProvider {
   }
 
   async createSchool(schoolName: string): Promise<School> {
-    this.logger.log(`Attempting to create school: ${schoolName}`);
-
+    // this.logger.log(`Attempting to create school: ${schoolName}`);
+  
     try {
-      const baseSubdomain = this.slugifySchoolName(schoolName);
+      const trimmedName = schoolName.trim();
+  
+      // ✅ Check if a school with the same name already exists
+      const existingSchool = await this.schoolRepository.findOne({
+        where: { schoolName: trimmedName },
+      });
+  
+      if (existingSchool) {
+        throw new SchoolAlreadyExistsException(trimmedName);
+      }
+  
+      const baseSubdomain = this.slugifySchoolName(trimmedName);
       const uniqueSubdomain = await this.generateUniqueSubdomain(baseSubdomain);
-
+  
       const newSchool = this.schoolRepository.create({
-
-        schoolName: schoolName.trim(),
+        schoolName: trimmedName,
         subdomain: uniqueSubdomain,
         isActive: true,
       });
-
+  
       const savedSchool = await this.schoolRepository.save(newSchool);
-      this.logger.log(`School created successfully with ID: ${savedSchool.schoolId} and subdomain: ${uniqueSubdomain}`);
-      console.log(`School created successfully: ${savedSchool.schoolName} with subdomain: ${savedSchool.subdomain}`);
-      
+  
+      // this.logger.log(
+      //   `School created successfully with ID: ${savedSchool.schoolId} and subdomain: ${uniqueSubdomain}`,
+      // );
+  
       return savedSchool;
     } catch (error) {
-      this.logger.error(`Failed to create school: ${error.message}`, error.stack);
-      
-      // Re-throw business exceptions as-is
+      // this.logger.error(`Failed to create school: ${error.message}`, error.stack);
+  
       if (error instanceof BusinessException) {
         throw error;
       }
-      
-      // Handle database constraint violations
+  
       if (error instanceof QueryFailedError) {
         if (error.message.includes('duplicate key') || error.message.includes('unique constraint')) {
-          // If it's a subdomain constraint, we shouldn't reach here due to our uniqueness check
-          // but handle it just in case
-          throw new SchoolAlreadyExistsException(this.slugifySchoolName(schoolName));
+          throw new SchoolAlreadyExistsException(schoolName);
         }
       }
-      
-      // Wrap other errors in a generic business exception
+  
       throw new BusinessException(
         'Failed to create school',
         'SCHOOL_CREATION_FAILED',
         HttpStatus.INTERNAL_SERVER_ERROR,
-        { originalError: error.message, schoolName }
+        { originalError: error.message, schoolName },
       );
     }
   }
+  
 
 
 

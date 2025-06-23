@@ -201,22 +201,7 @@ export class SchoolTypeService {
       return null;
     }
   
-   
-    console.log('School Config Debug:', {
-        id: schoolConfig.id,
-        selectedLevelsCount: schoolConfig.selectedLevels?.length,
-        levels: schoolConfig.selectedLevels?.map(level => ({
-          id: level.id,
-          name: level.name,
-         
-          curriculumSubjectsCount: level.curriculumSubjects?.length || 0,
-          subjects: level.curriculumSubjects?.map(cs => cs.subject?.name) || []
-        }))
-      });
-      console.log('Selected Levels:::::::::::::::::::::::::::', schoolConfig.selectedLevels.map(l => ({
-        name: l.name,
-        gradeLevels: l.gradeLevels?.map(g => g.name)
-      })));
+        
       
     // Organize the data structure for frontend consumption
     const configurationData = {
