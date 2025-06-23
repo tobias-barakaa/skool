@@ -87,34 +87,32 @@ export class SchoolTypeResolver {
   }
 
   private extractSubdomain(request: any): string {
-    // Extract subdomain from Host header
-    const host = request.headers.host 
-    // const host = request?.headers?.host || request?.headers?.Host || "sawa.squl.co.ke";
-
-    // const host = "barakaa.squl.co.ke"
-    
+    const host =
+      request?.headers?.['x-forwarded-host'] ||
+      request?.headers?.host ||
+      request?.hostname;
+  
     console.log('Host:', host);
-    
+  
     if (!host) {
       throw new Error('Host header is required');
     }
-
-    // Handle different formats: subdomain.domain.com or subdomain.localhost:3000
+  
     const hostParts = host.split('.');
-    
-    // For development (localhost)
+  
+    // Local dev (e.g. barakaa.localhost:3000)
     if (host.includes('localhost')) {
-      const subdomain = hostParts[0];
-      return subdomain === 'localhost' ? 'default' : subdomain;
+      return hostParts.length > 1 ? hostParts[0] : 'default';
     }
-    
-    // For production (subdomain.squl.co.ke)
+  
+    // Prod (e.g. barakaa.squl.co.ke)
     if (hostParts.length >= 3) {
       return hostParts[0];
     }
-    
+  
     throw new Error('Invalid subdomain format');
   }
+  
 }
 
 // import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';

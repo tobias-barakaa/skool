@@ -171,6 +171,7 @@ export class SchoolTypeService {
 
   async getSchoolConfiguration(subdomain: string, userId: string): Promise<any> {
     // Validate school and user access
+    // const school = await this.validateSchoolAccess(subdomain, userId);
     const school = await this.validateSchoolAccess(subdomain, userId);
   
     // Use QueryBuilder for more precise control over relations
