@@ -49,7 +49,6 @@ export class SchoolTypeResolver {
     );
   }
 
-  @Auth(AuthType.Bearer)
   @Query(() => SchoolConfigurationResponse, { nullable: true })
   async getSchoolConfiguration(
     @ActiveUser() user: ActiveUserData

@@ -8,6 +8,9 @@ import { CustomLogger } from './common/custom-logger.service';
 import * as express from 'express';
 import { join } from 'path';
 import { SeedingService } from './school-type/seeds/school-type';
+import * as cookieParser from 'cookie-parser';
+
+
 
 
 async function bootstrap() {
@@ -25,6 +28,8 @@ async function bootstrap() {
     );
 
     // CORS
+    app.use(cookieParser());
+
     app.enableCors({
       origin: [
         'http://localhost:3000',

@@ -26,9 +26,16 @@ export class SchoolLevel {
   @ManyToOne(() => SchoolType, (type) => type.schoolLevels, { onDelete: 'CASCADE' })
   schoolType: SchoolType;
 
+//   @OneToMany(() => GradeLevel, gradeLevel => gradeLevel.schoolLevel, {
+//     cascade: true,
+//     eager: false,
+//   })
+//   @Field(() => [GradeLevel], { nullable: true })
+//   gradeLevels?: GradeLevel[];
+
   @OneToMany(() => GradeLevel, gradeLevel => gradeLevel.schoolLevel, {
     cascade: true,
-    eager: false,
+    eager: false
   })
   @Field(() => [GradeLevel], { nullable: true })
   gradeLevels?: GradeLevel[];

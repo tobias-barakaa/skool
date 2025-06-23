@@ -176,16 +176,26 @@ export class SchoolTypeService {
     const school = await this.validateSchoolAccess(subdomain, userId);
   
     // Use QueryBuilder for more precise control over relations
-    const schoolConfig = await this.schoolConfigRepo
-      .createQueryBuilder('config')
-      .leftJoinAndSelect('config.school', 'school')
-      .leftJoinAndSelect('config.selectedLevels', 'curriculum')
-      .leftJoinAndSelect('curriculum.schoolType', 'schoolType')
-      .leftJoinAndSelect('curriculum.gradeLevels', 'gradeLevels')
-      .leftJoinAndSelect('curriculum.curriculumSubjects', 'curriculumSubjects')
-      .leftJoinAndSelect('curriculumSubjects.subject', 'subject')
-      .where('school.schoolId = :schoolId', { schoolId: school.schoolId })
-      .getOne();
+  const schoolConfig = await this.schoolConfigRepo
+  .createQueryBuilder('config')
+  .leftJoinAndSelect('config.school', 'school')
+  .leftJoinAndSelect('config.selectedLevels', 'schoolLevel') // renamed alias
+  .leftJoinAndSelect('schoolLevel.schoolType', 'schoolType')
+  .leftJoinAndSelect('schoolLevel.gradeLevels', 'gradeLevels') // ✅ join gradeLevels properly
+  .leftJoinAndSelect('schoolLevel.curriculumSubjects', 'curriculumSubjects')
+  .leftJoinAndSelect('curriculumSubjects.subject', 'subject')
+  .where('school.schoolId = :schoolId', { schoolId: school.schoolId })
+  .getOne();
+    // const schoolConfig = await this.schoolConfigRepo
+    //   .createQueryBuilder('config')
+    //   .leftJoinAndSelect('config.school', 'school')
+    //   .leftJoinAndSelect('config.selectedLevels', 'curriculum')
+    //   .leftJoinAndSelect('curriculum.schoolType', 'schoolType')
+    //   .leftJoinAndSelect('curriculum.gradeLevels', 'gradeLevels')
+    //   .leftJoinAndSelect('curriculum.curriculumSubjects', 'curriculumSubjects')
+    //   .leftJoinAndSelect('curriculumSubjects.subject', 'subject')
+    //   .where('school.schoolId = :schoolId', { schoolId: school.schoolId })
+    //   .getOne();
   
     if (!schoolConfig) {
       return null;
@@ -203,7 +213,11 @@ export class SchoolTypeService {
           subjects: level.curriculumSubjects?.map(cs => cs.subject?.name) || []
         }))
       });
-  
+      console.log('Selected Levels:::::::::::::::::::::::::::', schoolConfig.selectedLevels.map(l => ({
+        name: l.name,
+        gradeLevels: l.gradeLevels?.map(g => g.name)
+      })));
+      
     // Organize the data structure for frontend consumption
     const configurationData = {
       id: schoolConfig.id,
@@ -218,14 +232,18 @@ export class SchoolTypeService {
         name: level.name,
         description: this.getCurriculumDescription(level.name),
         ageRange: this.getAgeRange(level.name),
-       
         subjects: level.curriculumSubjects?.map(cs => ({
           id: cs.subject?.id,
           name: cs.subject?.name,
           code: cs.subject?.code,
           subjectType: cs.subjectType
-        })).filter(s => s.id) || [] // Filter out null subjects
+        })).filter(s => s.id) || [],
+        gradeLevels: level.gradeLevels?.map(g => ({
+          id: g.id,
+          name: g.name
+        })) || []
       })),
+      
       createdAt: schoolConfig.createdAt,
       updatedAt: schoolConfig.updatedAt
     };
