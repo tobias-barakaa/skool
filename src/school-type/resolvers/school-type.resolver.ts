@@ -18,6 +18,18 @@ export class SchoolTypeResolver {
     @ActiveUser() user: ActiveUserData
   ) {
     // Extract subdomain from request headers or context
+
+    const req = context.req;
+  
+    // 🔍 Log all headers
+    console.log('Request Headers:', req.headers);
+  
+    // 🔍 Log Authorization header specifically
+    console.log('Authorization Header:', req.headers['authorization'] || req.headers['Authorization']);
+  
+    // 🔍 Log ActiveUser decorator injection
+    console.log('Decoded User::::::::::::::::::::::::::::', user);
+
     const subdomain = this.extractSubdomain(context.req);
     
     return await this.schoolTypeService.configureSchoolLevelsByNames(
@@ -71,7 +83,7 @@ export class SchoolTypeResolver {
     const host = request.headers.host 
     // const host = request?.headers?.host || request?.headers?.Host || "sawa.squl.co.ke";
 
-    // const host = "areyoume.squl.co.ke"
+    // const host = "barakaa.squl.co.ke"
     
     console.log('Host:', host);
     
