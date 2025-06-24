@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { SchoolTypeProvider } from './providers/school-type-provider';
-import { CbcProvider } from './providers/cbc-provider';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CBCSchoolSelectionEntity } from './entities/cbc_school_selections';
 import { SubjectModule } from 'src/subject/subject.module';
@@ -17,7 +15,7 @@ import { Level } from 'src/level/entities/level.entities';
 
 @Module({
   imports: [TypeOrmModule.forFeature([CBCSchoolSelectionEntity, SchoolType,GradeLevel, Level,UserSchoolSelection, SchoolLevel,SchoolConfig ]), SubjectModule,CurriculumModule, SchoolsModule],
-  providers: [SchoolTypeProvider, CbcProvider, SchoolTypeService, SchoolTypeResolver],
+  providers: [ SchoolTypeService, SchoolTypeResolver],
   exports: [SchoolTypeService]
 })
 export class SchoolTypeModule {}

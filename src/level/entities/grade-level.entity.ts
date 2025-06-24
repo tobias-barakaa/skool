@@ -1,8 +1,9 @@
 import { Field, ID, ObjectType } from "@nestjs/graphql";
 import { Level } from "../../level/entities/level.entities";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Curriculum } from "src/curriculum/entities/curicula.entity";
 import { SchoolLevel } from "src/school-type/entities/school_level.entity";
+import { Stream } from "src/streams/entities/streams.entity";
 
 // grade-level.entity.ts
 @ObjectType()
@@ -40,6 +41,7 @@ export class GradeLevel {
   // @ManyToOne(() => Curriculum, curriculum => curriculum.gradeLevels)
   // curriculum: Curriculum;
 
+
   @Field()
   @Column()
   code: string; // 'Y1', 'Y10', 'NUR'
@@ -47,5 +49,12 @@ export class GradeLevel {
   @Field()
   @Column({ type: 'int' })
   order: number; // For sorting/progression
+
+
+  @OneToMany(() => Stream, stream => stream.gradeLevel, { 
+    cascade: true,
+    eager: false // Load streams only when needed
+  })
+  streams: Stream[];
 }
 

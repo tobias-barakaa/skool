@@ -20,7 +20,20 @@ export class GraphQLExceptionsFilter implements GqlExceptionFilter {
     const gqlContext = host.getArgByIndex(2);
     const operationName = gqlContext?.operation?.operationName || 'UnknownOperation';
 
-    // Handle BusinessException
+    // 🧠 Validation Error
+    if (exception.name === 'ValidationError') {
+      this.logger.warn(`[ValidationError] ${exception.message}`);
+
+      return new GraphQLError('Input validation failed', {
+        extensions: {
+          code: 'VALIDATION_ERROR',
+          details: exception.message,
+          statusCode: 400,
+        },
+      });
+    }
+
+    // 🧠 Business Exception
     if (exception instanceof BusinessException) {
       this.logger.warn(
         `[BusinessException] ${exception.name}: ${exception.message} | Metadata: ${JSON.stringify(
@@ -37,7 +50,7 @@ export class GraphQLExceptionsFilter implements GqlExceptionFilter {
       });
     }
 
-    // Handle known HTTP exceptions
+    // 🧠 Known NestJS exceptions
     if (
       exception instanceof ForbiddenException ||
       exception instanceof NotFoundException ||
@@ -54,7 +67,7 @@ export class GraphQLExceptionsFilter implements GqlExceptionFilter {
       });
     }
 
-    // Fallback for unknown exceptions
+    // 🧠 Fallback for unknown errors
     const errorMessage = exception.message || 'Unknown error';
     const errorStack = exception.stack || 'No stack trace available';
 
@@ -69,5 +82,3 @@ export class GraphQLExceptionsFilter implements GqlExceptionFilter {
     });
   }
 }
-
-

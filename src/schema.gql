@@ -106,6 +106,14 @@ enum ClassType {
   SPECIAL
 }
 
+input CreateStreamInput {
+  capacity: Int
+  description: String
+  gradeLevelId: String!
+  isActive: Boolean = true
+  name: String!
+}
+
 input CreateUserInput {
   email: String!
   name: String!
@@ -207,6 +215,7 @@ type Level {
 
 type Mutation {
   configureSchoolLevelsByNames(levelNames: [String!]!): SchoolConfigurationResponse!
+  createStream(input: CreateStreamInput!): StreamType!
   createUser(createUserInput: CreateUserInput!): CreateUserResponse!
   updateSchoolConfiguration(data: UpdateSchoolConfigurationInput!): Organization!
 }
@@ -237,11 +246,15 @@ type Parent {
 }
 
 type Query {
+  activeStreams: [StreamType!]!
   getAvailableLevelNames: [String!]!
   getCurrentOrganization: Organization!
   getSchoolConfiguration: SchoolConfigurationResponse
   getSchoolTypes: [SchoolTypeConfig!]!
   getStudentsByLevel(grade: String!, level: String!): [Student!]!
+  stream(id: ID!): StreamType!
+  streams: [StreamType!]!
+  streamsByGradeLevel(gradeLevelId: ID!): [StreamType!]!
   users: [User!]!
 }
 
@@ -346,6 +359,17 @@ type SelectedLevelResponse {
   subjects: [SubjectResponse!]
 }
 
+type StreamType {
+  capacity: Int
+  createdAt: DateTime!
+  description: String
+  gradeLevel: GradeLevel!
+  id: ID!
+  isActive: Boolean!
+  name: String!
+  updatedAt: DateTime!
+}
+
 type Student {
   academicLevel: String!
   academicStatus: AcademicStatus!
@@ -399,7 +423,6 @@ type Student {
   schoolId: String!
   secondaryParent: Parent
   secondaryParentId: String
-  stream: String
   studentId: ID!
   studentNumber: String!
   subjects: [Subject!]

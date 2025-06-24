@@ -45,23 +45,42 @@ async function bootstrap() {
     });
 
     // Validation Pipe
+    // app.useGlobalPipes(
+    //   new ValidationPipe({
+    //     whitelist: true,
+    //     forbidNonWhitelisted: true,
+    //     transform: true,
+    //     transformOptions: {
+    //       enableImplicitConversion: true,
+    //     },
+    //     exceptionFactory: (errors) => {
+    //       const messages = errors.map((error) => ({
+    //         field: error.property,
+    //         errors: Object.values(error.constraints || {}),
+    //       }));
+    //       return new Error(`Validation failed: ${JSON.stringify(messages)}`);
+    //     },
+    //   }),
+    // );
+
     app.useGlobalPipes(
       new ValidationPipe({
-        whitelist: true,
-        forbidNonWhitelisted: true,
         transform: true,
-        transformOptions: {
-          enableImplicitConversion: true,
-        },
+        whitelist: true,
         exceptionFactory: (errors) => {
-          const messages = errors.map((error) => ({
-            field: error.property,
-            errors: Object.values(error.constraints || {}),
+          const formattedErrors = errors.map(err => ({
+            field: err.property,
+            errors: Object.values(err.constraints || {})
           }));
-          return new Error(`Validation failed: ${JSON.stringify(messages)}`);
+  
+          const error = new Error('Validation failed: ' + JSON.stringify(formattedErrors));
+          error.name = 'ValidationError';
+          throw error;
         },
       }),
     );
+  
+    app.useGlobalFilters(new GraphQLExceptionsFilter());
 
     app.use('/favicon.ico', express.static(join(__dirname, '..', 'public', 'favicon.ico')));
 

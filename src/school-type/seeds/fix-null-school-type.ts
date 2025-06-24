@@ -22,11 +22,11 @@ import { SchoolLevelSetting } from '../../school-level-setting/entities/school-l
 // Adjust to your actual credentials
 const AppDataSource = new DataSource({
     type: 'postgres',
-    host: 'ep-noisy-cherry-abc735si-pooler.eu-west-2.aws.neon.tech',
+    host: 'host',
     port: 5432,
-    username: 'skool_owner',
-    password: 'npg_PSlKBLy5DJN2',
-    database: 'skool',
+    username: 'owner',
+    password: 'password',
+    database: 'database_name',
     entities: [
         SchoolType,
         Level,
@@ -49,9 +49,9 @@ const AppDataSource = new DataSource({
         
         
       ],
-    synchronize: true, // only for development
+    synchronize: true,
     ssl: {
-      rejectUnauthorized: false, // for self-signed certs (Neon uses this setup)
+      rejectUnauthorized: false,
     },
   });
   

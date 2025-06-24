@@ -26,6 +26,7 @@ import { Parent } from '../../parent/entities/parent.entity';
 import { Grade } from '../../grade/entities/grade.entity';
 import { Subject } from '../../subject/entities/subject.entity';
 import { Organization } from '../../organizations/entities/organizations-entity';
+import { Stream } from 'src/streams/entities/streams.entity';
 
 @ObjectType()
 @Entity()
@@ -98,10 +99,7 @@ export class Student {
   @Column()
   currentGrade: string;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  stream?: string;
-
+ 
   @Field()
   @Column()
   admissionDate: Date;
@@ -270,6 +268,12 @@ export class Student {
   @Field()
   @Column()
   academicLevel: string;
+
+  @ManyToOne(() => Stream, stream => stream.students, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  stream: Stream;
 }
 
 registerEnumType(Gender, {
