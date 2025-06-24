@@ -202,6 +202,7 @@ type GradeLevelResponse {
   id: ID!
   name: String!
   order: Float
+  streams: [Stream!]
 }
 
 type Level {
@@ -357,6 +358,16 @@ type SelectedLevelResponse {
   id: ID!
   name: String!
   subjects: [SubjectResponse!]
+}
+
+type Stream {
+  capacity: Int
+  createdAt: DateTime!
+  description: String
+  id: ID!
+  isActive: Boolean
+  name: String!
+  updatedAt: DateTime!
 }
 
 type StreamType {

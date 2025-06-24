@@ -185,6 +185,7 @@ export class SchoolTypeService {
   .leftJoinAndSelect('config.selectedLevels', 'schoolLevel')
   .leftJoinAndSelect('schoolLevel.schoolType', 'schoolType')
   .leftJoinAndSelect('schoolLevel.gradeLevels', 'gradeLevels') 
+  .leftJoinAndSelect('gradeLevels.streams', 'streams')
   .leftJoinAndSelect('schoolLevel.curriculumSubjects', 'curriculumSubjects')
   .leftJoinAndSelect('curriculumSubjects.subject', 'subject')
   .where('school.schoolId = :schoolId', { schoolId: school.schoolId })
@@ -217,7 +218,11 @@ export class SchoolTypeService {
         })).filter(s => s.id) || [],
         gradeLevels: level.gradeLevels?.map(g => ({
           id: g.id,
-          name: g.name
+          name: g.name,
+          streams: g.streams?.map(s => ({
+            id: s.id,
+            name: s.name,
+          })) || [],
         })) || []
       })),
       
@@ -264,46 +269,6 @@ export class SchoolTypeService {
     });
   }
 
-
-  private async validateSchoolAccess(subdomain: string, userId: string): Promise<School> {
-
-    const school = await this.schoolRepo.findOne({
-      where: { subdomain },
-      relations: ['users']
-    });
-
-    if (!school) {
-      throw new NotFoundException('School not found');
-    }
-
-    const existingConfig = await this.schoolConfigRepo.findOne({
-      where: { school: Equal(school.schoolId), isActive: true },
-    });
-
-    if (existingConfig) {
-      throw new BadRequestException('School has already been configured');
-    }
-
-    if (!school) {
-    throw new NotFoundException('School not found');
-  }
-
-  // ✅ Add these debug logs
-  console.log('School users:', school.users?.map(u => u.id));
-  console.log('Current user ID:', userId);
-
-    if (!school) {
-      throw new BadRequestException('School not found');
-    }
-
-    // Verify user belongs to this school
-    const userBelongsToSchool = school.users?.some(user => user.id === userId);
-    if (!userBelongsToSchool) {
-      throw new ForbiddenException('Access denied: User does not belong to this school');
-    }
-
-    return school;
-  }
 
 
 

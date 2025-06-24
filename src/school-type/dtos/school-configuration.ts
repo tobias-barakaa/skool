@@ -1,4 +1,5 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { Stream } from 'src/streams/entities/streams.entity';
 
 
 @ObjectType()
@@ -16,8 +17,13 @@ export class GradeLevelResponse {
   order?: number;
 
   @Field({ nullable: true })
-  age?: string; // you can set this from `getAgeRange(...)`
+  age?: string;
+
+  // ✅ Fix is here: explicitly define type of array
+  @Field(() => [Stream], { nullable: true })
+  streams?: Stream[];
 }
+
 
 
 
