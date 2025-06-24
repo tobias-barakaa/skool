@@ -31,7 +31,8 @@ export class SchoolTypeService {
     subdomain: string,
     userId: string
   ): Promise<any> {
-    const school = await this.validateSchoolAccess(subdomain, userId);
+    const school = await this.validateSchoolOwnership(subdomain, userId);
+    await this.assertSchoolNotConfigured(school.schoolId);
   
     const normalizedLevelNames = levelNames.map(name =>
       name.toLowerCase().trim().replace(/\s+/g, ' ')
@@ -173,7 +174,7 @@ export class SchoolTypeService {
     // Validate school and user access
     // const school = await this.validateSchoolAccess(subdomain, userId);
     // const school = await this.validateSchoolAccess(subdomain, userId);
-    const school = await this.validateSchoolAccess(subdomain, userId);
+    const school = await this.validateSchoolOwnership(subdomain, userId);
 
 
   
@@ -302,6 +303,37 @@ export class SchoolTypeService {
     }
 
     return school;
+  }
+
+
+
+  private async validateSchoolOwnership(subdomain: string, userId: string): Promise<School> {
+    const school = await this.schoolRepo.findOne({
+      where: { subdomain },
+      relations: ['users'],
+    });
+  
+    if (!school) {
+      throw new NotFoundException('School not found');
+    }
+  
+    const userBelongsToSchool = school.users?.some(user => user.id === userId);
+    if (!userBelongsToSchool) {
+      throw new ForbiddenException('Access denied: User does not belong to this school');
+    }
+  
+    return school;
+  }
+  
+
+  private async assertSchoolNotConfigured(schoolId: string): Promise<void> {
+    const existingConfig = await this.schoolConfigRepo.findOne({
+      where: { school: Equal(schoolId), isActive: true },
+    });
+  
+    if (existingConfig) {
+      throw new BadRequestException('School has already been configured');
+    }
   }
 
   private getCurriculumDescription(curriculumName: string): string {

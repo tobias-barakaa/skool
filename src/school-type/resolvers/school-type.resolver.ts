@@ -3,10 +3,8 @@ import { SchoolTypeService } from '../services/school-type.service';
 import { SchoolConfigurationResponse } from '../dtos/school-configuration';
 import { ActiveUser } from 'src/auth/decorator/active-user.decorator';
 import { ActiveUserData } from 'src/auth/interface/active-user.interface';
-import { Auth } from 'src/auth/decorator/auth.decorator';
 import { Logger } from '@nestjs/common';
 
-import { AuthType } from 'src/auth/enums/auth-type.enum';
 
 @Resolver()
 export class SchoolTypeResolver {
@@ -28,14 +26,14 @@ export class SchoolTypeResolver {
     const req = context.req;
     
     // 🔍 Log all headers
-    logger.debug('📥 Request Headers:', JSON.stringify(req.headers, null, 2));
+    // logger.debug('📥 Request Headers:', JSON.stringify(req.headers, null, 2));
     
     // 🔍 Log Authorization header specifically
-    const authHeader = req.headers['authorization'] || req.headers['Authorization'];
-    logger.debug(`🔑 Authorization Header: ${authHeader}`);
+    // const authHeader = req.headers['authorization'] || req.headers['Authorization'];
+    // logger.debug(`🔑 Authorization Header: ${authHeader}`);
     
     // 🔍 Log decoded user from ActiveUser decorator
-    logger.debug(`👤 Decoded User: ${JSON.stringify(user, null, 2)}`);
+    // logger.debug(`👤 Decoded User: ${JSON.stringify(user, null, 2)}`);
 
     // const subdomain = this.extractSubdomain(context.req);
     const subdomain = user.schoolSubdomain;
