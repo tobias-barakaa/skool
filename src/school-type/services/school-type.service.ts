@@ -174,37 +174,28 @@ export class SchoolTypeService {
     // const school = await this.validateSchoolAccess(subdomain, userId);
     // const school = await this.validateSchoolAccess(subdomain, userId);
     const school = await this.validateSchoolAccess(subdomain, userId);
+
+
   
     // Use QueryBuilder for more precise control over relations
   const schoolConfig = await this.schoolConfigRepo
   .createQueryBuilder('config')
   .leftJoinAndSelect('config.school', 'school')
-  .leftJoinAndSelect('config.selectedLevels', 'schoolLevel') // renamed alias
+  .leftJoinAndSelect('config.selectedLevels', 'schoolLevel')
   .leftJoinAndSelect('schoolLevel.schoolType', 'schoolType')
-  .leftJoinAndSelect('schoolLevel.gradeLevels', 'gradeLevels') // ✅ join gradeLevels properly
+  .leftJoinAndSelect('schoolLevel.gradeLevels', 'gradeLevels') 
   .leftJoinAndSelect('schoolLevel.curriculumSubjects', 'curriculumSubjects')
   .leftJoinAndSelect('curriculumSubjects.subject', 'subject')
   .where('school.schoolId = :schoolId', { schoolId: school.schoolId })
   .getOne();
-    // const schoolConfig = await this.schoolConfigRepo
-    //   .createQueryBuilder('config')
-    //   .leftJoinAndSelect('config.school', 'school')
-    //   .leftJoinAndSelect('config.selectedLevels', 'curriculum')
-    //   .leftJoinAndSelect('curriculum.schoolType', 'schoolType')
-    //   .leftJoinAndSelect('curriculum.gradeLevels', 'gradeLevels')
-    //   .leftJoinAndSelect('curriculum.curriculumSubjects', 'curriculumSubjects')
-    //   .leftJoinAndSelect('curriculumSubjects.subject', 'subject')
-    //   .where('school.schoolId = :schoolId', { schoolId: school.schoolId })
-    //   .getOne();
+  
   
     if (!schoolConfig) {
       return null;
     }
   
         
-      
-    // Organize the data structure for frontend consumption
-    const configurationData = {
+          const configurationData = {
       id: schoolConfig.id,
       school: {
         schoolId: school.schoolId,
@@ -274,10 +265,23 @@ export class SchoolTypeService {
 
 
   private async validateSchoolAccess(subdomain: string, userId: string): Promise<School> {
+
     const school = await this.schoolRepo.findOne({
       where: { subdomain },
       relations: ['users']
     });
+
+    if (!school) {
+      throw new NotFoundException('School not found');
+    }
+
+    const existingConfig = await this.schoolConfigRepo.findOne({
+      where: { school: Equal(school.schoolId), isActive: true },
+    });
+
+    if (existingConfig) {
+      throw new BadRequestException('School has already been configured');
+    }
 
     if (!school) {
     throw new NotFoundException('School not found');

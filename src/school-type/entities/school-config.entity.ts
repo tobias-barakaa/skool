@@ -28,6 +28,10 @@ export class SchoolConfig {
   @JoinTable()
   selectedLevels: SchoolLevel[];
 
+  @Field()
+  @Column({ default: true })
+  isActive: boolean; 
+
   @Field(() => Date)
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
