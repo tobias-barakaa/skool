@@ -38,6 +38,7 @@ import { SchoolLevelSettingModule } from './school-level-setting/school-level-se
 import { CurriculumModule } from './curriculum/curriculum.module';
 import { REQUEST_USER_KEY } from './auth/constants/auth.constants';
 import { StreamsModule } from './streams/streams.module';
+import { UserTenantMembershipModule } from './user-tenant-membership/user-tenant-membership.module';
 
 
 
@@ -139,6 +140,7 @@ const ENV = process.env.NODE_ENV;
     SchoolLevelSettingModule,
     CurriculumModule,
     StreamsModule,
+    UserTenantMembershipModule,
     
  
     

@@ -1,10 +1,10 @@
-// providers/create-stream.provider.ts
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GradeLevel } from '../../level/entities/grade-level.entity';
 import { Stream } from '../entities/streams.entity';
 import { CreateStreamInput } from '../dtos/create-stream.input';
+import { ActiveUserData } from 'src/auth/interface/active-user.interface';
 
 @Injectable()
 export class CreateStreamProvider {
@@ -15,7 +15,14 @@ export class CreateStreamProvider {
     private readonly gradeLevelRepository: Repository<GradeLevel>,
   ) {}
 
-  async execute(input: CreateStreamInput): Promise<Stream> {
+  async execute(input: CreateStreamInput, user: ActiveUserData): Promise<Stream> {
+    // Check if user is authenticated
+    if (!user || !user.sub) {
+      throw new ForbiddenException('User must be authenticated to create streams');
+    }
+
+    console.log('Creating stream with input:', input);
+
     // Validate grade level exists
     const gradeLevel = await this.gradeLevelRepository.findOne({
       where: { id: input.gradeLevelId },

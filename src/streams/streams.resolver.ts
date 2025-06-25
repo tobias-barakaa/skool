@@ -1,18 +1,45 @@
-// streams.resolver.ts
 import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
 import { StreamType } from './dtos/stream.object-type';
-import { StreamsService } from './providers/stream.service';
 import { CreateStreamInput } from './dtos/create-stream.input';
+import { UpdateStreamInput } from './dtos/update-stream.input';
+import { Logger, UseGuards } from '@nestjs/common';
+import { StreamsService } from './providers/stream.service';
+import { Auth } from 'src/auth/decorator/auth.decorator';
+import { AuthType } from 'src/auth/enums/auth-type.enum';
+import { ActiveUserData } from 'src/auth/interface/active-user.interface';
+import { ActiveUser } from 'src/auth/decorator/active-user.decorator';
 
 @Resolver(() => StreamType)
+@Auth(AuthType.Bearer) // Apply auth guard to all operations
 export class StreamsResolver {
+  private readonly logger = new Logger(StreamsResolver.name);
+
   constructor(private readonly streamsService: StreamsService) {}
 
   @Mutation(() => StreamType)
   async createStream(
     @Args('input') input: CreateStreamInput,
+    @ActiveUser() user: ActiveUserData,
   ): Promise<StreamType> {
-    return this.streamsService.createStream(input);
+    this.logger.log('Creating stream with input:', input);
+    
+    return this.streamsService.createStream(input, user);
+  }
+
+  @Mutation(() => StreamType)
+  async updateStream(
+    @Args('input') input: UpdateStreamInput,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<StreamType> {
+    return this.streamsService.updateStream(input, user);
+  }
+
+  @Mutation(() => Boolean)
+  async deleteStream(
+    @Args('id', { type: () => ID }) id: string,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<boolean> {
+    return this.streamsService.deleteStream(id, user);
   }
 
   @Query(() => [StreamType])

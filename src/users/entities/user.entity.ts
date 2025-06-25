@@ -7,6 +7,7 @@ import { SchoolManager } from "../../schoolmanager/entities/school-manager.entit
 import { Teacher } from "../../teacher/entities/teacher.entity";
 import { UserBranch } from "../../user-branch/entities/user-branch.entity";
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { UserTenantMembership } from "src/user-tenant-membership/entities/user-tenant-membership.entity";
 
 // src/users/entities/user.entity.ts
 @ObjectType()
@@ -44,6 +45,8 @@ export class User {
   @JoinColumn({ name: 'organizationId' })
   organization: Organization;
 
+  @OneToMany(() => UserTenantMembership, membership => membership.user)
+  memberships: UserTenantMembership[];
 
  
   @Field(() => [UserBranch], { nullable: true })

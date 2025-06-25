@@ -1,10 +1,13 @@
-// providers/streams.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Stream } from '../entities/streams.entity';
-import { CreateStreamProvider } from './stream.create.provider';
+import { UpdateStreamProvider } from './update-stream.provider';
+import { DeleteStreamProvider } from './delete-stream.provider';
 import { CreateStreamInput } from '../dtos/create-stream.input';
+import { UpdateStreamInput } from '../dtos/update-stream.input';
+import { CreateStreamProvider } from './stream.create.provider';
+import { ActiveUserData } from 'src/auth/interface/active-user.interface';
 
 @Injectable()
 export class StreamsService {
@@ -12,10 +15,20 @@ export class StreamsService {
     @InjectRepository(Stream)
     private readonly streamRepository: Repository<Stream>,
     private readonly createStreamProvider: CreateStreamProvider,
+    private readonly updateStreamProvider: UpdateStreamProvider,
+    private readonly deleteStreamProvider: DeleteStreamProvider,
   ) {}
 
-  async createStream(input: CreateStreamInput): Promise<Stream> {
-    return this.createStreamProvider.execute(input);
+  async createStream(input: CreateStreamInput, user: ActiveUserData): Promise<Stream> {
+    return this.createStreamProvider.execute(input, user);
+  }
+
+  async updateStream(input: UpdateStreamInput, user: ActiveUserData): Promise<Stream> {
+    return this.updateStreamProvider.execute(input, user);
+  }
+
+  async deleteStream(id: string, user: ActiveUserData): Promise<boolean> {
+    return this.deleteStreamProvider.execute(id, user);
   }
 
   async findAll(): Promise<Stream[]> {

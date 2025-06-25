@@ -218,7 +218,9 @@ type Mutation {
   configureSchoolLevelsByNames(levelNames: [String!]!): SchoolConfigurationResponse!
   createStream(input: CreateStreamInput!): StreamType!
   createUser(createUserInput: CreateUserInput!): CreateUserResponse!
+  deleteStream(id: ID!): Boolean!
   updateSchoolConfiguration(data: UpdateSchoolConfigurationInput!): Organization!
+  updateStream(input: UpdateStreamInput!): StreamType!
 }
 
 type Organization {
@@ -507,6 +509,14 @@ type Teacher {
   user: User!
 }
 
+type Tenant {
+  createdAt: DateTime!
+  id: ID!
+  name: String!
+  subdomain: String!
+  updatedAt: DateTime!
+}
+
 type TokensOutput {
   accessToken: String!
   refreshToken: String!
@@ -515,6 +525,15 @@ type TokensOutput {
 input UpdateSchoolConfigurationInput {
   schoolType: String!
   selectedLevels: [String!]!
+}
+
+input UpdateStreamInput {
+  capacity: Float
+  description: String
+  gradeLevelId: ID
+  id: ID!
+  isActive: Boolean
+  name: String
 }
 
 type User {
