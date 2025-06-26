@@ -31,8 +31,8 @@ export class CreateStreamProvider {
         relations: [
           'schoolLevel',
           'schoolLevel.schoolType',
-          'schoolLevel.schoolConfigs',
-          'schoolLevel.schoolConfigs.school'
+        //   'schoolLevel.schoolConfigs',
+        //   'schoolLevel.schoolConfigs.school'
         ],
       });
 
