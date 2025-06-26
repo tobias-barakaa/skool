@@ -6,6 +6,6 @@ export interface ActiveUserData {
 
     organizationId: string;
 
-    schoolId?: string;
+    schoolId: string;
     schoolSubdomain?: string;
 }

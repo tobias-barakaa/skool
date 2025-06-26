@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Stream } from '../entities/streams.entity';
@@ -20,8 +20,14 @@ export class StreamsService {
   ) {}
 
   async createStream(input: CreateStreamInput, user: ActiveUserData): Promise<Stream> {
-    return this.createStreamProvider.execute(input, user);
+    if (!user.schoolId) {
+        throw new BadRequestException('User is not associated with any school');
+      }
+    
+      return this.createStreamProvider.execute(input, user, user.schoolId);
+
   }
+  
 
   async updateStream(input: UpdateStreamInput, user: ActiveUserData): Promise<Stream> {
     return this.updateStreamProvider.execute(input, user);

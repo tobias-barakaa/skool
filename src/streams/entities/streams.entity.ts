@@ -1,5 +1,6 @@
 import { ObjectType, Field, ID, Int } from '@nestjs/graphql';
 import { GradeLevel } from 'src/level/entities/grade-level.entity';
+import { School } from 'src/school/entities/school.entity';
 import { Student } from 'src/student/entities/student.entity';
 import {
   Entity,
@@ -9,6 +10,7 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  JoinColumn,
 } from 'typeorm';
 
 @ObjectType() // ✅ Needed for GraphQL
@@ -50,4 +52,12 @@ export class Stream {
   @Field()
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Column({ nullable: false }) // 👈 temporarily allow nulls
+schoolId: string;
+
+  @ManyToOne(() => School, { nullable: false, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'schoolId' })
+  school: School;
+
 }

@@ -61,6 +61,8 @@ export class SchoolTypeService {
         'Cannot select levels from different school types. Please select levels from the same school type only.'
       );
     }
+
+
   
     const schoolLevels: SchoolLevel[] = [];
   
@@ -185,7 +187,15 @@ export class SchoolTypeService {
   .leftJoinAndSelect('config.selectedLevels', 'schoolLevel')
   .leftJoinAndSelect('schoolLevel.schoolType', 'schoolType')
   .leftJoinAndSelect('schoolLevel.gradeLevels', 'gradeLevels') 
-  .leftJoinAndSelect('gradeLevels.streams', 'streams')
+//   .leftJoinAndSelect('gradeLevels.streams', 'streams', 'streams.schoolId = :schoolId', { schoolId: school.schoolId })
+  .leftJoinAndSelect(
+    'gradeLevels.streams',
+    'streams',
+    'streams.schoolId = :schoolId',
+    { schoolId: school.schoolId }
+  )
+
+//   .leftJoinAndSelect('gradeLevels.streams', 'streams')
   .leftJoinAndSelect('schoolLevel.curriculumSubjects', 'curriculumSubjects')
   .leftJoinAndSelect('curriculumSubjects.subject', 'subject')
   .where('school.schoolId = :schoolId', { schoolId: school.schoolId })

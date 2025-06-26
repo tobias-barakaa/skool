@@ -15,7 +15,9 @@ export class CreateStreamProvider {
     private readonly gradeLevelRepository: Repository<GradeLevel>,
   ) {}
 
-  async execute(input: CreateStreamInput, user: ActiveUserData): Promise<Stream> {
+  async execute(input: CreateStreamInput, user: ActiveUserData, schoolId: string): Promise<Stream> {
+
+//   async execute(input: CreateStreamInput, user: ActiveUserData): Promise<Stream> {
     // Check if user is authenticated
     if (!user || !user.sub) {
       throw new ForbiddenException('User must be authenticated to create streams');
@@ -25,8 +27,14 @@ export class CreateStreamProvider {
 
     // Validate grade level exists
     const gradeLevel = await this.gradeLevelRepository.findOne({
-      where: { id: input.gradeLevelId },
-    });
+        where: { id: input.gradeLevelId },
+        relations: [
+          'schoolLevel',
+          'schoolLevel.schoolType',
+          'schoolLevel.schoolConfigs',
+          'schoolLevel.schoolConfigs.school'
+        ],
+      });
 
     if (!gradeLevel) {
       throw new NotFoundException(`Grade level with ID ${input.gradeLevelId} not found`);
@@ -52,13 +60,32 @@ export class CreateStreamProvider {
     }
 
     // Create the stream
-    const stream = this.streamRepository.create({
-      name: input.name,
-      capacity: input.capacity,
-      description: input.description,
-      isActive: input.isActive ?? true,
-      gradeLevel,
-    });
+    // const stream = this.streamRepository.create({
+    //   name: input.name,
+    //   capacity: input.capacity,
+    //   description: input.description,
+    //   isActive: input.isActive ?? true,
+    //   gradeLevel,
+    // });
+
+    // const stream = this.streamRepository.create({
+    //     name: input.name,
+    //     capacity: input.capacity,
+    //     description: input.description,
+    //     isActive: input.isActive ?? true,
+    //     gradeLevel,
+    //     schoolId: schoolId
+    //   });
+
+      const stream = this.streamRepository.create({
+        name: input.name,
+        capacity: input.capacity,
+        description: input.description,
+        isActive: input.isActive ?? true,
+        gradeLevel,
+        schoolId,
+      });
+      
 
     return this.streamRepository.save(stream);
   }
