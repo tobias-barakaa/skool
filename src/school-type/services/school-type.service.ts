@@ -259,16 +259,7 @@ export class SchoolTypeService {
     
   }
   
-
   
-
-
-  // async getSchoolConfiguration(subdomain: string, userId: string): Promise<any> {
-  //   // Validate school and user access
-  //   // const school = await this.validateSchoolAccess(subdomain, userId);
-  //   // const school = await this.validateSchoolAccess(subdomain, userId);
-  //   const school = await this.validateTenantOwnership(subdomain, userId);
-
 
   
     async getSchoolConfiguration(subdomain: string, userId: string, user: { tenantId: string }): Promise<any> {
@@ -301,10 +292,10 @@ export class SchoolTypeService {
     }
   
         
-          const configurationData = {
+    const configurationData = {
       id: schoolConfig.id,
-      school: {
-        schoolId: tenant.id,
+      tenant: { 
+        id: tenant.id,
         schoolName: tenant.name,
         subdomain: tenant.subdomain
       },
@@ -373,42 +364,6 @@ export class SchoolTypeService {
     });
   }
   
-  
-  // // Also, you might want to verify your relations are working by testing individual queries:
-  // async debugRelations(schoolId: string): Promise<void> {
-  //   // Test 1: Check if curriculum has grade levels
-  //   const curricula = await this.curriculumRepo.find({
-  //     where: { schoolType: { name: 'International' } }, 
-  //     relations: ['gradeLevels']
-  //   });
-    
-  //   console.log('Curricula with grade levels:', curricula.map(c => ({
-  //     name: c.name,
-  //     gradeLevelsCount: c.gradeLevels?.length || 0
-  //   })));
-  
-  //   // Test 2: Check if curriculum has subjects
-  //   const curriculaWithSubjects = await this.curriculumRepo.find({
-  //     where: { schoolType: { name: 'International' } },
-  //     relations: ['curriculumSubjects', 'curriculumSubjects.subject']
-  //   });
-    
-  //   console.log('Curricula with subjects:', curriculaWithSubjects.map(c => ({
-  //     name: c.name,
-  //     subjectsCount: c.curriculumSubjects?.length || 0
-  //   })));
-  
-  //   // Test 3: Check school configuration
-  //   const config = await this.schoolConfigRepo.findOne({
-  //     where: { tenant: { tenant.id } },
-  //     relations: ['selectedLevels']
-  //   });
-    
-  //   console.log('School config:', {
-  //     id: config?.id,
-  //     selectedLevelsCount: config?.selectedLevels?.length || 0
-  //   });
-  // }
 
 
 
@@ -479,26 +434,6 @@ export class SchoolTypeService {
     return descriptions[key] || 'Educational stage';
   }
   
-  // private getCurriculumDescription(curriculumName: string): string {
-  //   const descriptions = {
-  //     'PrePrimary': 'Early childhood education',
-  //     'LowerPrimary': 'Foundation stage',
-  //     'UpperPrimary': 'Intermediate stage',
-  //     'JuniorSecondary': 'Middle school stage',
-  //     'SeniorSecondary': 'Advanced level',
-  //     'Madrasa_Beginners': 'With religious foundation',
-  //     'Madrasa_Lower': 'With religious instruction',
-  //     'Madrasa_Upper': 'Religious education integration',
-  //     'Madrasa_Secondary': 'With religious studies integration',
-  //     'Madrasa_AdvancedAlim': 'Specialized religious education',
-  //     'Homeschool_EarlyYears': 'Early childhood homeschooling',
-  //     'Homeschool_LowerPrimary': 'Elementary homeschooling',
-  //     'Homeschool_UpperPrimary': 'Upper elementary homeschooling',
-  //     'Homeschool_JuniorSecondary': 'Middle school homeschooling',
-  //     'Homeschool_SeniorSecondary': 'High school homeschooling'
-  //   };
-  //   return descriptions[curriculumName] || 'Educational stage';
-  // }
 
   private getAgeRange(curriculumName: string): string {
     const normalizedKey = curriculumName.replace(/\s+/g, '').replace(/_/g, '').replace(/-/g, '');
