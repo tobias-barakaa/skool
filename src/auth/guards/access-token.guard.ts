@@ -38,7 +38,7 @@ export class AccessTokenGuard implements CanActivate {
 
     let payload: any;
     try {
-      payload = await this.jwtService.verifyAsync(token, this.jwtConfiguration);
+      payload = await this.jwtService.verifyAsync(token, this.jwtConfiguration)
     } catch {
       throw new UnauthorizedException('Invalid token');
     }
