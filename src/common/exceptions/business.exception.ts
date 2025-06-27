@@ -40,3 +40,16 @@ export class SchoolAlreadyExistsException extends BusinessException {
     this.name = 'SchoolAlreadyExistsException';
   }
 }
+
+
+export class UserNotInTenantException extends BusinessException {
+  constructor(userId: string, tenantId: string) {
+    super(
+      `User ${userId} does not belong to tenant ${tenantId}`,
+      'USER_NOT_IN_TENANT',
+      HttpStatus.UNAUTHORIZED,
+      { userId, tenantId }
+    );
+    this.name = 'UserNotInTenantException';
+  }
+}

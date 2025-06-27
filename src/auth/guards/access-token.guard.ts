@@ -15,6 +15,7 @@ import { Tenant } from 'src/tenants/entities/tenant.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserTenantMembership } from 'src/user-tenant-membership/entities/user-tenant-membership.entity';
+import { UserNotInTenantException } from 'src/common/exceptions/business.exception';
 
 @Injectable()
 export class AccessTokenGuard implements CanActivate {
@@ -43,7 +44,6 @@ export class AccessTokenGuard implements CanActivate {
     }
 
     const host = request.headers.host;
-    console.log(`Host:::::::::::::::::::::::://////////////////////////////////////////// ${host}`);
     
     const subdomain = extractSubdomain(host);
     if (!subdomain) throw new UnauthorizedException('Subdomain not found in host');
@@ -53,13 +53,6 @@ export class AccessTokenGuard implements CanActivate {
     if (!tenant) throw new UnauthorizedException('Tenant not found');
     console.log(`Checking membership for user ${payload.sub} in tenant ${tenant.id}`);
 
-    // const membership = await this.membershipRepo.findOne({
-    //   where: {
-    //     user: { id: payload.sub },
-    //     tenant: { id: tenant.id }
-    //   },
-    //   relations: ['user', 'tenant']
-    // });
     const membership = await this.membershipRepo.findOne({
       where: {
         userId: payload.sub,
@@ -68,7 +61,10 @@ export class AccessTokenGuard implements CanActivate {
       relations: ['user', 'tenant']
     });
 
-    if (!membership) throw new UnauthorizedException('User does not belong to this tenant');
+    if (!membership) {
+      throw new UserNotInTenantException(payload.sub, tenant.id);
+    }
+    
 
     // Attach enriched payload
     request[REQUEST_USER_KEY] = {
