@@ -43,7 +43,7 @@ export class AccessTokenGuard implements CanActivate {
     }
 
     const host = request.headers.host;
-    console.log(`Host::::: ${host}`);
+    console.log(`Host:::::::::::::::::::::::://////////////////////////////////////////// ${host}`);
     
     const subdomain = extractSubdomain(host);
     if (!subdomain) throw new UnauthorizedException('Subdomain not found in host');
