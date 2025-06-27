@@ -1,7 +1,9 @@
 export function extractSubdomain(host: string): string | null {
     if (!host) return null;
-    const parts = host.split('.');
-    if (parts.length < 4) return null; 
-    return parts[0]; // e.g., "greenfield.schoolapp.com" → "greenfield"
+    const hostname = host.split(':')[0]; // Remove port if present
+    const parts = hostname.split('.');
+  
+    if (parts.length < 3) return null; // e.g., just "zelisline.com" → no subdomain
+    return parts[0]; // e.g., "skool" in "skool.zelisline.com"
   }
   
