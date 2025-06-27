@@ -3,7 +3,7 @@ export function extractSubdomain(host: string): string | null {
     const hostname = host.split(':')[0]; 
     const parts = hostname.split('.');
   
-    if (parts.length < 3) return null; 
+    if (parts.length < 4) return null; 
     return parts[0]; 
   }
   

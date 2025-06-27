@@ -44,6 +44,7 @@ export class AccessTokenGuard implements CanActivate {
     }
 
     const host = request.headers.host;
+    // const host = "wedkdwamdanaye.squl.co.ke";
     
     const subdomain = extractSubdomain(host);
     if (!subdomain) throw new UnauthorizedException('Subdomain not found in host');
