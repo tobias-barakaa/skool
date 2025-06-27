@@ -107,10 +107,11 @@ export class SelectedLevelResponse {
 }
 
 
+
 @ObjectType()
-export class SchoolResponse {
+export class TenantResponse {
   @Field(() => ID)
-  schoolId: string;
+  id: string;
 
   @Field()
   schoolName: string;
@@ -124,8 +125,8 @@ export class SchoolConfigurationResponse {
   @Field(() => ID)
   id: string;
 
-  @Field(() => SchoolResponse)
-  school: SchoolResponse;
+  @Field(() => TenantResponse) // or your Tenant GraphQL type
+  tenant: TenantResponse;
 
   @Field(() => SchoolTypeResponse, { nullable: true })
   schoolType?: SchoolTypeResponse;
@@ -139,4 +140,3 @@ export class SchoolConfigurationResponse {
   @Field()
   updatedAt: Date;
 }
-

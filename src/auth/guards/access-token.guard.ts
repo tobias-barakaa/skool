@@ -42,19 +42,28 @@ export class AccessTokenGuard implements CanActivate {
       throw new UnauthorizedException('Invalid token');
     }
 
-    const host = request.headers.host;
-    // const host = "school-table.squl.co.ke"
+    // const host = request.headers.host;
+    const host = "wekwamdanaye.squl.co.ke"
     
     const subdomain = extractSubdomain(host);
     if (!subdomain) throw new UnauthorizedException('Subdomain not found in host');
 
     const tenant = await this.tenantRepo.findOne({ where: { subdomain } });
+    console.log(`Tenant found: ${tenant ? tenant.id : 'None'}`, tenant);
     if (!tenant) throw new UnauthorizedException('Tenant not found');
+    console.log(`Checking membership for user ${payload.sub} in tenant ${tenant.id}`);
 
+    // const membership = await this.membershipRepo.findOne({
+    //   where: {
+    //     user: { id: payload.sub },
+    //     tenant: { id: tenant.id }
+    //   },
+    //   relations: ['user', 'tenant']
+    // });
     const membership = await this.membershipRepo.findOne({
       where: {
-        user: { id: payload.sub },
-        tenant: { id: tenant.id }
+        userId: payload.sub,
+        tenantId: tenant.id
       },
       relations: ['user', 'tenant']
     });
@@ -78,7 +87,6 @@ export class AccessTokenGuard implements CanActivate {
     return token;
   }
 }
-
 
 // import { CanActivate, ExecutionContext, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 // import { ConfigType } from '@nestjs/config';

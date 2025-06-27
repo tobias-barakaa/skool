@@ -256,9 +256,9 @@ type School {
 type SchoolConfigurationResponse {
   createdAt: DateTime!
   id: ID!
-  school: SchoolResponse!
   schoolType: SchoolTypeResponse
   selectedLevels: [SelectedLevelResponse!]!
+  tenant: TenantResponse!
   updatedAt: DateTime!
 }
 
@@ -269,12 +269,6 @@ type SchoolLevel {
   id: ID!
   name: String!
   schoolType: SchoolType!
-}
-
-type SchoolResponse {
-  schoolId: ID!
-  schoolName: String!
-  subdomain: String!
 }
 
 type SchoolType {
@@ -464,6 +458,12 @@ type Tenant {
   name: String!
   subdomain: String!
   updatedAt: DateTime!
+}
+
+type TenantResponse {
+  id: ID!
+  schoolName: String!
+  subdomain: String!
 }
 
 type TokenPair {

@@ -169,8 +169,94 @@ export class SchoolTypeService {
         'selectedLevels.curriculum.schoolType',
       ],
     });
-  
-    return result;
+    
+    if (!result) {
+      throw new Error('School configuration not found');
+    }
+    
+    if (!result.selectedLevels || result.selectedLevels.length === 0) {
+      throw new Error('No selected levels found');
+    }
+    
+    // Define the SchoolConfigurationResponse interface
+    interface SchoolConfigurationResponse {
+      id: string;
+      createdAt: Date;
+      updatedAt: Date;
+      tenant: {
+        id: string;
+        schoolName: string;
+        subdomain: string;
+      };
+      schoolType: {
+        id: string;
+        name: string;
+      } | null;
+      selectedLevels: {
+        id: string;
+        curriculum: {
+          id: string;
+          name: string;
+        };
+        gradeLevels: {
+          id: string;
+          level: {
+            id: string;
+            name: string;
+          };
+        }[];
+        curriculumSubjects: {
+          id: string;
+          subject: {
+            id: string;
+            name: string;
+          };
+        }[];
+      }[];
+    }
+    
+        const response: SchoolConfigurationResponse = {
+      id: result.id,
+      createdAt: result.createdAt,
+      updatedAt: result.updatedAt,
+      tenant: {
+        id: result.tenant.id,
+        schoolName: result.tenant.name,
+        subdomain: result.tenant.subdomain,
+      },
+      schoolType: result.selectedLevels[0]?.curriculum?.schoolType
+        ? {
+            id: result.selectedLevels[0].curriculum.schoolType.id,
+            name: result.selectedLevels[0].curriculum.schoolType.name,
+          }
+        : null,
+        selectedLevels: result.selectedLevels.map(sl => ({
+          id: sl.id,
+          name: sl.name, 
+          curriculum: {
+            id: sl.curriculum.id,
+            name: sl.curriculum.name,
+          },
+          gradeLevels: sl.gradeLevels?.map(gl => ({
+            id: gl.id,
+            name: gl.name, // ✅ ADD THIS LINE
+            level: {
+              id: gl.level.id,
+              name: gl.level.name,
+            },
+          })) ?? [],
+          curriculumSubjects: sl.curriculumSubjects?.map(cs => ({
+            id: cs.id,
+            subject: {
+              id: cs.subject.id,
+              name: cs.subject.name,
+            },
+          })) ?? [],
+        })),
+    };
+    
+    return response;
+    
   }
   
 

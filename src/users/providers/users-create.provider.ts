@@ -86,13 +86,20 @@ const tenant = queryRunner.manager.create(Tenant, {
 });
 const savedTenant = await queryRunner.manager.save(tenant);
 
+
 const membership = queryRunner.manager.create(UserTenantMembership, {
   userId: savedUser.id,
   tenantId: savedTenant.id,
   role: MembershipRole.SCHOOL_ADMIN,
   joinedAt: new Date(),
 });
+
+
 const savedMembership = await queryRunner.manager.save(membership);
+
+// const savedMembership = await queryRunner.manager.save(membership);
+console.log('✅ Membership created::::', savedMembership);
+
 
 await queryRunner.commitTransaction();
 
