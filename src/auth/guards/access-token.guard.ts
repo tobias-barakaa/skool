@@ -42,8 +42,8 @@ export class AccessTokenGuard implements CanActivate {
       throw new UnauthorizedException('Invalid token');
     }
 
-    // const host = request.headers.host;
-    const host = "school-table.squl.co.ke"
+    const host = request.headers.host;
+    // const host = "school-table.squl.co.ke"
     
     const subdomain = extractSubdomain(host);
     if (!subdomain) throw new UnauthorizedException('Subdomain not found in host');
