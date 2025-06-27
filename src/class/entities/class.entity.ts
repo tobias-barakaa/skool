@@ -20,7 +20,6 @@ import {
 //   import { TimetableSlot } from 'src/timetable/entities/timetable-slot.entity';
   import { Attendance } from '../../attendance/entities/attendance.entity';
 import { School } from '../../school/entities/school.entity';
-import { Branch } from '../../branch/entities/branch.entity';
 import { Grade } from '../../grade/entities/grade.entity';
 import { Teacher } from '../../teacher/entities/teacher.entity';
 import { Student } from '../../student/entities/student.entity';
@@ -170,24 +169,21 @@ import { Student } from '../../student/entities/student.entity';
     @ManyToOne(() => School, (school) => school.classes)
     school: School;
   
-    @Field(() => [Branch])
-    @ManyToOne(() => Branch, (branch) => branch.classes)
-    branch: Branch;
 
     @Field(() => [Grade])
     @OneToMany(() => Grade, (grade) => grade.class)
     grades: Grade[];
 
   
-    @Field(() => [Teacher])
-    @ManyToOne(() => Teacher, (t) => t.primaryClasses)
-    @JoinColumn({ name: 'classTeacherId' })
-    classTeacher: Teacher;
+    // @Field(() => [Teacher])
+    // @ManyToOne(() => Teacher, (t) => t.primaryClasses)
+    // @JoinColumn({ name: 'classTeacherId' })
+    // classTeacher: Teacher;
   
-    @Field(() => [Teacher], { nullable: true })
-    @ManyToOne(() => Teacher, (t) => t.assistantClasses, { nullable: true })
-    @JoinColumn({ name: 'assistantTeacherId' })
-    assistantTeacher?: Teacher;
+    // @Field(() => [Teacher], { nullable: true })
+    // @ManyToOne(() => Teacher, (t) => t.assistantClasses, { nullable: true })
+    // @JoinColumn({ name: 'assistantTeacherId' })
+    // assistantTeacher?: Teacher;
   
     @Field(() => [Student], { nullable: true })
     @ManyToOne(() => Student, (s) => s.monitorOf, { nullable: true })

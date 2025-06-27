@@ -40,12 +40,8 @@ export class Organization {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => User, user => user.organization)
-  users: User[];
 
   @OneToMany(() => Student, student => student.organization)
   students: Student[];
 
-  @OneToMany(() => Teacher, teacher => teacher.organization)
-  teachers: Teacher[];
 }

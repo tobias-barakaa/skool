@@ -10,9 +10,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join as pathJoin } from 'path';
 import { SchoolsModule } from './school/school.module';
 import { UserModule } from './users/users.module';
-import { BranchModule } from './branch/branch.module';
 import { SchoolTypeModule } from './school-type/school-type.module';
-import { UserBranchModule } from './user-branch/user-branch.module';
 import { TeacherModule } from './teacher/teacher.module';
 import { ParentModule } from './parent/parent.module';
 import { StudentModule } from './student/student.module';
@@ -20,7 +18,6 @@ import { GradeModule } from './grade/grade.module';
 import { AttendanceModule } from './attendance/attendance.module';
 import { SubjectModule } from './subject/subject.module';
 import { ClassModule } from './class/class.module';
-import { SchoolmanagerModule } from './schoolmanager/schoolmanager.module';
 import { GraphQLError } from 'graphql';
 import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
@@ -39,6 +36,9 @@ import { CurriculumModule } from './curriculum/curriculum.module';
 import { REQUEST_USER_KEY } from './auth/constants/auth.constants';
 import { StreamsModule } from './streams/streams.module';
 import { UserTenantMembershipModule } from './user-tenant-membership/user-tenant-membership.module';
+import { InvitationModule } from './invitation/invitation.module';
+import { TeacherProfilesModule } from './teacher_profiles/teacher_profiles.module';
+import { EmailModule } from './email/email.module';
 
 
 
@@ -78,6 +78,7 @@ const ENV = process.env.NODE_ENV;
       path: '/graphql',
       playground: true,
       sortSchema: true,
+      validationRules: [],
       // context: ({ req }) => ({
       //   req,
       //   [REQUEST_USER_KEY]: req?.user, 
@@ -122,17 +123,14 @@ const ENV = process.env.NODE_ENV;
 
     UserModule,
     SchoolsModule,
-    BranchModule,
     TeacherModule,
     SchoolTypeModule,
-    UserBranchModule,
     ParentModule,
     StudentModule,
     GradeModule,
     AttendanceModule,
     SubjectModule,
     ClassModule,
-    SchoolmanagerModule,
     AuthModule,
     OrganizationsModule,
     TenantsModule,
@@ -141,6 +139,9 @@ const ENV = process.env.NODE_ENV;
     CurriculumModule,
     StreamsModule,
     UserTenantMembershipModule,
+    InvitationModule,
+    TeacherProfilesModule,
+    EmailModule,
     
  
     

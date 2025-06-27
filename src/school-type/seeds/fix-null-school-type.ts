@@ -11,9 +11,6 @@ import { Class } from '../../class/entities/class.entity';
 import { Teacher } from '../../teacher/entities/teacher.entity';
 import { Student } from '../../student/entities/student.entity';
 import { Attendance } from '../../attendance/entities/attendance.entity';
-import { Branch } from '../../branch/entities/branch.entity';
-import { UserBranch } from '../../user-branch/entities/user-branch.entity';
-import { SchoolManager } from '../../schoolmanager/entities/school-manager.entity';
 import { User } from '../../users/entities/user.entity';
 import { Organization } from '../../organizations/entities/organizations-entity';
 import { Parent } from '../../parent/entities/parent.entity';
@@ -38,9 +35,6 @@ const AppDataSource = new DataSource({
         Student,
         Teacher,
         Class,
-        Branch,
-        UserBranch,
-        SchoolManager,
         User,
         Organization,
         Parent,

@@ -1,11 +1,8 @@
 export interface ActiveUserData {
-    // Id of the user
-    sub: number;
-    // email user
-    email: string
-
-    organizationId: string;
-
-    schoolId: string;
-    schoolSubdomain?: string;
-}
+    sub: string; // UUID string now, not number
+    email: string;
+    tenantId: string;
+    subdomain: string;
+    membershipId: string;
+  }
+  

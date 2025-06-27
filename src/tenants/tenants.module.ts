@@ -17,7 +17,7 @@ import { Tenant } from './entities/tenant.entity';
     OrganizationsModule
   ],
   providers: [TenantService],
-  exports: [TenantService],
+  exports: [TenantService, TypeOrmModule],
 })
 
 

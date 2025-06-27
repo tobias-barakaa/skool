@@ -6,6 +6,7 @@ import { User } from '../entities/user.entity';
 import { UsersCreateProvider } from '../providers/users-create.provider';
 import { School } from '../../school/entities/school.entity';
 import { CreateUserInput } from '../dtos/create-user.input';
+import { SignupInput } from '../dtos/signUp-input';
 
 @Injectable()
 export class UsersService {
@@ -17,32 +18,12 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async create(createUserInput: CreateUserInput): Promise<{ user: User; school: School, tokens: { accessToken: string; refreshToken: string } }> {
-    const result = await this.usersCreateProvider.createUser(
-      createUserInput.name,
-      createUserInput.email,
-      createUserInput.password,
-      createUserInput.schoolName,
-      createUserInput.userRole,
-      createUserInput.schoolUrl,
-
-    );
-
-
-    if (!result) {
-      throw new Error('Failed to create user');
-    }
-
-    if (!result.user || !result.school) {
-      throw new Error('Invalid result structure');
-    }
-
-    console.log(`User created successfully::::: ${result.user.email} for school: ${result.school.schoolName}`);
-    return { user: result.user, school: result.school, tokens: result.tokens };
+  async createUser(signupInput: SignupInput) {
+    return this.usersCreateProvider.createUser(signupInput);
   }
 
 
-  public async findOneById(id: number) {
+  public async findOneById(id: string) {
     let user: User | null = null;
     try {
         user = await this.userRepository.findOne({

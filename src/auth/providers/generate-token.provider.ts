@@ -51,13 +51,13 @@ public async signToken<T>(userId: string, expiresIn: number, payload?: T) {
 public async generateTokens(user: User) {
   const tenantContext: Partial<ActiveUserData> = {
     email: user.email,
-    organizationId: user.organizationId, 
+    // organizationId: user.organizationId, 
   };
   
-    if (user.school) {
-      tenantContext.schoolId = user.school.schoolId;
-      tenantContext.schoolSubdomain = user.school.subdomain;
-    }
+    // if (user.school) {
+    //   tenantContext.schoolId = user.school.schoolId;
+    //   tenantContext.schoolSubdomain = user.school.subdomain;
+    // }
   
     const [accessToken, refreshToken] = await Promise.all([
       this.signToken<Partial<ActiveUserData>>(

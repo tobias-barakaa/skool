@@ -24,30 +24,5 @@ export class SchoolResolver {
     }));
   }
 
-  @Query(() => Organization)
-  async getCurrentOrganization(@ActiveUser() user: ActiveUserData) {
-    return this.schoolService.getOrganizationById(user.organizationId);
-  }
-
-  @Query(() => [Student])
-  async getStudentsByLevel(
-    @Args('level') level: string,
-    @Args('grade') grade: string,
-    @ActiveUser() user: ActiveUserData
-  ): Promise<Student[]> {
-    return this.schoolService.getStudentsByLevel(user.organizationId, level, grade);
-  }
-
-  @Mutation(() => Organization)
-  async updateSchoolConfiguration(
-  @Args('data') data: UpdateSchoolConfigurationInput,
-  @ActiveUser() user: ActiveUserData,
-) {
-  return this.schoolService.updateSchoolConfiguration(
-    user.organizationId,
-    data.schoolType,
-    data.selectedLevels,
-  );
-}
 
 }

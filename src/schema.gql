@@ -24,7 +24,6 @@ type Attendance {
   class: Class
   classId: String
   date: DateTime!
-  markedBy: Teacher!
   remarks: String
   status: AttendanceStatus!
   student: Student!
@@ -41,27 +40,11 @@ enum AttendanceStatus {
   PRESENT
 }
 
-type Branch {
-  address: String!
-  branchCode: String!
-  branchId: ID!
-  branchName: String!
-  classes: [Class!]!
-  isActive: Boolean!
-  school: School!
-  schoolId: String!
-  students: [Student!]!
-  teachers: [Teacher!]!
-  userBranches: [UserBranch!]
-}
-
 type Class {
   academicYear: String!
   assignments: [String!]
-  assistantTeacher: [Teacher!]
   assistantTeacherId: String
   attendance: [Attendance!]!
-  branch: [Branch!]!
   branchId: String!
   breakTimes: [String!]
   building: String
@@ -71,7 +54,6 @@ type Class {
   classMonitor: [Student!]
   classMonitorId: String
   className: String!
-  classTeacher: [Teacher!]!
   classTeacherId: String!
   classType: ClassType!
   classroom: String
@@ -112,15 +94,6 @@ input CreateStreamInput {
   gradeLevelId: String!
   isActive: Boolean = true
   name: String!
-}
-
-input CreateUserInput {
-  email: String!
-  name: String!
-  password: String!
-  schoolName: String!
-  schoolUrl: String!
-  userRole: String!
 }
 
 type CreateUserResponse {
@@ -184,7 +157,6 @@ type Grade {
   student: Student!
   studentId: String!
   subjectId: String!
-  teacher: Teacher!
   term: String!
   totalMarks: Float!
 }
@@ -205,6 +177,12 @@ type GradeLevelResponse {
   streams: [Stream!]
 }
 
+type InvitationInfo {
+  email: String!
+  role: MembershipRole!
+  tenantName: String!
+}
+
 type Level {
   description: String
   gradeLevels: [GradeLevel!]
@@ -214,24 +192,28 @@ type Level {
   schoolType: SchoolTypeConfig!
 }
 
+enum MembershipRole {
+  SCHOOL_ADMIN
+  SCHOOL_MANAGER
+  STAFF
+  SUPER_ADMIN
+  TEACHER
+  TREASURER
+}
+
+enum MembershipStatus {
+  ACTIVE
+  EXPIRED
+  PENDING
+  SUSPENDED
+}
+
 type Mutation {
   configureSchoolLevelsByNames(levelNames: [String!]!): SchoolConfigurationResponse!
   createStream(input: CreateStreamInput!): StreamType!
-  createUser(createUserInput: CreateUserInput!): CreateUserResponse!
+  createUser(signupInput: SignupInput!): CreateUserResponse!
   deleteStream(id: ID!): Boolean!
-  updateSchoolConfiguration(data: UpdateSchoolConfigurationInput!): Organization!
   updateStream(input: UpdateStreamInput!): StreamType!
-}
-
-type Organization {
-  createdAt: DateTime!
-  id: ID!
-  isActive: Boolean!
-  name: String!
-  schoolConfig: SchoolTypeConfig!
-  schoolType: String!
-  subdomain: String!
-  updatedAt: DateTime!
 }
 
 type Parent {
@@ -251,10 +233,8 @@ type Parent {
 type Query {
   activeStreams: [StreamType!]!
   getAvailableLevelNames: [String!]!
-  getCurrentOrganization: Organization!
   getSchoolConfiguration: SchoolConfigurationResponse
   getSchoolTypes: [SchoolTypeConfig!]!
-  getStudentsByLevel(grade: String!, level: String!): [Student!]!
   stream(id: ID!): StreamType!
   streams: [StreamType!]!
   streamsByGradeLevel(gradeLevelId: ID!): [StreamType!]!
@@ -262,11 +242,9 @@ type Query {
 }
 
 type School {
-  branches: [Branch!]
   classes: [Class!]!
   createdAt: DateTime!
   isActive: Boolean!
-  manager: SchoolManager
   schoolId: ID!
   schoolName: String!
   schoolType: SchoolType!
@@ -291,19 +269,6 @@ type SchoolLevel {
   id: ID!
   name: String!
   schoolType: SchoolType!
-}
-
-type SchoolManager {
-  createdAt: DateTime!
-  firstName: String!
-  id: ID!
-  lastName: String!
-  phoneNumber: String
-  position: String
-  school: School
-  title: String
-  updatedAt: DateTime!
-  user: User!
 }
 
 type SchoolResponse {
@@ -362,6 +327,14 @@ type SelectedLevelResponse {
   subjects: [SubjectResponse!]
 }
 
+input SignupInput {
+  email: String!
+  name: String!
+  password: String!
+  schoolName: String!
+  schoolUrl: String
+}
+
 type Stream {
   capacity: Int
   createdAt: DateTime!
@@ -392,8 +365,6 @@ type Student {
   allergies: [String!]
   attendance: [Attendance!]!
   bloodGroup: String
-  branch: Branch!
-  branchId: String!
   class: Class!
   classId: String
   createdAt: DateTime!
@@ -483,48 +454,25 @@ enum SubjectType {
   VOCATIONAL
 }
 
-type Teacher {
-  assistantClasses: [Class!]!
-  attendance: [Attendance!]!
-  branches: [Branch!]!
-  classes: [String!]!
-  dateOfBirth: DateTime
-  department: String
-  employeeId: String!
-  firstName: String!
-  grades: [Grade!]!
-  hireDate: DateTime!
-  isActive: Boolean!
-  lastName: String!
-  organization: [Organization!]!
-  phoneNumber: String
-  primaryClasses: [Class!]!
-  qualifications: [String!]!
-  salary: Float
-  school: School!
-  schoolId: String!
-  specialization: [String!]!
-  subjects: [String!]!
-  teacherId: ID!
-  user: User!
-}
-
 type Tenant {
   createdAt: DateTime!
+  description: String
   id: ID!
+  isActive: Boolean!
+  memberships: [UserTenantMembership!]!
   name: String!
   subdomain: String!
   updatedAt: DateTime!
 }
 
-type TokensOutput {
+type TokenPair {
   accessToken: String!
   refreshToken: String!
 }
 
-input UpdateSchoolConfigurationInput {
-  schoolType: String!
-  selectedLevels: [String!]!
+type TokensOutput {
+  accessToken: String!
+  refreshToken: String!
 }
 
 input UpdateStreamInput {
@@ -537,27 +485,25 @@ input UpdateStreamInput {
 }
 
 type User {
-  branch: Branch
   createdAt: DateTime!
   email: String!
   id: ID!
-  managerProfile: SchoolManager
+  isGlobalAdmin: Boolean!
+  memberships: [UserTenantMembership!]!
   name: String!
-  organizationId: String!
-  parentProfile: Parent
   password: String!
-  school: School
-  schoolUrl: String
-  teacherProfile: Teacher
+  schoolUrl: String!
   updatedAt: DateTime!
-  userBranches: [UserBranch!]
-  userRole: String!
 }
 
-type UserBranch {
-  branch: Branch!
-  branchId: String!
-  canAccess: Boolean!
+type UserTenantMembership {
+  createdAt: DateTime!
+  id: ID!
+  joinedAt: DateTime
+  permissions: [String!]
+  role: MembershipRole!
+  status: MembershipStatus!
+  tenant: Tenant!
+  updatedAt: DateTime!
   user: User!
-  userId: String!
 }

@@ -19,7 +19,6 @@ import { Attendance } from '../../attendance/entities/attendance.entity';
 import { Gender } from '../enums/student.gender.enum';
 import { AcademicStatus } from '../enums/student.academic.status.enum';
 import { School } from '../../school/entities/school.entity';
-import { Branch } from '../../branch/entities/branch.entity';
 import { Class } from '../../class/entities/class.entity';
 import { truncate } from 'fs';
 import { Parent } from '../../parent/entities/parent.entity';
@@ -116,9 +115,6 @@ export class Student {
   @Column()
   schoolId: string;
 
-  @Field()
-  @Column()
-  branchId: string;
 
   @Field({ nullable: true })
   @Column({ nullable: true })
@@ -204,9 +200,6 @@ export class Student {
   @OneToMany(() => Class, (cls) => cls.classMonitor)
   monitorOf: Class[];
 
-  @Field(() => Branch)
-  @ManyToOne(() => Branch, (branch) => branch.students)
-  branch: Branch;
 
   @Field(() => Class, { nullable: true })
   @ManyToOne(() => Class, (cls) => cls.students, { nullable: true })

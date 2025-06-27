@@ -1,135 +1,90 @@
-// src/teachers/entities/teacher.entity.ts
-import {
-    Entity,
-    PrimaryGeneratedColumn,
-    Column,
-    ManyToOne,
-    OneToOne,
-    JoinColumn,
-    ManyToMany,
-    JoinTable,
-    OneToMany,
-  } from 'typeorm';
-  import { ObjectType, Field, ID } from '@nestjs/graphql';
-  import { User } from '../../users/entities/user.entity';
-  
-import { School } from '../../school/entities/school.entity';
-import { Branch } from '../../branch/entities/branch.entity';
-import { Class } from '../../class/entities/class.entity';
-import { Grade } from '../../grade/entities/grade.entity';
-import { Attendance } from '../../attendance/entities/attendance.entity';
-import { Organization } from '../../organizations/entities/organizations-entity';
-  
-  @ObjectType()
-  @Entity()
-  export class Teacher {
-    @Field(() => ID)
-    @PrimaryGeneratedColumn('uuid')
-    teacherId: string;
-  
-    @Field()
-    @Column({ unique: true })
-    employeeId: string;
-  
-    @Field()
-    @Column()
-    firstName: string;
-  
-    @Field()
-    @Column()
-    lastName: string;
-  
-    @Field({ nullable: true })
-    @Column({ nullable: true })
-    phoneNumber?: string;
-  
-    @Field({ nullable: true })
-    @Column({ type: 'date', nullable: true })
-    dateOfBirth?: Date;
-  
-    @Field()
-    @Column({ type: 'date' })
-    hireDate: Date;
-  
-    @Field({ nullable: true })
-    @Column({ type: 'float', nullable: true })
-    salary?: number;
-  
-    @Field({ nullable: true })
-    @Column({ nullable: true })
-    department?: string;
-  
-    @Field(() => [String])
-    @Column({ type: 'text', array: true, default: [] })
-    specialization: string[];
-  
-    @Field(() => [String])
-    @Column({ type: 'text', array: true, default: [] })
-    qualifications: string[];
-  
-    @Field()
-    @Column({ default: true })
-    isActive: boolean;
-  
-    @Field()
-    @Column()
-    schoolId: string;
-  
-    // 🔗 Relations
-  
-    @Field(() => School)
-    @ManyToOne(() => School, (school) => school.teachers, { onDelete: 'CASCADE' })
-    school: School;
-  
-    @Field(() => User)
-    @OneToOne(() => User, { cascade: true })
-    @JoinColumn()
-    user: User;
-  
-    @Field(() => [String])
-    @Column({
-    type: 'text',
-    array: true,
-    default: []
-    })
-    classes: string[];
-  
-    @Field(() => [String])
-    @Column({
-    type: 'varchar',
-    default: 'Math'
-    })
-    subjects: string[];
-  
-    @Field(() => [Branch])
-    @ManyToMany(() => Branch, (branch: Branch) => branch.teachers)
-    @JoinTable()
-    branches: Branch[];
+import { Field, ID, ObjectType } from "@nestjs/graphql";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { User } from "../../users/entities/user.entity";
+import { School } from "../../school/entities/school.entity";
 
-    @Field(() => [Class])
-    @OneToMany(() => Class, (cls) => cls.classTeacher)
-    primaryClasses: Class[];
+@ObjectType()
+@Entity()
+export class Teacher {
+  @PrimaryGeneratedColumn('uuid')
+  @Field(() => ID)
+  id: string;
 
-    @Field(() => [Grade])
-    @OneToMany(() => Grade, (grade) => grade.teacher)
-    grades: Grade[];
+  @Field()
+  @Column()
+  fullName: string;
+
+  @Field()
+  @Column()
+  firstName: string;
+
+  @Field()
+  @Column()
+  lastName: string;
+
+  @Field()
+  @Column()
+  email: string;
+
+  @Field()
+  @Column({ type: 'enum', enum: ['MALE', 'FEMALE', 'OTHER'] })
+  gender: string;
+
+  @Field()
+  @Column()
+  department: string;
+
+  @Field()
+  @Column()
+  phoneNumber: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  address?: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  subject?: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  employeeId?: string;
+
+  @Field({ nullable: true })
+  @Column({ type: 'date', nullable: true })
+  dateOfBirth?: Date;
+
+  @Field({ nullable: true })
+  @Column({ type: 'text', nullable: true })
+  qualifications?: string;
+
+  @Field({ nullable: true })
+  @Column({ default: false })
+  isActive: boolean;
+
+  @Field({ nullable: true })
+  @Column({ default: false })
+  hasCompletedProfile: boolean;
+
+  // @OneToOne(() => User, (user) => user.teacherProfile, { nullable: true })
+  // @JoinColumn()
+  // @Field(() => User, { nullable: true })
+  // user?: User;
+
+  @Column({ nullable: true })
+  userId?: string;
+
+  @ManyToOne(() => School, { nullable: true })
+  @Field(() => School, { nullable: true })
+  school?: School;
 
 
-    @Field(() => [Organization])
-    @OneToMany(() => Organization, (organization) => organization.teachers)
-    organization: Organization[];
+  @CreateDateColumn()
+  @Field(() => Date)
+  createdAt: Date;
 
-      // One teacher can assist multiple classes
-     @Field(() => [Class])
-    @OneToMany(() => Class, (cls) => cls.assistantTeacher)
-     assistantClasses: Class[];
+  @UpdateDateColumn()
+  @Field(() => Date)
+  updatedAt: Date;
+}
 
-     @Field(() => [Attendance])
-    @OneToMany(() => Attendance, (attendance) => attendance.markedBy)
-    attendance: Attendance[];
-
-    
- 
-
-  }
-  

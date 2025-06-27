@@ -75,8 +75,8 @@ import { Teacher } from '../../teacher/entities/teacher.entity';
     class?: Class;
   
   
-    @Field(() => Teacher)
-    @ManyToOne(() => Teacher, (teacher) => teacher.attendance)
-    markedBy: Teacher;
+    // @Field(() => Teacher)
+    // @ManyToOne(() => Teacher, (teacher) => teacher.attendance)
+    // markedBy: Teacher;
   }
   

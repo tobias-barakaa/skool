@@ -13,12 +13,10 @@ import {
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { User } from '../../users/entities/user.entity';
 import { Teacher } from '../../teacher/entities/teacher.entity';
-import { Branch } from '../../branch/entities/branch.entity';
 import { Parent } from '../../parent/entities/parent.entity';
 import { Subject } from '../../subject/entities/subject.entity';
 import { Class } from '../../class/entities/class.entity';
 import { Student } from '../../student/entities/student.entity';
-import { SchoolManager } from '../../schoolmanager/entities/school-manager.entity';
 import { SchoolLevelSetting } from '../../school-level-setting/entities/school-level-setting.entity';
 import { SchoolType } from '../../school-type/entities/school-type';
 
@@ -49,17 +47,11 @@ export class School {
   @CreateDateColumn()
   createdAt: Date;
 
-  // Relations
-
-  @Field(() => [Branch], { nullable: true })
-  @OneToMany(() => Branch, (branch: Branch) => branch.school)
-  branches: Branch[];
+ 
 
   @OneToMany(() => Teacher, (teacher) => teacher.school)
  teachers: Teacher[];
 
- @OneToMany(() => User, (user) => user.school)
- users: User[];
 
   @OneToMany(() => Parent, (parent) => parent.school)
   parents: Parent[];
@@ -73,14 +65,6 @@ export class School {
   classes: Class[];
 
 
-  @OneToOne(() => SchoolManager, (manager) => manager.school, {
-    cascade: true,
-    nullable: true,
-    eager: true,
-  })
-  @JoinColumn()
-  @Field(() => SchoolManager, { nullable: true })
-  manager?: SchoolManager;
   
 
   @Field(() => [Student])

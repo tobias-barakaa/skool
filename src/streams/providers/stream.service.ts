@@ -19,13 +19,21 @@ export class StreamsService {
     private readonly deleteStreamProvider: DeleteStreamProvider,
   ) {}
 
-  async createStream(input: CreateStreamInput, user: ActiveUserData): Promise<Stream> {
-    if (!user.schoolId) {
-        throw new BadRequestException('User is not associated with any school');
-      }
+  // async createStream(input: CreateStreamInput, user: ActiveUserData): Promise<Stream> {
+  //   if (!user.schoolId) {
+  //       throw new BadRequestException('User is not associated with any school');
+  //     }
     
-      return this.createStreamProvider.execute(input, user, user.schoolId);
+  //     return this.createStreamProvider.execute(input, user, user.schoolId);
 
+  // }
+
+  async createStream(input: CreateStreamInput, user: ActiveUserData): Promise<Stream> {
+    if (!user.tenantId) {
+      throw new BadRequestException('User is not associated with a tenant');
+    }
+  
+    return this.createStreamProvider.execute(input, user, user.tenantId); // Pass tenantId instead
   }
   
 

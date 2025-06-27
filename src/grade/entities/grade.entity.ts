@@ -111,9 +111,9 @@ import { Level } from '../../level/entities/level.entities';
     @ManyToOne(() => Class, (cls) => cls.grades)
     class: Class;
   
-    @Field(() => Teacher)
-    @ManyToOne(() => Teacher, (teacher) => teacher.grades)
-    teacher: Teacher;
+    // @Field(() => Teacher)
+    // @ManyToOne(() => Teacher, (teacher) => teacher.grades)
+    // teacher: Teacher;
 
 
   }

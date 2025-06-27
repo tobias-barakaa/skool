@@ -67,6 +67,7 @@ async function bootstrap() {
       new ValidationPipe({
         transform: true,
         whitelist: true,
+        forbidNonWhitelisted: true,
         exceptionFactory: (errors) => {
           const formattedErrors = errors.map(err => ({
             field: err.property,

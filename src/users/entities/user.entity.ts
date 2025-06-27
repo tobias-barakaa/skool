@@ -1,17 +1,11 @@
-import { Field, ID, ObjectType } from "@nestjs/graphql";
-import { Branch } from "../../branch/entities/branch.entity";
-import { Organization } from "../../organizations/entities/organizations-entity";
-import { Parent } from "../../parent/entities/parent.entity";
-import { School } from "../../school/entities/school.entity";
-import { SchoolManager } from "../../schoolmanager/entities/school-manager.entity";
-import { Teacher } from "../../teacher/entities/teacher.entity";
-import { UserBranch } from "../../user-branch/entities/user-branch.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { UserTenantMembership } from "src/user-tenant-membership/entities/user-tenant-membership.entity";
 
-// src/users/entities/user.entity.ts
+import { Field, ID, ObjectType } from "@nestjs/graphql";
+import { UserInvitation } from "src/invitation/entities/user-iInvitation.entity";
+import { UserTenantMembership } from "src/user-tenant-membership/entities/user-tenant-membership.entity";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+
 @ObjectType()
-@Entity()
+@Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
   @Field(() => ID)
@@ -29,61 +23,20 @@ export class User {
   @Column()
   name: string;
 
-  @Column({
-    type: 'varchar',
-    default: 'SUPER_ADMIN',
-  })
-  @Field(() => String)
-  userRole: string;
-
-
+  @Column({ type: 'boolean', default: false })
   @Field()
-  @Column({ nullable: true }) 
-  organizationId: string;
-
-  @ManyToOne(() => Organization, org => org.users)
-  @JoinColumn({ name: 'organizationId' })
-  organization: Organization;
+  isGlobalAdmin: boolean; 
 
   @OneToMany(() => UserTenantMembership, membership => membership.user)
+  @Field(() => [UserTenantMembership])
   memberships: UserTenantMembership[];
 
- 
-  @Field(() => [UserBranch], { nullable: true })
-  @OneToMany(() => UserBranch, (userBranch) => userBranch.user)
-  userBranches: UserBranch[];
+  @Column({ type: 'text', nullable: false }) 
+  @Field({ nullable: false })               
+  schoolUrl: string;
 
-  @Field(() => School, { nullable: true })
-  @ManyToOne(() => School, (school) => school.users)
-  @Field(() => School)
-  school: School;
-
-  @Column({ type: 'text', nullable: true }) 
-  @Field({ nullable: true })               
-  schoolUrl?: string;
-
-  @ManyToOne(() => Branch, { nullable: true })
-  @Field(() => Branch, { nullable: true })
-  branch: Branch | null;
-
-  @OneToOne(() => Teacher, (teacher) => teacher.user, { nullable: true })
-  @Field(() => Teacher, { nullable: true })
-  teacherProfile: Teacher | null;
-
-  @OneToOne(() => Parent, (parent) => parent.user, { nullable: true })
-  @Field(() => Parent, { nullable: true })
-  parentProfile: Parent | null;
-
-  @OneToOne(() => SchoolManager, (manager) => manager.user, { nullable: true })
-  @Field(() => SchoolManager, { nullable: true })
-  managerProfile: SchoolManager | null;
-
-  
-  // @ManyToOne(() => School, (school) => school.users, {
-  //   nullable: true,
-  //   onDelete: 'SET NULL',
-  // })
-  // school: School;
+  @OneToMany(() => UserInvitation, invitation => invitation.invitedBy)
+  sentInvitations: UserInvitation[];
 
   @CreateDateColumn()
   @Field(() => Date)

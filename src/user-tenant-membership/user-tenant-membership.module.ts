@@ -15,7 +15,7 @@ import { UserTenantMembership } from './entities/user-tenant-membership.entity';
     OrganizationsModule
   ],
   providers: [],
-  exports: [],
+  exports: [TypeOrmModule],
 })
 
 

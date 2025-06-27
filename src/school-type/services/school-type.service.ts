@@ -9,6 +9,7 @@ import { SchoolConfig } from '../entities/school-config.entity';
 import { SchoolLevel } from '../entities/school_level.entity';
 
 
+
 @Injectable()
 export class SchoolTypeService {
   constructor(
@@ -285,17 +286,16 @@ export class SchoolTypeService {
   private async validateSchoolOwnership(subdomain: string, userId: string): Promise<School> {
     const school = await this.schoolRepo.findOne({
       where: { subdomain },
-      relations: ['users'],
     });
   
     if (!school) {
       throw new NotFoundException('School not found');
     }
   
-    const userBelongsToSchool = school.users?.some(user => user.id === userId);
-    if (!userBelongsToSchool) {
-      throw new ForbiddenException('Access denied: User does not belong to this school');
-    }
+    // const userBelongsToSchool = school.users?.some(user => user.id === userId);
+    // if (!userBelongsToSchool) {
+    //   throw new ForbiddenException('Access denied: User does not belong to this school');
+    // }
   
     return school;
   }
