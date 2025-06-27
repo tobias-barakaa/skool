@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, ForbiddenException, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Curriculum } from 'src/curriculum/entities/curicula.entity';
 import { CurriculumSubject } from 'src/curriculum/entities/curriculum_subjects.entity';
@@ -7,6 +7,7 @@ import { School } from 'src/school/entities/school.entity';
 import { Equal,In, Repository } from 'typeorm';
 import { SchoolConfig } from '../entities/school-config.entity';
 import { SchoolLevel } from '../entities/school_level.entity';
+import { Tenant } from 'src/tenants/entities/tenant.entity';
 
 
 
@@ -25,6 +26,9 @@ export class SchoolTypeService {
     private readonly schoolConfigRepo: Repository<SchoolConfig>,
     @InjectRepository(SchoolLevel)
     private readonly schoolLevelRepo: Repository<SchoolLevel>,
+
+    @InjectRepository(Tenant)
+    private readonly tenantRepo: Repository<Tenant>,
   ) {}
 
   async configureSchoolLevelsByNames(
@@ -32,8 +36,8 @@ export class SchoolTypeService {
     subdomain: string,
     userId: string
   ): Promise<any> {
-    const school = await this.validateSchoolOwnership(subdomain, userId);
-    await this.assertSchoolNotConfigured(school.schoolId);
+    const tenant = await this.validateTenantOwnership(subdomain, userId);
+    await this.assertSchoolNotConfigured(tenant.id);
   
     const normalizedLevelNames = levelNames.map(name =>
       name.toLowerCase().trim().replace(/\s+/g, ' ')
@@ -113,7 +117,7 @@ export class SchoolTypeService {
     }
   
     let schoolConfig = await this.schoolConfigRepo.findOne({
-      where: { school: Equal(school.schoolId) },
+      where: { tenant: { id: tenant.id } },
       relations: ['selectedLevels'],
     });
   
@@ -139,7 +143,7 @@ export class SchoolTypeService {
     } else {
       // Create a new config and relate the levels
       schoolConfig = await this.schoolConfigRepo.save({
-        school,
+        tenant,
         createdAt: new Date(),
         updatedAt: new Date(),
       });
@@ -155,7 +159,7 @@ export class SchoolTypeService {
     const result = await this.schoolConfigRepo.findOne({
       where: { id: schoolConfig.id },
       relations: [
-        'school',
+        'tenant',
         'selectedLevels',
         'selectedLevels.gradeLevels',
         'selectedLevels.gradeLevels.level',
@@ -173,34 +177,37 @@ export class SchoolTypeService {
   
 
 
-  async getSchoolConfiguration(subdomain: string, userId: string): Promise<any> {
-    // Validate school and user access
-    // const school = await this.validateSchoolAccess(subdomain, userId);
-    // const school = await this.validateSchoolAccess(subdomain, userId);
-    const school = await this.validateSchoolOwnership(subdomain, userId);
+  // async getSchoolConfiguration(subdomain: string, userId: string): Promise<any> {
+  //   // Validate school and user access
+  //   // const school = await this.validateSchoolAccess(subdomain, userId);
+  //   // const school = await this.validateSchoolAccess(subdomain, userId);
+  //   const school = await this.validateTenantOwnership(subdomain, userId);
 
 
   
-    // Use QueryBuilder for more precise control over relations
-  const schoolConfig = await this.schoolConfigRepo
-  .createQueryBuilder('config')
-  .leftJoinAndSelect('config.school', 'school')
-  .leftJoinAndSelect('config.selectedLevels', 'schoolLevel')
-  .leftJoinAndSelect('schoolLevel.schoolType', 'schoolType')
-  .leftJoinAndSelect('schoolLevel.gradeLevels', 'gradeLevels') 
-//   .leftJoinAndSelect('gradeLevels.streams', 'streams', 'streams.schoolId = :schoolId', { schoolId: school.schoolId })
-  .leftJoinAndSelect(
-    'gradeLevels.streams',
-    'streams',
-    'streams.schoolId = :schoolId',
-    { schoolId: school.schoolId }
-  )
+    async getSchoolConfiguration(subdomain: string, userId: string, user: { tenantId: string }): Promise<any> {
+      const tenant = await this.validateTenantOwnership(subdomain, userId);
 
-//   .leftJoinAndSelect('gradeLevels.streams', 'streams')
-  .leftJoinAndSelect('schoolLevel.curriculumSubjects', 'curriculumSubjects')
-  .leftJoinAndSelect('curriculumSubjects.subject', 'subject')
-  .where('school.schoolId = :schoolId', { schoolId: school.schoolId })
-  .getOne();
+      if (!tenant || !tenant.name || !tenant.subdomain) {
+        console.log('Tenant info incomplete:', tenant);
+        throw new InternalServerErrorException('Tenant info incomplete or not found');
+      }
+      const schoolConfig = await this.schoolConfigRepo
+      .createQueryBuilder('config')
+      .leftJoinAndSelect('config.tenant', 'tenant') // 👈 updated from 'school'
+      .leftJoinAndSelect('config.selectedLevels', 'schoolLevel')
+      .leftJoinAndSelect('schoolLevel.schoolType', 'schoolType')
+      .leftJoinAndSelect('schoolLevel.gradeLevels', 'gradeLevels')
+      .leftJoinAndSelect(
+        'gradeLevels.streams',
+        'streams',
+        'streams.tenantId = :tenantId',
+        { tenantId: user.tenantId }      
+      )
+      .leftJoinAndSelect('schoolLevel.curriculumSubjects', 'curriculumSubjects')
+      .leftJoinAndSelect('curriculumSubjects.subject', 'subject')
+      .where('tenant.id = :tenantId', { tenantId: user.tenantId }) // 👈 updated from school
+      .getOne();
   
   
     if (!schoolConfig) {
@@ -211,9 +218,9 @@ export class SchoolTypeService {
           const configurationData = {
       id: schoolConfig.id,
       school: {
-        schoolId: school.schoolId,
-        schoolName: school.schoolName,
-        subdomain: school.subdomain
+        schoolId: tenant.id,
+        schoolName: tenant.name,
+        subdomain: tenant.subdomain
       },
       schoolType: schoolConfig.selectedLevels[0]?.schoolType,
       selectedLevels: schoolConfig.selectedLevels.map(level => ({
@@ -243,15 +250,15 @@ export class SchoolTypeService {
   
     return configurationData;
   }
-  
-  // Also, you might want to verify your relations are working by testing individual queries:
-  async debugRelations(schoolId: string): Promise<void> {
+
+
+  async debugRelations(tenantId: string): Promise<void> {
     // Test 1: Check if curriculum has grade levels
     const curricula = await this.curriculumRepo.find({
-      where: { schoolType: { name: 'International' } }, // or whatever school type
+      where: { schoolType: { name: 'International' } },
       relations: ['gradeLevels']
     });
-    
+  
     console.log('Curricula with grade levels:', curricula.map(c => ({
       name: c.name,
       gradeLevelsCount: c.gradeLevels?.length || 0
@@ -262,94 +269,173 @@ export class SchoolTypeService {
       where: { schoolType: { name: 'International' } },
       relations: ['curriculumSubjects', 'curriculumSubjects.subject']
     });
-    
+  
     console.log('Curricula with subjects:', curriculaWithSubjects.map(c => ({
       name: c.name,
       subjectsCount: c.curriculumSubjects?.length || 0
     })));
   
-    // Test 3: Check school configuration
+    // Test 3: Check school configuration (tenant-based)
     const config = await this.schoolConfigRepo.findOne({
-      where: { school: { schoolId } },
+      where: { tenant: { id: tenantId } },
       relations: ['selectedLevels']
     });
-    
+  
     console.log('School config:', {
       id: config?.id,
       selectedLevelsCount: config?.selectedLevels?.length || 0
     });
   }
+  
+  
+  // // Also, you might want to verify your relations are working by testing individual queries:
+  // async debugRelations(schoolId: string): Promise<void> {
+  //   // Test 1: Check if curriculum has grade levels
+  //   const curricula = await this.curriculumRepo.find({
+  //     where: { schoolType: { name: 'International' } }, 
+  //     relations: ['gradeLevels']
+  //   });
+    
+  //   console.log('Curricula with grade levels:', curricula.map(c => ({
+  //     name: c.name,
+  //     gradeLevelsCount: c.gradeLevels?.length || 0
+  //   })));
+  
+  //   // Test 2: Check if curriculum has subjects
+  //   const curriculaWithSubjects = await this.curriculumRepo.find({
+  //     where: { schoolType: { name: 'International' } },
+  //     relations: ['curriculumSubjects', 'curriculumSubjects.subject']
+  //   });
+    
+  //   console.log('Curricula with subjects:', curriculaWithSubjects.map(c => ({
+  //     name: c.name,
+  //     subjectsCount: c.curriculumSubjects?.length || 0
+  //   })));
+  
+  //   // Test 3: Check school configuration
+  //   const config = await this.schoolConfigRepo.findOne({
+  //     where: { tenant: { tenant.id } },
+  //     relations: ['selectedLevels']
+  //   });
+    
+  //   console.log('School config:', {
+  //     id: config?.id,
+  //     selectedLevelsCount: config?.selectedLevels?.length || 0
+  //   });
+  // }
 
 
 
-
-  private async validateSchoolOwnership(subdomain: string, userId: string): Promise<School> {
-    const school = await this.schoolRepo.findOne({
+  private async validateTenantOwnership(subdomain: string, userId: string): Promise<Tenant> {
+    const tenant = await this.tenantRepo.findOne({
       where: { subdomain },
+      relations: ['memberships', 'memberships.user'], // load required nested relations
     });
   
-    if (!school) {
-      throw new NotFoundException('School not found');
+    if (!tenant) {
+      throw new NotFoundException('School (tenant) not found');
     }
   
-    // const userBelongsToSchool = school.users?.some(user => user.id === userId);
-    // if (!userBelongsToSchool) {
-    //   throw new ForbiddenException('Access denied: User does not belong to this school');
-    // }
+    const userBelongsToTenant = tenant.memberships?.some(
+      membership => membership.user.id === userId
+    );
   
-    return school;
+    if (!userBelongsToTenant) {
+      throw new ForbiddenException('Access denied: User does not belong to this school');
+    }
+  
+    return tenant;
   }
   
-
-  private async assertSchoolNotConfigured(schoolId: string): Promise<void> {
+  
+  
+   
+  
+  
+  
+  private async assertSchoolNotConfigured(tenantId: string): Promise<void> {
     const existingConfig = await this.schoolConfigRepo.findOne({
-      where: { school: Equal(schoolId), isActive: true },
+      where: {
+        tenant: { id: tenantId },
+        isActive: true,
+      },
+      relations: ['tenant'],
     });
   
     if (existingConfig) {
       throw new BadRequestException('School has already been configured');
     }
   }
+  
+
 
   private getCurriculumDescription(curriculumName: string): string {
+    const key = curriculumName.replace(/\s+/g, '').replace(/-/g, '');
+  
     const descriptions = {
       'PrePrimary': 'Early childhood education',
       'LowerPrimary': 'Foundation stage',
       'UpperPrimary': 'Intermediate stage',
       'JuniorSecondary': 'Middle school stage',
       'SeniorSecondary': 'Advanced level',
-      'Madrasa_Beginners': 'With religious foundation',
-      'Madrasa_Lower': 'With religious instruction',
-      'Madrasa_Upper': 'Religious education integration',
-      'Madrasa_Secondary': 'With religious studies integration',
-      'Madrasa_AdvancedAlim': 'Specialized religious education',
-      'Homeschool_EarlyYears': 'Early childhood homeschooling',
-      'Homeschool_LowerPrimary': 'Elementary homeschooling',
-      'Homeschool_UpperPrimary': 'Upper elementary homeschooling',
-      'Homeschool_JuniorSecondary': 'Middle school homeschooling',
-      'Homeschool_SeniorSecondary': 'High school homeschooling'
+      'MadrasaBeginners': 'With religious foundation',
+      'MadrasaLower': 'With religious instruction',
+      'MadrasaUpper': 'Religious education integration',
+      'MadrasaSecondary': 'With religious studies integration',
+      'MadrasaAdvancedAlim': 'Specialized religious education',
+      'HomeschoolEarlyYears': 'Early childhood homeschooling',
+      'HomeschoolLowerPrimary': 'Elementary homeschooling',
+      'HomeschoolUpperPrimary': 'Upper elementary homeschooling',
+      'HomeschoolJuniorSecondary': 'Middle school homeschooling',
+      'HomeschoolSeniorSecondary': 'High school homeschooling'
     };
-    return descriptions[curriculumName] || 'Educational stage';
+  
+    return descriptions[key] || 'Educational stage';
   }
+  
+  // private getCurriculumDescription(curriculumName: string): string {
+  //   const descriptions = {
+  //     'PrePrimary': 'Early childhood education',
+  //     'LowerPrimary': 'Foundation stage',
+  //     'UpperPrimary': 'Intermediate stage',
+  //     'JuniorSecondary': 'Middle school stage',
+  //     'SeniorSecondary': 'Advanced level',
+  //     'Madrasa_Beginners': 'With religious foundation',
+  //     'Madrasa_Lower': 'With religious instruction',
+  //     'Madrasa_Upper': 'Religious education integration',
+  //     'Madrasa_Secondary': 'With religious studies integration',
+  //     'Madrasa_AdvancedAlim': 'Specialized religious education',
+  //     'Homeschool_EarlyYears': 'Early childhood homeschooling',
+  //     'Homeschool_LowerPrimary': 'Elementary homeschooling',
+  //     'Homeschool_UpperPrimary': 'Upper elementary homeschooling',
+  //     'Homeschool_JuniorSecondary': 'Middle school homeschooling',
+  //     'Homeschool_SeniorSecondary': 'High school homeschooling'
+  //   };
+  //   return descriptions[curriculumName] || 'Educational stage';
+  // }
 
   private getAgeRange(curriculumName: string): string {
-    const ageRanges = {
+    const normalizedKey = curriculumName.replace(/\s+/g, '').replace(/_/g, '').replace(/-/g, '');
+  
+    const ageRanges: Record<string, string> = {
       'PrePrimary': '4–5 years',
       'LowerPrimary': '6–8 years',
       'UpperPrimary': '9–11 years',
       'JuniorSecondary': '12–14 years',
       'SeniorSecondary': '15–17 years',
-      'Madrasa_Beginners': '3–5 years',
-      'Madrasa_Lower': '6–8 years',
-      'Madrasa_Upper': '9–11 years',
-      'Madrasa_Secondary': '12–14 years',
-      'Madrasa_AdvancedAlim': '15–17 years',
-      'Homeschool_EarlyYears': '3–5 years',
-      'Homeschool_LowerPrimary': '6–8 years',
-      'Homeschool_UpperPrimary': '9–11 years',
-      'Homeschool_JuniorSecondary': '12–14 years',
-      'Homeschool_SeniorSecondary': '15–17 years'
+      'MadrasaBeginners': '3–5 years',
+      'MadrasaLower': '6–8 years',
+      'MadrasaUpper': '9–11 years',
+      'MadrasaSecondary': '12–14 years',
+      'MadrasaAdvancedAlim': '15–17 years',
+      'HomeschoolEarlyYears': '3–5 years',
+      'HomeschoolLowerPrimary': '6–8 years',
+      'HomeschoolUpperPrimary': '9–11 years',
+      'HomeschoolJuniorSecondary': '12–14 years',
+      'HomeschoolSeniorSecondary': '15–17 years',
     };
-    return ageRanges[curriculumName] || 'Various ages';
+  
+    return ageRanges[normalizedKey] || 'Various ages';
   }
+  
 }

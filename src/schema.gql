@@ -342,6 +342,7 @@ type Stream {
   id: ID!
   isActive: Boolean
   name: String!
+  tenant: Tenant!
   updatedAt: DateTime!
 }
 

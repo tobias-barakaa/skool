@@ -29,18 +29,32 @@ export class SchoolTypeResolver {
     );
   }
 
+  // @Query(() => SchoolConfigurationResponse, { nullable: true })
+  // async getSchoolConfiguration(@ActiveUser() user: ActiveUserData) {
+  //   console.log('ActiveUser:', user);
+
+  //   const subdomain = user.subdomain;
+  //   console.log('Extracted subdomain:', subdomain);
+
+  //   return await this.schoolTypeService.getSchoolConfiguration(
+  //     subdomain || 'default',
+  //     user.sub
+  //   );
+  // }
+
+
   @Query(() => SchoolConfigurationResponse, { nullable: true })
-  async getSchoolConfiguration(@ActiveUser() user: ActiveUserData) {
-    console.log('ActiveUser:', user);
+async getSchoolConfiguration(@ActiveUser() user: ActiveUserData) {
+  console.log('ActiveUser:', user);
 
-    const subdomain = user.subdomain;
-    console.log('Extracted subdomain:', subdomain);
+  const tenantId = user.tenantId;
+  console.log('Tenant ID:', tenantId);
 
-    return await this.schoolTypeService.getSchoolConfiguration(
-      subdomain || 'default',
-      user.sub
-    );
-  }
+  const subdomain = user.subdomain || 'default';
+  const userId = user.sub;
+  return await this.schoolTypeService.getSchoolConfiguration(subdomain, userId, { tenantId });
+}
+
 
   @Query(() => [String])
   async getAvailableLevelNames() {

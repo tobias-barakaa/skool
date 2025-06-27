@@ -6,19 +6,16 @@ import {
   CreateDateColumn,
   OneToMany,
   ManyToOne,
-  OneToOne,
-  JoinColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Field, ObjectType, ID } from '@nestjs/graphql';
-import { User } from '../../users/entities/user.entity';
 import { Teacher } from '../../teacher/entities/teacher.entity';
 import { Parent } from '../../parent/entities/parent.entity';
-import { Subject } from '../../subject/entities/subject.entity';
 import { Class } from '../../class/entities/class.entity';
 import { Student } from '../../student/entities/student.entity';
 import { SchoolLevelSetting } from '../../school-level-setting/entities/school-level-setting.entity';
 import { SchoolType } from '../../school-type/entities/school-type';
+import { Tenant } from 'src/tenants/entities/tenant.entity';
 
 @ObjectType()
 @Entity()
@@ -78,6 +75,9 @@ export class School {
   @OneToMany(() => SchoolLevelSetting, setting => setting.school)
   levelSettings: SchoolLevelSetting[];
 
+
+  @ManyToOne(() => Tenant, tenant => tenant.schools)
+  tenant: Tenant;
 }
 
 

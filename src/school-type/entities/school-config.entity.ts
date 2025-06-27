@@ -10,6 +10,7 @@ import {
   Column,
 } from 'typeorm';
 import { SchoolLevel } from './school_level.entity';
+import { Tenant } from 'src/tenants/entities/tenant.entity';
 
 @ObjectType()
 @Entity()
@@ -18,10 +19,9 @@ export class SchoolConfig {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Field(() => School)
-  @OneToOne(() => School, { eager: true })
-  @JoinColumn()
-  school: School;
+  @OneToOne(() => Tenant, { eager: true, onDelete: 'CASCADE' })
+@JoinColumn()
+tenant: Tenant;
 
   @Field(() => [SchoolLevel])
   @ManyToMany(() => SchoolLevel, { cascade: true })

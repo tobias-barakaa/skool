@@ -2,6 +2,7 @@ import { ObjectType, Field, ID, Int } from '@nestjs/graphql';
 import { GradeLevel } from 'src/level/entities/grade-level.entity';
 import { School } from 'src/school/entities/school.entity';
 import { Student } from 'src/student/entities/student.entity';
+import { Tenant } from 'src/tenants/entities/tenant.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -59,5 +60,12 @@ schoolId: string;
   @ManyToOne(() => School, { nullable: false, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'schoolId' })
   school: School;
+
+  @ManyToOne(() => Tenant, tenant => tenant.streams, { onDelete: 'CASCADE' })
+@Field(() => Tenant)
+tenant: Tenant;
+
+@Column()
+tenantId: string;
 
 }

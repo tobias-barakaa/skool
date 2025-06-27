@@ -15,7 +15,7 @@ export class CreateStreamProvider {
     private readonly gradeLevelRepository: Repository<GradeLevel>,
   ) {}
 
-  async execute(input: CreateStreamInput, user: ActiveUserData, schoolId: string): Promise<Stream> {
+  async execute(input: CreateStreamInput, user: ActiveUserData, tenantId: string): Promise<Stream> {
 
 //   async execute(input: CreateStreamInput, user: ActiveUserData): Promise<Stream> {
     // Check if user is authenticated
@@ -83,7 +83,7 @@ export class CreateStreamProvider {
         description: input.description,
         isActive: input.isActive ?? true,
         gradeLevel,
-        schoolId,
+        tenantId,
       });
       
 

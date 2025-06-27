@@ -1,5 +1,7 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { UserInvitation } from 'src/invitation/entities/user-iInvitation.entity';
+import { School } from 'src/school/entities/school.entity';
+import { Stream } from 'src/streams/entities/streams.entity';
 import { UserTenantMembership } from 'src/user-tenant-membership/entities/user-tenant-membership.entity';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 
@@ -43,4 +45,11 @@ export class Tenant {
   @Field()
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => School, school => school.tenant)
+  schools: School[];
+
+  @OneToMany(() => Stream, stream => stream.tenant)
+streams: Stream[];
+
 }
