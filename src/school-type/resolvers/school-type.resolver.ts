@@ -12,7 +12,7 @@ export class SchoolTypeResolver {
   constructor(private readonly schoolTypeService: SchoolTypeService) {}
 
   @Mutation(() => SchoolConfigurationResponse)
-  // @Auth(AuthType.None)
+  @Auth(AuthType.Bearer)
   async configureSchoolLevelsByNames(
     @Args('levelNames', { type: () => [String] }) levelNames: string[],
     @ActiveUser() user: ActiveUserData
@@ -44,16 +44,17 @@ export class SchoolTypeResolver {
 
 
   @Query(() => SchoolConfigurationResponse, { nullable: true })
-async getSchoolConfiguration(@ActiveUser() user: ActiveUserData) {
-  console.log('ActiveUser:', user);
+  @Auth(AuthType.Bearer)
+  async getSchoolConfiguration(@ActiveUser() user: ActiveUserData) {
+    console.log('ActiveUser:', user);
 
-  const tenantId = user.tenantId;
-  console.log('Tenant ID:', tenantId);
+    const tenantId = user.tenantId;
+    console.log('Tenant ID:', tenantId);
 
-  const subdomain = user.subdomain || 'default';
-  const userId = user.sub;
-  return await this.schoolTypeService.getSchoolConfiguration(subdomain, userId, { tenantId });
-}
+    const subdomain = user.subdomain || 'default';
+    const userId = user.sub;
+    return await this.schoolTypeService.getSchoolConfiguration(subdomain, userId, { tenantId });
+  }
 
 
   @Query(() => [String])

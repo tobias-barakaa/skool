@@ -34,6 +34,7 @@ export class AccessTokenGuard implements CanActivate {
     const request = gqlContext.getContext().req;
 
     const token = this.extractTokenFromHeader(request);
+    console.log(token, 'this is the token..::')
     if (!token) throw new UnauthorizedException('Token not found');
 
     let payload: any;
@@ -44,9 +45,11 @@ export class AccessTokenGuard implements CanActivate {
     }
 
     const host = request.headers.host;
-    // const host = "wedkdwamdanaye.squl.co.ke";
+    console.log('🔍 Request headers:', request.headers);
+    console.log('🔍 Host from headers:', host);
     
     const subdomain = extractSubdomain(host);
+    console.log('🔍 Extracted subdomain:', subdomain);
     if (!subdomain) throw new UnauthorizedException('Subdomain not found in host');
 
     const tenant = await this.tenantRepo.findOne({ where: { subdomain } });

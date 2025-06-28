@@ -8,6 +8,7 @@ import { Equal,In, Repository } from 'typeorm';
 import { SchoolConfig } from '../entities/school-config.entity';
 import { SchoolLevel } from '../entities/school_level.entity';
 import { Tenant } from 'src/tenants/entities/tenant.entity';
+import { MembershipRole } from 'src/user-tenant-membership/entities/user-tenant-membership.entity';
 
 
 
@@ -377,12 +378,18 @@ export class SchoolTypeService {
       throw new NotFoundException('School (tenant) not found');
     }
   
-    const userBelongsToTenant = tenant.memberships?.some(
+    const userMembership = tenant.memberships?.find(
       membership => membership.user.id === userId
     );
   
-    if (!userBelongsToTenant) {
+    if (!userMembership) {
       throw new ForbiddenException('Access denied: User does not belong to this school');
+    }
+
+    // Check if user has appropriate role to configure school levels
+    const allowedRoles = [MembershipRole.SUPER_ADMIN, MembershipRole.SCHOOL_ADMIN];
+    if (!allowedRoles.includes(userMembership.role)) {
+      throw new ForbiddenException('Permission denied. You may not have admin rights to configure school levels.');
     }
   
     return tenant;
