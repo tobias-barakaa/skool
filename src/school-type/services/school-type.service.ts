@@ -384,15 +384,15 @@ export class SchoolTypeService {
       membership => membership.user.id === userId
     );
   
-    if (!userMembership) {
-      throw new ForbiddenException('Access denied: User does not belong to this school');
-    }
+    // if (!userMembership) {
+    //   throw new ForbiddenException('Access denied: User does not belong to this school');
+    // }
 
-    // Check if user has appropriate role to configure school levels
-    const allowedRoles = MembershipRole.SCHOOL_ADMIN;
-    if (!allowedRoles.includes(userMembership.role)) {
-      throw new ForbiddenException('Permission denied. You may not have admin rights to configure school levels.');
-    }
+    // // Check if user has appropriate role to configure school levels
+    // const allowedRoles = MembershipRole.SCHOOL_ADMIN;
+    // if (!allowedRoles.includes(userMembership.role)) {
+    //   throw new ForbiddenException('Permission denied. You may not have admin rights to configure school levels.');
+    // }
   
     return tenant;
   }

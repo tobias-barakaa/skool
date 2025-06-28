@@ -24,7 +24,7 @@ registerEnumType(MembershipStatus, { name: 'MembershipStatus' });
 
 @ObjectType()
 @Entity('user_tenant_memberships')
-@Unique(['userId', 'tenantId']) // One membership per user per tenant
+@Unique(['userId', 'tenantId']) 
 export class UserTenantMembership {
   @Field(() => ID)
   @PrimaryGeneratedColumn('uuid')
