@@ -38,7 +38,7 @@ export class SchoolTypeService {
     userId: string
   ): Promise<any> {
     const tenant = await this.validateTenantOwnership(subdomain, userId);
-    console.log(subdomain, 'this is the subdomain', userId, 'this is the user id')
+    console.log(subdomain, 'this is the subdomain',)
     await this.assertSchoolNotConfigured(tenant.id);
   
     const normalizedLevelNames = levelNames.map(name =>
@@ -372,9 +372,8 @@ export class SchoolTypeService {
   private async validateTenantOwnership(subdomain: string, userId: string): Promise<Tenant> {
     const tenant = await this.tenantRepo.findOne({
       where: { subdomain },
-      relations: ['memberships', 'memberships.user'], 
+      relations: ['memberships', 'memberships.user'], // load required nested relations
     });
-    console.log(tenant, 'this is the tenant')
   
     if (!tenant) {
       throw new NotFoundException('School (tenant) not found');
@@ -384,15 +383,15 @@ export class SchoolTypeService {
       membership => membership.user.id === userId
     );
   
-    // if (!userMembership) {
-    //   throw new ForbiddenException('Access denied: User does not belong to this school');
-    // }
+    if (!userMembership) {
+      throw new ForbiddenException('Access denied: User does not belong to this school');
+    }
 
-    // // Check if user has appropriate role to configure school levels
-    // const allowedRoles = MembershipRole.SCHOOL_ADMIN;
-    // if (!allowedRoles.includes(userMembership.role)) {
-    //   throw new ForbiddenException('Permission denied. You may not have admin rights to configure school levels.');
-    // }
+    // Check if user has appropriate role to configure school levels
+    const allowedRoles = [MembershipRole.SCHOOL_ADMIN];
+    if (!allowedRoles.includes(userMembership.role)) {
+      throw new ForbiddenException('Permission denied. You may not have admin rights to configure school levels.');
+    }
   
     return tenant;
   }
