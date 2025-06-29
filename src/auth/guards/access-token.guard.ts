@@ -44,8 +44,8 @@ export class AccessTokenGuard implements CanActivate {
       throw new UnauthorizedException('Invalid token');
     }
 
-    // const host = request.headers.host;
-    const host = "whatdstheshoolname.squl.co.ke";
+    const host = request.headers.host;
+    // const host = "whatdstheshoolname.squl.co.ke";
     console.log('🔍 Request headers:', request.headers);
     console.log('🔍 Host from headers:', host);
     
