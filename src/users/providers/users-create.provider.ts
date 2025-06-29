@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from '../entities/user.entity';
-import { SchoolCreateProvider } from '../../school/providers/school-create.provider';
 import { HashingProvider } from 'src/auth/providers/hashing.provider';
 import { GenerateTokenProvider } from 'src/auth/providers/generate-token.provider';
 import { Tenant } from 'src/tenants/entities/tenant.entity';
@@ -66,7 +65,7 @@ export class UsersCreateProvider {
      
     // Create user
 
-    console.log('🚨 Password before hashing:', signupInput.password);
+    // console.log('🚨 Password before hashing:', signupInput.password);
 
 
      const user = queryRunner.manager.create(User, {
@@ -162,7 +161,7 @@ async signupWithInvitation(input: InvitationSignupInput) {
     const membership = queryRunner.manager.create(UserTenantMembership, {
       userId: user.id,
       tenantId: invitation.tenantId,
-      role: invitation.role,
+      role: MembershipRole.TEACHER,
       joinedAt: new Date(),
     });
     const savedMembership = await queryRunner.manager.save(membership);

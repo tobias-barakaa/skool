@@ -5,24 +5,23 @@ import { AuthType } from 'src/auth/enums/auth-type.enum';
 import { ActiveUser } from 'src/auth/decorator/active-user.decorator';
 import { TeacherService } from './providers/teacher.service';
 import { CreateTeacherInvitationDto } from './dtos/create-teacher-invitation.dto';
+import { InviteTeacherResponse } from './dtos/invite-teacher-response.dto';
 
 @Resolver()
-@Auth(AuthType.None)
 export class TeacherResolver {
   constructor(private teacherService: TeacherService) {}
 
-  @Mutation(() => String)
+  @Mutation(() => InviteTeacherResponse)
   async inviteTeacher(
     @Args('createTeacherDto') createTeacherDto: CreateTeacherInvitationDto,
     @Args('tenantId') tenantId: string,
     @ActiveUser() currentUser: User
   ) {
-    const result = await this.teacherService.inviteTeacher(
+    return await this.teacherService.inviteTeacher(
       createTeacherDto,
       currentUser,
       tenantId
     );
-    return JSON.stringify(result);
   }
 
   @Mutation(() => String)

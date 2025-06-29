@@ -53,3 +53,17 @@ export class UserNotInTenantException extends BusinessException {
     this.name = 'UserNotInTenantException';
   }
 }
+
+// email-send-failed.exception.ts
+
+export class EmailSendFailedException extends BusinessException {
+  constructor(email: string) {
+    super(
+      `Failed to send invitation email to ${email}`,
+      'EMAIL_SEND_FAILED',
+      500,
+      { email }
+    );
+    this.name = 'EmailSendFailedException';
+  }
+}

@@ -43,9 +43,9 @@ export class UserInvitation {
   @Column()
   email: string;
 
-  @Field(() => MembershipRole)
-  @Column({ type: 'enum', enum: MembershipRole })
-  role: MembershipRole;
+  @Field()
+  @Column({ type: 'varchar' }) // or just @Column() by default
+  role: string;
 
   @Field()
   @Column({ unique: true })
@@ -71,7 +71,7 @@ export class UserInvitation {
   type: string;
 
   @Column({ type: 'json', nullable: true })
-   userData: Partial<CreateTeacherInvitationDto>;; // JSON stringified data for the user being invited
+   userData: Partial<CreateTeacherInvitationDto>;
 
   @Column({ nullable: true })
   invitedById?: string;

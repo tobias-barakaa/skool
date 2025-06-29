@@ -10,6 +10,7 @@ import { MembershipRole, MembershipStatus, UserTenantMembership } from 'src/user
 import { Tenant } from 'src/tenants/entities/tenant.entity';
 import { EmailService } from 'src/email/providers/email.service';
 import { CreateTeacherInvitationDto } from '../dtos/create-teacher-invitation.dto';
+import { EmailSendFailedException } from 'src/common/exceptions/business.exception';
 
 @Injectable()
 export class TeacherService {
@@ -37,7 +38,7 @@ export class TeacherService {
       where: {
         user: { id: currentUser.id },
         tenant: { id: tenantId },
-        role: MembershipRole.SUPER_ADMIN,
+        role: MembershipRole.SCHOOL_ADMIN,
         status: MembershipStatus.ACTIVE
       }
     });
@@ -90,6 +91,8 @@ export class TeacherService {
     // Create invitation record
     const invitation = this.invitationRepository.create({
       email: createTeacherDto.email,
+      role: createTeacherDto.role,
+      userData: createTeacherDto,
       token,
       type: InvitationType.TEACHER,
       status: InvitationStatus.PENDING,
@@ -110,29 +113,27 @@ export class TeacherService {
     await this.teacherRepository.save(teacher);
 
     // Send invitation email
-    await this.emailService.sendTeacherInvitation(
-      createTeacherDto.email,
-      createTeacherDto.fullName,
-      tenant?.name || 'Unknown Tenant',
-      token,
-      currentUser.name
-    );
+    try {
+      await this.emailService.sendTeacherInvitation(
+        createTeacherDto.email,
+        createTeacherDto.fullName,
+        tenant?.name || 'Unknown Tenant',
+        token,
+        currentUser.name,
+        tenantId
+      );
+    } catch (error) {
+      console.error('[EmailService Error]', error);
+      throw new EmailSendFailedException(createTeacherDto.email);
+    }
 
     return {
-      message: 'Teacher invitation sent successfully',
-      invitation: {
-        id: invitation.id,
-        email: invitation.email,
-        expiresAt: invitation.expiresAt,
-        status: invitation.status
-      },
-      teacher: {
-        id: teacher.id,
-        fullName: teacher.fullName,
-        email: teacher.email,
-        department: teacher.department
-      }
+      email: invitation.email,
+      fullName: teacher.fullName,
+      status: invitation.status,
+      createdAt: invitation.createdAt,
     };
+
   }
 
   async acceptInvitation(token: string, password: string) {

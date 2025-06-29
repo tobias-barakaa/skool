@@ -1,13 +1,8 @@
 // 1. First, let's create the DTO for adding a teacher
 // src/teacher/dto/create-teacher-invitation.dto.ts
 import { Field, InputType } from '@nestjs/graphql';
-import { IsEmail, IsNotEmpty, IsOptional, IsEnum } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsEnum, IsString } from 'class-validator';
 
-export enum Gender {
-  MALE = 'MALE',
-  FEMALE = 'FEMALE',
-  OTHER = 'OTHER'
-}
 
 @InputType()
 export class CreateTeacherInvitationDto {
@@ -28,9 +23,13 @@ export class CreateTeacherInvitationDto {
   @IsNotEmpty()
   lastName: string;
 
-  @Field(() => Gender)
-  @IsEnum(Gender)
-  gender: Gender;
+  @Field()
+  @IsString()
+  role: string;
+
+  @Field()
+  @IsString()
+  gender: string;
 
   @Field()
   @IsNotEmpty()
@@ -39,6 +38,7 @@ export class CreateTeacherInvitationDto {
   @Field()
   @IsNotEmpty()
   phoneNumber: string;
+
 
   @Field({ nullable: true })
   @IsOptional()

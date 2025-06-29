@@ -7,10 +7,11 @@ import { EmailModule } from 'src/email/email.module';
 import { TenantsModule } from 'src/tenants/tenants.module';
 import { UserTenantMembershipModule } from 'src/user-tenant-membership/user-tenant-membership.module';
 import { InvitationModule } from 'src/invitation/invitation.module';
+import { TeacherResolver } from './teacher.resolver';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Teacher]),EmailModule, UserModule,InvitationModule,TenantsModule, UserTenantMembershipModule], 
-  providers: [TeacherService],
+  providers: [TeacherService, TeacherResolver],
   exports: [TypeOrmModule],
 })
 export class TeacherModule {}

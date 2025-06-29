@@ -273,7 +273,7 @@ export class SchoolTypeService {
       }
       const schoolConfig = await this.schoolConfigRepo
       .createQueryBuilder('config')
-      .leftJoinAndSelect('config.tenant', 'tenant') // 👈 updated from 'school'
+      .leftJoinAndSelect('config.tenant', 'tenant') 
       .leftJoinAndSelect('config.selectedLevels', 'schoolLevel')
       .leftJoinAndSelect('schoolLevel.schoolType', 'schoolType')
       .leftJoinAndSelect('schoolLevel.gradeLevels', 'gradeLevels')
@@ -285,7 +285,7 @@ export class SchoolTypeService {
       )
       .leftJoinAndSelect('schoolLevel.curriculumSubjects', 'curriculumSubjects')
       .leftJoinAndSelect('curriculumSubjects.subject', 'subject')
-      .where('tenant.id = :tenantId', { tenantId: user.tenantId }) // 👈 updated from school
+      .where('tenant.id = :tenantId', { tenantId: user.tenantId }) 
       .getOne();
   
   
@@ -389,6 +389,10 @@ export class SchoolTypeService {
 
     // Check if user has appropriate role to configure school levels
     const allowedRoles = [MembershipRole.SCHOOL_ADMIN];
+
+   console.log('User role is::::::', userMembership.role);
+
+    console.log(allowedRoles, 'this is the allowed rolesssss')
     if (!allowedRoles.includes(userMembership.role)) {
       throw new ForbiddenException('Permission denied. You may not have admin rights to configure school levels.');
     }

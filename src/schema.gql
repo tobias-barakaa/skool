@@ -96,6 +96,22 @@ input CreateStreamInput {
   name: String!
 }
 
+input CreateTeacherInvitationDto {
+  address: String
+  dateOfBirth: DateTime
+  department: String!
+  email: String!
+  employeeId: String
+  firstName: String!
+  fullName: String!
+  gender: String!
+  lastName: String!
+  phoneNumber: String!
+  qualifications: String
+  role: String!
+  subject: String
+}
+
 type CreateUserResponse {
   school: School!
   subdomainUrl: String!
@@ -183,6 +199,13 @@ type InvitationInfo {
   tenantName: String!
 }
 
+type InviteTeacherResponse {
+  createdAt: DateTime!
+  email: String!
+  fullName: String!
+  status: String!
+}
+
 type Level {
   description: String
   gradeLevels: [GradeLevel!]
@@ -209,10 +232,13 @@ enum MembershipStatus {
 }
 
 type Mutation {
+  acceptTeacherInvitation(password: String!, token: String!): String!
   configureSchoolLevelsByNames(levelNames: [String!]!): SchoolConfigurationResponse!
   createStream(input: CreateStreamInput!): StreamType!
   createUser(signupInput: SignupInput!): CreateUserResponse!
   deleteStream(id: ID!): Boolean!
+  inviteTeacher(createTeacherDto: CreateTeacherInvitationDto!, tenantId: String!): InviteTeacherResponse!
+  revokeInvitation(invitationId: String!): String!
   updateStream(input: UpdateStreamInput!): StreamType!
 }
 
@@ -233,6 +259,7 @@ type Parent {
 type Query {
   activeStreams: [StreamType!]!
   getAvailableLevelNames: [String!]!
+  getPendingInvitations(tenantId: String!): String!
   getSchoolConfiguration: SchoolConfigurationResponse
   getSchoolTypes: [SchoolTypeConfig!]!
   stream(id: ID!): StreamType!

@@ -26,7 +26,7 @@ export class AuthenticationGuard implements CanActivate {
       [AuthType.Bearer]: this.accessTokenGuard,
       [AuthType.None]: { canActivate: () => true },
     };
-  }
+  } 
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     // Get auth types from metadata or default

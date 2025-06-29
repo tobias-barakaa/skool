@@ -1,0 +1,69 @@
+{
+    "workbench.colorCustomizations": {
+      // Activity Bar (Left sidebar icons)
+      "activityBar.background": "#1a1a2e",
+      "activityBar.foreground": "#e94560",
+      "activityBar.activeBorder": "#e94560",
+      "activityBar.activeBackground": "#16213e",
+      "activityBar.inactiveForeground": "#7c8db5",
+      "activityBarBadge.background": "#e94560",
+      "activityBarBadge.foreground": "#ffffff",
+      
+      // Side Bar (File explorer, search, etc.)
+      "sideBar.background": "#00000071",
+      "sideBar.foreground": "#c5d1eb",
+      "sideBar.border": "#0f3460",
+      "sideBarTitle.foreground": "#e94560",
+      "sideBarSectionHeader.background": "#1a1a2e",
+      "sideBarSectionHeader.foreground": "#e94560",
+      "sideBarSectionHeader.border": "#0f3460",
+      
+      // Tree (File explorer items)
+      "tree.indentGuidesStroke": "#0f3460",
+      "tree.tableColumnsBorder": "#0f3460",
+      "list.hoverBackground": "#1a1a2e",
+      "list.activeSelectionBackground": "#0f3460",
+      "list.activeSelectionForeground": "#ffffff",
+      "list.inactiveSelectionBackground": "#1a1a2e",
+      "list.focusBackground": "#0f3460",
+      "list.focusForeground": "#ffffff",
+      
+      // Status Bar (Bottom bar)
+      "statusBar.background": "#1a1a2e",
+      "statusBar.foreground": "#c5d1eb",
+      "statusBar.border": "#0f3460",
+      "statusBar.debuggingBackground": "#e94560",
+      "statusBar.debuggingForeground": "#ffffff",
+      "statusBar.noFolderBackground": "#1a1a2e",
+      "statusBarItem.activeBackground": "#e94560",
+      "statusBarItem.hoverBackground": "#0f3460",
+      "statusBarItem.prominentBackground": "#e94560",
+      "statusBarItem.prominentHoverBackground": "#c73650",
+      
+      // Tab Bar
+      "tab.activeBackground": "#16213e",
+      "tab.activeForeground": "#ffffff",
+      "tab.activeBorder": "#e94560",
+      "tab.inactiveBackground": "#1a1a2e",
+      "tab.inactiveForeground": "#7c8db5",
+      "tab.border": "#0f3460",
+      
+      // Title Bar
+      "titleBar.activeBackground": "#1a1a2e",
+      "titleBar.activeForeground": "#c5d1eb",
+      "titleBar.inactiveBackground": "#16213e",
+      "titleBar.inactiveForeground": "#7c8db5",
+      "titleBar.border": "#0f3460",
+      
+      // Breadcrumbs
+      "breadcrumb.background": "#16213e",
+      "breadcrumb.foreground": "#7c8db5",
+      "breadcrumb.focusForeground": "#e94560",
+      "breadcrumb.activeSelectionForeground": "#ffffff",
+      
+      // Scrollbar
+      "scrollbarSlider.background": "#0f3460",
+      "scrollbarSlider.hoverBackground": "#1a1a2e",
+      "scrollbarSlider.activeBackground": "#e94560"
+    }
+  }

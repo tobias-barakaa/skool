@@ -38,6 +38,10 @@ export class Teacher {
   @Column()
   phoneNumber: string;
 
+  @Field()
+  @Column()
+  role: string;
+
   @Field({ nullable: true })
   @Column({ nullable: true })
   address?: string;

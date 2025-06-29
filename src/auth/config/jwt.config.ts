@@ -11,7 +11,7 @@ export default registerAs('jwt', () => {
     refreshTokenTtl: parseInt(process.env.JWT_REFRESH_TOKEN_TTL ?? '864000', 10),
 
     // ✅ expiresIn is usually used for `sign()` options — keep as string if using with JWTService directly
-    expiresIn: process.env.JWT_EXPIRES_IN ?? '3600s',
+    expiresIn: process.env.JWT_EXPIRES_IN ?? '3600s', 
   };
 });
 
