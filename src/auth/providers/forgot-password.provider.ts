@@ -51,7 +51,7 @@ export class ForgotPasswordProvider {
 
     if (!user) {
       // Don't reveal if user exists or not for security
-      return { message: 'If an account with that email exists, you will receive a password reset link.' };
+      return { message: 'If an account with that email exists, you will receive a password reset link......1' };
     }
 
     // Check if user has membership in this tenant
