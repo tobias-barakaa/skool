@@ -64,7 +64,7 @@ export class ForgotPasswordProvider {
     });
 
     if (!membership) {
-      return { message: 'If an account with that email exists, you will receive a password reset link.' };
+      return { message: 'If an account with that email exists, you will receive a password reset link......2' };
     }
 
     // Generate reset token (valid for 1 hour)
@@ -92,7 +92,7 @@ export class ForgotPasswordProvider {
       tenant.id
     );
 
-    return { message: 'If an account with that email exists, you will receive a password reset link.' };
+    return { message: 'If an account with that email exists, you will receive a password reset link....3' };
   }
 
   async resetPassword(resetPasswordInput: ResetPasswordInput): Promise<{ message: string }> {
