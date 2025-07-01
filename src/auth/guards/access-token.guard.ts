@@ -83,23 +83,29 @@ export class AccessTokenGuard implements CanActivate {
   private extractSubdomainFromRequest(request: any): string {
     const host = request.headers.host || request.headers['x-forwarded-host'];
     console.log('🌐 Host header:', host);
-
-    if (host?.includes('.squl.co.ke')) {
-      const subdomain = host.split('.squl.co.ke')[0];
-      console.log('🔍 Extracted subdomain:', subdomain);
-      return subdomain;
-    }
-
-    // Fallback for localhost testing
-    if (host?.includes('localhost')) {
+  
+    if (!host) throw new UnauthorizedException('Host header missing');
+  
+    const knownDomains = ['.squl.co.ke', '.zelisline.com'];
+  
+    for (const domain of knownDomains) {
+      if (host.endsWith(domain)) {
+        const subdomain = host.replace(domain, '');
+        console.log(`🔍 Extracted subdomain (${domain}):`, subdomain);
+        return subdomain;
+      }
+    } 
+  
+    // Fallback for localhost development
+    if (host.includes('localhost')) {
       const url = new URL(request.url, `http://${host}`);
       const subdomainParam = url.searchParams.get('subdomain');
       if (subdomainParam) {
-        console.log('🔍 Extracted subdomain from param:', subdomainParam);
+        console.log('🔍 Extracted subdomain from param (localhost):', subdomainParam);
         return subdomainParam;
       }
     }
-
+  
     throw new UnauthorizedException(`Unable to extract subdomain from host: ${host}`);
   }
 }
