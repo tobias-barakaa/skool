@@ -25,7 +25,7 @@ export class SignInProvider {
   ) {}
 
 
-  async signIn(signInInput: SignInInput): Promise<AuthResponse> {
+  async signIn(signInInput: SignInInput, subdomain: string): Promise<AuthResponse> {
     const user = await this.userRepository.findOne({
       where: { email: signInInput.email },
       relations: ['memberships', 'memberships.tenant']
@@ -57,12 +57,13 @@ export class SignInProvider {
     return {
       user,
       membership: defaultMembership,
-      // allMemberships: activeMemberships, // 🟢 send this to frontend
+      allMemberships: activeMemberships, // 🟢 send this to frontend
       tokens,
       subdomainUrl: `${tenant.subdomain}.squl.co.ke`,
     };
   }
   
+
 
 
   

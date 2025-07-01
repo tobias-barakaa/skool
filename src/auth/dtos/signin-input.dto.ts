@@ -32,6 +32,9 @@ export class AuthResponse {
   @Field(() => UserTenantMembership, { nullable: true })
   membership?: UserTenantMembership;
 
+  @Field(() => [UserTenantMembership], { nullable: true }) // ✅ Add this
+  allMemberships?: UserTenantMembership[];
+
   @Field()
   subdomainUrl: string;
 

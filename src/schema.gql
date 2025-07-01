@@ -53,6 +53,7 @@ enum AttendanceStatus {
 }
 
 type AuthResponse {
+  allMemberships: [UserTenantMembership!]
   membership: UserTenantMembership
   subdomainUrl: String!
   tokens: TokenResponse!
