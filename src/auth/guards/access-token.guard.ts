@@ -52,7 +52,7 @@ export class AccessTokenGuard implements CanActivate {
     console.log('🔍 Host from headers:', host);
     
     const subdomain = extractSubdomain(host);
-    console.log('🔍 Extracted subdomain:', subdomain);
+    console.log('🔍 Extracted subdomain::::::::::::::::::::::::::::::::', subdomain);
     if (!subdomain) throw new UnauthorizedException('Subdomain not found in host');
 
     const tenant = await this.tenantRepo.findOne({ where: { subdomain } });
