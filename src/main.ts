@@ -45,6 +45,10 @@ async function bootstrap() {
       credentials: true,
     });
 
+      // ✅ Trust proxy from Coolify
+      const expressApp = app.getHttpAdapter().getInstance() as express.Express;
+      expressApp.set('trust proxy', true);
+
 
     app.useGlobalPipes(
       new ValidationPipe({
