@@ -44,8 +44,8 @@ export class AccessTokenGuard implements CanActivate {
       throw new UnauthorizedException('Invalid or expired token');
     }
 
-    const subdomain = this.extractSubdomainFromRequest(request);
-    if (!subdomain) throw new UnauthorizedException('Subdomain not found');
+    const subdomain = this.extractSubdomainFromCookies(request);
+    if (!subdomain) throw new UnauthorizedException('Missing subdomain cookie');
 
     const tenant = await this.tenantRepo.findOne({ where: { subdomain } });
     if (!tenant) throw new UnauthorizedException(`Tenant '${subdomain}' not found`);
@@ -80,37 +80,13 @@ export class AccessTokenGuard implements CanActivate {
     return token;
   }
 
-  private extractSubdomainFromRequest(request: any): string {
-    const host =
-      request.headers['x-forwarded-host'] ||
-      request.headers.host ||
-      request.hostname;
-  
-    console.log('🌐 Host header:', host);
-  
-    const knownDomains = ['.squl.co.ke', '.zelisline.com'];
-  
-    for (const domain of knownDomains) {
-      if (host?.endsWith(domain)) {
-        const subdomain = host.replace(domain, '');
-        console.log(`🔍 Extracted subdomain (${domain}):`, subdomain);
-        return subdomain;
-      }
-    }
-  
-    // fallback for localhost
-    if (host?.includes('localhost')) {
-      const url = new URL(request.url, `http://${host}`);
-      const subdomainParam = url.searchParams.get('subdomain');
-      if (subdomainParam) {
-        return subdomainParam;
-      }
-    }
-  
-    throw new UnauthorizedException(`Unable to extract subdomain from host: ${host}`);
+  private extractSubdomainFromCookies(request: any): string | undefined {
+    const subdomain = request.cookies?.schoolUrl;
+    console.log('🍪 Extracted subdomain from cookie:', subdomain);
+    return subdomain;
   }
-  
 }
+
 
 
 
