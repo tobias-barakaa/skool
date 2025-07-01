@@ -74,6 +74,8 @@ const ENV = process.env.NODE_ENV;
         JwtModule.registerAsync(jwtConfig.asProvider()),
 
     GraphQLModule.forRoot<ApolloDriverConfig>({
+
+  
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       path: '/graphql',
@@ -90,6 +92,7 @@ const ENV = process.env.NODE_ENV;
         res, // ✅ <---- this is what fixes your issue
         user: req.user, // optional
       }),
+      
       // context: ({ req, res }) => ({ req, res }),
       // context: ({ req }) => ({ req }),
       // This is the key part for error formatting

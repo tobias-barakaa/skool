@@ -31,11 +31,11 @@ export class AccessTokenGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const gqlContext = GqlExecutionContext.create(context);
     const request = gqlContext.getContext().req;
+    console.log('🧪 Request cookies:', request.cookies);
 
-    console.log('🛡️ JWT Config:', this.jwtConfiguration);
 
     const token = this.extractTokenFromHeader(request);
-    if (!token) throw new UnauthorizedException('Token not found');
+    if (!token) throw new UnauthorizedException('Token not found in authorization header');
 
     let payload: any;
     try {
@@ -45,10 +45,16 @@ export class AccessTokenGuard implements CanActivate {
     }
 
     const subdomain = this.extractSubdomainFromCookies(request);
-    if (!subdomain) throw new UnauthorizedException('Missing subdomain cookie');
+    if (!subdomain) {
+      console.error('❌ Missing `schoolUrl` cookie');
+      throw new UnauthorizedException('Missing subdomain cookie (schoolUrl)');
+    }
 
     const tenant = await this.tenantRepo.findOne({ where: { subdomain } });
-    if (!tenant) throw new UnauthorizedException(`Tenant '${subdomain}' not found`);
+    if (!tenant) {
+      console.error(`❌ Tenant not found for subdomain: ${subdomain}`);
+      throw new UnauthorizedException(`Tenant '${subdomain}' not found`);
+    }
 
     const membership = await this.membershipRepo.findOne({
       where: {
@@ -70,8 +76,6 @@ export class AccessTokenGuard implements CanActivate {
       membershipId: membership.id,
     };
 
-    console.log('✅ Authenticated user and tenant:', request[REQUEST_USER_KEY]);
-
     return true;
   }
 
@@ -82,10 +86,12 @@ export class AccessTokenGuard implements CanActivate {
 
   private extractSubdomainFromCookies(request: any): string | undefined {
     const subdomain = request.cookies?.schoolUrl;
-    console.log('🍪 Extracted subdomain from cookie:', subdomain);
+    console.log('🍪 Extracted schoolUrl from cookies:', subdomain);
     return subdomain;
   }
 }
+
+
 
 
 

@@ -21,6 +21,8 @@ async function bootstrap() {
       logger,
     });
 
+
+
     // Global filters
     app.useGlobalFilters(
       new EntityNotFoundFilter(),
@@ -92,6 +94,10 @@ async function bootstrap() {
 //     const seedingService = app.get(SeedingService);
 // await seedingService.seedAllSchoolTypes();
 
+app.enableCors({
+  origin: ['https://subdomain.squl.co.ke', 'http://localhost:3000'], 
+  credentials: true, // ✅ allow cookies
+});
     await app.listen(port, '0.0.0.0');
     console.log('ENV TEST::::::g', process.env.PORT);
 
