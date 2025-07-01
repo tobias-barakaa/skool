@@ -54,20 +54,7 @@ export class ForgotPasswordProvider {
       return { message: 'If an account with that email exists, you will receive a password reset link......1' };
     }
 
-    // Check if user has membership in this tenant
-    const membership = await this.membershipRepository.findOne({
-      where: {
-        userId: user.id,
-        tenantId: tenant.id,
-        status: MembershipStatus.ACTIVE
-      }
-    });
-
-    if (!membership) {
-      return { message: 'If an account with that email exists, you will receive a password reset link......2' };
-    }
-
-    // Generate reset token (valid for 1 hour)
+   // Generate reset token (valid for 1 hour)
     const resetToken = await this.jwtService.signAsync(
       {
         sub: user.id,
