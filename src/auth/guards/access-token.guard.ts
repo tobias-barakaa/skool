@@ -31,6 +31,8 @@ export class AccessTokenGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const gqlContext = GqlExecutionContext.create(context);
+    console.log('JWT config in guard::::::::::::::::::::::::::::::::::::::', this.jwtConfiguration);
+
     const request = gqlContext.getContext().req;
 
     const token = this.extractTokenFromHeader(request);
@@ -45,7 +47,7 @@ export class AccessTokenGuard implements CanActivate {
     }
 
     const host = request.headers.host;
-    // const host = "whatdstheshoolname.squl.co.ke";
+    // const host = "lydia-fuentes.squl.co.ke";
     console.log('🔍 Request headers:', request.headers);
     console.log('🔍 Host from headers:', host);
     
@@ -85,6 +87,10 @@ export class AccessTokenGuard implements CanActivate {
 
   private extractTokenFromHeader(request: any): string | undefined {
     const [_, token] = request.headers?.authorization?.split(' ') ?? [];
+    console.log('JWT config in guard::::::::::::::::::::::::://', this.jwtConfiguration);
+
+    console.log([_, token], 'this is the token......................::')
+    console.log(token, 'this is the token......................::')
     return token;
   }
 }

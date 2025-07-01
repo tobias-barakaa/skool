@@ -29,7 +29,7 @@ export class UsersCreateProvider {
     private tenantRepository: Repository<Tenant>,
     @InjectRepository(UserTenantMembership)
     private membershipRepository: Repository<UserTenantMembership>,
-    private invitationService: InvitationService,
+    private readonly invitationService: InvitationService,
     private dataSource: DataSource,
   ) { }
 

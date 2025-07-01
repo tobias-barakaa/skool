@@ -6,6 +6,8 @@ import { ActiveUser } from 'src/auth/decorator/active-user.decorator';
 import { TeacherService } from './providers/teacher.service';
 import { CreateTeacherInvitationDto } from './dtos/create-teacher-invitation.dto';
 import { InviteTeacherResponse } from './dtos/invite-teacher-response.dto';
+import { AcceptInvitationResponse } from './dtos/accept-teacher-invitation-response.dto';
+import { AcceptInvitationInput } from './dtos/accept-teacher-invitation.dto';
 
 @Resolver()
 export class TeacherResolver {
@@ -24,14 +26,44 @@ export class TeacherResolver {
     );
   }
 
-  @Mutation(() => String)
+  @Mutation(() => AcceptInvitationResponse)
   async acceptTeacherInvitation(
-    @Args('token') token: string,
-    @Args('password') password: string
-  ) {
-    const result = await this.teacherService.acceptInvitation(token, password);
-    return JSON.stringify(result);
+    @Args('acceptInvitationInput', { type: () => AcceptInvitationInput }) input: AcceptInvitationInput,
+    @Context() context
+  ): Promise<AcceptInvitationResponse> {
+   
+
+
+
+    const { message, user, tokens, teacher } = await this.teacherService.acceptInvitation(input.token,
+      input.password);
+
+    context.res.cookie('access_token', tokens.accessToken, {
+      httpOnly: true,
+      sameSite: 'None',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 1000 * 60 * 15,
+      domain: '.squl.co.ke',
+    });
+  
+    context.res.cookie('refresh_token', tokens.refreshToken, {
+      httpOnly: true,
+      sameSite: 'None',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+      domain: '.squl.co.ke',
+    });
+  
+    return {
+      message,
+      user,
+      tokens,
+      teacher,
+    };
+
+
   }
+  
 
   @Query(() => String)
   async getPendingInvitations(

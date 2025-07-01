@@ -12,7 +12,6 @@ export class SchoolTypeResolver {
   constructor(private readonly schoolTypeService: SchoolTypeService) {}
 
   @Mutation(() => SchoolConfigurationResponse)
-  @Auth(AuthType.Bearer)
   async configureSchoolLevelsByNames(
     @Args('levelNames', { type: () => [String] }) levelNames: string[],
     @ActiveUser() user: ActiveUserData

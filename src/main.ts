@@ -38,30 +38,13 @@ async function bootstrap() {
         'https://squl.co.ke',
         'https://squl.com',
         'https://www.squl.co.ke',
-        /^https:\/\/.*\.squl\.com$/ ,
+        /^https:\/\/.*\.squl\.com$/,      
+        /^https:\/\/.*\.squl\.co\.ke$/,    
       ],
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
       credentials: true,
     });
 
-    // Validation Pipe
-    // app.useGlobalPipes(
-    //   new ValidationPipe({
-    //     whitelist: true,
-    //     forbidNonWhitelisted: true,
-    //     transform: true,
-    //     transformOptions: {
-    //       enableImplicitConversion: true,
-    //     },
-    //     exceptionFactory: (errors) => {
-    //       const messages = errors.map((error) => ({
-    //         field: error.property,
-    //         errors: Object.values(error.constraints || {}),
-    //       }));
-    //       return new Error(`Validation failed: ${JSON.stringify(messages)}`);
-    //     },
-    //   }),
-    // );
 
     app.useGlobalPipes(
       new ValidationPipe({
@@ -81,7 +64,6 @@ async function bootstrap() {
       }),
     );
   
-    app.useGlobalFilters(new GraphQLExceptionsFilter());
 
     app.use('/favicon.ico', express.static(join(__dirname, '..', 'public', 'favicon.ico')));
 
@@ -120,5 +102,6 @@ async function bootstrap() {
     process.exit(1);
   }
 }
+
 
 void bootstrap();

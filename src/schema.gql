@@ -11,6 +11,18 @@ enum AcademicStatus {
   TRANSFERRED
 }
 
+input AcceptInvitationInput {
+  password: String!
+  token: String!
+}
+
+type AcceptInvitationResponse {
+  message: String!
+  teacher: TeacherOutput
+  tokens: TokensOutput!
+  user: User!
+}
+
 enum AssessmentType {
   ASSIGNMENT
   CAT
@@ -38,6 +50,19 @@ enum AttendanceStatus {
   EXCUSED
   LATE
   PRESENT
+}
+
+type AuthResponse {
+  membership: UserTenantMembership
+  subdomainUrl: String!
+  tokens: TokenResponse!
+  user: User!
+}
+
+input ChangePasswordInput {
+  confirmPassword: String!
+  currentPassword: String!
+  newPassword: String!
 }
 
 type Class {
@@ -150,6 +175,10 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+input ForgotPasswordInput {
+  email: String!
+}
+
 enum Gender {
   FEMALE
   MALE
@@ -232,13 +261,17 @@ enum MembershipStatus {
 }
 
 type Mutation {
-  acceptTeacherInvitation(password: String!, token: String!): String!
+  acceptTeacherInvitation(acceptInvitationInput: AcceptInvitationInput!): AcceptInvitationResponse!
+  changePassword(changePasswordInput: ChangePasswordInput!): PasswordResetResponse!
   configureSchoolLevelsByNames(levelNames: [String!]!): SchoolConfigurationResponse!
   createStream(input: CreateStreamInput!): StreamType!
   createUser(signupInput: SignupInput!): CreateUserResponse!
   deleteStream(id: ID!): Boolean!
+  forgotPassword(forgotPasswordInput: ForgotPasswordInput!): PasswordResetResponse!
   inviteTeacher(createTeacherDto: CreateTeacherInvitationDto!, tenantId: String!): InviteTeacherResponse!
+  resetPassword(resetPasswordInput: ResetPasswordInput!): PasswordResetResponse!
   revokeInvitation(invitationId: String!): String!
+  signIn(signInInput: SignInInput!): AuthResponse!
   updateStream(input: UpdateStreamInput!): StreamType!
 }
 
@@ -256,6 +289,10 @@ type Parent {
   user: User!
 }
 
+type PasswordResetResponse {
+  message: String!
+}
+
 type Query {
   activeStreams: [StreamType!]!
   getAvailableLevelNames: [String!]!
@@ -266,6 +303,12 @@ type Query {
   streams: [StreamType!]!
   streamsByGradeLevel(gradeLevelId: ID!): [StreamType!]!
   users: [User!]!
+}
+
+input ResetPasswordInput {
+  confirmPassword: String!
+  newPassword: String!
+  token: String!
 }
 
 type School {
@@ -346,6 +389,11 @@ type SelectedLevelResponse {
   id: ID!
   name: String!
   subjects: [SubjectResponse!]
+}
+
+input SignInInput {
+  email: String!
+  password: String!
 }
 
 input SignupInput {
@@ -476,6 +524,11 @@ enum SubjectType {
   VOCATIONAL
 }
 
+type TeacherOutput {
+  id: String!
+  name: String!
+}
+
 type Tenant {
   createdAt: DateTime!
   description: String
@@ -494,6 +547,11 @@ type TenantResponse {
 }
 
 type TokenPair {
+  accessToken: String!
+  refreshToken: String!
+}
+
+type TokenResponse {
   accessToken: String!
   refreshToken: String!
 }

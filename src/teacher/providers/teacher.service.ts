@@ -11,21 +11,25 @@ import { Tenant } from 'src/tenants/entities/tenant.entity';
 import { EmailService } from 'src/email/providers/email.service';
 import { CreateTeacherInvitationDto } from '../dtos/create-teacher-invitation.dto';
 import { EmailSendFailedException } from 'src/common/exceptions/business.exception';
+import { GenerateTokenProvider } from 'src/auth/providers/generate-token.provider';
 
 @Injectable()
 export class TeacherService {
   constructor(
     @InjectRepository(Teacher)
-    private teacherRepository: Repository<Teacher>,
+    private readonly teacherRepository: Repository<Teacher>,
     @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private readonly userRepository: Repository<User>,
     @InjectRepository(UserInvitation)
-    private invitationRepository: Repository<UserInvitation>,
+    private readonly invitationRepository: Repository<UserInvitation>,
     @InjectRepository(UserTenantMembership)
-    private membershipRepository: Repository<UserTenantMembership>,
+    private readonly membershipRepository: Repository<UserTenantMembership>,
     @InjectRepository(Tenant)
-    private tenantRepository: Repository<Tenant>,
-    private emailService: EmailService,
+    private readonly tenantRepository: Repository<Tenant>,
+    private readonly emailService: EmailService,
+    private readonly generateTokensProvider: GenerateTokenProvider,
+
+
   ) {}
 
   async inviteTeacher(
@@ -86,7 +90,7 @@ export class TeacherService {
     // Generate invitation token
     const token = crypto.randomBytes(32).toString('hex');
     const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + 7); // Expires in 7 days
+    expiresAt.setDate(expiresAt.getDate() + 7); 
 
     // Create invitation record
     const invitation = this.invitationRepository.create({
@@ -171,6 +175,7 @@ export class TeacherService {
         email: invitation.email,
         password: hashedPassword,
         name: teacherData.fullName,
+        schoolUrl: invitation.tenant.subdomain
       });
 
       await this.userRepository.save(user);
@@ -202,6 +207,10 @@ export class TeacherService {
       status: InvitationStatus.ACCEPTED
     });
 
+
+const tokens = await this.generateTokensProvider.generateTokens(user);
+const { accessToken, refreshToken } = tokens;
+
     return {
       message: 'Invitation accepted successfully',
       user: {
@@ -209,10 +218,13 @@ export class TeacherService {
         email: user.email,
         name: user.name
       },
+      tokens: {
+        accessToken,
+        refreshToken,
+      },
       teacher: teacher ? {
         id: teacher.id,
-        fullName: teacher.fullName,
-        department: teacher.department
+        name: teacher.fullName,
       } : null
     };
   }
