@@ -5,6 +5,8 @@ import { JwtService } from '@nestjs/jwt';
 import { HashingProvider } from './hashing.provider';
 import { User } from 'src/users/entities/user.entity';
 import { ActiveUserData } from '../interface/active-user.interface';
+import { UserTenantMembership } from 'src/user-tenant-membership/entities/user-tenant-membership.entity';
+import { Tenant } from 'src/tenants/entities/tenant.entity';
 
 @Injectable()
 export class GenerateTokenProvider {
@@ -48,37 +50,69 @@ public async signToken<T>(userId: string, expiresIn: number, payload?: T) {
 }
 
 
-public async generateTokens(user: User) {
+// public async generateTokens(user: User, membership?: UserTenantMembership, tenant?: Tenant) {
+//   const tenantContext: Partial<ActiveUserData> = {
+//     email: user.email,
+//     tenantId: tenant?.id,
+//     subdomain: tenant?.subdomain,
+//     membershipId: membership?.id,
+//   };
+  
+//   const [accessToken, refreshToken] = await Promise.all([
+//     this.signToken<Partial<ActiveUserData>>(
+//       user.id,
+//       this.jwtConfiguration.accessTokenTtl,
+//       tenantContext
+//     ),
+//     this.signToken(
+//       user.id,
+//       this.jwtConfiguration.refreshTokenTtl,
+//       tenantContext
+//     ),
+//   ]);
+
+//   return { accessToken, refreshToken };
+// }
+
+
+
+
+public async generateTokens(
+  user: User, 
+  membership?: UserTenantMembership, 
+  tenant?: Tenant
+) {
   const tenantContext: Partial<ActiveUserData> = {
     email: user.email,
-    // organizationId: user.organizationId, 
+    tenantId: tenant?.id,
+    subdomain: tenant?.subdomain,
+    membershipId: membership?.id,
   };
   
-    // if (user.school) {
-    //   tenantContext.schoolId = user.school.schoolId;
-    //   tenantContext.schoolSubdomain = user.school.subdomain;
-    // }
-  
-    const [accessToken, refreshToken] = await Promise.all([
-      this.signToken<Partial<ActiveUserData>>(
-        user.id,
-        this.jwtConfiguration.accessTokenTtl,
-        tenantContext
-      ),
-      this.signToken(
-        user.id,
-        this.jwtConfiguration.refreshTokenTtl,
-        tenantContext
-      ),
-    ]);
-  
-    return {
-      accessToken,
-      refreshToken,
-    };
-  }
-  
-  
+  const [accessToken, refreshToken] = await Promise.all([
+    this.signToken<Partial<ActiveUserData>>(
+      user.id,
+      this.jwtConfiguration.accessTokenTtl,
+      tenantContext
+    ),
+    this.signToken(
+      user.id,
+      this.jwtConfiguration.refreshTokenTtl,
+      tenantContext
+    ),
+  ]);
+
+  return {
+    accessToken,
+    refreshToken,
+  };
+}
+
+
+
+
+
+
 
 
 

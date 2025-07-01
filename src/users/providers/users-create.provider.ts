@@ -102,7 +102,11 @@ console.log('✅ Membership created::::', savedMembership);
 
 await queryRunner.commitTransaction();
 
-const tokens = await this.generateTokensProvider.generateTokens(savedUser);
+const tokens = await this.generateTokensProvider.generateTokens(
+  savedUser, 
+  savedMembership, 
+  savedTenant
+);
 const { accessToken, refreshToken } = tokens;
 
 const subdomainUrl = `${savedTenant.subdomain}.squl.co.ke`;
@@ -122,73 +126,6 @@ throw error;
 } finally {
 await queryRunner.release();
 }
-}
-
-
-
-async signupWithInvitation(input: InvitationSignupInput) {
-  const queryRunner = this.dataSource.createQueryRunner();
-  await queryRunner.connect();
-  await queryRunner.startTransaction();
-
-  try {
-   
-    const invitation = await this.invitationService.validateInvitation(input.invitationToken);
-    if (!invitation) {
-      throw new Error('Invalid or expired invitation');
-    }
-
-    if (invitation.email !== input.email) {
-      throw new Error('Email does not match invitation');
-    }
-
-    let user = await queryRunner.manager.findOne(User, {
-      where: { email: input.email }
-    });
-
-    if (!user) {
-   
-      const hashedPassword = await bcrypt.hash(input.password, 10);
-      user = queryRunner.manager.create(User, {
-        email: input.email,
-        password: hashedPassword,
-        name: input.name,
-      });
-      user = await queryRunner.manager.save(user);
-    }
-
-    // Create membership
-    const membership = queryRunner.manager.create(UserTenantMembership, {
-      userId: user.id,
-      tenantId: invitation.tenantId,
-      role: MembershipRole.TEACHER,
-      joinedAt: new Date(),
-    });
-    const savedMembership = await queryRunner.manager.save(membership);
-
-    // Mark invitation as accepted
-    await this.invitationService.acceptInvitation(input.invitationToken);
-
-    await queryRunner.commitTransaction();
-
-
-    const tokens = await this.generateTokensProvider.generateTokens(user);
-const { accessToken, refreshToken } = tokens;
-
-return {
-  user: user,
-  membership: savedMembership,
-  tokens: {
-    accessToken,
-    refreshToken,
-  }
-}
-  } catch (error) {
-    await queryRunner.rollbackTransaction();
-    throw error;
-  } finally {
-    await queryRunner.release();
-  }
 }
 
 }

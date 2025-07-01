@@ -47,7 +47,7 @@ export class AccessTokenGuard implements CanActivate {
     }
 
     const host = request.headers.host;
-    // const host = "lydia-fuentes.squl.co.ke";
+    // const host = "myschool.squl.co.ke";
     console.log('🔍 Request headers:', request.headers);
     console.log('🔍 Host from headers:', host);
     

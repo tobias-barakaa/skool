@@ -207,26 +207,25 @@ export class TeacherService {
       status: InvitationStatus.ACCEPTED
     });
 
+  const tokens = await this.generateTokensProvider.generateTokens(user, membership, invitation.tenant);
+  const { accessToken, refreshToken } = tokens;
 
-const tokens = await this.generateTokensProvider.generateTokens(user);
-const { accessToken, refreshToken } = tokens;
-
-    return {
-      message: 'Invitation accepted successfully',
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name
-      },
-      tokens: {
-        accessToken,
-        refreshToken,
-      },
-      teacher: teacher ? {
-        id: teacher.id,
-        name: teacher.fullName,
-      } : null
-    };
+  return {
+    message: 'Invitation accepted successfully',
+    user: {
+      id: user.id,
+      email: user.email,
+      name: user.name
+    },
+    tokens: {
+      accessToken,
+      refreshToken,
+    },
+    teacher: teacher ? {
+      id: teacher.id,
+      name: teacher.fullName,
+    } : null
+  };
   }
 
   async getPendingInvitations(tenantId: string, currentUser: User) {
