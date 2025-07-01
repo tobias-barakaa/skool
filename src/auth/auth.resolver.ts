@@ -68,6 +68,7 @@ export class AuthResolver {
     const host = context.req.headers.host;
     // const host = "whatdstheshoolname.squl.co.ke";
     const subdomain = host.split('.')[0];
+    console.log('Extracted subdomain,,,,,,:', subdomain);
 
     return await this.forgotPasswordProvider.sendResetPasswordEmail(forgotPasswordInput, subdomain);
   }
