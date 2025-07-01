@@ -1,20 +1,9 @@
-import {
-  CanActivate,
-  ExecutionContext,
-  Inject,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { GqlExecutionContext } from '@nestjs/graphql';
+import { CanActivate, ExecutionContext, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { GqlExecutionContext } from '@nestjs/graphql';
 import jwtConfig from 'src/auth/config/jwt.config';
-import { REQUEST_USER_KEY } from '../constants/auth.constants';
-import { Tenant } from 'src/tenants/entities/tenant.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { UserTenantMembership } from 'src/user-tenant-membership/entities/user-tenant-membership.entity';
-import { UserNotInTenantException } from 'src/common/exceptions/business.exception';
+import { REQUEST_USER_KEY } from 'src/auth/constants/auth.constants';
 
 @Injectable()
 export class AccessTokenGuard implements CanActivate {
@@ -22,59 +11,24 @@ export class AccessTokenGuard implements CanActivate {
     private readonly jwtService: JwtService,
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
-    @InjectRepository(Tenant)
-    private readonly tenantRepo: Repository<Tenant>,
-    @InjectRepository(UserTenantMembership)
-    private readonly membershipRepo: Repository<UserTenantMembership>
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const gqlContext = GqlExecutionContext.create(context);
     const request = gqlContext.getContext().req;
-    console.log('🧪 Request cookies:', request.cookies);
-
 
     const token = this.extractTokenFromHeader(request);
-    if (!token) throw new UnauthorizedException('Token not found in authorization header');
 
-    let payload: any;
+    if (!token) {
+      throw new UnauthorizedException('Token not found');
+    }
+
     try {
-      payload = await this.jwtService.verifyAsync(token, this.jwtConfiguration);
+      const payload = await this.jwtService.verifyAsync(token, this.jwtConfiguration);
+      request[REQUEST_USER_KEY] = payload;
     } catch {
-      throw new UnauthorizedException('Invalid or expired token');
+      throw new UnauthorizedException('Invalid token');
     }
-
-    const subdomain = this.extractSubdomainFromCookies(request);
-    if (!subdomain) {
-      console.error('❌ Missing `schoolUrl` cookie');
-      throw new UnauthorizedException('Missing subdomain cookie (schoolUrl)');
-    }
-
-    const tenant = await this.tenantRepo.findOne({ where: { subdomain } });
-    if (!tenant) {
-      console.error(`❌ Tenant not found for subdomain: ${subdomain}`);
-      throw new UnauthorizedException(`Tenant '${subdomain}' not found`);
-    }
-
-    const membership = await this.membershipRepo.findOne({
-      where: {
-        userId: payload.sub,
-        tenantId: tenant.id,
-      },
-      relations: ['user', 'tenant'],
-    });
-
-    if (!membership) {
-      throw new UserNotInTenantException(payload.sub, tenant.id);
-    }
-
-    request[REQUEST_USER_KEY] = {
-      sub: payload.sub,
-      email: payload.email,
-      tenantId: tenant.id,
-      subdomain: tenant.subdomain,
-      membershipId: membership.id,
-    };
 
     return true;
   }
@@ -83,15 +37,7 @@ export class AccessTokenGuard implements CanActivate {
     const [_, token] = request.headers?.authorization?.split(' ') ?? [];
     return token;
   }
-
-  private extractSubdomainFromCookies(request: any): string | undefined {
-    const subdomain = request.cookies?.schoolUrl;
-    console.log('🍪 Extracted schoolUrl from cookies:', subdomain);
-    return subdomain;
-  }
 }
-
-
 
 
 
