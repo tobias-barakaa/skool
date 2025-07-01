@@ -25,62 +25,44 @@ export class SignInProvider {
   ) {}
 
 
-  async signIn(signInInput: SignInInput, subdomain: string): Promise<AuthResponse> {
-    console.log(signInInput, 'this is the sign in input..::', subdomain)
-    
-    // Find tenant by subdomain
-    const tenant = await this.tenantRepository.findOne({
-      where: { subdomain, isActive: true }
-    });
-  
-    if (!tenant) {
-      throw new NotFoundException('School not found or inactive');
-    }
-  
-    // Find user by email
+  async signIn(signInInput: SignInInput): Promise<AuthResponse> {
     const user = await this.userRepository.findOne({
       where: { email: signInInput.email },
       relations: ['memberships', 'memberships.tenant']
     });
   
-    if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
+    if (!user) throw new UnauthorizedException('Invalid credentials');
   
-    // Verify password
     const isPasswordValid = await this.hashingProvider.comparePassword(
       signInInput.password,
       user.password
     );
   
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials 2');
+    if (!isPasswordValid) throw new UnauthorizedException('Invalid credentials');
+  
+    const activeMemberships = user.memberships.filter(
+      (m) => m.status === MembershipStatus.ACTIVE
+    );
+  
+    if (activeMemberships.length === 0) {
+      throw new UnauthorizedException('No active school memberships found');
     }
   
-    // Check if user has membership in this tenant
-    const membership = await this.membershipRepository.findOne({
-      where: {
-        userId: user.id,
-        tenantId: tenant.id,
-        status: MembershipStatus.ACTIVE
-      },
-      relations: ['tenant']
-    });
+    // Optionally pick the first one as default
+    const defaultMembership = activeMemberships[0];
+    const tenant = defaultMembership.tenant;
   
-    if (!membership) {
-      throw new UnauthorizedException('You do not have access to this school');
-    }
-  
-    // Generate tokens with tenant and membership context
-    const tokens = await this.generateTokensProvider.generateTokens(user, membership, tenant);
+    const tokens = await this.generateTokensProvider.generateTokens(user, defaultMembership, tenant);
   
     return {
       user,
-      membership,
+      membership: defaultMembership,
+      // allMemberships: activeMemberships, // 🟢 send this to frontend
+      tokens,
       subdomainUrl: `${tenant.subdomain}.squl.co.ke`,
-      tokens
     };
   }
+  
 
 
   

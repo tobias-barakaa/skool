@@ -59,23 +59,7 @@ export class CreateStreamProvider {
       throw new BadRequestException('Stream capacity must be greater than 0');
     }
 
-    // Create the stream
-    // const stream = this.streamRepository.create({
-    //   name: input.name,
-    //   capacity: input.capacity,
-    //   description: input.description,
-    //   isActive: input.isActive ?? true,
-    //   gradeLevel,
-    // });
-
-    // const stream = this.streamRepository.create({
-    //     name: input.name,
-    //     capacity: input.capacity,
-    //     description: input.description,
-    //     isActive: input.isActive ?? true,
-    //     gradeLevel,
-    //     schoolId: schoolId
-    //   });
+    
 
       const stream = this.streamRepository.create({
         name: input.name,

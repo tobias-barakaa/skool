@@ -14,7 +14,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 
-@ObjectType() // ✅ Needed for GraphQL
+@ObjectType() 
 @Entity('streams')
 export class Stream {
   @Field(() => ID)
@@ -54,14 +54,8 @@ export class Stream {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column({ nullable: false }) // 👈 temporarily allow nulls
-schoolId: string;
 
-  @ManyToOne(() => School, { nullable: false, onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'schoolId' })
-  school: School;
-
-  @ManyToOne(() => Tenant, tenant => tenant.streams, { onDelete: 'CASCADE' })
+@ManyToOne(() => Tenant, tenant => tenant.streams, { onDelete: 'CASCADE' })
 @Field(() => Tenant)
 tenant: Tenant;
 
