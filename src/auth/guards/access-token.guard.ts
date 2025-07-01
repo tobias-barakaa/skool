@@ -30,50 +30,38 @@ export class AccessTokenGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const gqlContext = GqlExecutionContext.create(context);
-    console.log('JWT config in guard::::::::::::::::::::::::::::::::::::::', this.jwtConfiguration);
-
     const request = gqlContext.getContext().req;
 
+    console.log('🛡️ JWT Config:', this.jwtConfiguration);
+
     const token = this.extractTokenFromHeader(request);
-    console.log(token, 'this is the token..::')
     if (!token) throw new UnauthorizedException('Token not found');
 
     let payload: any;
     try {
-      payload = await this.jwtService.verifyAsync(token, this.jwtConfiguration)
+      payload = await this.jwtService.verifyAsync(token, this.jwtConfiguration);
     } catch {
-      throw new UnauthorizedException('Invalid token');
+      throw new UnauthorizedException('Invalid or expired token');
     }
 
-    const host = request.headers.host;
-    // const host = "myschool.squl.co.ke";
-    console.log('🔍 Request headers:', request.headers);
-    console.log('🔍 Host from headers:', host);
-    
-     const subdomain = this.extractTokenFromHeader(request)
-
-    console.log('🔍 Extracted subdomain::::::::::::::::::::::::::::::::', subdomain);
-    if (!subdomain) throw new UnauthorizedException('Subdomain not found in host');
+    const subdomain = this.extractSubdomainFromRequest(request);
+    if (!subdomain) throw new UnauthorizedException('Subdomain not found');
 
     const tenant = await this.tenantRepo.findOne({ where: { subdomain } });
-    console.log(`Tenant found: ${tenant ? tenant.id : 'None'}`, tenant);
-    if (!tenant) throw new UnauthorizedException('Tenant not found');
-    console.log(`Checking membership for user ${payload.sub} in tenant ${tenant.id}`);
+    if (!tenant) throw new UnauthorizedException(`Tenant '${subdomain}' not found`);
 
     const membership = await this.membershipRepo.findOne({
       where: {
         userId: payload.sub,
-        tenantId: tenant.id
+        tenantId: tenant.id,
       },
-      relations: ['user', 'tenant']
+      relations: ['user', 'tenant'],
     });
 
     if (!membership) {
       throw new UserNotInTenantException(payload.sub, tenant.id);
     }
-    
 
-    // Attach enriched payload
     request[REQUEST_USER_KEY] = {
       sub: payload.sub,
       email: payload.email,
@@ -82,18 +70,44 @@ export class AccessTokenGuard implements CanActivate {
       membershipId: membership.id,
     };
 
+    console.log('✅ Authenticated user and tenant:', request[REQUEST_USER_KEY]);
+
     return true;
   }
 
   private extractTokenFromHeader(request: any): string | undefined {
     const [_, token] = request.headers?.authorization?.split(' ') ?? [];
-    console.log('JWT config in guard::::::::::::::::::::::::://', this.jwtConfiguration);
-
-    console.log([_, token], 'this is the token......................::')
-    console.log(token, 'this is the token......................::')
     return token;
   }
+
+  private extractSubdomainFromRequest(request: any): string {
+    const host = request.headers.host || request.headers['x-forwarded-host'];
+    console.log('🌐 Host header:', host);
+
+    if (host?.includes('.squl.co.ke')) {
+      const subdomain = host.split('.squl.co.ke')[0];
+      console.log('🔍 Extracted subdomain:', subdomain);
+      return subdomain;
+    }
+
+    // Fallback for localhost testing
+    if (host?.includes('localhost')) {
+      const url = new URL(request.url, `http://${host}`);
+      const subdomainParam = url.searchParams.get('subdomain');
+      if (subdomainParam) {
+        console.log('🔍 Extracted subdomain from param:', subdomainParam);
+        return subdomainParam;
+      }
+    }
+
+    throw new UnauthorizedException(`Unable to extract subdomain from host: ${host}`);
+  }
 }
+
+
+
+
+
 
 // import { CanActivate, ExecutionContext, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 // import { ConfigType } from '@nestjs/config';
