@@ -76,6 +76,14 @@ export class SchoolTypeResolver {
       'Homeschool Senior Secondary',
     ];
   }
+
+  @Query(() => String)
+debugHost(@Context() context): string {
+  const req = context.req;
+  console.log('🧪 Full headers:', req.headers);
+  return req.headers['x-forwarded-host'] || req.headers.host;
+}
+
 }
 
 

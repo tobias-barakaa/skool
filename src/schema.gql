@@ -295,6 +295,7 @@ type PasswordResetResponse {
 
 type Query {
   activeStreams: [StreamType!]!
+  debugHost: String!
   getAvailableLevelNames: [String!]!
   getPendingInvitations(tenantId: String!): String!
   getSchoolConfiguration: SchoolConfigurationResponse
