@@ -10,7 +10,6 @@ import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import jwtConfig from 'src/auth/config/jwt.config';
 import { REQUEST_USER_KEY } from '../constants/auth.constants';
-import { extractSubdomainFromRequest } from 'src/common/utils/host.utils';
 import { Tenant } from 'src/tenants/entities/tenant.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -51,7 +50,7 @@ export class AccessTokenGuard implements CanActivate {
     console.log('🔍 Request headers:', request.headers);
     console.log('🔍 Host from headers:', host);
     
-    const subdomain = extractSubdomainFromRequest(request);
+     const subdomain = this.extractTokenFromHeader(request)
 
     console.log('🔍 Extracted subdomain::::::::::::::::::::::::::::::::', subdomain);
     if (!subdomain) throw new UnauthorizedException('Subdomain not found in host');
