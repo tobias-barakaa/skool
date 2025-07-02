@@ -74,7 +74,7 @@ export class TeacherService {
       where: {
         email: createTeacherDto.email,
         tenant: { id: tenantId },
-        status: InvitationStatus.PENDING
+        status: InvitationStatus.ACCEPTED
       }
     });
 
@@ -102,7 +102,7 @@ export class TeacherService {
       status: InvitationStatus.PENDING,
       expiresAt,
       invitedBy: currentUser,
-      tenant: { id: tenantId },
+      tenant: { id: tenantId }
     });
 
     await this.invitationRepository.save(invitation);
