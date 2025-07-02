@@ -64,7 +64,12 @@ export class AuthResolver {
 @Auth(AuthType.None)
 async forgotPassword(
   @Args('forgotPasswordInput') forgotPasswordInput: ForgotPasswordInput,
+  @Context() context,
 ): Promise<PasswordResetResponse> {
+
+  const host = context.req.headers.host;
+  const subdomain = host.split('.')[0];
+  console.log('Subdomain::::::::::::::::::::::::::::://///////////////////////', subdomain);
     return await this.forgotPasswordProvider.sendResetPasswordEmail(forgotPasswordInput);
 }
 
