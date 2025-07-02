@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, MoreThan, LessThan } from 'typeorm';
 import * as crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { Teacher } from '../entities/teacher.entity';
@@ -37,7 +37,7 @@ export class TeacherService {
     currentUser: User,
     tenantId: string
   ) {
-    // Verify that current user is SUPER_ADMIN for this tenant
+    // Verify that current user is SCHOOL_ADMIN for this tenant
     const membership = await this.membershipRepository.findOne({
       where: {
         user: { id: currentUser.id },
@@ -46,16 +46,16 @@ export class TeacherService {
         status: MembershipStatus.ACTIVE
       }
     });
-
+  
     if (!membership) {
-      throw new ForbiddenException('Only SUPER_ADMIN can invite teachers');
+      throw new ForbiddenException('Only SCHOOL_ADMIN can invite teachers');
     }
-
+  
     // Check if user with this email already exists in this tenant
     const existingUser = await this.userRepository.findOne({
       where: { email: createTeacherDto.email }
     });
-
+  
     if (existingUser) {
       const existingMembership = await this.membershipRepository.findOne({
         where: {
@@ -63,35 +63,55 @@ export class TeacherService {
           tenant: { id: tenantId }
         }
       });
-
+  
       if (existingMembership) {
         throw new BadRequestException('User already exists in this tenant');
       }
     }
-
-    // Check for existing pending invitation
-    const existingInvitation = await this.invitationRepository.findOne({
+  
+    // Check for recent pending invitation (within last 10 minutes)
+    const tenMinutesAgo = new Date();
+    tenMinutesAgo.setMinutes(tenMinutesAgo.getMinutes() - 10);
+  
+    const recentInvitation = await this.invitationRepository.findOne({
       where: {
         email: createTeacherDto.email,
         tenant: { id: tenantId },
-        status: InvitationStatus.ACCEPTED
+        status: InvitationStatus.PENDING,
+        createdAt: MoreThan(tenMinutesAgo) // Using TypeORM's MoreThan operator
+      },
+      order: {
+        createdAt: 'DESC'
       }
     });
-
-    if (existingInvitation) {
-      throw new BadRequestException('Invitation already sent to this email');
+  
+    if (recentInvitation) {
+      throw new BadRequestException('An invitation was already sent to this email recently. Please wait 10 minutes before sending another.');
     }
-
+  
+    // Expire old pending invitations for this email and tenant
+    await this.invitationRepository.update(
+      {
+        email: createTeacherDto.email,
+        tenant: { id: tenantId },
+        status: InvitationStatus.PENDING,
+        expiresAt: LessThan(new Date()) // Using TypeORM's LessThan operator
+      },
+      {
+        status: InvitationStatus.EXPIRED
+      }
+    );
+  
     // Get tenant info
     const tenant = await this.tenantRepository.findOne({
       where: { id: tenantId }
     });
-
+  
     // Generate invitation token
     const token = crypto.randomBytes(32).toString('hex');
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 7); 
-
+  
     // Create invitation record
     const invitation = this.invitationRepository.create({
       email: createTeacherDto.email,
@@ -104,18 +124,25 @@ export class TeacherService {
       invitedBy: currentUser,
       tenant: { id: tenantId }
     });
-
+  
     await this.invitationRepository.save(invitation);
-
-    // Create teacher record with pre-filled data (not yet linked to user)
-    const teacher = this.teacherRepository.create({
-      ...createTeacherDto,
-      isActive: false,
-      hasCompletedProfile: false,
+  
+    // Check if teacher record already exists for this email
+    let teacher = await this.teacherRepository.findOne({
+      where: { email: createTeacherDto.email }
     });
-
-    await this.teacherRepository.save(teacher);
-
+  
+    if (!teacher) {
+      // Create teacher record with pre-filled data (not yet linked to user)
+      teacher = this.teacherRepository.create({
+        ...createTeacherDto,
+        isActive: false,
+        hasCompletedProfile: false,
+      });
+  
+      await this.teacherRepository.save(teacher);
+    }
+  
     // Send invitation email
     try {
       await this.emailService.sendTeacherInvitation(
@@ -130,14 +157,13 @@ export class TeacherService {
       console.error('[EmailService Error]', error);
       throw new EmailSendFailedException(createTeacherDto.email);
     }
-
+  
     return {
       email: invitation.email,
       fullName: teacher.fullName,
       status: invitation.status,
       createdAt: invitation.createdAt,
     };
-
   }
 
   async acceptInvitation(token: string, password: string) {
