@@ -34,11 +34,25 @@ export class ForgotPasswordProvider {
     private readonly hashingProvider: HashingProvider
   ) {}
 
-  async sendResetPasswordEmail(forgotPasswordInput: ForgotPasswordInput, subdomain: string): Promise<{ message: string }> {
+  async sendResetPasswordEmail(forgotPasswordInput: ForgotPasswordInput,): Promise<{ message: string }> {
     // Find tenant by subdomain
-    const tenant = await this.tenantRepository.findOne({
-      where: { subdomain, isActive: true }
+
+
+    const userEmail = await this.userRepository.findOne({
+      where: { email: forgotPasswordInput.email },
     });
+    
+    if (!userEmail || !userEmail.schoolUrl) {
+      throw new NotFoundException('User or school not found');
+    }
+    
+    const tenant = await this.tenantRepository.findOne({
+      where: { subdomain: userEmail.schoolUrl, isActive: true },
+    });
+    
+    if (!tenant) {
+      throw new NotFoundException('School not found or inactive');
+    }
 
     if (!tenant) {
       throw new NotFoundException('School not found');

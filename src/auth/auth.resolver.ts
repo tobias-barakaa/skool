@@ -15,6 +15,9 @@ import { PasswordResetResponse,
     ResetPasswordInput, 
  } from './dtos/password-reset.dto';
 import { AuthResponse, SignInInput } from './dtos/signin-input.dto';
+import { User } from 'src/users/entities/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Resolver()
 @UseFilters(GraphQLExceptionsFilter)
@@ -23,6 +26,8 @@ export class AuthResolver {
     private readonly signInProvider: SignInProvider,
     private readonly forgotPasswordProvider: ForgotPasswordProvider,
     private readonly changePasswordProvider: ChangePasswordProvider,
+    @InjectRepository(User)
+  private readonly userRepository: Repository<User>,
   ) {}
 
   @Mutation(() => AuthResponse, { name: 'signIn' })
@@ -31,13 +36,9 @@ export class AuthResolver {
     @Args('signInInput') signInInput: SignInInput,
     @Context() context,
   ): Promise<AuthResponse> {
-    // Extract subdomain from request headers
-    const host = context.req.headers.host;
-    // const host = "whatdstheshoolname.squl.co.ke";
+    
 
-    const subdomain = host.split('.')[0];
-
-    const result = await this.signInProvider.signIn(signInInput, subdomain);
+    const result = await this.signInProvider.signIn(signInInput);
 
     // Set cookies
     context.res.cookie('access_token', result.tokens.accessToken, {
@@ -59,19 +60,13 @@ export class AuthResolver {
     return result;
   }
 
-  @Mutation(() => PasswordResetResponse, { name: 'forgotPassword' })
-  @Auth(AuthType.None)
-  async forgotPassword(
-    @Args('forgotPasswordInput') forgotPasswordInput: ForgotPasswordInput,
-    @Context() context,
-  ): Promise<PasswordResetResponse> {
-    const host = context.req.headers.host;
-    // const host = "whatdstheshoolname.squl.co.ke";
-    const subdomain = host.split('.')[0];
-    console.log('Extracted subdomain,,,,,,:', subdomain);
-
-    return await this.forgotPasswordProvider.sendResetPasswordEmail(forgotPasswordInput, subdomain);
-  }
+@Mutation(() => PasswordResetResponse, { name: 'forgotPassword' })
+@Auth(AuthType.None)
+async forgotPassword(
+  @Args('forgotPasswordInput') forgotPasswordInput: ForgotPasswordInput,
+): Promise<PasswordResetResponse> {
+    return await this.forgotPasswordProvider.sendResetPasswordEmail(forgotPasswordInput);
+}
 
   @Mutation(() => PasswordResetResponse, { name: 'resetPassword' })
   @Auth(AuthType.None)
