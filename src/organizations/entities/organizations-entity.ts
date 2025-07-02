@@ -41,7 +41,4 @@ export class Organization {
   updatedAt: Date;
 
 
-  @OneToMany(() => Student, student => student.organization)
-  students: Student[];
-
 }

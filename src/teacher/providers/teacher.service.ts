@@ -78,7 +78,7 @@ export class TeacherService {
         email: createTeacherDto.email,
         tenant: { id: tenantId },
         status: InvitationStatus.PENDING,
-        createdAt: MoreThan(tenMinutesAgo) // Using TypeORM's MoreThan operator
+        createdAt: MoreThan(tenMinutesAgo) 
       },
       order: {
         createdAt: 'DESC'
@@ -95,7 +95,7 @@ export class TeacherService {
         email: createTeacherDto.email,
         tenant: { id: tenantId },
         status: InvitationStatus.PENDING,
-        expiresAt: LessThan(new Date()) // Using TypeORM's LessThan operator
+        expiresAt: LessThan(new Date()) 
       },
       {
         status: InvitationStatus.EXPIRED
@@ -133,7 +133,7 @@ export class TeacherService {
     });
   
     if (!teacher) {
-      // Create teacher record with pre-filled data (not yet linked to user)
+      
       teacher = this.teacherRepository.create({
         ...createTeacherDto,
         isActive: false,
@@ -187,13 +187,13 @@ export class TeacherService {
       throw new BadRequestException('Invitation has expired');
     }
 
-    // Check if user already exists
+  
     let user = await this.userRepository.findOne({
       where: { email: invitation.email }
     });
 
     if (!user) {
-      // Create new user
+    
       const hashedPassword = await bcrypt.hash(password, 10);
       const teacherData = invitation.userData as CreateTeacherInvitationDto;
       

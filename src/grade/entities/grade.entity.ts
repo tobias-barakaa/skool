@@ -101,10 +101,6 @@ import { Level } from '../../level/entities/level.entities';
     @Column({ default: false })
     isPublished: boolean;
   
-    // — Relations —
-    @Field(() => Student)
-    @ManyToOne(() => Student, (student) => student.grades)
-    student: Student;
 
    
     @Field(() => Class)

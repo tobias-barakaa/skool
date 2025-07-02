@@ -21,9 +21,9 @@ export class SignupInput {
   @Length(2, 100)
   schoolName: string;
 
-  @Field({ nullable: true }) // 👈 allow missing in GraphQL
+  @Field({ nullable: true })
   @IsString()
-  @IsOptional() // 👈 allow missing in class-validator
+  @IsOptional() 
   schoolUrl?: string;
 }
 

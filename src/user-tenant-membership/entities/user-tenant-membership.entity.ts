@@ -10,6 +10,7 @@ export enum MembershipRole {
   TEACHER = 'TEACHER',
   TREASURER = 'TREASURER',
   STAFF = 'STAFF',
+  STUDENT= 'STUDENT'
 }
 
 export enum MembershipStatus {

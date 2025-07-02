@@ -175,24 +175,7 @@ import { Student } from '../../student/entities/student.entity';
     grades: Grade[];
 
   
-    // @Field(() => [Teacher])
-    // @ManyToOne(() => Teacher, (t) => t.primaryClasses)
-    // @JoinColumn({ name: 'classTeacherId' })
-    // classTeacher: Teacher;
-  
-    // @Field(() => [Teacher], { nullable: true })
-    // @ManyToOne(() => Teacher, (t) => t.assistantClasses, { nullable: true })
-    // @JoinColumn({ name: 'assistantTeacherId' })
-    // assistantTeacher?: Teacher;
-  
-    @Field(() => [Student], { nullable: true })
-    @ManyToOne(() => Student, (s) => s.monitorOf, { nullable: true })
-    @JoinColumn({ name: 'classMonitorId' })
-    classMonitor?: Student;
-  
-    @Field(() => [Student])
-    @OneToMany(() => Student, (student) => student.class)
-    students: Student[];
+   
   
     @Field(() => [String], { nullable: true })
 @Column({ type: 'text', array: true, default: [] })

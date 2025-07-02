@@ -64,10 +64,6 @@ export class School {
 
   
 
-  @Field(() => [Student])
-  @OneToMany(() => Student, (student) => student.school)
-  students: Student[];
-
   @UpdateDateColumn()
   @Field(() => Date)
   updatedAt: Date;

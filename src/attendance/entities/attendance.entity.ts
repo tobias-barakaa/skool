@@ -65,10 +65,6 @@ import { Teacher } from '../../teacher/entities/teacher.entity';
     @Column({ type: 'timestamp', nullable: true })
     timeOut?: Date;
   
-    // Relations
-    @Field(() => Student)
-    @ManyToOne(() => Student, (student) => student.attendance)
-    student: Student;
   
     @Field(() => Class, { nullable: true })
     @ManyToOne(() => Class, (cls) => cls.attendance, { nullable: true })

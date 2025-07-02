@@ -2,15 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-enum AcademicStatus {
-  ACTIVE
-  DROPPED_OUT
-  GRADUATED
-  ON_LEAVE
-  SUSPENDED
-  TRANSFERRED
-}
-
 input AcceptInvitationInput {
   password: String!
   token: String!
@@ -38,7 +29,6 @@ type Attendance {
   date: DateTime!
   remarks: String
   status: AttendanceStatus!
-  student: Student!
   studentId: String!
   subjectId: String
   timeIn: DateTime
@@ -77,7 +67,6 @@ type Class {
   classCode: String!
   classEvents: [String!]
   classId: ID!
-  classMonitor: [Student!]
   classMonitorId: String
   className: String!
   classTeacherId: String!
@@ -100,7 +89,6 @@ type Class {
   section: String
   specialNeeds: Boolean!
   stream: String!
-  students: [Student!]!
   subjects: [String!]
   teachers: [String!]
   term: String!
@@ -120,6 +108,21 @@ input CreateStreamInput {
   gradeLevelId: String!
   isActive: Boolean = true
   name: String!
+}
+
+input CreateStudentInput {
+  admission_number: String!
+  email: String!
+  gender: String!
+  grade: String!
+  name: String!
+  phone: String!
+}
+
+type CreateStudentResponse {
+  generatedPassword: String!
+  student: Student!
+  user: User!
 }
 
 input CreateTeacherInvitationDto {
@@ -180,12 +183,6 @@ input ForgotPasswordInput {
   email: String!
 }
 
-enum Gender {
-  FEMALE
-  MALE
-  OTHER
-}
-
 type Grade {
   academicYear: String!
   assessmentName: String!
@@ -200,7 +197,6 @@ type Grade {
   percentage: Float!
   points: Float
   recordedBy: String!
-  student: Student!
   studentId: String!
   subjectId: String!
   term: String!
@@ -249,6 +245,7 @@ enum MembershipRole {
   SCHOOL_ADMIN
   SCHOOL_MANAGER
   STAFF
+  STUDENT
   SUPER_ADMIN
   TEACHER
   TREASURER
@@ -265,7 +262,9 @@ type Mutation {
   acceptTeacherInvitation(acceptInvitationInput: AcceptInvitationInput!): AcceptInvitationResponse!
   changePassword(changePasswordInput: ChangePasswordInput!): PasswordResetResponse!
   configureSchoolLevelsByNames(levelNames: [String!]!): SchoolConfigurationResponse!
+  createMultipleStudents(studentsData: [CreateStudentInput!]!): [CreateStudentResponse!]!
   createStream(input: CreateStreamInput!): StreamType!
+  createStudent(createStudentInput: CreateStudentInput!): CreateStudentResponse!
   createUser(signupInput: SignupInput!): CreateUserResponse!
   deleteStream(id: ID!): Boolean!
   forgotPassword(forgotPasswordInput: ForgotPasswordInput!): PasswordResetResponse!
@@ -274,20 +273,6 @@ type Mutation {
   revokeInvitation(invitationId: String!): String!
   signIn(signInInput: SignInInput!): AuthResponse!
   updateStream(input: UpdateStreamInput!): StreamType!
-}
-
-type Parent {
-  address: String
-  children: [Student!]!
-  emergencyContact: String
-  firstName: String!
-  lastName: String!
-  occupation: String
-  parentId: ID!
-  phoneNumber: String!
-  school: School!
-  schoolId: String!
-  user: User!
 }
 
 type PasswordResetResponse {
@@ -300,7 +285,6 @@ type Query {
   getAvailableLevelNames: [String!]!
   getPendingInvitations(tenantId: String!): String!
   getSchoolConfiguration: SchoolConfigurationResponse
-  getSchoolTypes: [SchoolTypeConfig!]!
   stream(id: ID!): StreamType!
   streams: [StreamType!]!
   streamsByGradeLevel(gradeLevelId: ID!): [StreamType!]!
@@ -320,7 +304,6 @@ type School {
   schoolId: ID!
   schoolName: String!
   schoolType: SchoolType!
-  students: [Student!]!
   subdomain: String!
   updatedAt: DateTime!
 }
@@ -429,62 +412,18 @@ type StreamType {
 }
 
 type Student {
-  academicLevel: String!
-  academicStatus: AcademicStatus!
-  address: String!
-  admissionDate: DateTime!
-  admissionNumber: String!
-  allergies: [String!]
-  attendance: [Attendance!]!
-  bloodGroup: String
-  class: Class!
-  classId: String
+  admission_number: String!
   createdAt: DateTime!
-  createdBy: String!
-  currentClass: Class
-  currentGrade: String!
-  dateOfBirth: DateTime!
-  disciplinaryRecords: [String!]
-  emergencyContact: [String!]!
-  feeCategory: String
-  feePayments: [String!]
   feesOwed: Float!
-  firstName: String!
-  gender: Gender!
-  gpa: Float
-  gradeLevel: String!
-  grades: [Grade!]!
-  graduationDate: DateTime
-  guardianId: String
-  hasLeft: Boolean!
-  invoices: [String!]
+  gender: String!
+  grade: String!
+  id: ID!
   isActive: Boolean!
-  lastName: String!
-  leftDate: DateTime
-  leftReason: String
-  medicalConditions: [String!]
-  medicalRecords: [String!]
-  middleName: String
-  monitorOf: [Class!]!
-  nationality: String!
-  organizationId: String!
-  overallGrade: String
-  parent: Parent!
-  phoneNumber: String
-  primaryParentId: String!
-  rank: Float
-  religion: String
-  scholarshipType: String
-  school: School!
-  schoolId: String!
-  secondaryParent: Parent
-  secondaryParentId: String
-  studentId: ID!
-  studentNumber: String!
-  subjects: [Subject!]
+  phone: String!
   totalFeesPaid: Float!
   updatedAt: DateTime!
-  user: User
+  user: User!
+  user_id: ID!
 }
 
 type Subject {

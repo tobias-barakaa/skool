@@ -1,5 +1,5 @@
 export interface ActiveUserData {
-    sub: string; // UUID string now, not number
+    sub: string;
     email: string;
     tenantId: string;
     subdomain: string;

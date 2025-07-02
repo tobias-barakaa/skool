@@ -60,8 +60,5 @@ import { Student } from '../../student/entities/student.entity';
     @JoinColumn()
     user: User;
 
-    @Field(() => [Student])
-    @OneToMany(() => Student, (student) => student.parent)
-    children: Student[];
   }
   

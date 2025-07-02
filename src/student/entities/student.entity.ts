@@ -1,144 +1,41 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  OneToMany,
-  ManyToMany,
-  JoinTable,
-  OneToOne,
-  JoinColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
-import { ObjectType, Field, ID, registerEnumType } from '@nestjs/graphql';
-import { User } from '../../users/entities/user.entity';
-//   import { StudentSubject } from '../../student-subjects/entities/student-subject.entity';
-import { Attendance } from '../../attendance/entities/attendance.entity';
-
-import { Gender } from '../enums/student.gender.enum';
-import { AcademicStatus } from '../enums/student.academic.status.enum';
-import { School } from '../../school/entities/school.entity';
-import { Class } from '../../class/entities/class.entity';
-import { truncate } from 'fs';
-import { Parent } from '../../parent/entities/parent.entity';
-import { Grade } from '../../grade/entities/grade.entity';
-import { Subject } from '../../subject/entities/subject.entity';
-import { Organization } from '../../organizations/entities/organizations-entity';
-import { Stream } from 'src/streams/entities/streams.entity';
+// src/students/entities/student.entity.ts
+import { Field, ID, ObjectType } from "@nestjs/graphql";
+import { Stream } from "src/streams/entities/streams.entity";
+import { User } from "src/users/entities/user.entity";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @ObjectType()
-@Entity()
+@Entity('students')
 export class Student {
-  @Field(() => ID)
   @PrimaryGeneratedColumn('uuid')
-  studentId: string;
+  @Field(() => ID)
+  id: string;
 
-  @Field()
   @Column({ unique: true })
-  studentNumber: string;
-
   @Field()
-  @Column({ unique: true })
-  admissionNumber: string;
+  admission_number: string;
 
-  @Field()
+  @Column('uuid')
+  @Field(() => ID)
+  user_id: string;
+
+  @OneToOne(() => User)
+  @JoinColumn({ name: 'user_id' })
+  @Field(() => User)
+  user: User;
+  
+
   @Column()
-  firstName: string;
-
   @Field()
+  phone: string;
+
   @Column()
-  lastName: string;
-
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  middleName?: string;
-
   @Field()
+  gender: string;
+
   @Column()
-  dateOfBirth: Date;
-
-  @Field(() => Gender)
-  @Column({ type: 'enum', enum: Gender })
-  gender: Gender;
-
   @Field()
-  @Column()
-  nationality: string;
-
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  religion?: string;
-
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  bloodGroup?: string;
-
-  @Field(() => [String], { nullable: true })
-  @Column('text', { array: true, nullable: true })
-  medicalConditions?: string[];
-
-  @Field(() => [String], { nullable: true })
-  @Column('text', { array: true, nullable: true })
-  allergies?: string[];
-
-  @Field()
-  @Column()
-  address: string;
-
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  phoneNumber?: string;
-
-  @Field(() => [String]) // Consider a separate entity for EmergencyContact
-  @Column('jsonb', { default: [] })
-  emergencyContact: any[];
-
-  @Field()
-  @Column()
-  currentGrade: string;
-
- 
-  @Field()
-  @Column()
-  admissionDate: Date;
-
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  graduationDate?: Date;
-
-  @Field(() => AcademicStatus)
-  @Column({ type: 'enum', enum: AcademicStatus })
-  academicStatus: AcademicStatus;
-
-  @Field()
-  @Column()
-  schoolId: string;
-
-
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  classId?: string;
-
-  @Field()
-  @Column()
-  primaryParentId: string;
-
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  secondaryParentId?: string;
-
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  guardianId?: string;
-
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  feeCategory?: string;
-
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  scholarshipType?: string;
+  grade: string; 
 
   @Field()
   @Column({ default: 0 })
@@ -148,119 +45,17 @@ export class Student {
   @Column({ default: 0 })
   totalFeesPaid: number;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  overallGrade?: string;
-
-  @Field({ nullable: true })
-  @Column({ nullable: true, type: 'float' })
-  gpa?: number;
-
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  rank?: number;
+  @CreateDateColumn()
+  @Field(() => Date)
+  createdAt: Date;
 
   @Field()
   @Column({ default: true })
   isActive: boolean;
 
-  @Field()
-  @Column({ default: false })
-  hasLeft: boolean;
-
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  leftDate?: Date;
-
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  leftReason?: string;
-
-  @Field()
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @Field()
-  @Column()
-  gradeLevel: string;
-
-  @Field()
   @UpdateDateColumn()
+  @Field(() => Date)
   updatedAt: Date;
-
-  @Field()
-  @Column()
-  createdBy: string;
-
-  @Field(() => School)
-  @ManyToOne(() => School, (school) => school.students)
-  school: School;
-
-  @Field(() => [Class])
-  @OneToMany(() => Class, (cls) => cls.classMonitor)
-  monitorOf: Class[];
-
-
-  @Field(() => Class, { nullable: true })
-  @ManyToOne(() => Class, (cls) => cls.students, { nullable: true })
-  currentClass?: Class;
-
-  @Field(() => Class)
-  @ManyToOne(() => Class, (cls) => cls.students)
-  class: Class;
-
-  @Field(() => Parent)
-  @ManyToOne(() => Parent, (parent) => parent.children)
-  parent: Parent;
-
-  @Field(() => Parent, { nullable: true })
-  @ManyToOne(() => Parent, { nullable: true })
-  secondaryParent?: Parent;
-
-  @Field(() => User, { nullable: true })
-  @OneToOne(() => User, { nullable: true })
-  @JoinColumn()
-  user?: User;
-
-  @Field(() => [Subject], { nullable: true })
-  @Column('text', { array: true, default: [] })
-  subjects: Subject[];
-
-  @Field(() => [Grade])
-  @OneToMany(() => Grade, (grade: Grade) => grade.student)
-  grades: Grade[];
-
-  @Field(() => [Attendance])
-  @OneToMany(() => Attendance, (attendance) => attendance.student)
-  attendance: Attendance[];
-
-  @Field(() => [String], { nullable: true })
-  @Column('text', { array: true, nullable: true, default: [] })
-  disciplinaryRecords?: string[];
-
-  @Field(() => [String], { nullable: true })
-  @Column('text', { array: true, nullable: true, default: [] })
-  medicalRecords?: string[];
-
-  @Field(() => [String], { nullable: true })
-  @Column('text', { array: true, default: [] })
-  feePayments: string[];
-
-  @Field(() => [String], { nullable: true })
-  @Column('text', { array: true, nullable: true, default: [] })
-  invoices?: string[];
-
-  @Field()
-  @Column({ nullable: true }) 
-  organizationId: string;
-
-  @ManyToOne(() => Organization, (org) => org.students)
-  @JoinColumn({ name: 'organizationId' })
-  organization: Organization;
-
-  @Field()
-  @Column()
-  academicLevel: string;
 
   @ManyToOne(() => Stream, stream => stream.students, {
     nullable: true,
@@ -269,10 +64,5 @@ export class Student {
   stream: Stream;
 }
 
-registerEnumType(Gender, {
-  name: 'Gender',
-});
 
-registerEnumType(AcademicStatus, {
-  name: 'AcademicStatus',
-});
+

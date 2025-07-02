@@ -16,7 +16,6 @@ import slugify from 'slugify';
 
 @Injectable()
 export class UsersCreateProvider {
-  private readonly logger = new Logger(UsersCreateProvider.name);
 
   constructor(
 
@@ -25,8 +24,7 @@ export class UsersCreateProvider {
 
     @Inject(forwardRef(() => GenerateTokenProvider))
     private readonly generateTokensProvider: GenerateTokenProvider,
-    @InjectRepository(Tenant)
-    private tenantRepository: Repository<Tenant>,
+   
     @InjectRepository(UserTenantMembership)
     private membershipRepository: Repository<UserTenantMembership>,
     private readonly invitationService: InvitationService,

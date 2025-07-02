@@ -11,7 +11,7 @@ import { Tenant } from './entities/tenant.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Tenant]), // No entities are defined in this module
+    TypeOrmModule.forFeature([Tenant]), 
     SchoolsModule,
     ConfigModule.forFeature(profileConfig),
     OrganizationsModule
