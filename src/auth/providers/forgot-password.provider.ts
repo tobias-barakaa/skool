@@ -64,8 +64,8 @@ export class ForgotPasswordProvider {
     });
 
     if (!user) {
-      // Don't reveal if user exists or not for security
-      return { message: 'If an account with that email exists, you will receive a password reset link......1' };
+    
+      return { message: 'If an account with that email exists, you will receive a password reset link' };
     }
 
    // Generate reset token (valid for 1 hour)
@@ -93,7 +93,7 @@ export class ForgotPasswordProvider {
       tenant.id
     );
 
-    return { message: 'If an account with that email exists, you will receive a password reset link....3' };
+    return { message: 'If an account with that email exists, you will receive a password reset link' };
   }
 
   async resetPassword(resetPasswordInput: ResetPasswordInput): Promise<{ message: string }> {
@@ -109,7 +109,6 @@ export class ForgotPasswordProvider {
         throw new UnauthorizedException('Invalid reset token');
       }
 
-      // Find user
       const user = await this.userRepository.findOne({
         where: { id: payload.sub, email: payload.email }
       });
@@ -118,7 +117,6 @@ export class ForgotPasswordProvider {
         throw new NotFoundException('User not found');
       }
 
-      // Update password
       const hashedPassword = await this.hashingProvider.hashPassword(resetPasswordInput.newPassword);
       await this.userRepository.update(user.id, { password: hashedPassword });
 
@@ -141,26 +139,3 @@ export class ForgotPasswordProvider {
 
 
 
-
-// # Enable Traefik
-// traefik.enable=true
-
-// # Middlewares
-// traefik.http.middlewares.app-gzip.compress=true
-// traefik.http.middlewares.app-redirect.redirectscheme.scheme=https
-
-// # HTTP Router - for skool.zelisline.com (redirect to HTTPS)
-// traefik.http.routers.app-http.entryPoints=http
-// traefik.http.routers.app-http.rule=Host(`skool.zelisline.com`)
-// traefik.http.routers.app-http.middlewares=app-redirect
-
-// # HTTPS Router - for skool.zelisline.com
-// traefik.http.routers.app-https.entryPoints=https
-// traefik.http.routers.app-https.rule=Host(`skool.zelisline.com`)
-// traefik.http.routers.app-https.tls=true
-// traefik.http.routers.app-https.tls.certresolver=letsencrypt
-// traefik.http.routers.app-https.middlewares=app-gzip
-// traefik.http.routers.app-https.service=app-service
-
-// # Service
-// traefik.http.services.app-service.loadbalancer.server.port=3000

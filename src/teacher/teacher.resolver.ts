@@ -27,6 +27,7 @@ export class TeacherResolver {
   }
 
   @Mutation(() => AcceptInvitationResponse)
+  @Auth(AuthType.None)
   async acceptTeacherInvitation(
     @Args('acceptInvitationInput', { type: () => AcceptInvitationInput }) input: AcceptInvitationInput,
     @Context() context
