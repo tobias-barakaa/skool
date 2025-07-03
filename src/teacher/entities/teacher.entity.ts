@@ -2,6 +2,7 @@ import { Field, ID, ObjectType } from "@nestjs/graphql";
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { User } from "../../users/entities/user.entity";
 import { School } from "../../school/entities/school.entity";
+import { Tenant } from "src/tenants/entities/tenant.entity";
 
 @ObjectType()
 @Entity()
@@ -75,6 +76,11 @@ export class Teacher {
   // @Field(() => User, { nullable: true })
   // user?: User;
 
+  @OneToOne(() => User, { nullable: true })
+@JoinColumn()
+@Field(() => User, { nullable: true })
+user?: User;
+
   @Column({ nullable: true })
   userId?: string;
 
@@ -90,5 +96,12 @@ export class Teacher {
   @UpdateDateColumn()
   @Field(() => Date)
   updatedAt: Date;
-}
 
+  @Column({ type: 'uuid', nullable: false }) 
+  tenantId: string;
+  
+  @ManyToOne(() => Tenant, { nullable: false }) 
+  @JoinColumn({ name: 'tenantId' })
+  @Field(() => Tenant, { nullable: false })
+  tenant: Tenant;
+}

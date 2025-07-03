@@ -286,6 +286,7 @@ type Query {
   getAvailableLevelNames: [String!]!
   getPendingInvitations(tenantId: String!): String!
   getSchoolConfiguration: SchoolConfigurationResponse
+  getTeachersByTenant(tenantId: String!): [TeacherDto!]!
   stream(id: ID!): StreamType!
   streams: [StreamType!]!
   streamsByGradeLevel(gradeLevelId: ID!): [StreamType!]!
@@ -475,6 +476,14 @@ enum SubjectType {
   SPORTS
   THEORY
   VOCATIONAL
+}
+
+type TeacherDto {
+  email: String!
+  id: ID!
+  name: String!
+  tenantId: String!
+  userId: String
 }
 
 type TeacherOutput {

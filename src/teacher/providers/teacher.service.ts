@@ -138,7 +138,9 @@ export class TeacherService {
         ...createTeacherDto,
         isActive: false,
         hasCompletedProfile: false,
+        tenant: { id: tenantId },  
       });
+      
   
       await this.teacherRepository.save(teacher);
     }
@@ -252,7 +254,27 @@ export class TeacherService {
       name: teacher.fullName,
     } : null
   };
+  };
+
+
+  async getTeachersByTenant(tenantId: string) {
+    const teachers = await this.teacherRepository.find({
+      where: {
+        tenantId: tenantId,
+        isActive: true,
+      },
+      relations: ['user'], 
+    });
+  
+    return teachers.map((teacher) => ({
+      id: teacher.id,
+      name: teacher.fullName,
+      email: teacher.email,
+      userId: teacher.userId,
+      tenantId: teacher.tenantId,
+    }));
   }
+  
 
   async getPendingInvitations(tenantId: string, currentUser: User) {
     // Verify admin access

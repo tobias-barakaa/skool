@@ -8,6 +8,7 @@ import { CreateTeacherInvitationDto } from './dtos/create-teacher-invitation.dto
 import { InviteTeacherResponse } from './dtos/invite-teacher-response.dto';
 import { AcceptInvitationResponse } from './dtos/accept-teacher-invitation-response.dto';
 import { AcceptInvitationInput } from './dtos/accept-teacher-invitation.dto';
+import { TeacherDto } from './dtos/teacher-query.dto';
 
 @Resolver()
 export class TeacherResolver {
@@ -65,6 +66,14 @@ export class TeacherResolver {
 
   }
   
+
+  @Query(() => [TeacherDto]) 
+async getTeachersByTenant(
+  @Args('tenantId') tenantId: string
+) {
+  return this.teacherService.getTeachersByTenant(tenantId);
+}
+
 
   @Query(() => String)
   async getPendingInvitations(
