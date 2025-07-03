@@ -281,7 +281,6 @@ export class TeacherService {
       dateOfBirth: teacher.dateOfBirth ? new Date(teacher.dateOfBirth) : undefined,
       isActive: teacher.isActive,
       hasCompletedProfile: teacher.hasCompletedProfile,
-      tenantId: teacher.tenantId,
       userId: teacher.userId,
     }));
   }

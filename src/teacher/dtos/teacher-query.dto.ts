@@ -44,9 +44,6 @@ export class TeacherDto {
   @Field()
   hasCompletedProfile: boolean;
 
-  @Field()
-  tenantId: string;
-
   @Field({ nullable: true })
   userId?: string;
 }

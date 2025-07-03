@@ -493,7 +493,6 @@ type TeacherDto {
   lastName: String!
   phoneNumber: String!
   subject: String
-  tenantId: String!
   userId: String
 }
 
