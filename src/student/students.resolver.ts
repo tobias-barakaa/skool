@@ -1,5 +1,5 @@
 // src/students/students.resolver.ts
-import { Resolver, Mutation, Args, Context } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, Context, Query } from '@nestjs/graphql';
 import { Logger, UseFilters, UseGuards } from '@nestjs/common';
 import { GraphQLExceptionsFilter } from '../common/filter/graphQLException.filter';
 import { Auth } from '../auth/decorator/auth.decorator';
@@ -10,6 +10,7 @@ import { CreateStudentInput } from './dtos/create-student-input.dto';
 import { ActiveUser } from 'src/auth/decorator/active-user.decorator';
 import { StudentsService } from './providers/student.service';
 import { ActiveUserData } from 'src/auth/interface/active-user.interface';
+import { Student } from './entities/student.entity';
 
 @Resolver()
 @UseFilters(GraphQLExceptionsFilter)
@@ -29,6 +30,15 @@ export class StudentsResolver {
     console.log('ActiveUserdfdffddddddddddd:', currentUser);
 
     return await this.studentsService.createStudent(createStudentInput, currentUser);
+  }
+
+
+  @Query(() => [Student], { name: 'students' })
+  @Auth(AuthType.Bearer)
+  async getStudents(
+    @ActiveUser() currentUser: ActiveUserData
+  ): Promise<Student[]> {
+    return this.studentsService.getAllStudentsByTenant(currentUser.tenantId);
   }
 
   @Mutation(() => [CreateStudentResponse], { name: 'createMultipleStudents' })

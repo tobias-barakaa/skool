@@ -16,10 +16,18 @@ import { ForgotPasswordProvider } from './providers/forgot-password.provider';
 import { ChangePasswordProvider } from './providers/change-password.provider';
 import { EmailService } from 'src/email/providers/email.service';
 import { EmailModule } from 'src/email/email.module';
+import { TenantValidationProvider } from './providers/tenant-validation.provider';
+import { APP_GUARD } from '@nestjs/core';
+import { TenantAccessGuard } from './guards/tenant-access.guard';
 
 @Module({
   providers: [AuthService, SignInProvider, { provide: HashingProvider, useClass: BcryptProvider }, 
-    BcryptProvider, GenerateTokenProvider, AuthResolver, RefreshTokensProvider, ForgotPasswordProvider, ChangePasswordProvider, SignInProvider],
+    BcryptProvider, GenerateTokenProvider, AuthResolver, RefreshTokensProvider, ForgotPasswordProvider, ChangePasswordProvider, SignInProvider, TenantValidationProvider,
+  {
+      provide: APP_GUARD,
+      useClass: TenantAccessGuard,
+    },
+  ],
   imports: [forwardRef(() => UserModule), ConfigModule.forFeature(jwtConfig), EmailModule,JwtModule.registerAsync(jwtConfig.asProvider()), TenantsModule, UserTenantMembershipModule ],
   exports: [AuthService, HashingProvider, GenerateTokenProvider], 
 })

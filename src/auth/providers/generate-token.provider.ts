@@ -82,13 +82,17 @@ public async generateTokens(
   membership?: UserTenantMembership, 
   tenant?: Tenant
 ) {
+  if (!tenant || !membership) {
+    throw new Error('Tenant and membership must be provided to generate tokens');
+  }
+
   const tenantContext: Partial<ActiveUserData> = {
     email: user.email,
-    tenantId: tenant?.id,
-    subdomain: tenant?.subdomain,
-    membershipId: membership?.id,
+    tenantId: tenant.id,
+    subdomain: tenant.subdomain,
+    membershipId: membership.id,
   };
-  
+
   const [accessToken, refreshToken] = await Promise.all([
     this.signToken<Partial<ActiveUserData>>(
       user.id,
@@ -107,6 +111,7 @@ public async generateTokens(
     refreshToken,
   };
 }
+
 
 
 

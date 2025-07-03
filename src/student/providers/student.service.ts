@@ -9,6 +9,7 @@ import { CreateStudentInput } from '../dtos/create-student-input.dto';
 import { User } from 'src/users/entities/user.entity';
 import { CreateStudentResponse } from '../dtos/student-response.dto';
 import { ActiveUserData } from 'src/auth/interface/active-user.interface';
+import { StudentQueryProvider } from './student-query.provider';
 
 @Injectable()
 export class StudentsService {
@@ -16,12 +17,15 @@ export class StudentsService {
 
   constructor(
     private readonly usersCreateStudentProvider: UsersCreateStudentProvider,
+
     
     @InjectRepository(Student)
     private readonly studentRepository: Repository<Student>,
     
     @InjectRepository(UserTenantMembership)
     private readonly membershipRepository: Repository<UserTenantMembership>,
+
+    private readonly studentQueryProvider: StudentQueryProvider
   ) {}
 
   async createStudent(
@@ -46,6 +50,10 @@ export class StudentsService {
       membership.tenantId,
       currentUser.subdomain
     );
+  }
+
+  async getAllStudentsByTenant(tenantId: string): Promise<Student[]> {
+    return this.studentQueryProvider.findAllByTenant(tenantId);
   }
 
   async createMultipleStudents(

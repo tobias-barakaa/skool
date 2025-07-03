@@ -8,6 +8,7 @@ import { Auth } from 'src/auth/decorator/auth.decorator';
 import { AuthType } from 'src/auth/enums/auth-type.enum';
 import { CreateUserResponse } from './dtos/create-user-response';
 import { AuthResponse, SignupInput } from './dtos/signUp-input';
+import { SkipTenantValidation } from 'src/auth/decorator/skip-tenant-validation.decorator';
 
 @Resolver(() => User)
 @UseFilters(GraphQLExceptionsFilter)
@@ -18,9 +19,11 @@ export class UsersResolver {
 
 @Mutation(() => CreateUserResponse, { name: 'createUser' })
 @Auth(AuthType.None)
+@SkipTenantValidation()
 async createUser(
   @Args('signupInput') signupInput: SignupInput,
-  @Context() context,
+  @Context() context
+  
 ): Promise<AuthResponse> {
 
   console.log('📥 Received SignupInput:', JSON.stringify(signupInput, null, 2));
@@ -31,7 +34,7 @@ async createUser(
   }
 
   // return await this.usersService.createUser(signupInput);
-  const { user, tokens, subdomainUrl } = await this.usersService.createUser(signupInput);
+  const { user, tokens, subdomainUrl, tenant } = await this.usersService.createUser(signupInput);
 
   context.res.cookie('access_token', tokens.accessToken, {
     httpOnly: true,
@@ -49,10 +52,20 @@ async createUser(
     domain: '.squl.co.ke',
   });
 
+  context.res.cookie('tenant_id', tenant.id, {
+    httpOnly: true,
+    sameSite: 'None',
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 1000 * 60 * 60 * 24 * 30,
+    domain: '.squl.co.ke',
+  });
+
+
   return {
     user,
     tokens,
     subdomainUrl,
+    tenant
   };
 }
 

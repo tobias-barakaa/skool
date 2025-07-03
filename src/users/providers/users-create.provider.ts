@@ -109,9 +109,11 @@ const { accessToken, refreshToken } = tokens;
 
 const subdomainUrl = `${savedTenant.subdomain}.squl.co.ke`;
 
+
 return {
   user: savedUser,
   membership: savedMembership,
+  tenant: savedTenant,
   subdomainUrl,
   tokens: {
     accessToken,

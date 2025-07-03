@@ -2,6 +2,7 @@ import { InputType, Field, ObjectType } from '@nestjs/graphql';
 import { MembershipRole, UserTenantMembership } from 'src/user-tenant-membership/entities/user-tenant-membership.entity';
 import { User } from '../entities/user.entity';
 import { IsEmail, IsOptional, IsString, Length, Matches } from 'class-validator';
+import { Tenant } from 'src/tenants/entities/tenant.entity';
 
 @InputType('SignupInput')
 export class SignupInput {
@@ -59,6 +60,12 @@ export class SendInvitationInput {
   message?: string;
 }
 
+export class TenantSignUPResponse {
+  id: string;
+  name: string;
+  subdomain: string;
+}
+
 @ObjectType()
 export class AuthResponse {
 
@@ -76,6 +83,13 @@ export class AuthResponse {
 
   @Field(() => String)
   subdomainUrl: string;
+
+  @Field(() => TenantSignUPResponse)
+  tenant: {
+    id: string;
+    name: string;
+    subdomain: string;
+  }
 }
 
 
