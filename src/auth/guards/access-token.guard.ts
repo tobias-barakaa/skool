@@ -17,7 +17,7 @@ export class AccessTokenGuard implements CanActivate {
     const gqlContext = GqlExecutionContext.create(context);
     // console.log(gqlContext, 'just get me one........');
     const request = gqlContext.getContext().req;
-    console.log(request, 'request in access token guard');
+    // console.log(request, 'request in access token guard');
     const token = this.extractTokenFromHeader(request);
 
     if (!token) {
