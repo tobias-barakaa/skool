@@ -12,6 +12,7 @@ import { EmailService } from 'src/email/providers/email.service';
 import { CreateTeacherInvitationDto } from '../dtos/create-teacher-invitation.dto';
 import { EmailSendFailedException } from 'src/common/exceptions/business.exception';
 import { GenerateTokenProvider } from 'src/auth/providers/generate-token.provider';
+import { TeacherDto } from '../dtos/teacher-query.dto';
 
 @Injectable()
 export class TeacherService {
@@ -257,23 +258,34 @@ export class TeacherService {
   };
 
 
-  async getTeachersByTenant(tenantId: string) {
+  async getTeachersByTenant(tenantId: string): Promise<TeacherDto[]> {
     const teachers = await this.teacherRepository.find({
       where: {
-        tenantId: tenantId,
+        tenantId,
         isActive: true,
-      },
-      relations: ['user'], 
+      }
     });
   
     return teachers.map((teacher) => ({
       id: teacher.id,
-      name: teacher.fullName,
+      fullName: teacher.fullName,
+      firstName: teacher.firstName,
+      lastName: teacher.lastName,
       email: teacher.email,
-      userId: teacher.userId,
+      phoneNumber: teacher.phoneNumber,
+      gender: teacher.gender,
+      department: teacher.department,
+      address: teacher.address,
+      subject: teacher.subject,
+      employeeId: teacher.employeeId,
+      dateOfBirth: teacher.dateOfBirth ? new Date(teacher.dateOfBirth) : undefined,
+      isActive: teacher.isActive,
+      hasCompletedProfile: teacher.hasCompletedProfile,
       tenantId: teacher.tenantId,
+      userId: teacher.userId,
     }));
   }
+  
   
 
   async getPendingInvitations(tenantId: string, currentUser: User) {

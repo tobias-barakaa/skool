@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from "@nestjs/graphql";
+import { Field, GraphQLISODateTime, ID, ObjectType } from "@nestjs/graphql";
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { User } from "../../users/entities/user.entity";
 import { School } from "../../school/entities/school.entity";
@@ -28,8 +28,9 @@ export class Teacher {
   email: string;
 
   @Field()
-  @Column({ type: 'enum', enum: ['MALE', 'FEMALE', 'OTHER'] })
+  @Column({ nullable: false })
   gender: string;
+
 
   @Field()
   @Column()
@@ -55,9 +56,11 @@ export class Teacher {
   @Column({ nullable: true })
   employeeId?: string;
 
-  @Field({ nullable: true })
-  @Column({ type: 'date', nullable: true })
-  dateOfBirth?: Date;
+ 
+
+   @Field(() => GraphQLISODateTime, { nullable: true })
+@Column({ type: 'date', nullable: true })
+dateOfBirth?: Date;
 
   @Field({ nullable: true })
   @Column({ type: 'text', nullable: true })

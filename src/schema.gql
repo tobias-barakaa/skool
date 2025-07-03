@@ -479,9 +479,20 @@ enum SubjectType {
 }
 
 type TeacherDto {
+  address: String
+  dateOfBirth: DateTime
+  department: String!
   email: String!
+  employeeId: String
+  firstName: String!
+  fullName: String!
+  gender: String!
+  hasCompletedProfile: Boolean!
   id: ID!
-  name: String!
+  isActive: Boolean!
+  lastName: String!
+  phoneNumber: String!
+  subject: String
   tenantId: String!
   userId: String
 }
