@@ -431,12 +431,19 @@ type Student {
 
 type StudentWithTenant {
   admission_number: String!
+  createdAt: DateTime!
+  feesOwed: Float!
   gender: String!
   grade: String!
   id: String!
+  isActive: Boolean!
   phone: String!
+  streamId: String!
   tenantId: String!
+  totalFeesPaid: Float!
+  updatedAt: DateTime!
   user: User!
+  user_id: String!
 }
 
 type Subject {

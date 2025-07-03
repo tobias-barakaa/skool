@@ -1,4 +1,3 @@
-// src/students/dtos/student-with-tenant.dto.ts
 import { Field, ObjectType } from '@nestjs/graphql';
 import { User } from 'src/users/entities/user.entity';
 
@@ -19,9 +18,32 @@ export class StudentWithTenant {
   @Field()
   grade: string;
 
+  @Field()
+  user_id: string;
+
+  @Field()
+  feesOwed: number;
+
+  @Field()
+  totalFeesPaid: number;
+
+  @Field()
+  createdAt: Date;
+
+  @Field()
+  isActive: boolean;
+
+  @Field()
+  updatedAt: Date;
+
+  @Field()
+  streamId: string;
+
   @Field(() => User)
   user: User;
 
   @Field()
   tenantId: string; 
 }
+
+

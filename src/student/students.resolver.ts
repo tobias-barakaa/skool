@@ -35,17 +35,30 @@ export class StudentsResolver {
 
 
   @Query(() => [StudentWithTenant], { name: 'students' })
-  @Auth(AuthType.Bearer)
-  async getStudents(
-    @ActiveUser() currentUser: ActiveUserData
-  ): Promise<StudentWithTenant[]> {
-    const students = await this.studentsService.getAllStudentsByTenant(currentUser.tenantId);
-  
-    return students.map((student) => ({
-      ...student,
-      tenantId: currentUser.tenantId
-    }));
-  }
+@Auth(AuthType.Bearer)
+async getStudents(
+  @ActiveUser() currentUser: ActiveUserData
+): Promise<StudentWithTenant[]> {
+  const students = await this.studentsService.getAllStudentsByTenant(currentUser.tenantId);
+
+  return students.map((student) => ({
+    id: student.id,
+    admission_number: student.admission_number,
+    phone: student.phone,
+    gender: student.gender,
+    grade: student.grade,
+    user: student.user,
+    user_id: student.user_id,
+    feesOwed: student.feesOwed,
+    totalFeesPaid: student.totalFeesPaid,
+    createdAt: student.createdAt,
+    isActive: student.isActive,
+    updatedAt: student.updatedAt,
+    streamId: student.stream.id, // Access the stream's ID
+    tenantId: currentUser.tenantId
+  }));
+}
+
 
   @Mutation(() => [CreateStudentResponse], { name: 'createMultipleStudents' })
   @Auth(AuthType.Bearer)
