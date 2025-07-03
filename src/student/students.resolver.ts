@@ -11,6 +11,7 @@ import { ActiveUser } from 'src/auth/decorator/active-user.decorator';
 import { StudentsService } from './providers/student.service';
 import { ActiveUserData } from 'src/auth/interface/active-user.interface';
 import { Student } from './entities/student.entity';
+import { StudentWithTenant } from './dtos/student-with-tenant.dto';
 
 @Resolver()
 @UseFilters(GraphQLExceptionsFilter)
@@ -33,12 +34,17 @@ export class StudentsResolver {
   }
 
 
-  @Query(() => [Student], { name: 'students' })
+  @Query(() => [StudentWithTenant], { name: 'students' })
   @Auth(AuthType.Bearer)
   async getStudents(
     @ActiveUser() currentUser: ActiveUserData
-  ): Promise<Student[]> {
-    return this.studentsService.getAllStudentsByTenant(currentUser.tenantId);
+  ): Promise<StudentWithTenant[]> {
+    const students = await this.studentsService.getAllStudentsByTenant(currentUser.tenantId);
+  
+    return students.map((student) => ({
+      ...student,
+      tenantId: currentUser.tenantId
+    }));
   }
 
   @Mutation(() => [CreateStudentResponse], { name: 'createMultipleStudents' })

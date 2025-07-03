@@ -22,11 +22,7 @@ import { TenantAccessGuard } from './guards/tenant-access.guard';
 
 @Module({
   providers: [AuthService, SignInProvider, { provide: HashingProvider, useClass: BcryptProvider }, 
-    BcryptProvider, GenerateTokenProvider, AuthResolver, RefreshTokensProvider, ForgotPasswordProvider, ChangePasswordProvider, SignInProvider, TenantValidationProvider,
-  {
-      provide: APP_GUARD,
-      useClass: TenantAccessGuard,
-    },
+    BcryptProvider, GenerateTokenProvider, AuthResolver, RefreshTokensProvider, ForgotPasswordProvider, ChangePasswordProvider, SignInProvider, TenantValidationProvider
   ],
   imports: [forwardRef(() => UserModule), ConfigModule.forFeature(jwtConfig), EmailModule,JwtModule.registerAsync(jwtConfig.asProvider()), TenantsModule, UserTenantMembershipModule ],
   exports: [AuthService, HashingProvider, GenerateTokenProvider], 

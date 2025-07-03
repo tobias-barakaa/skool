@@ -15,8 +15,9 @@ export class AccessTokenGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const gqlContext = GqlExecutionContext.create(context);
+    // console.log(gqlContext, 'just get me one........');
     const request = gqlContext.getContext().req;
-
+    console.log(request, 'request in access token guard');
     const token = this.extractTokenFromHeader(request);
 
     if (!token) {
