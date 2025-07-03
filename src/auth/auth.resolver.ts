@@ -18,6 +18,7 @@ import { AuthResponse, SignInInput } from './dtos/signin-input.dto';
 import { User } from 'src/users/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { SkipTenantValidation } from './decorator/skip-tenant-validation.decorator';
 
 @Resolver()
 @UseFilters(GraphQLExceptionsFilter)
@@ -32,6 +33,7 @@ export class AuthResolver {
 
   @Mutation(() => AuthResponse, { name: 'signIn' })
   @Auth(AuthType.None)
+  @SkipTenantValidation()
   async signIn(
     @Args('signInInput') signInInput: SignInInput,
     @Context() context,
