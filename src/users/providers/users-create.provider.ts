@@ -24,7 +24,7 @@ export class UsersCreateProvider {
 
     @Inject(forwardRef(() => GenerateTokenProvider))
     private readonly generateTokensProvider: GenerateTokenProvider,
-   
+
     @InjectRepository(UserTenantMembership)
     private membershipRepository: Repository<UserTenantMembership>,
     private readonly invitationService: InvitationService,
@@ -56,11 +56,11 @@ export class UsersCreateProvider {
       const existingUser = await queryRunner.manager.findOne(User, {
         where: { email: signupInput.email }
       });
-      
+
       if (existingUser) {
         throw new UserAlreadyExistsException(signupInput.email);
       }
-     
+
     // Create user
 
     // console.log('🚨 Password before hashing:', signupInput.password);
@@ -101,8 +101,8 @@ console.log('✅ Membership created::::', savedMembership);
 await queryRunner.commitTransaction();
 
 const tokens = await this.generateTokensProvider.generateTokens(
-  savedUser, 
-  savedMembership, 
+  savedUser,
+  savedMembership,
   savedTenant
 );
 const { accessToken, refreshToken } = tokens;
@@ -112,13 +112,16 @@ const subdomainUrl = `${savedTenant.subdomain}.squl.co.ke`;
 
 return {
   user: savedUser,
-  membership: savedMembership,
+  membership: {
+    ...savedMembership,
+    role: savedMembership.role, // ✅ explicitly include role
+  },
   tenant: savedTenant,
   subdomainUrl,
   tokens: {
     accessToken,
     refreshToken,
-  }
+  },
 };
 } catch (error) {
 await queryRunner.rollbackTransaction();
