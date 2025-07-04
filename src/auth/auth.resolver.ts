@@ -11,8 +11,8 @@ import { SignInProvider } from './providers/sign-in.provider';
 import { ChangePasswordInput } from './dtos/change-password.dto';
 import { PasswordResetResponse,
 
-    ForgotPasswordInput, 
-    ResetPasswordInput, 
+    ForgotPasswordInput,
+    ResetPasswordInput,
  } from './dtos/password-reset.dto';
 import { AuthResponse, SignInInput } from './dtos/signin-input.dto';
 import { User } from 'src/users/entities/user.entity';
@@ -28,7 +28,7 @@ export class AuthResolver {
     private readonly forgotPasswordProvider: ForgotPasswordProvider,
     private readonly changePasswordProvider: ChangePasswordProvider,
     @InjectRepository(User)
-  private readonly userRepository: Repository<User>,
+    private readonly userRepository: Repository<User>,
   ) {}
 
   @Mutation(() => AuthResponse, { name: 'signIn' })
@@ -38,42 +38,56 @@ export class AuthResolver {
     @Args('signInInput') signInInput: SignInInput,
     @Context() context,
   ): Promise<AuthResponse> {
-    
-
     const result = await this.signInProvider.signIn(signInInput);
 
-    // Set cookies
-    context.res.cookie('access_token', result.tokens.accessToken, {
+    const { tokens, tenant } = result;
+
+    // Set access token cookie
+    context.res.cookie('access_token', tokens.accessToken, {
       httpOnly: true,
       sameSite: 'None',
       secure: process.env.NODE_ENV === 'production',
-      maxAge: 1000 * 60 * 15, 
+      maxAge: 1000 * 60 * 15,
       domain: '.squl.co.ke',
     });
 
-    context.res.cookie('refresh_token', result.tokens.refreshToken, {
+    // Set refresh token cookie
+    context.res.cookie('refresh_token', tokens.refreshToken, {
       httpOnly: true,
       sameSite: 'None',
       secure: process.env.NODE_ENV === 'production',
-      maxAge: 1000 * 60 * 60 * 24 * 7, 
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+      domain: '.squl.co.ke',
+    });
+
+    // ✅ Also set tenant_id cookie — just like in signup
+    context.res.cookie('tenant_id', tenant.id, {
+      httpOnly: true,
+      sameSite: 'None',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 1000 * 60 * 60 * 24 * 30,
       domain: '.squl.co.ke',
     });
 
     return result;
   }
 
-@Mutation(() => PasswordResetResponse, { name: 'forgotPassword' })
-@Auth(AuthType.None)
-async forgotPassword(
-  @Args('forgotPasswordInput') forgotPasswordInput: ForgotPasswordInput,
-  @Context() context,
-): Promise<PasswordResetResponse> {
-
-  const host = context.req.headers.host;
-  const subdomain = host.split('.')[0];
-  console.log('Subdomain::::::::::::::::::::::::::::://///////////////////////', subdomain);
-    return await this.forgotPasswordProvider.sendResetPasswordEmail(forgotPasswordInput);
-}
+  @Mutation(() => PasswordResetResponse, { name: 'forgotPassword' })
+  @Auth(AuthType.None)
+  async forgotPassword(
+    @Args('forgotPasswordInput') forgotPasswordInput: ForgotPasswordInput,
+    @Context() context,
+  ): Promise<PasswordResetResponse> {
+    const host = context.req.headers.host;
+    const subdomain = host.split('.')[0];
+    console.log(
+      'Subdomain::::::::::::::::::::::::::::://///////////////////////',
+      subdomain,
+    );
+    return await this.forgotPasswordProvider.sendResetPasswordEmail(
+      forgotPasswordInput,
+    );
+  }
 
   @Mutation(() => PasswordResetResponse, { name: 'resetPassword' })
   @Auth(AuthType.None)
@@ -95,10 +109,15 @@ async forgotPassword(
     @ActiveUser() user: ActiveUserData,
   ): Promise<PasswordResetResponse> {
     // Validate password confirmation
-    if (changePasswordInput.newPassword !== changePasswordInput.confirmPassword) {
+    if (
+      changePasswordInput.newPassword !== changePasswordInput.confirmPassword
+    ) {
       throw new Error('Passwords do not match');
     }
 
-    return await this.changePasswordProvider.changePassword(user.sub, changePasswordInput);
+    return await this.changePasswordProvider.changePassword(
+      user.sub,
+      changePasswordInput,
+    );
   }
 }

@@ -2,6 +2,7 @@ import { InputType, Field, ObjectType } from '@nestjs/graphql';
 import { IsEmail, IsString, MinLength } from 'class-validator';
 import { User } from 'src/users/entities/user.entity';
 import { UserTenantMembership } from 'src/user-tenant-membership/entities/user-tenant-membership.entity';
+import { Tenant } from 'src/tenants/entities/tenant.entity';
 
 @InputType()
 export class SignInInput {
@@ -40,4 +41,9 @@ export class AuthResponse {
 
   @Field(() => TokenResponse)
   tokens: TokenResponse;
+
+  @Field(() => Tenant)
+  tenant: Tenant;
+
+
 }

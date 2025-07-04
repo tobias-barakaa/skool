@@ -46,6 +46,7 @@ type AuthResponse {
   allMemberships: [UserTenantMembership!]
   membership: UserTenantMembership
   subdomainUrl: String!
+  tenant: Tenant!
   tokens: TokenResponse!
   user: User!
 }

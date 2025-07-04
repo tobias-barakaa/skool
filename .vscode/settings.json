@@ -1,7 +1,7 @@
 {
   // Core theme and appearance
   "workbench.colorTheme": "Brogrammer",
-  "workbench.iconTheme": "material-icon-theme",
+  "workbench.iconTheme": "vs-seti",
   "workbench.productIconTheme": "material-product-icons",
 
   // Window and layout

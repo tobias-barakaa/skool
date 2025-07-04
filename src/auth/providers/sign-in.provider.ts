@@ -13,13 +13,13 @@ export class SignInProvider {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    
+
     @InjectRepository(Tenant)
     private readonly tenantRepository: Repository<Tenant>,
-    
+
     @InjectRepository(UserTenantMembership)
     private readonly membershipRepository: Repository<UserTenantMembership>,
-    
+
     private readonly hashingProvider: HashingProvider,
     private readonly generateTokensProvider: GenerateTokenProvider,
   ) {}
@@ -30,43 +30,48 @@ export class SignInProvider {
       where: { email: signInInput.email },
       relations: ['memberships', 'memberships.tenant']
     });
-  
+
     if (!user) throw new UnauthorizedException('Invalid credentials');
-  
+
     const isPasswordValid = await this.hashingProvider.comparePassword(
       signInInput.password,
       user.password
     );
-  
+
     if (!isPasswordValid) throw new UnauthorizedException('Invalid credentials');
-  
+
     const activeMemberships = user.memberships.filter(
       (m) => m.status === MembershipStatus.ACTIVE
     );
-  
+
     if (activeMemberships.length === 0) {
       throw new UnauthorizedException('No active school memberships found');
     }
-  
+
     // Optionally pick the first one as default
     const defaultMembership = activeMemberships[0];
     const tenant = defaultMembership.tenant;
-  
+
     const tokens = await this.generateTokensProvider.generateTokens(user, defaultMembership, tenant);
-  
+
     return {
       user,
-      membership: defaultMembership,
-      allMemberships: activeMemberships, // 🟢 send this to frontend
+      membership: {
+        ...defaultMembership,
+        role: defaultMembership.role, // explicitly expose role
+      },
+      allMemberships: activeMemberships,
       tokens,
+      tenant,
       subdomainUrl: `${tenant.subdomain}.squl.co.ke`,
     };
+
   }
-  
 
 
 
-  
+
+
   // async signIn(signInInput: SignInInput, subdomain: string): Promise<AuthResponse> {
   //   console.log(signInInput, 'this is the sign in input..::', subdomain)
   //   // Find tenant by subdomain
