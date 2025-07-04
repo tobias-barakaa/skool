@@ -4,13 +4,15 @@ import { User } from 'src/users/entities/user.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, Unique } from 'typeorm';
 
 export enum MembershipRole {
-  SUPER_ADMIN = 'SUPER_ADMIN', 
-  SCHOOL_ADMIN = 'SCHOOL_ADMIN', 
+  SUPER_ADMIN = 'SUPER_ADMIN',
+  SCHOOL_ADMIN = 'SCHOOL_ADMIN',
   SCHOOL_MANAGER = 'SCHOOL_MANAGER',
   TEACHER = 'TEACHER',
   TREASURER = 'TREASURER',
   STAFF = 'STAFF',
-  STUDENT= 'STUDENT'
+  STUDENT= 'STUDENT',
+  PARENT= 'PARENT'
+
 }
 
 export enum MembershipStatus {
@@ -25,7 +27,7 @@ registerEnumType(MembershipStatus, { name: 'MembershipStatus' });
 
 @ObjectType()
 @Entity('user_tenant_memberships')
-@Unique(['userId', 'tenantId']) 
+@Unique(['userId', 'tenantId'])
 export class UserTenantMembership {
   @Field(() => ID)
   @PrimaryGeneratedColumn('uuid')

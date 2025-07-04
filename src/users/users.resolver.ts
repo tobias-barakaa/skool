@@ -23,7 +23,7 @@ export class UsersResolver {
 async createUser(
   @Args('signupInput') signupInput: SignupInput,
   @Context() context
-  
+
 ): Promise<AuthResponse> {
 
   console.log('📥 Received SignupInput:', JSON.stringify(signupInput, null, 2));

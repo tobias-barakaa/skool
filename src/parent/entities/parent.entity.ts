@@ -1,64 +1,74 @@
-// src/parents/entities/parent.entity.ts
-
 import {
-    Entity,
-    PrimaryGeneratedColumn,
-    Column,
-    OneToOne,
-    JoinColumn,
-    ManyToOne,
-    OneToMany,
-  } from 'typeorm';
-  import { ObjectType, Field, ID } from '@nestjs/graphql';
-  import { User } from '../../users/entities/user.entity';
-import { School } from '../../school/entities/school.entity';
-import { Student } from '../../student/entities/student.entity';
-  
-  @ObjectType()
-  @Entity()
-  export class Parent {
-    @Field(() => ID)
-    @PrimaryGeneratedColumn('uuid')
-    parentId: string;
-  
-    @Field()
-    @Column()
-    firstName: string;
-  
-    @Field()
-    @Column()
-    lastName: string;
-  
-    @Field()
-    @Column()
-    phoneNumber: string;
-  
-    @Field({ nullable: true })
-    @Column({ nullable: true })
-    emergencyContact?: string;
-  
-    @Field({ nullable: true })
-    @Column({ nullable: true })
-    occupation?: string;
-  
-    @Field({ nullable: true })
-    @Column({ nullable: true })
-    address?: string;
-  
-    @Field()
-    @Column()
-    schoolId: string;
-  
-    // 🔗 Relations
-  
-    @Field(() => School)
-    @ManyToOne(() => School, (school) => school.parents, { onDelete: 'CASCADE' })
-    school: School;
-  
-    @Field(() => User)
-    @OneToOne(() => User, { cascade: true })
-    @JoinColumn()
-    user: User;
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
+import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { User } from 'src/users/entities/user.entity';
+import { ParentStudent } from './parent-student.entity';
 
-  }
-  
+@ObjectType()
+@Entity('parents')
+export class Parent {
+  @Field(() => ID)
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Field()
+  @Column()
+  firstName: string;
+
+  @Field()
+  @Column()
+  lastName: string;
+
+  @Field()
+  @Column({ unique: true })
+  email: string;
+
+  @Field()
+  @Column()
+  phone: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  address?: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  occupation?: string;
+
+  @Field(() => ID)
+  @Column('uuid')
+  userId: string;
+
+  @Field(() => User)
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'userId' })
+  user: User;
+
+  @Field(() => ID)
+  @Column('uuid')
+  tenantId: string;
+
+  @Field(() => [ParentStudent])
+  @OneToMany(() => ParentStudent, (parentStudent) => parentStudent.parent)
+  parentStudents: ParentStudent[];
+
+  @Field()
+  @Column({ default: true })
+  isActive: boolean;
+
+  @Field()
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @Field()
+  @UpdateDateColumn()
+  updatedAt: Date;
+}
