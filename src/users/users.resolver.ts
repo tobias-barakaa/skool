@@ -23,7 +23,7 @@ export class UsersResolver {
 async createUser(
   @Args('signupInput') signupInput: SignupInput,
   @Context() context
-  
+
 ): Promise<AuthResponse> {
 
   console.log('📥 Received SignupInput:', JSON.stringify(signupInput, null, 2));
@@ -34,7 +34,8 @@ async createUser(
   }
 
   // return await this.usersService.createUser(signupInput);
-  const { user, tokens, subdomainUrl, tenant } = await this.usersService.createUser(signupInput);
+  const { user, tokens, subdomainUrl, tenant, membership } =
+    await this.usersService.createUser(signupInput);
 
   context.res.cookie('access_token', tokens.accessToken, {
     httpOnly: true,
@@ -63,9 +64,10 @@ async createUser(
 
   return {
     user,
+    membership, // ✅ include this
     tokens,
     subdomainUrl,
-    tenant
+    tenant,
   };
 }
 
