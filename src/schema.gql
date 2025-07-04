@@ -438,7 +438,7 @@ type StudentWithTenant {
   id: String!
   isActive: Boolean!
   phone: String!
-  streamId: String!
+  streamId: String
   tenantId: String!
   totalFeesPaid: Float!
   updatedAt: DateTime!

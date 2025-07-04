@@ -16,6 +16,7 @@ export class StudentQueryProvider {
       .createQueryBuilder('student')
       .leftJoinAndSelect('student.user', 'user')
       .leftJoin('user.memberships', 'membership')
+      .leftJoinAndSelect('student.stream', 'stream') 
       .where('membership.tenantId = :tenantId', { tenantId })
       .getMany();
   }

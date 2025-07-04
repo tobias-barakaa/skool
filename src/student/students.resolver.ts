@@ -21,7 +21,7 @@ export class StudentsResolver {
   constructor(private readonly studentsService: StudentsService) {}
 
   @Mutation(() => CreateStudentResponse, { name: 'createStudent' })
-  @Auth(AuthType.Bearer) 
+  @Auth(AuthType.Bearer)
   async createStudent(
     @Args('createStudentInput') createStudentInput: CreateStudentInput,
     @ActiveUser() currentUser: ActiveUserData,
@@ -54,8 +54,8 @@ async getStudents(
     createdAt: student.createdAt,
     isActive: student.isActive,
     updatedAt: student.updatedAt,
-    streamId: student.stream.id, // Access the stream's ID
-    tenantId: currentUser.tenantId
+    streamId: student.stream?.id ?? null,
+    tenantId: currentUser.tenantId,
   }));
 }
 

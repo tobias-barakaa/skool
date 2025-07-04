@@ -36,14 +36,12 @@ export class StudentWithTenant {
   @Field()
   updatedAt: Date;
 
-  @Field()
-  streamId: string;
+  @Field({ nullable: true })
+  streamId?: string;
 
   @Field(() => User)
   user: User;
 
   @Field()
-  tenantId: string; 
+  tenantId: string;
 }
-
-
