@@ -143,6 +143,7 @@ input CreateTeacherInvitationDto {
 }
 
 type CreateUserResponse {
+  membership: UserTenantMembership
   school: School!
   subdomainUrl: String!
   tenant: Tenant!
@@ -221,6 +222,12 @@ type GradeLevelResponse {
   streams: [Stream!]
 }
 
+type GradeLevelWithStreamsOutput {
+  id: String!
+  name: String!
+  streams: [StreamOutput!]!
+}
+
 type InvitationInfo {
   email: String!
   role: MembershipRole!
@@ -244,6 +251,7 @@ type Level {
 }
 
 enum MembershipRole {
+  PARENT
   SCHOOL_ADMIN
   SCHOOL_MANAGER
   STAFF
@@ -288,6 +296,7 @@ type Query {
   getPendingInvitations(tenantId: String!): String!
   getSchoolConfiguration: SchoolConfigurationResponse
   getTeachersByTenant(tenantId: String!): [TeacherDto!]!
+  gradeLevelsWithStreams: [GradeLevelWithStreamsOutput!]!
   stream(id: ID!): StreamType!
   streams: [StreamType!]!
   streamsByGradeLevel(gradeLevelId: ID!): [StreamType!]!
@@ -402,6 +411,11 @@ type Stream {
   name: String!
   tenant: Tenant!
   updatedAt: DateTime!
+}
+
+type StreamOutput {
+  id: String!
+  name: String!
 }
 
 type StreamType {

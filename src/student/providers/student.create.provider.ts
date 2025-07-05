@@ -17,25 +17,23 @@ export class UsersCreateStudentProvider {
 
   constructor(
     private readonly hashingProvider: HashingProvider,
-    
-    
+
     @InjectRepository(Student)
     private studentRepository: Repository<Student>,
-    
+
     @InjectRepository(UserTenantMembership)
     private membershipRepository: Repository<UserTenantMembership>,
-    
-    
+
     private dataSource: DataSource,
   ) {}
 
   async createStudent(
     createStudentInput: CreateStudentInput,
     tenantId: string,
-    subdomain: string
+    subdomain: string,
   ): Promise<CreateStudentResponse> {
     this.logger.log(`Creating student with email: ${createStudentInput.email}`);
-    
+
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -43,34 +41,36 @@ export class UsersCreateStudentProvider {
     try {
       // Check if user already exists
       const existingUser = await queryRunner.manager.findOne(User, {
-        where: { email: createStudentInput.email }
+        where: { email: createStudentInput.email },
       });
-      
+
       if (existingUser) {
         throw new UserAlreadyExistsException(createStudentInput.email);
       }
 
       // Check if admission number already exists for this tenant
       const existingStudent = await queryRunner.manager.findOne(Student, {
-        where: { admission_number: createStudentInput.admission_number }
+        where: { admission_number: createStudentInput.admission_number },
       });
-      
+
       if (existingStudent) {
-        throw new Error(`Student with admission number ${createStudentInput.admission_number} already exists`);
+        throw new Error(
+          `Student with admission number ${createStudentInput.admission_number} already exists`,
+        );
       }
 
       // Use admission number as password
       const generatedPassword = createStudentInput.admission_number;
-      
+
       // Create user
       const user = queryRunner.manager.create(User, {
         email: createStudentInput.email,
         password: await this.hashingProvider.hashPassword(generatedPassword),
         name: createStudentInput.name,
         schoolUrl: subdomain,
-        isGlobalAdmin: false
+        isGlobalAdmin: false,
       });
-      
+
       const savedUser = await queryRunner.manager.save(user);
 
       // Create student record
@@ -79,32 +79,31 @@ export class UsersCreateStudentProvider {
         admission_number: createStudentInput.admission_number,
         phone: createStudentInput.phone,
         gender: createStudentInput.gender,
-        grade: createStudentInput.grade
+        grade: createStudentInput.grade,
       });
-      
+
       const savedStudent = await queryRunner.manager.save(student);
 
       const membership = queryRunner.manager.create(UserTenantMembership, {
         userId: savedUser.id,
         tenantId: tenantId,
-        role: MembershipRole.STUDENT, 
+        role: MembershipRole.STUDENT,
         joinedAt: new Date(),
       });
-      
+
       await queryRunner.manager.save(membership);
 
       await queryRunner.commitTransaction();
 
-      this.logger.log(`Student created successfully with ID: ${savedStudent.id}`);
+      this.logger.log(
+        `Student created successfully with ID: ${savedStudent.id}`,
+      );
 
       return {
         user: savedUser,
         student: savedStudent,
-        generatedPassword: generatedPassword, 
+        generatedPassword: generatedPassword,
       };
-
-      
-
     } catch (error) {
       await queryRunner.rollbackTransaction();
       this.logger.error(`Error creating student: ${error.message}`);
@@ -117,20 +116,27 @@ export class UsersCreateStudentProvider {
   async createMultipleStudents(
     studentsData: CreateStudentInput[],
     tenantId: string,
-    schoolUrl: string
+    schoolUrl: string,
   ): Promise<CreateStudentResponse[]> {
     const results: CreateStudentResponse[] = [];
-    
+
     for (const studentData of studentsData) {
       try {
-        const result = await this.createStudent(studentData, tenantId, schoolUrl);
+        const result = await this.createStudent(
+          studentData,
+          tenantId,
+          schoolUrl,
+        );
         results.push(result);
       } catch (error) {
-        this.logger.error(`Failed to create student ${studentData.email}: ${error.message}`);
+        this.logger.error(
+          `Failed to create student ${studentData.email}: ${error.message}`,
+        );
         // Continue with other students, but you might want to collect errors
       }
     }
-    
+
     return results;
   }
+
 }

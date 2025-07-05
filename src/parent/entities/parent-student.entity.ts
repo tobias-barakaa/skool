@@ -25,10 +25,10 @@ export class ParentStudent {
   @Column('uuid')
   parentId: string;
 
-  @Field(() => Parent)
-  @ManyToOne(() => Parent, (parent) => parent.parentStudents)
-  @JoinColumn({ name: 'parentId' })
-  parent: Parent;
+  // @Field(() => Parent)
+  // @ManyToOne(() => Parent, (parent) => parent.parentStudents)
+  // @JoinColumn({ name: 'parentId' })
+  // parent: Parent;
 
   @Field(() => ID)
   @Column('uuid')

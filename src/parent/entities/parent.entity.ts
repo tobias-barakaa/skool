@@ -56,9 +56,9 @@ export class Parent {
   @Column('uuid')
   tenantId: string;
 
-  @Field(() => [ParentStudent])
-  @OneToMany(() => ParentStudent, (parentStudent) => parentStudent.parent)
-  parentStudents: ParentStudent[];
+  // @Field(() => [ParentStudent])
+  // @OneToMany(() => ParentStudent, (parentStudent) => parentStudent.parent)
+  // parentStudents: ParentStudent[];
 
   @Field()
   @Column({ default: true })

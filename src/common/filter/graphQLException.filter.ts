@@ -7,6 +7,7 @@ import {
   NotFoundException,
   BadRequestException,
   UnauthorizedException,
+  HttpException,
 } from '@nestjs/common';
 import { GqlExceptionFilter } from '@nestjs/graphql';
 import { GraphQLError } from 'graphql';
@@ -18,12 +19,12 @@ export class GraphQLExceptionsFilter implements GqlExceptionFilter {
 
   catch(exception: any, host: ArgumentsHost): GraphQLError {
     const gqlContext = host.getArgByIndex(2);
-    const operationName = gqlContext?.operation?.operationName || 'UnknownOperation';
+    const operationName =
+      gqlContext?.operation?.operationName || 'UnknownOperation';
 
     // 🧠 Validation Error
     if (exception.name === 'ValidationError') {
       this.logger.warn(`[ValidationError] ${exception.message}`);
-
       return new GraphQLError('Input validation failed', {
         extensions: {
           code: 'VALIDATION_ERROR',
@@ -40,7 +41,6 @@ export class GraphQLExceptionsFilter implements GqlExceptionFilter {
           exception.metadata,
         )}`,
       );
-
       return new GraphQLError(exception.message, {
         extensions: {
           code: exception.code,
@@ -58,7 +58,30 @@ export class GraphQLExceptionsFilter implements GqlExceptionFilter {
       exception instanceof UnauthorizedException
     ) {
       this.logger.warn(`[${exception.name}] ${exception.message}`);
+      return new GraphQLError(exception.message, {
+        extensions: {
+          code: exception.name.toUpperCase(),
+          statusCode: exception.getStatus(),
+        },
+      });
+    }
 
+    // ✅ Move this block *before* the return!
+    if (exception?.code === 'ETIMEDOUT') {
+      this.logger.error('[ETIMEDOUT] External connection timed out', exception);
+      return new GraphQLError(
+        'Service connection timed out. Please try again later.',
+        {
+          extensions: {
+            code: 'EXTERNAL_TIMEOUT',
+            statusCode: 504,
+          },
+        },
+      );
+    }
+
+    if (exception instanceof HttpException) {
+      this.logger.warn(`[${exception.name}] ${exception.message}`);
       return new GraphQLError(exception.message, {
         extensions: {
           code: exception.name.toUpperCase(),
@@ -71,7 +94,9 @@ export class GraphQLExceptionsFilter implements GqlExceptionFilter {
     const errorMessage = exception.message || 'Unknown error';
     const errorStack = exception.stack || 'No stack trace available';
 
-    this.logger.error(`[UnexpectedError] GraphQL Error in ${operationName}: ${errorMessage}`);
+    this.logger.error(
+      `[UnexpectedError] GraphQL Error in ${operationName}: ${errorMessage}`,
+    );
     this.logger.error(errorStack);
 
     return new GraphQLError('Internal server error', {

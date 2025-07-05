@@ -7,9 +7,10 @@ import { UserTenantMembershipModule } from 'src/user-tenant-membership/user-tena
 import { AuthModule } from 'src/auth/auth.module';
 import { StudentsResolver } from './students.resolver';
 import { StudentQueryProvider } from './providers/student-query.provider';
+import { SchoolTypeModule } from 'src/school-type/school-type.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Student]), UserTenantMembershipModule, AuthModule], 
+  imports: [TypeOrmModule.forFeature([Student]), UserTenantMembershipModule, AuthModule, SchoolTypeModule],
   providers: [StudentsService, UsersCreateStudentProvider, StudentsResolver, StudentQueryProvider],
   exports: [TypeOrmModule],
 })

@@ -44,14 +44,14 @@ export class School {
   @CreateDateColumn()
   createdAt: Date;
 
- 
+
 
   @OneToMany(() => Teacher, (teacher) => teacher.school)
  teachers: Teacher[];
 
 
-  @OneToMany(() => Parent, (parent) => parent.school)
-  parents: Parent[];
+  // @OneToMany(() => Parent, (parent) => parent.school)
+  // parents: Parent[];
 
   // @Field(() => Subject)
   // @ManyToOne(() => Subject, (subject: Subject) => subject.subjectId)
@@ -62,7 +62,7 @@ export class School {
   classes: Class[];
 
 
-  
+
 
   @UpdateDateColumn()
   @Field(() => Date)
@@ -75,5 +75,3 @@ export class School {
   @ManyToOne(() => Tenant, tenant => tenant.schools)
   tenant: Tenant;
 }
-
-

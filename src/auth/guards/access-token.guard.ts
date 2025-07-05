@@ -1,12 +1,21 @@
-import { CanActivate, ExecutionContext, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+  Logger,
+} from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, TokenExpiredError } from '@nestjs/jwt';
 import jwtConfig from 'src/auth/config/jwt.config';
 import { REQUEST_USER_KEY } from 'src/auth/constants/auth.constants';
 
 @Injectable()
 export class AccessTokenGuard implements CanActivate {
+  private readonly logger = new Logger(AccessTokenGuard.name);
+
   constructor(
     private readonly jwtService: JwtService,
     @Inject(jwtConfig.KEY)
@@ -15,88 +24,46 @@ export class AccessTokenGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const gqlContext = GqlExecutionContext.create(context);
-    // console.log(gqlContext, 'just get me one........');
     const request = gqlContext.getContext().req;
-    // console.log(request, 'request in access token guard');
-    const token = this.extractTokenFromHeader(request);
+    const token = this.extractToken(request);
 
     if (!token) {
-      throw new UnauthorizedException('Token not found');
+      this.logger.warn('No token found in header or cookies');
+      throw new UnauthorizedException('Access token not found');
     }
 
     try {
-      const payload = await this.jwtService.verifyAsync(token, this.jwtConfiguration);
+      const payload = await this.jwtService.verifyAsync(
+        token,
+        this.jwtConfiguration,
+      );
       request[REQUEST_USER_KEY] = payload;
-    } catch {
-      throw new UnauthorizedException('Invalid token');
+      return true;
+    } catch (err: any) {
+      if (err instanceof TokenExpiredError) {
+        this.logger.warn('JWT token has expired');
+        throw new UnauthorizedException('Access token expired');
+      }
+
+      this.logger.error(`Token verification failed: ${err?.message || err}`);
+      throw new UnauthorizedException('Invalid or corrupted access token');
+    }
+  }
+
+  private extractToken(request: any): string | undefined {
+    const authHeader = request.headers?.authorization;
+    if (authHeader?.startsWith('Bearer ')) {
+      this.logger.debug('Token found in Authorization header');
+      return authHeader.split(' ')[1];
     }
 
-    return true;
-  }
+    const cookieToken = request.cookies?.['access_token'];
+    if (cookieToken) {
+      this.logger.debug('Token found in access_token cookie');
+      return cookieToken;
+    }
 
-  private extractTokenFromHeader(request: any): string | undefined {
-    const [_, token] = request.headers?.authorization?.split(' ') ?? [];
-    return token;
+    this.logger.debug('No token found in request');
+    return undefined;
   }
 }
-
-
-
-
-
-
-
-// import { CanActivate, ExecutionContext, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-// import { ConfigType } from '@nestjs/config';
-// import { JwtService } from '@nestjs/jwt';
-// import { Observable } from 'rxjs';
-// import jwtConfig from 'src/auth/config/jwt.config';
-// import { Request } from 'express';
-// import { REQUEST_USER_KEY } from '../constants/auth.constants';
-// import { GqlExecutionContext } from '@nestjs/graphql';
-
-
-// @Injectable()
-// export class AccessTokenGuard implements CanActivate {
-//   constructor(
-//     /**
-//      * Inject jwtService
-//      */
-//     private readonly jwtService: JwtService,
-//     /**
-//      * Inject jwtConfiguration
-//      */
-//     @Inject(jwtConfig.KEY)
-//     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>
-//   ) {}
-//   async canActivate(
-//     context: ExecutionContext,
-//   ): Promise<boolean> {
-//     // extract the request from the execution context
-//     // const request = context.switchToHttp().getRequest();
-
-// const gqlContext = GqlExecutionContext.create(context);
-// const request = gqlContext.getContext().req;
-//     // extract the token from the header
-//     const token = this.extractRequestFromHeader(request);
-//     // validate the token
-//     if(!token) {
-//       throw new UnauthorizedException('Token not found');
-//     }
-//     try {
-//       const payload = await this.jwtService.verifyAsync(token, this.jwtConfiguration)
-//       request[REQUEST_USER_KEY] = payload;
-      
-//     } catch (error) {
-//       throw new UnauthorizedException('Invalid token');
-      
-//     }
-
-//     return true;
-//   }
-
-//   private extractRequestFromHeader(request: Request): string | undefined {
-//     const [_, token] = request.headers.authorization?.split(' ') ?? [];
-//     return token;
-//   }
-// }

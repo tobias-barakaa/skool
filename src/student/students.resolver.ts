@@ -12,6 +12,7 @@ import { StudentsService } from './providers/student.service';
 import { ActiveUserData } from 'src/auth/interface/active-user.interface';
 import { Student } from './entities/student.entity';
 import { StudentWithTenant } from './dtos/student-with-tenant.dto';
+import { GradeLevelWithStreamsOutput } from './dtos/grade-level-with-streams.output';
 
 @Resolver()
 @UseFilters(GraphQLExceptionsFilter)
@@ -26,48 +27,68 @@ export class StudentsResolver {
     @Args('createStudentInput') createStudentInput: CreateStudentInput,
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<CreateStudentResponse> {
-    this.logger.log(`Admin ${currentUser.email} creating student: ${createStudentInput.email}`);
+    this.logger.log(
+      `Admin ${currentUser.email} creating student: ${createStudentInput.email}`,
+    );
 
     console.log('ActiveUserdfdffddddddddddd:', currentUser);
 
-    return await this.studentsService.createStudent(createStudentInput, currentUser);
+    return await this.studentsService.createStudent(
+      createStudentInput,
+      currentUser,
+    );
   }
 
-
   @Query(() => [StudentWithTenant], { name: 'students' })
-@Auth(AuthType.Bearer)
-async getStudents(
-  @ActiveUser() currentUser: ActiveUserData
-): Promise<StudentWithTenant[]> {
-  const students = await this.studentsService.getAllStudentsByTenant(currentUser.tenantId);
+  @Auth(AuthType.Bearer)
+  async getStudents(
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise<StudentWithTenant[]> {
+    const students = await this.studentsService.getAllStudentsByTenant(
+      currentUser.tenantId,
+    );
 
-  return students.map((student) => ({
-    id: student.id,
-    admission_number: student.admission_number,
-    phone: student.phone,
-    gender: student.gender,
-    grade: student.grade,
-    user: student.user,
-    user_id: student.user_id,
-    feesOwed: student.feesOwed,
-    totalFeesPaid: student.totalFeesPaid,
-    createdAt: student.createdAt,
-    isActive: student.isActive,
-    updatedAt: student.updatedAt,
-    streamId: student.stream?.id ?? null,
-    tenantId: currentUser.tenantId,
-  }));
-}
+    return students.map((student) => ({
+      id: student.id,
+      admission_number: student.admission_number,
+      phone: student.phone,
+      gender: student.gender,
+      grade: student.grade,
+      user: student.user,
+      user_id: student.user_id,
+      feesOwed: student.feesOwed,
+      totalFeesPaid: student.totalFeesPaid,
+      createdAt: student.createdAt,
+      isActive: student.isActive,
+      updatedAt: student.updatedAt,
+      streamName: student.stream?.name ?? [],
+      tenantId: currentUser.tenantId,
+    }));
+  }
 
+  @Query(() => [GradeLevelWithStreamsOutput])
+  async gradeLevelsWithStreams(
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<GradeLevelWithStreamsOutput[]> {
+    return this.studentsService.getGradeLevelsWithStreamsForTenant(
+      user.tenantId,
+    );
+  }
 
   @Mutation(() => [CreateStudentResponse], { name: 'createMultipleStudents' })
   @Auth(AuthType.Bearer)
   async createMultipleStudents(
-    @Args('studentsData', { type: () => [CreateStudentInput] }) studentsData: CreateStudentInput[],
+    @Args('studentsData', { type: () => [CreateStudentInput] })
+    studentsData: CreateStudentInput[],
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<CreateStudentResponse[]> {
-    this.logger.log(`Admin ${currentUser.email} creating ${studentsData.length} students`);
+    this.logger.log(
+      `Admin ${currentUser.email} creating ${studentsData.length} students`,
+    );
 
-    return await this.studentsService.createMultipleStudents(studentsData, currentUser);
+    return await this.studentsService.createMultipleStudents(
+      studentsData,
+      currentUser,
+    );
   }
 }

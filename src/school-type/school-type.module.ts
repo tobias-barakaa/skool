@@ -17,8 +17,6 @@ import { TenantsModule } from 'src/tenants/tenants.module';
 @Module({
   imports: [TypeOrmModule.forFeature([CBCSchoolSelectionEntity, SchoolType,GradeLevel, Level,UserSchoolSelection, SchoolLevel,SchoolConfig ]), SubjectModule,CurriculumModule, SchoolsModule, TenantsModule],
   providers: [ SchoolTypeService, SchoolTypeResolver],
-  exports: [SchoolTypeService]
+  exports: [SchoolTypeService, TypeOrmModule]
 })
 export class SchoolTypeModule {}
-
-
