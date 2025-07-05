@@ -1,0 +1,129 @@
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { GenerateTokenProvider } from 'src/admin/auth/providers/generate-token.provider';
+import { HashingProvider } from 'src/admin/auth/providers/hashing.provider';
+import { Repository } from 'typeorm';
+import { AuthResponse, SignInInput } from '../dtos/signin-input.dto';
+import { User } from 'src/admin/users/entities/user.entity';
+import { Tenant } from 'src/admin/tenants/entities/tenant.entity';
+import { MembershipStatus, UserTenantMembership } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
+
+@Injectable()
+export class SignInProvider {
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+
+    @InjectRepository(Tenant)
+    private readonly tenantRepository: Repository<Tenant>,
+
+    @InjectRepository(UserTenantMembership)
+    private readonly membershipRepository: Repository<UserTenantMembership>,
+
+    private readonly hashingProvider: HashingProvider,
+    private readonly generateTokensProvider: GenerateTokenProvider,
+  ) {}
+
+  async signIn(signInInput: SignInInput): Promise<AuthResponse> {
+    const user = await this.userRepository.findOne({
+      where: { email: signInInput.email },
+      relations: ['memberships', 'memberships.tenant'],
+    });
+
+    if (!user) throw new UnauthorizedException('Invalid credentials');
+
+    const isPasswordValid = await this.hashingProvider.comparePassword(
+      signInInput.password,
+      user.password,
+    );
+
+    if (!isPasswordValid)
+      throw new UnauthorizedException('Invalid credentials');
+
+    const activeMemberships = user.memberships.filter(
+      (m) => m.status === MembershipStatus.ACTIVE,
+    );
+
+    if (activeMemberships.length === 0) {
+      throw new UnauthorizedException('No active school memberships found');
+    }
+
+    // Optionally pick the first one as default
+    const defaultMembership = activeMemberships[0];
+    const tenant = defaultMembership.tenant;
+
+    const tokens = await this.generateTokensProvider.generateTokens(
+      user,
+      defaultMembership,
+      tenant,
+    );
+
+    return {
+      user,
+      membership: {
+        ...defaultMembership,
+        role: defaultMembership.role, // explicitly expose role
+      },
+      allMemberships: activeMemberships,
+      tokens,
+      tenant,
+      subdomainUrl: `${tenant.subdomain}.squl.co.ke`,
+    };
+  }
+
+  // async signIn(signInInput: SignInInput, subdomain: string): Promise<AuthResponse> {
+  //   console.log(signInInput, 'this is the sign in input..::', subdomain)
+  //   // Find tenant by subdomain
+  //   const tenant = await this.tenantRepository.findOne({
+  //     where: { subdomain, isActive: true }
+  //   });
+
+  //   if (!tenant) {
+  //     throw new NotFoundException('School not found or inactive');
+  //   }
+
+  //   // Find user by email
+  //   const user = await this.userRepository.findOne({
+  //     where: { email: signInInput.email },
+  //     relations: ['memberships', 'memberships.tenant']
+  //   });
+
+  //   if (!user) {
+  //     throw new UnauthorizedException('Invalid credentials');
+  //   }
+
+  //   // Verify password
+  //   const isPasswordValid = await this.hashingProvider.comparePassword(
+  //     signInInput.password,
+  //     user.password
+  //   );
+
+  //   if (!isPasswordValid) {
+  //     throw new UnauthorizedException('Invalid credentials 2');
+  //   }
+
+  //   // Check if user has membership in this tenant
+  //   const membership = await this.membershipRepository.findOne({
+  //     where: {
+  //       userId: user.id,
+  //       tenantId: tenant.id,
+  //       status: MembershipStatus.ACTIVE
+  //     },
+  //     relations: ['tenant']
+  //   });
+
+  //   if (!membership) {
+  //     throw new UnauthorizedException('You do not have access to this school');
+  //   }
+
+  //   // Generate tokens
+  //   const tokens = await this.generateTokensProvider.generateTokens(user);
+
+  //   return {
+  //     user,
+  //     membership,
+  //     subdomainUrl: `${tenant.subdomain}.squl.co.ke`,
+  //     tokens
+  //   };
+  // }
+}

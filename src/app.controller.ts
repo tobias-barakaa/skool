@@ -1,16 +1,16 @@
 import { Controller, Get } from '@nestjs/common';
-import { Auth } from './auth/decorator/auth.decorator';
-import { AuthType } from './auth/enums/auth-type.enum';
+import { Auth } from './admin/auth/decorator/auth.decorator';
+import { AuthType } from './admin/auth/enums/auth-type.enum';
 
 @Controller()
 export class AppController {
-  @Get() 
+  @Get()
   @Auth(AuthType.None)
   getRoot() {
     return {
       message: 'API is running',
       graphql: '/graphql',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -18,6 +18,5 @@ export class AppController {
   chromeDevTools() {
     return {};
   }
-} 
+}
 // EbtKKqozQ7IBCEF
-

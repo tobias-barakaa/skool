@@ -1,17 +1,13 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { EntityNotFoundFilter } from './common/filter/entity-not-found.filter';
-import { GraphQLExceptionsFilter } from './common/filter/graphQLException.filter';
-import { CustomLogger } from './common/custom-logger.service';
+import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
 import { join } from 'path';
-import { SeedingService } from './school-type/seeds/school-type';
-import * as cookieParser from 'cookie-parser';
-
-
-
+import { AppModule } from './app.module';
+import { CustomLogger } from './admin/common/custom-logger.service';
+import { EntityNotFoundFilter } from './admin/common/filter/entity-not-found.filter';
+import { GraphQLExceptionsFilter } from './admin/common/filter/graphQLException.filter';
 
 async function bootstrap() {
   const logger = new CustomLogger('Bootstrap');
@@ -20,8 +16,6 @@ async function bootstrap() {
     const app = await NestFactory.create(AppModule, {
       logger,
     });
-
-
 
     // Global filters
     app.useGlobalFilters(
@@ -40,17 +34,15 @@ async function bootstrap() {
         'https://squl.co.ke',
         'https://squl.com',
         'https://www.squl.co.ke',
-        /^https:\/\/.*\.squl\.com$/,      
-        /^https:\/\/.*\.squl\.co\.ke$/,    
+        /^https:\/\/.*\.squl\.com$/,
+        /^https:\/\/.*\.squl\.co\.ke$/,
       ],
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
       credentials: true,
     });
 
-      // ✅ Trust proxy from Coolify
-      const expressApp = app.getHttpAdapter().getInstance() as express.Express;
-      expressApp.set('trust proxy', true);
-
+    const expressApp = app.getHttpAdapter().getInstance() as express.Express;
+    expressApp.set('trust proxy', true);
 
     app.useGlobalPipes(
       new ValidationPipe({
@@ -58,22 +50,24 @@ async function bootstrap() {
         whitelist: true,
         forbidNonWhitelisted: true,
         exceptionFactory: (errors) => {
-          const formattedErrors = errors.map(err => ({
+          const formattedErrors = errors.map((err) => ({
             field: err.property,
-            errors: Object.values(err.constraints || {})
+            errors: Object.values(err.constraints || {}),
           }));
-  
-          const error = new Error('Validation failed: ' + JSON.stringify(formattedErrors));
+
+          const error = new Error(
+            'Validation failed: ' + JSON.stringify(formattedErrors),
+          );
           error.name = 'ValidationError';
           throw error;
         },
       }),
     );
-  
 
-    app.use('/favicon.ico', express.static(join(__dirname, '..', 'public', 'favicon.ico')));
-
-
+    app.use(
+      '/favicon.ico',
+      express.static(join(__dirname, '..', 'public', 'favicon.ico')),
+    );
 
     // Swagger setup
     const swaggerConfig = new DocumentBuilder()
@@ -89,29 +83,26 @@ async function bootstrap() {
     SwaggerModule.setup('api', app, document);
 
     // Start application
-    const port = process.env.PORT || 4000
+    const port = process.env.PORT || 4000;
 
-//     const seedingService = app.get(SeedingService);
-// await seedingService.seedAllSchoolTypes();
+    //     const seedingService = app.get(SeedingService);
+    // await seedingService.seedAllSchoolTypes();
 
-app.enableCors({
-  origin: ['https://subdomain.squl.co.ke', 'http://localhost:3000'], 
-  credentials: true, // ✅ allow cookies
-});
+    app.enableCors({
+      origin: ['https://subdomain.squl.co.ke', 'http://localhost:3000'],
+      credentials: true, // ✅ allow cookies
+    });
     await app.listen(port, '0.0.0.0');
     console.log('ENV TEST::::::g', process.env.PORT);
-
 
     const url = await app.getUrl();
     logger.log(`🚀 Application is running on: ${url}`);
     logger.log(`📘 GraphQL Playground: ${url}/graphql`);
     logger.log(`📚 Swagger API docs: ${url}/api`);
-
   } catch (error) {
     logger.error('❌ Failed to start application', error.stack);
     process.exit(1);
   }
 }
-
 
 void bootstrap();
