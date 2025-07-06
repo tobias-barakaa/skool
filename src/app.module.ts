@@ -19,6 +19,7 @@ import jwtConfig from './admin/auth/config/jwt.config';
 import { AuthenticationGuard } from './admin/auth/guards/authentication.guard';
 import { DataResponseInterceptor } from './admin/common/interceptor/data-response/data-response.interceptor';
 import { AccessTokenGuard } from './admin/auth/guards/access-token.guard';
+import { StaffModule } from './staff/staff.module';
 
 
 
@@ -93,6 +94,9 @@ const ENV = process.env.NODE_ENV;
 
 
     AdminModule,
+
+
+    StaffModule,
   ],
   controllers: [AppController],
   providers: [

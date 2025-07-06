@@ -24,7 +24,8 @@ export enum InvitationStatus {
 export enum InvitationType {
     TEACHER = 'TEACHER',
     SCHOOL_MANAGER = 'SCHOOL_MANAGER',
-    PARENT = 'PARENT'
+    PARENT = 'PARENT',
+    STAFF = 'STAFF',
   }
 
 registerEnumType(InvitationType, { name: 'InvitationType' });
@@ -77,7 +78,7 @@ export class UserInvitation {
   @Column({ type: 'json', nullable: true })
   // userData: Partial<CreateTeacherInvitationDto>;
   userData: Record<string, any>;
-  
+
   @Column({ nullable: true })
   invitedById?: string;
 

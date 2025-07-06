@@ -141,6 +141,12 @@ export class ParentService {
       relations: ['user'],
     });
 
+    console.log('Searching students by manual input:', {
+      studentFullName,
+      studentGrade,
+      studentPhone,
+      tenantId});
+
     const matchingStudents: StudentSearchResponse[] = [];
 
     for (const membership of studentMemberships) {

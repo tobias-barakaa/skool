@@ -231,4 +231,113 @@ export class EmailService {
 
     return data;
   }
+
+  async sendStaffInvitation(
+    email: string,
+    staffName: string,
+    schoolName: string,
+    invitationToken: string,
+    inviterName: string,
+    tenantId: string,
+    staffRole: string,
+  ) {
+    const subdomain = await this.getTenantSubdomain(tenantId);
+
+    const invitationUrl = `https://${subdomain}.squl.co.ke/signup?token=${invitationToken}`;
+
+    // Format the role for display
+    const formattedRole = staffRole
+      .replace(/_/g, ' ')
+      .toLowerCase()
+      .replace(/\b\w/g, (l) => l.toUpperCase());
+
+    const htmlContent = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
+        <h1 style="color: white; margin: 0; font-size: 28px;">Welcome to ${schoolName}!</h1>
+        <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 16px;">Staff Invitation</p>
+      </div>
+
+      <div style="background: white; padding: 30px; border-radius: 0 0 10px 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <p style="font-size: 18px; color: #333; margin-bottom: 20px;">Dear ${staffName},</p>
+
+        <p style="color: #555; line-height: 1.6; margin-bottom: 20px;">
+          You have been invited by <strong>${inviterName}</strong> to join <strong>${schoolName}</strong> as a <strong>${formattedRole}</strong>.
+        </p>
+
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #667eea;">
+          <h3 style="color: #333; margin-top: 0; font-size: 16px;">Your Position Details:</h3>
+          <ul style="color: #555; margin: 10px 0; padding-left: 20px;">
+            <li><strong>Role:</strong> ${formattedRole}</li>
+            <li><strong>School:</strong> ${schoolName}</li>
+            <li><strong>Invited by:</strong> ${inviterName}</li>
+          </ul>
+        </div>
+
+        <div style="background: #e8f4f8; padding: 20px; border-radius: 8px; margin: 25px 0;">
+          <h3 style="color: #333; margin-top: 0; font-size: 16px;">Getting Started:</h3>
+          <ol style="color: #555; margin: 10px 0; padding-left: 20px; line-height: 1.6;">
+            <li>Click the invitation link below to accept</li>
+            <li>Create your secure password</li>
+            <li>Complete your staff profile</li>
+            <li>Access your dashboard and start managing school operations</li>
+          </ol>
+        </div>
+
+        <div style="text-align: center; margin: 35px 0;">
+          <a href="${invitationUrl}"
+             style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                    padding: 15px 40px;
+                    text-decoration: none;
+                    border-radius: 25px;
+                    display: inline-block;
+                    font-weight: bold;
+                    font-size: 16px;
+                    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+                    transition: all 0.3s ease;">
+            Accept Invitation & Join Team
+          </a>
+        </div>
+
+        <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 8px; margin: 25px 0;">
+          <p style="color: #856404; margin: 0; font-size: 14px;">
+            <strong>⏰ Important:</strong> This invitation will expire in 7 days. Please accept it as soon as possible.
+          </p>
+        </div>
+
+        <div style="border-top: 2px solid #f1f3f4; padding-top: 20px; margin-top: 30px;">
+          <p style="color: #888; font-size: 14px; margin-bottom: 10px;">
+            If you have any questions about your role or need assistance, please contact your school administrator.
+          </p>
+
+          <p style="color: #333; margin-bottom: 5px;">
+            Best regards,<br>
+            <strong>The ${schoolName} Administration Team</strong>
+          </p>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+          <p style="color: #999; font-size: 12px; margin: 0;">
+            This is an automated message. Please do not reply to this email.
+          </p>
+        </div>
+      </div>
+    </div>
+  `;
+
+    const { data, error } = await this.resend.emails.send({
+      from: this.resendConfiguration.fromEmail || 'noreply@squl.co.ke',
+      to: email,
+      subject: `Welcome to ${schoolName} - Staff Invitation (${formattedRole})`,
+      html: htmlContent,
+    });
+
+    if (error) {
+      console.error('Resend error:', error);
+      throw new Error('Failed to send email33');
+    }
+
+    return data;
+  }
 }

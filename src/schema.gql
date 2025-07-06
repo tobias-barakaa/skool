@@ -26,6 +26,18 @@ type AcceptParentInvitationResponse {
   user: UserResponse!
 }
 
+input AcceptStaffInvitationInput {
+  password: String!
+  token: String!
+}
+
+type AcceptStaffInvitationResponse {
+  message: String!
+  staff: StaffInfo
+  tokens: TokensOutput!
+  user: UserInfo!
+}
+
 enum AssessmentType {
   ASSIGNMENT
   CAT
@@ -125,6 +137,31 @@ input CreateParentInvitationDto {
   studentGrade: String
   studentName: String
   studentPhone: String
+}
+
+input CreateStaffInvitationDto {
+  address: String
+  bankAccount: String
+  bankName: String
+  dateOfBirth: String
+  dateOfJoining: String
+  department: String
+  email: String!
+  emergencyContact: String
+  emergencyContactPhone: String
+  employeeId: String
+  firstName: String!
+  fullName: String!
+  gender: String!
+  jobDescription: String
+  lastName: String!
+  nationalId: String
+  phoneNumber: String
+  qualifications: String
+  role: String!
+  salary: Float
+  supervisor: String
+  workExperience: String
 }
 
 input CreateStreamInput {
@@ -267,6 +304,13 @@ type InviteParentResponse {
   studentName: String!
 }
 
+type InviteStaffResponse {
+  createdAt: DateTime!
+  email: String!
+  fullName: String!
+  status: String!
+}
+
 type InviteTeacherResponse {
   createdAt: DateTime!
   email: String!
@@ -303,6 +347,7 @@ enum MembershipStatus {
 
 type Mutation {
   acceptParentInvitation(acceptInvitationInput: AcceptParentInvitationInput!): AcceptParentInvitationResponse!
+  acceptStaffInvitation(acceptInvitationInput: AcceptStaffInvitationInput!): AcceptStaffInvitationResponse!
   acceptTeacherInvitation(acceptInvitationInput: AcceptInvitationInput!): AcceptInvitationResponse!
   changePassword(changePasswordInput: ChangePasswordInput!): PasswordResetResponse!
   configureSchoolLevelsByNames(levelNames: [String!]!): SchoolConfigurationResponse!
@@ -310,13 +355,17 @@ type Mutation {
   createStream(input: CreateStreamInput!): StreamType!
   createStudent(createStudentInput: CreateStudentInput!): CreateStudentResponse!
   createUser(signupInput: SignupInput!): CreateUserResponse!
+  deleteStaff(id: String!, tenantId: String!): String!
   deleteStream(id: ID!): Boolean!
   forgotPassword(forgotPasswordInput: ForgotPasswordInput!): PasswordResetResponse!
   inviteParent(createParentDto: CreateParentInvitationDto!, studentId: String!, tenantId: String!): InviteParentResponse!
+  inviteStaff(createStaffDto: CreateStaffInvitationDto!, tenantId: String!): InviteStaffResponse!
   inviteTeacher(createTeacherDto: CreateTeacherInvitationDto!, tenantId: String!): InviteTeacherResponse!
   resetPassword(resetPasswordInput: ResetPasswordInput!): PasswordResetResponse!
   revokeInvitation(invitationId: String!): String!
+  revokeStaffInvitation(invitationId: String!): String!
   signIn(signInInput: SignInInput!): AuthResponse!
+  updateStaff(tenantId: String!, updateStaffInput: UpdateStaffInput!): StaffDto!
   updateStream(input: UpdateStreamInput!): StreamType!
 }
 
@@ -363,12 +412,19 @@ type PasswordResetResponse {
 type Query {
   activeStreams: [StreamType!]!
   debugHost: String!
+  getActiveStaffByTenant(tenantId: String!): [StaffDto!]!
   getAvailableLevelNames: [String!]!
   getPendingInvitations(tenantId: String!): String!
   getPendingParentInvitations(tenantId: String!): String!
+  getPendingStaffInvitations(tenantId: String!): String!
   getSchoolConfiguration: SchoolConfigurationResponse
+  getStaffByDepartment(department: String!, tenantId: String!): [StaffDto!]!
+  getStaffById(id: String!, tenantId: String!): StaffDto!
+  getStaffByTenant(tenantId: String!): [StaffDto!]!
+  getStaffCount(tenantId: String!): Float!
   getTeachersByTenant(tenantId: String!): [TeacherDto!]!
   gradeLevelsWithStreams: [GradeLevelWithStreamsOutput!]!
+  searchStaff(searchTerm: String!, tenantId: String!): [StaffDto!]!
   searchStudentByAdmission(admissionNumber: String!, tenantId: String!): StudentSearchResponse
   searchStudentsByManualInput(studentFullName: String, studentGrade: String, studentPhone: String, tenantId: String!): [StudentSearchResponse!]!
   searchStudentsByName(name: String!, tenantId: String!): [StudentSearchResponse!]!
@@ -475,6 +531,51 @@ input SignupInput {
   password: String!
   schoolName: String!
   schoolUrl: String
+}
+
+type StaffDto {
+  address: String
+  bankAccount: String
+  bankName: String
+  createdAt: DateTime!
+  dateOfBirth: DateTime
+  dateOfJoining: DateTime
+  department: String
+  email: String!
+  emergencyContact: String
+  emergencyContactPhone: String
+  employeeId: String
+  firstName: String!
+  fullName: String!
+  gender: String!
+  hasCompletedProfile: Boolean!
+  id: ID!
+  isActive: Boolean!
+  jobDescription: String
+  lastName: String!
+  nationalId: String
+  phoneNumber: String
+  qualifications: String
+  role: String!
+  salary: Float
+  status: StaffStatus!
+  supervisor: String
+  updatedAt: DateTime!
+  userId: String
+  workExperience: String
+}
+
+type StaffInfo {
+  id: ID!
+  name: String!
+  role: String!
+}
+
+enum StaffStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  TERMINATED
 }
 
 type Stream {
@@ -639,6 +740,32 @@ type TokensOutput {
   refreshToken: String!
 }
 
+input UpdateStaffInput {
+  address: String
+  bankAccount: String
+  bankName: String
+  dateOfBirth: String
+  dateOfJoining: String
+  department: String
+  emergencyContact: String
+  emergencyContactPhone: String
+  employeeId: String
+  firstName: String
+  fullName: String
+  gender: String!
+  id: ID!
+  jobDescription: String
+  lastName: String
+  nationalId: String
+  phoneNumber: String
+  qualifications: String
+  role: String!
+  salary: Float
+  status: StaffStatus
+  supervisor: String
+  workExperience: String
+}
+
 input UpdateStreamInput {
   capacity: Float
   description: String
@@ -658,6 +785,12 @@ type User {
   password: String!
   schoolUrl: String!
   updatedAt: DateTime!
+}
+
+type UserInfo {
+  email: String!
+  id: ID!
+  name: String!
 }
 
 type UserResponse {
