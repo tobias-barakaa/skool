@@ -173,7 +173,6 @@
   "zenMode.fullScreen": false,
   "zenMode.hideActivityBar": false,
   "zenMode.hideStatusBar": false,
-  "zenMode.hideTabs": false,
   "zenMode.centerLayout": false,
 
   // Custom color overrides for Windsurf-like appearance
@@ -208,5 +207,6 @@
     "terminal.foreground": "#d4d4d4",
     "panel.background": "#1e1e1e",
     "panel.border": "#2d2d30"
-  }
+  },
+  "workbench.editor.tabActionLocation": "right"
 }

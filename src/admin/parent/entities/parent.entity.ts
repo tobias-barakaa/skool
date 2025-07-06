@@ -21,11 +21,7 @@ export class Parent {
 
   @Field()
   @Column()
-  firstName: string;
-
-  @Field()
-  @Column()
-  lastName: string;
+  name: string;
 
   @Field()
   @Column({ unique: true })
@@ -72,3 +68,5 @@ export class Parent {
   @UpdateDateColumn()
   updatedAt: Date;
 }
+
+

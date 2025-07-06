@@ -153,5 +153,82 @@ export class EmailService {
 
     return data;
   }
-  
+
+  async sendParentInvitation(
+    email: string,
+    parentName: string,
+    schoolName: string,
+    invitationToken: string,
+    inviterName: string,
+    tenantId: string,
+    studentName: string,
+  ) {
+    const subdomain = await this.getTenantSubdomain(tenantId);
+
+    const invitationUrl = `https://${subdomain}.squl.co.ke/signup?token=${invitationToken}`;
+
+    const htmlContent = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h2 style="color: #2c3e50;">Welcome to ${schoolName}!</h2>
+
+      <p>Dear ${parentName},</p>
+
+      <p>You have been invited by <strong>${inviterName}</strong> to join <strong>${schoolName}</strong> as a parent of <strong>${studentName}</strong>.</p>
+
+      <p>As a parent, you will have access to:</p>
+      <ul>
+        <li>Your child's academic progress and grades</li>
+        <li>Fee statements and payment history</li>
+        <li>School announcements and communication</li>
+        <li>Teacher-parent communication portal</li>
+        <li>School calendar and events</li>
+      </ul>
+
+      <div style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0;">
+        <p><strong>To complete your registration and access your account:</strong></p>
+        <ol>
+          <li>Click the invitation link below</li>
+          <li>Set up your password</li>
+          <li>Review and update your profile information</li>
+          <li>Start monitoring your child's academic journey</li>
+        </ol>
+      </div>
+
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${invitationUrl}"
+           style="background-color: #27ae60; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">
+          Accept Invitation
+        </a>
+      </div>
+
+      <div style="background-color: #e8f5e8; padding: 15px; border-radius: 5px; margin: 20px 0;">
+        <p style="margin: 0; color: #2c3e50;">
+          <strong>Child Information:</strong><br>
+          Student Name: ${studentName}<br>
+          School: ${schoolName}
+        </p>
+      </div>
+
+      <p style="color: #7f8c8d; font-size: 14px;">
+        This invitation will expire in 7 days. If you have any questions, please contact your school administrator.
+      </p>
+
+      <p>Best regards,<br>The ${schoolName} Team</p>
+    </div>
+  `;
+
+    const { data, error } = await this.resend.emails.send({
+      from: this.resendConfiguration.fromEmail || 'noreply@squl.co.ke',
+      to: email,
+      subject: `Invitation to Join ${schoolName} - Parent of ${studentName}`,
+      html: htmlContent,
+    });
+
+    if (error) {
+      console.error('Resend error:', error);
+      throw new Error('Failed to send email');
+    }
+
+    return data;
+  }
 }

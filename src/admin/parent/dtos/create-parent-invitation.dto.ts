@@ -1,0 +1,47 @@
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { TokensOutput } from 'src/admin/users/dtos/tokens.output';
+import { User } from 'src/admin/users/entities/user.entity';
+import { Parent } from '../entities/parent.entity';
+
+@InputType()
+export class AcceptParentInvitationInput {
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  token: string;
+
+  @Field()
+  @IsString()
+  @MinLength(8)
+  password: string;
+}
+
+
+@ObjectType()
+class UserResponse {
+  @Field()
+  id: string;
+
+  @Field()
+  email: string;
+
+  @Field()
+  name: string;
+}
+
+
+@ObjectType()
+export class AcceptParentInvitationResponse {
+  @Field()
+  message: string;
+
+  @Field(() => UserResponse)
+  user: UserResponse;
+
+  @Field()
+  tokens: TokensOutput; // You can create a proper TokenDto if needed
+
+  @Field(() => Parent, { nullable: true })
+  parent: Parent | null;
+}
