@@ -271,6 +271,9 @@ export class EmailService {
             <li><strong>Role:</strong> ${formattedRole}</li>
             <li><strong>School:</strong> ${schoolName}</li>
             <li><strong>Invited by:</strong> ${inviterName}</li>
+            <li><strong>Invited by:</strong> ${invitationToken}</li>
+
+
           </ul>
         </div>
 
@@ -325,6 +328,8 @@ export class EmailService {
       </div>
     </div>
   `;
+
+
 
     const { data, error } = await this.resend.emails.send({
       from: this.resendConfiguration.fromEmail || 'noreply@squl.co.ke',
