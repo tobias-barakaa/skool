@@ -9,6 +9,7 @@ import { CreateTeacherInvitationDto } from './dtos/create-teacher-invitation.dto
 import { InviteTeacherResponse } from './dtos/invite-teacher-response.dto';
 import { TeacherDto } from './dtos/teacher-query.dto';
 import { TeacherService } from './providers/teacher.service';
+import { PendingInvitation } from './dtos/pending-invitation.output';
 
 @Resolver()
 export class TeacherResolver {
@@ -66,16 +67,15 @@ export class TeacherResolver {
     return this.teacherService.getTeachersByTenant(tenantId);
   }
 
-  @Query(() => String)
+  @Query(() => [PendingInvitation], { name: 'getPendingInvitations' })
   async getPendingInvitations(
     @Args('tenantId') tenantId: string,
     @ActiveUser() currentUser: User,
   ) {
-    const result = await this.teacherService.getPendingInvitations(
+    return await this.teacherService.getPendingInvitations(
       tenantId,
       currentUser,
     );
-    return JSON.stringify(result);
   }
 
   @Mutation(() => String)

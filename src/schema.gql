@@ -295,6 +295,22 @@ type InvitationInfo {
   tenantName: String!
 }
 
+enum InvitationStatus {
+  ACCEPTED
+  ALREADY_EXISTS
+  BLOCKED
+  CANCELLED
+  DECLINED
+  DUPLICATE
+  ERROR
+  EXPIRED
+  FAILED
+  INVALID
+  NOT_FOUND
+  PENDING
+  REVOKED
+}
+
 type InviteParentResponse {
   createdAt: DateTime!
   email: String!
@@ -410,13 +426,22 @@ type PasswordResetResponse {
   message: String!
 }
 
+type PendingInvitation {
+  createdAt: DateTime!
+  email: String!
+  id: String!
+  invitedBy: User!
+  role: String!
+  status: InvitationStatus!
+}
+
 type Query {
   activeStreams: [StreamType!]!
   allUsersOfTenant(tenantId: String!): [TenantUserSummary!]!
   debugHost: String!
   getActiveStaffByTenant(tenantId: String!): [StaffDto!]!
   getAvailableLevelNames: [String!]!
-  getPendingInvitations(tenantId: String!): String!
+  getPendingInvitations(tenantId: String!): [PendingInvitation!]!
   getPendingParentInvitations(tenantId: String!): String!
   getPendingStaffInvitations(tenantId: String!): String!
   getSchoolConfiguration: SchoolConfigurationResponse
