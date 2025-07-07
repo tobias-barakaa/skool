@@ -381,9 +381,11 @@ type Mutation {
   resetPassword(resetPasswordInput: ResetPasswordInput!): PasswordResetResponse!
   revokeInvitation(invitationId: String!): RevokeInvitationResponse!
   revokeStaffInvitation(invitationId: String!): String!
+  revokeStudent(studentId: String!): String!
   signIn(signInInput: SignInInput!): AuthResponse!
   updateStaff(tenantId: String!, updateStaffInput: UpdateStaffInput!): StaffDto!
   updateStream(input: UpdateStreamInput!): StreamType!
+  updateTeacherRole(newRole: MembershipRole!, tenantId: String!, userId: String!): String!
 }
 
 type Parent {

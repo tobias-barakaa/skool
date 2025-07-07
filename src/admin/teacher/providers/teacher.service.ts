@@ -10,7 +10,7 @@ import * as crypto from 'crypto';
 import { GenerateTokenProvider } from 'src/admin/auth/providers/generate-token.provider';
 import { EmailService } from 'src/admin/email/providers/email.service';
 import { Tenant } from 'src/admin/tenants/entities/tenant.entity';
-import { Equal, LessThan, MoreThan, Not, Repository } from 'typeorm';
+import { Equal, In, LessThan, MoreThan, Not, Repository } from 'typeorm';
 import { CreateTeacherInvitationDto } from '../dtos/create-teacher-invitation.dto';
 import { TeacherDto } from '../dtos/teacher-query.dto';
 import { Teacher } from '../entities/teacher.entity';
@@ -267,58 +267,57 @@ export class TeacherService {
   async deleteTeacher(id: string, currentUser: User, tenantId: string) {
     // Step 1: Verify admin access
     const membership = await this.membershipRepository.findOne({
-  where: {
-    user: { id: currentUser.id },
-    tenant: { id: tenantId },
-    role: MembershipRole.SCHOOL_ADMIN,
-    status: MembershipStatus.ACTIVE,
-  },
-});
+      where: {
+        user: { id: currentUser.id },
+        tenant: { id: tenantId },
+        role: MembershipRole.SCHOOL_ADMIN,
+        status: MembershipStatus.ACTIVE,
+      },
+    });
 
-if (!membership) {
-  throw new ForbiddenException('Only SCHOOL_ADMIN can delete teachers');
-}
+    if (!membership) {
+      throw new ForbiddenException('Only SCHOOL_ADMIN can delete teachers');
+    }
 
-// Step 2: Find the teacher
-const teacher = await this.teacherRepository.findOne({
-  where: { id, tenant: { id: tenantId } },
-  relations: ['tenant'],
-});
+    // Step 2: Find the teacher
+    const teacher = await this.teacherRepository.findOne({
+      where: { id, tenant: { id: tenantId } },
+      relations: ['tenant'],
+    });
 
-if (!teacher) {
-  throw new NotFoundException('Teacher not found');
-}
+    if (!teacher) {
+      throw new NotFoundException('Teacher not found');
+    }
 
-// Step 3: Delete teacher record first (to release FK lock)
-await this.teacherRepository.delete({ id });
+    // Step 3: Delete teacher record first (to release FK lock)
+    await this.teacherRepository.delete({ id });
 
-// Step 4: Delete teacher's membership for this tenant
-if (teacher.userId) {
-  await this.membershipRepository.delete({
-    user: { id: teacher.userId },
-    tenant: { id: tenantId },
-  });
+    // Step 4: Delete teacher's membership for this tenant
+    if (teacher.userId) {
+      await this.membershipRepository.delete({
+        user: { id: teacher.userId },
+        tenant: { id: tenantId },
+      });
 
-  // Step 5: Check if user belongs to any other tenants
-  const otherMemberships = await this.membershipRepository.find({
-    where: {
-      user: { id: teacher.userId },
-      tenant: Not(Equal(tenantId)),
-    },
-  });
+      // Step 5: Check if user belongs to any other tenants
+      const otherMemberships = await this.membershipRepository.find({
+        where: {
+          user: { id: teacher.userId },
+          tenant: Not(Equal(tenantId)),
+        },
+      });
 
-  // Step 6: Delete user only if no other memberships exist
-  if (otherMemberships.length === 0) {
-    await this.userRepository.delete({ id: teacher.userId });
+      // Step 6: Delete user only if no other memberships exist
+      if (otherMemberships.length === 0) {
+        await this.userRepository.delete({ id: teacher.userId });
+      }
+    }
+
+    return {
+      message:
+        'Teacher, membership, and user (if orphaned) deleted successfully',
+    };
   }
-}
-
-return {
-  message: 'Teacher, membership, and user (if orphaned) deleted successfully',
-}
-
-  }
-
 
   async getTeachersByTenant(tenantId: string): Promise<TeacherDto[]> {
     const teachers = await this.teacherRepository.find({
@@ -404,4 +403,95 @@ return {
 
     return { message: 'Invitation revoked successfully' };
   }
+
+  async updateTeacherRole(
+    targetUserId: string,
+    newRole: MembershipRole,
+    tenantId: string,
+    currentUser: User,
+  ) {
+    // Step 1: Check current user's permission
+    const currentMembership = await this.membershipRepository.findOne({
+      where: {
+        user: { id: currentUser.id },
+        tenant: { id: tenantId },
+        role: In([MembershipRole.SCHOOL_ADMIN, MembershipRole.SCHOOL_ADMIN]),
+        status: MembershipStatus.ACTIVE,
+      },
+    });
+
+    if (!currentMembership) {
+      throw new ForbiddenException('Access denied');
+    }
+
+    // Step 2: Find the target user's membership
+    const membership = await this.membershipRepository.findOne({
+      where: {
+        user: { id: targetUserId },
+        tenant: { id: tenantId },
+      },
+    });
+
+    if (!membership) {
+      throw new NotFoundException('Target user is not a member of this tenant');
+    }
+
+    // Step 3: Prevent demoting last SCHOOL_ADMIN (see part 3 below)
+    if (
+      membership.role === MembershipRole.SCHOOL_ADMIN &&
+      newRole !== MembershipRole.SCHOOL_ADMIN
+    ) {
+      const adminCount = await this.membershipRepository.count({
+        where: {
+          tenant: { id: tenantId },
+          role: MembershipRole.SCHOOL_ADMIN,
+          status: MembershipStatus.ACTIVE,
+        },
+      });
+
+      if (adminCount <= 1) {
+        throw new BadRequestException('Cannot demote the last SCHOOL_ADMIN');
+      }
+    }
+
+    membership.role = newRole;
+    await this.membershipRepository.save(membership);
+
+    return {
+      message: `User role updated to ${newRole}`,
+    };
+  }
+
+  async getTeacherStats(tenantId: string) {
+    const [total, active, pendingInvites, recentTeachers] = await Promise.all([
+      this.teacherRepository.count({ where: { tenantId } }),
+      this.teacherRepository.count({ where: { tenantId, isActive: true } }),
+      this.invitationRepository.count({
+        where: {
+          tenant: { id: tenantId },
+          status: InvitationStatus.PENDING,
+        },
+      }),
+      this.teacherRepository.find({
+        where: { tenantId },
+        order: { createdAt: 'DESC' },
+        take: 5,
+      }),
+    ]);
+
+    return {
+      total,
+      active,
+      pendingInvitations: pendingInvites,
+      recentlyAdded: recentTeachers.map((t) => ({
+        id: t.id,
+        fullName: t.fullName,
+        email: t.email,
+        createdAt: t.createdAt,
+      })),
+    };
+  };
+
+
+  
 }

@@ -1,5 +1,5 @@
 // src/students/students.service.ts
-import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
+import { ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { Repository } from 'typeorm';
@@ -138,5 +138,35 @@ export class StudentsService {
       },
       relations: ['user'],
     });
+  };
+
+
+
+  async revokeStudent(studentId: string, currentUser: ActiveUserData): Promise<{ message: string }> {
+    const membership = await this.membershipRepository.findOne({
+      where: {
+        userId: currentUser.sub,
+        tenantId: currentUser.tenantId,
+        role: MembershipRole.SCHOOL_ADMIN,
+      },
+    });
+
+    if (!membership) {
+      throw new ForbiddenException('Only school admins can revoke students');
+    }
+
+    const student = await this.studentRepository.findOne({
+      where: { id: studentId },
+      relations: ['user'],
+    });
+
+    if (!student) {
+      throw new NotFoundException('Student not found');
+    }
+
+    student.isActive = false;
+    await this.studentRepository.save(student);
+
+    return { message: 'Student revoked successfully' };
   }
 }

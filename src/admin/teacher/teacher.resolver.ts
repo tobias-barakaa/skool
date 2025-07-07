@@ -11,6 +11,7 @@ import { TeacherDto } from './dtos/teacher-query.dto';
 import { TeacherService } from './providers/teacher.service';
 import { PendingInvitation } from './dtos/pending-invitation.output';
 import { RevokeInvitationResponse } from './dtos/revoke-invitation.output';
+import { MembershipRole } from '../user-tenant-membership/entities/user-tenant-membership.entity';
 
 @Resolver()
 export class TeacherResolver {
@@ -88,6 +89,23 @@ export class TeacherResolver {
       invitationId,
       currentUser,
     );
+  }
+
+  @Mutation(() => String)
+  @Auth(AuthType.Bearer)
+  async updateTeacherRole(
+    @Args('userId') userId: string,
+    @Args('newRole', { type: () => MembershipRole }) newRole: MembershipRole,
+    @Args('tenantId') tenantId: string,
+    @ActiveUser() currentUser: User,
+  ) {
+    const result = await this.teacherService.updateTeacherRole(
+      userId,
+      newRole,
+      tenantId,
+      currentUser,
+    );
+    return result.message;
   }
 
   @Mutation(() => String)

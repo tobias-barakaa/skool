@@ -89,4 +89,17 @@ export class StudentsResolver {
       currentUser,
     );
   }
+
+  @Mutation(() => String, { name: 'revokeStudent' })
+  @Auth(AuthType.Bearer)
+  async revokeStudent(
+    @Args('studentId') studentId: string,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise<string> {
+    const result = await this.studentsService.revokeStudent(
+      studentId,
+      currentUser,
+    );
+    return result.message;
+  }
 }
