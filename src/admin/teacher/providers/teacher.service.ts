@@ -389,7 +389,7 @@ return {
       where: {
         user: { id: currentUser.id },
         tenant: { id: invitation.tenant.id },
-        role: MembershipRole.SUPER_ADMIN,
+        role: MembershipRole.SCHOOL_ADMIN,
         status: MembershipStatus.ACTIVE,
       },
     });
