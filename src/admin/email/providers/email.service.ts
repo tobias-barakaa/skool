@@ -52,6 +52,8 @@ export class EmailService {
         <p>Dear ${teacherName},</p>
 
         <p>You have been invited by <strong>${inviterName}</strong> to join <strong>${schoolName}</strong> as a teacher.</p>
+        <p>You have been invited by <strong>${invitationToken}</strong>
+
 
         <p>Your profile has been pre-filled with the following information. You can review and update it after accepting the invitation:</p>
 
