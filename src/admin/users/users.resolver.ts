@@ -9,6 +9,7 @@ import { AuthResponse, SignupInput } from './dtos/signUp-input';
 import { User } from './entities/user.entity';
 import { UsersService } from './providers/users.service';
 import { GraphQLExceptionsFilter } from '../common/filter/graphQLException.filter';
+import { MembershipRole } from '../user-tenant-membership/entities/user-tenant-membership.entity';
 
 @Resolver(() => User)
 @UseFilters(GraphQLExceptionsFilter)
@@ -75,5 +76,14 @@ export class UsersResolver {
   async findAll(): Promise<User[]> {
     // this.logger.log('Fetching all users');
     return await this.usersService.findAll();
+  }
+
+  @Query(() => [User], { name: 'usersByTenant' })
+  @Auth(AuthType.Bearer) // or any role that should access this
+  async usersByTenant(
+    @Args('tenantId') tenantId: string,
+    @Args('role', { nullable: true }) role?: MembershipRole,
+  ): Promise<User[]> {
+    return await this.usersService.findUsersByTenant(tenantId, role);
   }
 }

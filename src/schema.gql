@@ -434,6 +434,7 @@ type Query {
   streamsByGradeLevel(gradeLevelId: ID!): [StreamType!]!
   students: [StudentWithTenant!]!
   users: [User!]!
+  usersByTenant(role: String, tenantId: String!): [User!]!
 }
 
 input ResetPasswordInput {
