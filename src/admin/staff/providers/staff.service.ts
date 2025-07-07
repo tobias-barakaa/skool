@@ -90,7 +90,6 @@ export class StaffService {
       }
     }
 
-
     const tenMinutesAgo = new Date();
     tenMinutesAgo.setMinutes(tenMinutesAgo.getMinutes() - 10);
 
@@ -181,7 +180,6 @@ export class StaffService {
         tenantId,
         createStaffDto.role,
       );
-
     } catch (error) {
       console.error('[EmailService Error]', error);
       throw new EmailSendFailedException(createStaffDto.email);
@@ -416,7 +414,7 @@ export class StaffService {
   }
 
   async deleteStaff(id: string, currentUser: User, tenantId: string) {
-    // Verify admin access
+    // Step 1: Verify admin access
     const membership = await this.membershipRepository.findOne({
       where: {
         user: { id: currentUser.id },
@@ -432,6 +430,7 @@ export class StaffService {
       );
     }
 
+    // Step 2: Find the staff to delete
     const staff = await this.staffRepository.findOne({
       where: { id, tenantId },
     });
@@ -440,12 +439,23 @@ export class StaffService {
       throw new NotFoundException('Staff member not found');
     }
 
-    // Soft delete by setting isActive to false
-    // staff.isActive = false;
-    // await this.staffRepository.save(staff);
+    // Step 3: Delete associated membership (if exists)
+    if (staff.userId) {
+      await this.membershipRepository.delete({
+        user: { id: staff.userId },
+        tenant: { id: tenantId },
+      });
+
+      // Step 4: Delete the user account
+      await this.userRepository.delete({ id: staff.userId });
+    }
+
+    // Step 5: Delete the staff record
     await this.staffRepository.delete({ id, tenantId });
 
-    return { message: 'Staff member deleted successfully' };
+    return {
+      message: 'Staff member, user, and membership deleted successfully',
+    };
   }
 
   async getPendingInvitations(tenantId: string, currentUser: User) {
