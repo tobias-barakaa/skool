@@ -10,6 +10,7 @@ import { InviteTeacherResponse } from './dtos/invite-teacher-response.dto';
 import { TeacherDto } from './dtos/teacher-query.dto';
 import { TeacherService } from './providers/teacher.service';
 import { PendingInvitation } from './dtos/pending-invitation.output';
+import { RevokeInvitationResponse } from './dtos/revoke-invitation.output';
 
 @Resolver()
 export class TeacherResolver {
@@ -78,16 +79,15 @@ export class TeacherResolver {
     );
   }
 
-  @Mutation(() => String)
+  @Mutation(() => RevokeInvitationResponse)
   async revokeInvitation(
     @Args('invitationId') invitationId: string,
     @ActiveUser() currentUser: User,
-  ) {
-    const result = await this.teacherService.revokeInvitation(
+  ): Promise<RevokeInvitationResponse> {
+    return await this.teacherService.revokeInvitation(
       invitationId,
       currentUser,
     );
-    return JSON.stringify(result);
   }
 
   @Mutation(() => String)

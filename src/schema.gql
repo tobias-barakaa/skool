@@ -379,7 +379,7 @@ type Mutation {
   inviteStaff(createStaffDto: CreateStaffInvitationDto!, tenantId: String!): InviteStaffResponse!
   inviteTeacher(createTeacherDto: CreateTeacherInvitationDto!, tenantId: String!): InviteTeacherResponse!
   resetPassword(resetPasswordInput: ResetPasswordInput!): PasswordResetResponse!
-  revokeInvitation(invitationId: String!): String!
+  revokeInvitation(invitationId: String!): RevokeInvitationResponse!
   revokeStaffInvitation(invitationId: String!): String!
   signIn(signInInput: SignInInput!): AuthResponse!
   updateStaff(tenantId: String!, updateStaffInput: UpdateStaffInput!): StaffDto!
@@ -430,7 +430,7 @@ type PendingInvitation {
   createdAt: DateTime!
   email: String!
   id: String!
-  invitedBy: User!
+  invitedBy: User
   role: String!
   status: InvitationStatus!
 }
@@ -467,6 +467,10 @@ input ResetPasswordInput {
   confirmPassword: String!
   newPassword: String!
   token: String!
+}
+
+type RevokeInvitationResponse {
+  message: String!
 }
 
 type School {
