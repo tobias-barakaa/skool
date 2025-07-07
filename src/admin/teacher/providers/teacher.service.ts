@@ -10,7 +10,7 @@ import * as crypto from 'crypto';
 import { GenerateTokenProvider } from 'src/admin/auth/providers/generate-token.provider';
 import { EmailService } from 'src/admin/email/providers/email.service';
 import { Tenant } from 'src/admin/tenants/entities/tenant.entity';
-import { LessThan, MoreThan, Repository } from 'typeorm';
+import { Equal, LessThan, MoreThan, Not, Repository } from 'typeorm';
 import { CreateTeacherInvitationDto } from '../dtos/create-teacher-invitation.dto';
 import { TeacherDto } from '../dtos/teacher-query.dto';
 import { Teacher } from '../entities/teacher.entity';
@@ -265,6 +265,7 @@ export class TeacherService {
   }
 
   async deleteTeacher(id: string, currentUser: User, tenantId: string) {
+    // Step 1: Verify admin access
     const membership = await this.membershipRepository.findOne({
       where: {
         user: { id: currentUser.id },
@@ -278,6 +279,7 @@ export class TeacherService {
       throw new ForbiddenException('Only SCHOOL_ADMIN can delete teachers');
     }
 
+    // Step 2: Find the teacher and related tenant
     const teacher = await this.teacherRepository.findOne({
       where: { id, tenant: { id: tenantId } },
       relations: ['tenant'],
@@ -287,18 +289,34 @@ export class TeacherService {
       throw new NotFoundException('Teacher not found');
     }
 
+    // Step 3: Delete teacher's membership for this tenant
     if (teacher.userId) {
       await this.membershipRepository.delete({
         user: { id: teacher.userId },
         tenant: { id: tenantId },
       });
 
-      await this.userRepository.delete({ id: teacher.userId });
+      // Step 4: Check if user belongs to any other tenants
+      const otherMemberships = await this.membershipRepository.find({
+        where: {
+          user: { id: teacher.userId },
+          tenant: Not(Equal(tenantId)),
+        },
+      });
+
+      // Step 5: Delete user only if no other memberships exist
+      if (otherMemberships.length === 0) {
+        await this.userRepository.delete({ id: teacher.userId });
+      }
     }
 
+    // Step 6: Delete the teacher record
     await this.teacherRepository.delete({ id });
 
-    return { message: 'Teacher, user, and membership deleted successfully' };
+    return {
+      message:
+        'Teacher, membership, and user (if orphaned) deleted successfully',
+    };
   }
 
   async getTeachersByTenant(tenantId: string): Promise<TeacherDto[]> {
