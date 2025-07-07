@@ -412,6 +412,7 @@ type PasswordResetResponse {
 
 type Query {
   activeStreams: [StreamType!]!
+  allUsersOfTenant(tenantId: String!): [TenantUserSummary!]!
   debugHost: String!
   getActiveStaffByTenant(tenantId: String!): [StaffDto!]!
   getAvailableLevelNames: [String!]!
@@ -725,6 +726,14 @@ type TenantResponse {
   id: ID!
   schoolName: String!
   subdomain: String!
+}
+
+type TenantUserSummary {
+  email: String!
+  id: String!
+  name: String!
+  role: MembershipRole!
+  tenantId: String!
 }
 
 type TokenPair {

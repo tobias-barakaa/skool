@@ -18,9 +18,8 @@ export class UsersService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
 
-
-        @InjectRepository(UserTenantMembership)
-        private membershipRepository: Repository<UserTenantMembership>
+    @InjectRepository(UserTenantMembership)
+    private membershipRepository: Repository<UserTenantMembership>,
   ) {}
 
   async createUser(signupInput: SignupInput) {
@@ -70,6 +69,21 @@ export class UsersService {
     }
 
     const results = await query.getMany();
+
+    return results.map((membership) => ({
+      ...membership.user,
+      tenantId: membership.tenantId,
+      role: membership.role,
+    }));
+  }
+
+  async findAllUsersOfTenant(
+    tenantId: string,
+  ): Promise<(User & { tenantId: string; role: MembershipRole })[]> {
+    const results = await this.membershipRepository.find({
+      where: { tenantId },
+      relations: ['user'],
+    });
 
     return results.map((membership) => ({
       ...membership.user,
