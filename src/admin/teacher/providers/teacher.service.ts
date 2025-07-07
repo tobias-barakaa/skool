@@ -267,57 +267,58 @@ export class TeacherService {
   async deleteTeacher(id: string, currentUser: User, tenantId: string) {
     // Step 1: Verify admin access
     const membership = await this.membershipRepository.findOne({
-      where: {
-        user: { id: currentUser.id },
-        tenant: { id: tenantId },
-        role: MembershipRole.SCHOOL_ADMIN,
-        status: MembershipStatus.ACTIVE,
-      },
-    });
+  where: {
+    user: { id: currentUser.id },
+    tenant: { id: tenantId },
+    role: MembershipRole.SCHOOL_ADMIN,
+    status: MembershipStatus.ACTIVE,
+  },
+});
 
-    if (!membership) {
-      throw new ForbiddenException('Only SCHOOL_ADMIN can delete teachers');
-    }
+if (!membership) {
+  throw new ForbiddenException('Only SCHOOL_ADMIN can delete teachers');
+}
 
-    // Step 2: Find the teacher and related tenant
-    const teacher = await this.teacherRepository.findOne({
-      where: { id, tenant: { id: tenantId } },
-      relations: ['tenant'],
-    });
+// Step 2: Find the teacher
+const teacher = await this.teacherRepository.findOne({
+  where: { id, tenant: { id: tenantId } },
+  relations: ['tenant'],
+});
 
-    if (!teacher) {
-      throw new NotFoundException('Teacher not found');
-    }
+if (!teacher) {
+  throw new NotFoundException('Teacher not found');
+}
 
-    // Step 3: Delete teacher's membership for this tenant
-    if (teacher.userId) {
-      await this.membershipRepository.delete({
-        user: { id: teacher.userId },
-        tenant: { id: tenantId },
-      });
+// Step 3: Delete teacher record first (to release FK lock)
+await this.teacherRepository.delete({ id });
 
-      // Step 4: Check if user belongs to any other tenants
-      const otherMemberships = await this.membershipRepository.find({
-        where: {
-          user: { id: teacher.userId },
-          tenant: Not(Equal(tenantId)),
-        },
-      });
+// Step 4: Delete teacher's membership for this tenant
+if (teacher.userId) {
+  await this.membershipRepository.delete({
+    user: { id: teacher.userId },
+    tenant: { id: tenantId },
+  });
 
-      // Step 5: Delete user only if no other memberships exist
-      if (otherMemberships.length === 0) {
-        await this.userRepository.delete({ id: teacher.userId });
-      }
-    }
+  // Step 5: Check if user belongs to any other tenants
+  const otherMemberships = await this.membershipRepository.find({
+    where: {
+      user: { id: teacher.userId },
+      tenant: Not(Equal(tenantId)),
+    },
+  });
 
-    // Step 6: Delete the teacher record
-    await this.teacherRepository.delete({ id });
-
-    return {
-      message:
-        'Teacher, membership, and user (if orphaned) deleted successfully',
-    };
+  // Step 6: Delete user only if no other memberships exist
+  if (otherMemberships.length === 0) {
+    await this.userRepository.delete({ id: teacher.userId });
   }
+}
+
+return {
+  message: 'Teacher, membership, and user (if orphaned) deleted successfully',
+}
+
+  }
+
 
   async getTeachersByTenant(tenantId: string): Promise<TeacherDto[]> {
     const teachers = await this.teacherRepository.find({

@@ -10,7 +10,7 @@ import * as crypto from 'crypto';
 import { GenerateTokenProvider } from 'src/admin/auth/providers/generate-token.provider';
 import { EmailService } from 'src/admin/email/providers/email.service';
 import { Tenant } from 'src/admin/tenants/entities/tenant.entity';
-import { LessThan, MoreThan, Repository } from 'typeorm';
+import { Equal, LessThan, MoreThan, Not, Repository } from 'typeorm';
 import { User } from 'src/admin/users/entities/user.entity';
 import {
   InvitationStatus,
@@ -430,31 +430,43 @@ export class StaffService {
       );
     }
 
-    // Step 2: Find the staff to delete
+    // Step 2: Find the staff
     const staff = await this.staffRepository.findOne({
       where: { id, tenantId },
+      relations: ['tenant'],
     });
 
     if (!staff) {
       throw new NotFoundException('Staff member not found');
     }
 
-    // Step 3: Delete associated membership (if exists)
+    // Step 3: Delete staff's membership for this tenant
     if (staff.userId) {
       await this.membershipRepository.delete({
         user: { id: staff.userId },
         tenant: { id: tenantId },
       });
 
-      // Step 4: Delete the user account
-      await this.userRepository.delete({ id: staff.userId });
+      // Step 4: Check if user belongs to other tenants
+      const otherMemberships = await this.membershipRepository.find({
+        where: {
+          user: { id: staff.userId },
+          tenant: Not(Equal(tenantId)),
+        },
+      });
+
+      // Step 5: Only delete the user if no other memberships
+      if (otherMemberships.length === 0) {
+        await this.userRepository.delete({ id: staff.userId });
+      }
     }
 
-    // Step 5: Delete the staff record
+    // Step 6: Delete staff record
     await this.staffRepository.delete({ id, tenantId });
 
     return {
-      message: 'Staff member, user, and membership deleted successfully',
+      message:
+        'Staff member, membership, and user (if orphaned) deleted successfully',
     };
   }
 
