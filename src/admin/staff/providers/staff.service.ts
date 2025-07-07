@@ -90,7 +90,7 @@ export class StaffService {
       }
     }
 
-  
+
     const tenMinutesAgo = new Date();
     tenMinutesAgo.setMinutes(tenMinutesAgo.getMinutes() - 10);
 
@@ -441,8 +441,9 @@ export class StaffService {
     }
 
     // Soft delete by setting isActive to false
-    staff.isActive = false;
-    await this.staffRepository.save(staff);
+    // staff.isActive = false;
+    // await this.staffRepository.save(staff);
+    await this.staffRepository.delete({ id, tenantId });
 
     return { message: 'Staff member deleted successfully' };
   }
