@@ -357,6 +357,7 @@ type Mutation {
   createUser(signupInput: SignupInput!): CreateUserResponse!
   deleteStaff(id: String!, tenantId: String!): String!
   deleteStream(id: ID!): Boolean!
+  deleteTeacher(id: String!, tenantId: String!): String!
   forgotPassword(forgotPasswordInput: ForgotPasswordInput!): PasswordResetResponse!
   inviteParent(createParentDto: CreateParentInvitationDto!, studentId: String!, tenantId: String!): InviteParentResponse!
   inviteStaff(createStaffDto: CreateStaffInvitationDto!, tenantId: String!): InviteStaffResponse!

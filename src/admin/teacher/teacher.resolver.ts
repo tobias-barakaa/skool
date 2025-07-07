@@ -89,4 +89,18 @@ export class TeacherResolver {
     );
     return JSON.stringify(result);
   }
+
+  @Mutation(() => String)
+  async deleteTeacher(
+    @Args('id') id: string,
+    @Args('tenantId') tenantId: string,
+    @ActiveUser() currentUser: User,
+  ) {
+    const result = await this.teacherService.deleteTeacher(
+      id,
+      currentUser,
+      tenantId,
+    );
+    return JSON.stringify(result);
+  }
 }

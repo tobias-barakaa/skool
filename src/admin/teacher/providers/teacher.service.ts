@@ -264,6 +264,43 @@ export class TeacherService {
     };
   }
 
+  async deleteTeacher(id: string, currentUser: User, tenantId: string) {
+    const membership = await this.membershipRepository.findOne({
+      where: {
+        user: { id: currentUser.id },
+        tenant: { id: tenantId },
+        role: MembershipRole.SCHOOL_ADMIN,
+        status: MembershipStatus.ACTIVE,
+      },
+    });
+
+    if (!membership) {
+      throw new ForbiddenException('Only SCHOOL_ADMIN can delete teachers');
+    }
+
+    const teacher = await this.teacherRepository.findOne({
+      where: { id, tenant: { id: tenantId } },
+      relations: ['tenant'],
+    });
+
+    if (!teacher) {
+      throw new NotFoundException('Teacher not found');
+    }
+
+    if (teacher.userId) {
+      await this.membershipRepository.delete({
+        user: { id: teacher.userId },
+        tenant: { id: tenantId },
+      });
+
+      await this.userRepository.delete({ id: teacher.userId });
+    }
+
+    await this.teacherRepository.delete({ id });
+
+    return { message: 'Teacher, user, and membership deleted successfully' };
+  }
+
   async getTeachersByTenant(tenantId: string): Promise<TeacherDto[]> {
     const teachers = await this.teacherRepository.find({
       where: {
