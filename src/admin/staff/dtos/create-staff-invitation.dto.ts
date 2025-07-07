@@ -242,6 +242,9 @@ export class AcceptStaffInvitationInput {
 }
 
 
+
+
+
 @ObjectType()
 export class UserInfo {
   @Field(() => ID)

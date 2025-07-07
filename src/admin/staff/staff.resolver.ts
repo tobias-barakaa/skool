@@ -6,6 +6,7 @@ import { StaffService } from './providers/staff.service';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { AcceptStaffInvitationInput, AcceptStaffInvitationResponse, CreateStaffInvitationDto, InviteStaffResponse, StaffDto, UpdateStaffInput } from './dtos/create-staff-invitation.dto';
 import { User } from 'src/admin/users/entities/user.entity';
+import { AcceptInvitationInput } from 'src/admin/teacher/dtos/accept-teacher-invitation.dto';
 
 @Resolver()
 export class StaffResolver {
@@ -28,7 +29,7 @@ export class StaffResolver {
   @Auth(AuthType.None)
   async acceptStaffInvitation(
     @Args('acceptInvitationInput', { type: () => AcceptStaffInvitationInput })
-    input: AcceptStaffInvitationInput,
+    input: AcceptInvitationInput,
     @Context() context,
   ): Promise<AcceptStaffInvitationResponse> {
     const { message, user, tokens, staff } =
@@ -72,6 +73,8 @@ export class StaffResolver {
     @Args('tenantId') tenantId: string,
     @ActiveUser() currentUser: User,
   ) {
+    console.log(`Fetching staff with ID: ${id} for tenant: ${tenantId}`);
+    
     return this.staffService.getStaffById(id, tenantId);
   }
 
