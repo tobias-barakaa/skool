@@ -20,6 +20,6 @@ export class PendingInvitation {
   @Field()
   createdAt: Date;
 
-  @Field(() => User)
-  invitedBy: User;
+  @Field(() => User, { nullable: true }) // 👈 fix here
+  invitedBy?: User;
 }
