@@ -46,6 +46,6 @@ export class AcceptParentInvitationResponse {
   @Field(() => Parent, { nullable: true })
   parent: Parent | null;
 
-  @Field(() => MembershipRole) // assuming you have this enum
-  role: MembershipRole;
+  @Field(() => String, { nullable: true })
+  role?: string;
 }

@@ -68,7 +68,7 @@ export class ParentResolver {
       user,
       tokens,
       parent,
-      role: user.role // Ensure 'role' is included from the user object
+      role: user.role 
     };
   }
 
