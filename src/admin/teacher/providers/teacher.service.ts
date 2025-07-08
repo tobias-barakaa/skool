@@ -18,6 +18,7 @@ import { User } from 'src/admin/users/entities/user.entity';
 import { InvitationStatus, InvitationType, UserInvitation } from 'src/admin/invitation/entities/user-iInvitation.entity';
 import { MembershipRole, MembershipStatus, UserTenantMembership } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
 import { EmailSendFailedException } from 'src/admin/common/exceptions/business.exception';
+import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 
 @Injectable()
 export class TeacherService {
@@ -348,11 +349,14 @@ export class TeacherService {
     }));
   }
 
-  async getPendingInvitations(tenantId: string, currentUser: User) {
+  async getTeacherPendingInvitations(
+    tenantId: string,
+    currentUser: ActiveUserData,
+  ) {
     // Verify admin access
     const membership = await this.membershipRepository.findOne({
       where: {
-        user: { id: currentUser.id },
+        user: { id: currentUser.sub },
         tenant: { id: tenantId },
         role: MembershipRole.SCHOOL_ADMIN,
         status: MembershipStatus.ACTIVE,
@@ -490,8 +494,5 @@ export class TeacherService {
         createdAt: t.createdAt,
       })),
     };
-  };
-
-
-  
+  }
 }

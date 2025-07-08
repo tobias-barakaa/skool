@@ -12,6 +12,8 @@ import { TeacherService } from './providers/teacher.service';
 import { PendingInvitation } from './dtos/pending-invitation.output';
 import { RevokeInvitationResponse } from './dtos/revoke-invitation.output';
 import { MembershipRole } from '../user-tenant-membership/entities/user-tenant-membership.entity';
+import { BadRequestException, ForbiddenException } from '@nestjs/common';
+import { ActiveUserData } from '../auth/interface/active-user.interface';
 
 @Resolver()
 export class TeacherResolver {
@@ -71,10 +73,21 @@ export class TeacherResolver {
 
   @Query(() => [PendingInvitation], { name: 'getPendingInvitations' })
   async getPendingInvitations(
-    @Args('tenantId') tenantId: string,
-    @ActiveUser() currentUser: User,
+    @Args('tenantId', { type: () => String }) tenantId: string,
+    @ActiveUser() currentUser: ActiveUserData,
   ) {
-    return await this.teacherService.getPendingInvitations(
+    console.log('✅ Received tenantId from frontend:', tenantId);
+    console.log('✅ Logged-in user tenantId:', currentUser.tenantId);
+
+    if (!tenantId) {
+      throw new BadRequestException('Missing tenantId');
+    }
+
+    if (tenantId.trim() !== currentUser.tenantId.trim()) {
+      throw new ForbiddenException('Access denied: tenantId mismatch');
+    }
+
+    return this.teacherService.getTeacherPendingInvitations(
       tenantId,
       currentUser,
     );

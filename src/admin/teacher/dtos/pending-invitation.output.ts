@@ -1,5 +1,6 @@
 // dtos/pending-invitation.output.ts
 import { Field, ObjectType } from '@nestjs/graphql';
+import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { InvitationStatus } from 'src/admin/invitation/entities/user-iInvitation.entity';
 import { User } from 'src/admin/users/entities/user.entity';
 
@@ -20,6 +21,6 @@ export class PendingInvitation {
   @Field()
   createdAt: Date;
 
-  @Field(() => User, { nullable: true }) // 👈 fix here
+  @Field(() => User, { nullable: true })
   invitedBy?: User;
 }
