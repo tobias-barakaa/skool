@@ -157,13 +157,26 @@ export class EmailService {
   }
 
   async sendParentInvitation(
+    // email: string,
+    // parentName: string,
+    // schoolName: string,
+    // invitationToken: string,
+    // inviterName: string,
+    // tenantId: string,
+    // studentName: string,
+
     email: string,
     parentName: string,
     schoolName: string,
     invitationToken: string,
     inviterName: string,
     tenantId: string,
-    studentName: string,
+    students: {
+      id: string;
+      name: string;
+      admissionNumber: string;
+      grade: string;
+    }[],
   ) {
     const subdomain = await this.getTenantSubdomain(tenantId);
 
@@ -175,7 +188,7 @@ export class EmailService {
 
       <p>Dear ${parentName},</p>
 
-      <p>You have been invited by <strong>${inviterName}</strong> to join <strong>${schoolName}</strong> as a parent of <strong>${studentName}</strong>.</p>
+      <p>You have been invited by <strong>${inviterName}</strong> to join <strong>${schoolName}</strong> as a parent of <strong>${students}</strong>.</p>
 
       <p>As a parent, you will have access to:</p>
       <ul>
@@ -206,7 +219,7 @@ export class EmailService {
       <div style="background-color: #e8f5e8; padding: 15px; border-radius: 5px; margin: 20px 0;">
         <p style="margin: 0; color: #2c3e50;">
           <strong>Child Information:</strong><br>
-          Student Name: ${studentName}<br>
+          Student Name: ${students}<br>
           School: ${schoolName}
         </p>
       </div>
@@ -222,7 +235,7 @@ export class EmailService {
     const { data, error } = await this.resend.emails.send({
       from: this.resendConfiguration.fromEmail || 'noreply@squl.co.ke',
       to: email,
-      subject: `Invitation to Join ${schoolName} - Parent of ${studentName}`,
+      subject: `Invitation to Join ${schoolName} - Parent of ${students}`,
       html: htmlContent,
     });
 
@@ -330,8 +343,6 @@ export class EmailService {
       </div>
     </div>
   `;
-
-
 
     const { data, error } = await this.resend.emails.send({
       from: this.resendConfiguration.fromEmail || 'noreply@squl.co.ke',

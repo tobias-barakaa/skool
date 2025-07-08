@@ -1,4 +1,6 @@
+// dtos/invite-parent-response.dto.ts
 import { Field, ObjectType } from '@nestjs/graphql';
+import { StudentSummaryDto } from './student-summary.dto';
 
 @ObjectType()
 export class InviteParentResponse {
@@ -14,9 +16,9 @@ export class InviteParentResponse {
   @Field()
   createdAt: Date;
 
-  @Field()
-  studentName: string;
+  @Field(() => [StudentSummaryDto])
+  students: StudentSummaryDto[];
 
-  @Field()
-  studentAdmissionNumber: string;
+  @Field({ nullable: true })
+  studentAdmissionNumber?: string; 
 }
