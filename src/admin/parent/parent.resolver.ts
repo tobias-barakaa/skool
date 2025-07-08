@@ -37,6 +37,40 @@ export class ParentResolver {
     );
   }
 
+  @Mutation(() => AcceptParentInvitationResponse)
+  @Auth(AuthType.None)
+  async acceptParentInvitation(
+    @Args('acceptInvitationInput') input: AcceptParentInvitationInput,
+    @Context() context,
+  ): Promise<AcceptParentInvitationResponse> {
+    const { message, user, tokens, parent } =
+      await this.parentService.acceptInvitation(input.token, input.password);
+
+    // Set cookies same as teacher invitation
+    context.res.cookie('access_token', tokens.accessToken, {
+      httpOnly: true,
+      sameSite: 'None',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 1000 * 60 * 15,
+      domain: '.squl.co.ke',
+    });
+
+    context.res.cookie('refresh_token', tokens.refreshToken, {
+      httpOnly: true,
+      sameSite: 'None',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+      domain: '.squl.co.ke',
+    });
+
+    return {
+      message,
+      user,
+      tokens,
+      parent,
+    };
+  }
+
   @Query(() => [StudentSearchResponse])
   async searchStudentsByManualInput(
     @Args('tenantId') tenantId: string,
@@ -105,7 +139,10 @@ export class ParentResolver {
     let allStudents: StudentSearchResponse[] = [];
 
     if (searchTerm) {
-      allStudents = await this.parentService.searchStudentsByName(searchTerm, tenantId);
+      allStudents = await this.parentService.searchStudentsByName(
+        searchTerm,
+        tenantId,
+      );
     } else {
       allStudents = await this.parentService.searchStudentByManualInput(
         undefined,
@@ -116,55 +153,15 @@ export class ParentResolver {
     }
 
     // Get students already linked to this parent
-    const linkedStudents = await this.parentService.getStudentsForParent(parentId, tenantId);
-    const linkedStudentIds = linkedStudents.map(s => s.id);
+    const linkedStudents = await this.parentService.getStudentsForParent(
+      parentId,
+      tenantId,
+    );
+    const linkedStudentIds = linkedStudents.map((s) => s.id);
 
     // Return students not already linked to this parent
-    return allStudents.filter(student => !linkedStudentIds.includes(student.id));
+    return allStudents.filter(
+      (student) => !linkedStudentIds.includes(student.id),
+    );
   }
 }
-
-//   @Mutation(() => AcceptParentInvitationResponse)
-//   @Auth(AuthType.None)
-//   async acceptParentInvitation(
-//     @Args('acceptInvitationInput') input: AcceptParentInvitationInput,
-//     @Context() context,
-//   ): Promise<AcceptParentInvitationResponse> {
-//     const { message, user, tokens, parent } =
-//       await this.parentService.acceptInvitation(input.token, input.password);
-
-//     // Set cookies same as teacher invitation
-//     context.res.cookie('access_token', tokens.accessToken, {
-//       httpOnly: true,
-//       sameSite: 'None',
-//       secure: process.env.NODE_ENV === 'production',
-//       maxAge: 1000 * 60 * 15,
-//       domain: '.squl.co.ke',
-//     });
-
-//     context.res.cookie('refresh_token', tokens.refreshToken, {
-//       httpOnly: true,
-//       sameSite: 'None',
-//       secure: process.env.NODE_ENV === 'production',
-//       maxAge: 1000 * 60 * 60 * 24 * 7,
-//       domain: '.squl.co.ke',
-//     });
-
-//     return {
-//       message,
-//       user,
-//       tokens,
-//       parent,
-//     };
-//   }
-
-//   @Query(() => String)
-//   async getPendingParentInvitations(
-//     @Args('tenantId') tenantId: string,
-//     @ActiveUser() currentUser: User,
-//   ): Promise<string> {
-//     // This would be similar to teacher's pending invitations
-//     // You can implement this based on your needs
-//     return JSON.stringify([]);
-//   }
-// }

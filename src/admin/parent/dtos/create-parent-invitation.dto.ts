@@ -40,7 +40,7 @@ export class AcceptParentInvitationResponse {
   user: UserResponse;
 
   @Field()
-  tokens: TokensOutput; // You can create a proper TokenDto if needed
+  tokens: TokensOutput;
 
   @Field(() => Parent, { nullable: true })
   parent: Parent | null;
