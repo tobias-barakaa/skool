@@ -22,6 +22,7 @@ import { StudentSearchResponse } from '../dtos/student-search-response.dto';
 import { InviteParentResponse } from '../dtos/invite-parent-response.dto';
 import { CreateParentInvitationDto } from '../dtos/accept-parent-invitation.dto';
 import { HashingProvider } from 'src/admin/auth/providers/hashing.provider';
+import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 
 @Injectable()
 export class ParentService {
@@ -42,7 +43,6 @@ export class ParentService {
     private invitationRepository: Repository<UserInvitation>,
     private emailService: EmailService,
     private generateTokensProvider: GenerateTokenProvider,
-
 
     private readonly hashingProvider: HashingProvider,
   ) {}
@@ -539,6 +539,75 @@ export class ParentService {
     return students;
   }
 
+  async getParentsByTenant(tenantId: string): Promise<Parent[]> {
+    return this.parentRepository.find({
+      where: {
+        tenantId,
+        isActive: true,
+      },
+      relations: ['user'],
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  async getParentPendingInvitations(
+    tenantId: string,
+    currentUser: ActiveUserData,
+  ) {
+    const membership = await this.membershipRepository.findOne({
+      where: {
+        user: { id: currentUser.sub },
+        tenant: { id: tenantId },
+        role: MembershipRole.SCHOOL_ADMIN,
+        status: MembershipStatus.ACTIVE,
+      },
+    });
+
+    if (!membership) {
+      throw new ForbiddenException('Access denied');
+    }
+
+    return this.invitationRepository.find({
+      where: {
+        tenant: { id: tenantId },
+        role: MembershipRole.PARENT,
+        status: InvitationStatus.PENDING,
+      },
+      relations: ['invitedBy'],
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  async revokeParentInvitation(invitationId: string, currentUser: User) {
+    const invitation = await this.invitationRepository.findOne({
+      where: { id: invitationId },
+      relations: ['tenant'],
+    });
+
+    if (!invitation) {
+      throw new NotFoundException('Invitation not found');
+    }
+
+    const membership = await this.membershipRepository.findOne({
+      where: {
+        user: { id: currentUser.id },
+        tenant: { id: invitation.tenant.id },
+        role: MembershipRole.SCHOOL_ADMIN,
+        status: MembershipStatus.ACTIVE,
+      },
+    });
+
+    if (!membership) {
+      throw new ForbiddenException('Access denied');
+    }
+
+    await this.invitationRepository.update(invitationId, {
+      status: InvitationStatus.REVOKED,
+    });
+
+    return { message: 'Parent invitation revoked successfully' };
+  }
+
   async acceptInvitation(token: string, password: string) {
     // Find invitation
     const invitation = await this.invitationRepository.findOne({
@@ -565,12 +634,7 @@ export class ParentService {
     });
 
     if (!user) {
-      const hashedPassword = await this.hashingProvider.hashPassword(
-        password
-      );
-
-
-
+      const hashedPassword = await this.hashingProvider.hashPassword(password);
 
       const parentData = invitation.userData as any;
 
@@ -616,7 +680,6 @@ export class ParentService {
       invitation.tenant,
     );
     const { accessToken, refreshToken } = tokens;
-
 
     return {
       message: 'Invitation accepted successfully',

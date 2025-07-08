@@ -382,6 +382,7 @@ type Mutation {
   inviteTeacher(createTeacherDto: CreateTeacherInvitationDto!, tenantId: String!): InviteTeacherResponse!
   resetPassword(resetPasswordInput: ResetPasswordInput!): PasswordResetResponse!
   revokeInvitation(invitationId: String!): RevokeInvitationResponse!
+  revokeParentInvitation(invitationId: String!): RevokeInvitationResponse!
   revokeStaffInvitation(invitationId: String!): String!
   revokeStudent(studentId: String!): String!
   signIn(signInInput: SignInInput!): AuthResponse!
@@ -444,7 +445,9 @@ type Query {
   debugHost: String!
   getActiveStaffByTenant(tenantId: String!): [StaffDto!]!
   getAvailableLevelNames: [String!]!
+  getParentsByTenant(tenantId: String!): [Parent!]!
   getPendingInvitations(tenantId: String!): [PendingInvitation!]!
+  getPendingParentInvitations(tenantId: String!): [PendingInvitation!]!
   getPendingStaffInvitations(tenantId: String!): String!
   getSchoolConfiguration: SchoolConfigurationResponse
   getStaffByDepartment(department: String!, tenantId: String!): [StaffDto!]!

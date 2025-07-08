@@ -9,6 +9,10 @@ import { StudentSearchResponse } from './dtos/student-search-response.dto';
 import { InviteParentResponse } from './dtos/invite-parent-response.dto';
 import { CreateParentInvitationDto } from './dtos/accept-parent-invitation.dto';
 import { AcceptParentInvitationInput, AcceptParentInvitationResponse } from './dtos/create-parent-invitation.dto';
+import { PendingInvitation } from '../teacher/dtos/pending-invitation.output';
+import { ActiveUserData } from '../auth/interface/active-user.interface';
+import { RevokeInvitationResponse } from '../teacher/dtos/revoke-invitation.output';
+import { Parent } from './entities/parent.entity';
 
 @Resolver()
 export class ParentResolver {
@@ -68,7 +72,7 @@ export class ParentResolver {
       user,
       tokens,
       parent,
-      role: user.role 
+      role: user.role,
     };
   }
 
@@ -129,7 +133,35 @@ export class ParentResolver {
     return await this.parentService.getStudentsForParent(parentId, tenantId);
   }
 
-  // New query to search students that can be added to a parent (excluding already linked ones)
+
+  @Query(() => [Parent])
+  async getParentsByTenant(@Args('tenantId') tenantId: string) {
+    return this.parentService.getParentsByTenant(tenantId);
+  }
+
+  @Query(() => [PendingInvitation])
+  async getPendingParentInvitations(
+    @Args('tenantId') tenantId: string,
+    @ActiveUser() currentUser: ActiveUserData,
+  ) {
+    return this.parentService.getParentPendingInvitations(
+      tenantId,
+      currentUser,
+    );
+  }
+
+  @Mutation(() => RevokeInvitationResponse)
+  async revokeParentInvitation(
+    @Args('invitationId') invitationId: string,
+    @ActiveUser() currentUser: User,
+  ): Promise<RevokeInvitationResponse> {
+    return await this.parentService.revokeParentInvitation(
+      invitationId,
+      currentUser,
+    );
+  }
+
+
   @Query(() => [StudentSearchResponse])
   async searchAvailableStudentsForParent(
     @Args('parentId') parentId: string,
