@@ -617,12 +617,14 @@ export class ParentService {
     );
     const { accessToken, refreshToken } = tokens;
 
+
     return {
       message: 'Invitation accepted successfully',
       user: {
         id: user.id,
         email: user.email,
         name: user.name,
+        role: membership.role,
       },
       tokens: {
         accessToken,

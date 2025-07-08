@@ -3,6 +3,7 @@ import { IsNotEmpty, IsString, MinLength } from 'class-validator';
 import { TokensOutput } from 'src/admin/users/dtos/tokens.output';
 import { User } from 'src/admin/users/entities/user.entity';
 import { Parent } from '../entities/parent.entity';
+import { MembershipRole } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
 
 @InputType()
 export class AcceptParentInvitationInput {
@@ -44,4 +45,7 @@ export class AcceptParentInvitationResponse {
 
   @Field(() => Parent, { nullable: true })
   parent: Parent | null;
+
+  @Field(() => MembershipRole) // assuming you have this enum
+  role: MembershipRole;
 }

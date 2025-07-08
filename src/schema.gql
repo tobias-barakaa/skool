@@ -22,6 +22,7 @@ input AcceptParentInvitationInput {
 type AcceptParentInvitationResponse {
   message: String!
   parent: Parent
+  role: MembershipRole!
   tokens: TokensOutput!
   user: UserResponse!
 }
