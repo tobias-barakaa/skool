@@ -7,6 +7,7 @@ import {
   ManyToOne,
   OneToMany,
   JoinColumn,
+  OneToOne,
 } from 'typeorm';
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { ParentStudent } from './parent-student.entity';
@@ -39,14 +40,13 @@ export class Parent {
   @Column({ nullable: true })
   occupation?: string;
 
-  @Field(() => ID)
-  @Column('uuid')
-  userId: string;
+    @OneToOne(() => User, { nullable: true })
+    @JoinColumn()
+    @Field(() => User, { nullable: true })
+    user?: User;
 
-  @Field(() => User)
-  @ManyToOne(() => User)
-  @JoinColumn({ name: 'userId' })
-  user: User;
+    @Column({ nullable: true })
+    userId?: string;
 
   @Field(() => ID)
   @Column('uuid')
@@ -68,5 +68,3 @@ export class Parent {
   @UpdateDateColumn()
   updatedAt: Date;
 }
-
-
