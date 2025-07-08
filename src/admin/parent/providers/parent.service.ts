@@ -577,7 +577,7 @@ export class ParentService {
       user = this.userRepository.create({
         email: invitation.email,
         password: hashedPassword,
-        name: parentData.fullName,
+        name: parentData.name,
         schoolUrl: invitation.tenant.subdomain,
       });
 
