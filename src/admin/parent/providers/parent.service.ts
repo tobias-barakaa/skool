@@ -21,6 +21,7 @@ import { GenerateTokenProvider } from 'src/admin/auth/providers/generate-token.p
 import { StudentSearchResponse } from '../dtos/student-search-response.dto';
 import { InviteParentResponse } from '../dtos/invite-parent-response.dto';
 import { CreateParentInvitationDto } from '../dtos/accept-parent-invitation.dto';
+import { HashingProvider } from 'src/admin/auth/providers/hashing.provider';
 
 @Injectable()
 export class ParentService {
@@ -41,6 +42,9 @@ export class ParentService {
     private invitationRepository: Repository<UserInvitation>,
     private emailService: EmailService,
     private generateTokensProvider: GenerateTokenProvider,
+
+
+    private readonly hashingProvider: HashingProvider,
   ) {}
 
   async searchStudentsByName(
@@ -561,7 +565,13 @@ export class ParentService {
     });
 
     if (!user) {
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const hashedPassword = await this.hashingProvider.hashPassword(
+        password
+      );
+
+
+
+
       const parentData = invitation.userData as any;
 
       user = this.userRepository.create({

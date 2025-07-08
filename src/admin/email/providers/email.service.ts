@@ -219,7 +219,7 @@ export class EmailService {
       <div style="background-color: #e8f5e8; padding: 15px; border-radius: 5px; margin: 20px 0;">
         <p style="margin: 0; color: #2c3e50;">
           <strong>Child Information:</strong><br>
-          Student Name: ${students}<br>
+          Student Name: ${invitationToken}<br>
           School: ${schoolName}
         </p>
       </div>
