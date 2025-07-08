@@ -193,7 +193,7 @@ export class ParentService {
   createParentDto: CreateParentInvitationDto,
   currentUser: User,
   tenantId: string,
-  studentIds: string[], 
+  studentIds: string[],
 ): Promise<InviteParentResponse> {
   // Verify that current user is SCHOOL_ADMIN for this tenant
   const membership = await this.membershipRepository.findOne({
@@ -354,6 +354,7 @@ export class ParentService {
       where: {
         parent: { id: parent.id },
         student: { id: studentId },
+
       },
     });
 
@@ -361,6 +362,7 @@ export class ParentService {
       const parentStudent = this.parentStudentRepository.create({
         parent: { id: parent.id },
         student: { id: studentId },
+        tenantId: tenantId
       });
       parentStudentRelations.push(parentStudent);
     }

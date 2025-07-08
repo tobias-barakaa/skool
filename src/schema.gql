@@ -388,8 +388,7 @@ type Parent {
   phone: String!
   tenantId: ID!
   updatedAt: DateTime!
-  user: User!
-  userId: ID!
+  user: User
 }
 
 """The method used by the parent to link to a student"""
