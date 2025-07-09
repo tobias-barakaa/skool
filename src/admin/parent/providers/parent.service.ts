@@ -569,7 +569,7 @@ export class ParentService {
 
     return this.invitationRepository.find({
       where: {
-        tenant: { id: tenantId },
+        tenantId: tenantId, 
         role: MembershipRole.PARENT,
         status: InvitationStatus.PENDING,
       },
