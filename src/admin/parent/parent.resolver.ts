@@ -144,6 +144,8 @@ export class ParentResolver {
     @Args('tenantId') tenantId: string,
     @ActiveUser() currentUser: ActiveUserData,
   ) {
+    console.log('Using tenantId filter::::::::::::::::::::::::::', tenantId);
+
     return this.parentService.getParentPendingInvitations(
       tenantId,
       currentUser,

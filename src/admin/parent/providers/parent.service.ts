@@ -569,7 +569,7 @@ export class ParentService {
 
     return this.invitationRepository.find({
       where: {
-        tenantId: tenantId, 
+        tenantId: tenantId,
         role: MembershipRole.PARENT,
         status: InvitationStatus.PENDING,
       },
@@ -699,6 +699,8 @@ export class ParentService {
     };
   }
 }
+
+
 
   // async inviteParent(
   //   createParentDto: CreateParentInvitationDto,
