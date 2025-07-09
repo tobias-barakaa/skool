@@ -578,7 +578,10 @@ export class ParentService {
     });
   }
 
-  async revokeParentInvitation(invitationId: string, currentUser: User) {
+  async revokeParentInvitation(
+    invitationId: string,
+    currentUser: ActiveUserData,
+  ) {
     const invitation = await this.invitationRepository.findOne({
       where: { id: invitationId },
       relations: ['tenant'],
@@ -590,7 +593,7 @@ export class ParentService {
 
     const membership = await this.membershipRepository.findOne({
       where: {
-        user: { id: currentUser.id },
+        user: { id: currentUser.sub },
         tenant: { id: invitation.tenant.id },
         role: MembershipRole.SCHOOL_ADMIN,
         status: MembershipStatus.ACTIVE,

@@ -161,7 +161,7 @@ export class ParentResolver {
   @Mutation(() => RevokeInvitationResponse)
   async revokeParentInvitation(
     @Args('invitationId') invitationId: string,
-    @ActiveUser() currentUser: User,
+    @ActiveUser() currentUser: ActiveUserData,
   ): Promise<RevokeInvitationResponse> {
     return await this.parentService.revokeParentInvitation(
       invitationId,
