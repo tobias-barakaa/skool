@@ -145,6 +145,8 @@ export class ParentResolver {
     @ActiveUser() currentUser: ActiveUserData,
   ) {
     console.log('Using tenantId filter::::::::::::::::::::::::::', tenantId);
+    console.log('Using tenantId current users ::::::::::::::::::::::::::', currentUser.tenantId);
+
 
     return this.parentService.getParentPendingInvitations(
       tenantId,
