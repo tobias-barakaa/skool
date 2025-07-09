@@ -13,6 +13,7 @@ import { PendingInvitation } from '../teacher/dtos/pending-invitation.output';
 import { ActiveUserData } from '../auth/interface/active-user.interface';
 import { RevokeInvitationResponse } from '../teacher/dtos/revoke-invitation.output';
 import { Parent } from './entities/parent.entity';
+import { ForbiddenException } from '@nestjs/common';
 
 @Resolver()
 export class ParentResolver {
@@ -133,7 +134,6 @@ export class ParentResolver {
     return await this.parentService.getStudentsForParent(parentId, tenantId);
   }
 
-
   @Query(() => [Parent])
   async getParentsByTenant(@Args('tenantId') tenantId: string) {
     return this.parentService.getParentsByTenant(tenantId);
@@ -141,12 +141,16 @@ export class ParentResolver {
 
   @Query(() => [PendingInvitation])
   async getPendingParentInvitations(
-    @Args('tenantId') tenantId: string,
+    @Args('tenantId', { type: () => String }) tenantId: string,
     @ActiveUser() currentUser: ActiveUserData,
   ) {
-    console.log('Using tenantId filter::::::::::::::::::::::::::', tenantId);
-    console.log('Using tenantId current users ::::::::::::::::::::::::::', currentUser.tenantId);
+    console.log('Using tenantId filter :::::', tenantId);
+    console.log('Current user tenantId :::::', currentUser.tenantId);
 
+    // 🚫 Prevent cross-tenant access
+    if (tenantId.trim() !== currentUser.tenantId.trim()) {
+      throw new ForbiddenException('Access denied: tenantId mismatch');
+    }
 
     return this.parentService.getParentPendingInvitations(
       tenantId,
@@ -164,7 +168,6 @@ export class ParentResolver {
       currentUser,
     );
   }
-
 
   @Query(() => [StudentSearchResponse])
   async searchAvailableStudentsForParent(

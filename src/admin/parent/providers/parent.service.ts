@@ -564,12 +564,12 @@ export class ParentService {
     });
 
     if (!membership) {
-      throw new ForbiddenException('Access denied');
+      throw new ForbiddenException('Access denied: Not a school admin');
     }
 
     return this.invitationRepository.find({
       where: {
-        tenantId: tenantId,
+        tenantId,
         role: MembershipRole.PARENT,
         status: InvitationStatus.PENDING,
       },
