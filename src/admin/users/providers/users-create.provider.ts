@@ -21,9 +21,6 @@ export class UsersCreateProvider {
     @Inject(forwardRef(() => GenerateTokenProvider))
     private readonly generateTokensProvider: GenerateTokenProvider,
 
-    @InjectRepository(UserTenantMembership)
-    private membershipRepository: Repository<UserTenantMembership>,
-    private readonly invitationService: InvitationService,
     private dataSource: DataSource,
   ) {}
 
@@ -81,8 +78,6 @@ export class UsersCreateProvider {
       });
 
       const savedMembership = await queryRunner.manager.save(membership);
-
-      // const savedMembership = await queryRunner.manager.save(membership);
       console.log('✅ Membership created::::', savedMembership);
 
       await queryRunner.commitTransaction();
@@ -100,7 +95,7 @@ export class UsersCreateProvider {
         user: savedUser,
         membership: {
           ...savedMembership,
-          role: savedMembership.role, // ✅ explicitly include role
+          role: savedMembership.role,
         },
         tenant: savedTenant,
         subdomainUrl,

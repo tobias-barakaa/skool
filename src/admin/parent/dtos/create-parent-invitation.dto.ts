@@ -18,7 +18,6 @@ export class AcceptParentInvitationInput {
   password: string;
 }
 
-
 @ObjectType()
 class UserResponse {
   @Field()
@@ -30,7 +29,6 @@ class UserResponse {
   @Field()
   name: string;
 }
-
 
 @ObjectType()
 export class AcceptParentInvitationResponse {

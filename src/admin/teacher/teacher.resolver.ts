@@ -1,4 +1,4 @@
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, GraphQLExecutionContext, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { Auth } from 'src/admin/auth/decorator/auth.decorator';
 import { AuthType } from 'src/admin/auth/enums/auth-type.enum';
@@ -7,13 +7,12 @@ import { AcceptInvitationResponse } from './dtos/accept-teacher-invitation-respo
 import { AcceptInvitationInput } from './dtos/accept-teacher-invitation.dto';
 import { CreateTeacherInvitationDto } from './dtos/create-teacher-invitation.dto';
 import { InviteTeacherResponse } from './dtos/invite-teacher-response.dto';
-import { TeacherDto } from './dtos/teacher-query.dto';
 import { TeacherService } from './providers/teacher.service';
 import { PendingInvitation } from './dtos/pending-invitation.output';
 import { RevokeInvitationResponse } from './dtos/revoke-invitation.output';
-import { MembershipRole } from '../user-tenant-membership/entities/user-tenant-membership.entity';
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { ActiveUserData } from '../auth/interface/active-user.interface';
+import { setAuthCookies } from '../auth/utils/set-auth-cookies';
 
 @Resolver()
 export class TeacherResolver {
@@ -23,8 +22,18 @@ export class TeacherResolver {
   async inviteTeacher(
     @Args('createTeacherDto') createTeacherDto: CreateTeacherInvitationDto,
     @Args('tenantId') tenantId: string,
-    @ActiveUser() currentUser: User,
+    @ActiveUser() currentUser: ActiveUserData,
   ) {
+
+
+
+    console.log(Object.keys(createTeacherDto), 'DTO keys');
+    console.log(tenantId, 'this is teh tenant id')
+    console.log(currentUser.tenantId, 'this is teh tenant id');
+
+    console.log(createTeacherDto, 'received createTeacherDto');
+
+
     return await this.teacherService.inviteTeacher(
       createTeacherDto,
       currentUser,
@@ -35,41 +44,30 @@ export class TeacherResolver {
   @Mutation(() => AcceptInvitationResponse)
   @Auth(AuthType.None)
   async acceptTeacherInvitation(
-    @Args('acceptInvitationInput', { type: () => AcceptInvitationInput })
-    input: AcceptInvitationInput,
-    @Context() context,
+    @Args('acceptInvitationInput') input: AcceptInvitationInput,
+    @Context() context: GraphQLExecutionContext,
   ): Promise<AcceptInvitationResponse> {
-    const { message, user, tokens, teacher } =
+    const { message, user, tokens, teacher, invitation, role } =
       await this.teacherService.acceptInvitation(input.token, input.password);
 
-    context.res.cookie('access_token', tokens.accessToken, {
-      httpOnly: true,
-      sameSite: 'None',
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 1000 * 60 * 15,
-      domain: '.squl.co.ke',
-    });
-
-    context.res.cookie('refresh_token', tokens.refreshToken, {
-      httpOnly: true,
-      sameSite: 'None',
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-      domain: '.squl.co.ke',
-    });
+    setAuthCookies(context, tokens, invitation.tenant.id);
 
     return {
       message,
       user,
       tokens,
       teacher,
+      invitation,
+      role,
     };
   }
 
-  @Query(() => [TeacherDto])
-  async getTeachersByTenant(@Args('tenantId') tenantId: string) {
-    return this.teacherService.getTeachersByTenant(tenantId);
-  }
+  // @Query(() => [TeacherDto])
+  // async getTeachersByTenant(@Args('tenantId') tenantId: string) {
+  //   return this.teacherService.getTeachersByTenant(tenantId);
+  // }
+
+  // 60660adb-416d-4d52-9efa-e3a8fc7c95c3
 
   @Query(() => [PendingInvitation], { name: 'getPendingInvitations' })
   async getPendingInvitations(
@@ -87,7 +85,7 @@ export class TeacherResolver {
       throw new ForbiddenException('Access denied: tenantId mismatch');
     }
 
-    return this.teacherService.getTeacherPendingInvitations(
+    return this.teacherService.getPendingTeacherInvitations(
       tenantId,
       currentUser,
     );
@@ -96,7 +94,7 @@ export class TeacherResolver {
   @Mutation(() => RevokeInvitationResponse)
   async revokeInvitation(
     @Args('invitationId') invitationId: string,
-    @ActiveUser() currentUser: User,
+    @ActiveUser() currentUser: ActiveUserData,
   ): Promise<RevokeInvitationResponse> {
     return await this.teacherService.revokeInvitation(
       invitationId,
@@ -105,31 +103,14 @@ export class TeacherResolver {
   }
 
   @Mutation(() => String)
-  @Auth(AuthType.Bearer)
-  async updateTeacherRole(
-    @Args('userId') userId: string,
-    @Args('newRole', { type: () => MembershipRole }) newRole: MembershipRole,
-    @Args('tenantId') tenantId: string,
-    @ActiveUser() currentUser: User,
-  ) {
-    const result = await this.teacherService.updateTeacherRole(
-      userId,
-      newRole,
-      tenantId,
-      currentUser,
-    );
-    return result.message;
-  }
-
-  @Mutation(() => String)
   async deleteTeacher(
     @Args('id') id: string,
     @Args('tenantId') tenantId: string,
-    @ActiveUser() currentUser: User,
+    @ActiveUser() currentUser: ActiveUserData,
   ) {
     const result = await this.teacherService.deleteTeacher(
       id,
-      currentUser,
+      currentUser.sub,
       tenantId,
     );
     return JSON.stringify(result);

@@ -10,7 +10,7 @@ import { LevelModule } from '../level/level.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Stream]), LevelModule],
-  exports: [StreamsService],
+  exports: [StreamsService, TypeOrmModule],
   providers: [StreamsService, CreateStreamProvider,DeleteStreamProvider,UpdateStreamProvider, StreamsResolver]
 })
 export class StreamsModule {}

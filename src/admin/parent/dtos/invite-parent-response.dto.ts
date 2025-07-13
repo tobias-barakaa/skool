@@ -20,5 +20,5 @@ export class InviteParentResponse {
   students: StudentSummaryDto[];
 
   @Field({ nullable: true })
-  studentAdmissionNumber?: string; 
+  studentAdmissionNumber?: string;
 }

@@ -8,7 +8,10 @@ import { ParentService } from './providers/parent.service';
 import { StudentSearchResponse } from './dtos/student-search-response.dto';
 import { InviteParentResponse } from './dtos/invite-parent-response.dto';
 import { CreateParentInvitationDto } from './dtos/accept-parent-invitation.dto';
-import { AcceptParentInvitationInput, AcceptParentInvitationResponse } from './dtos/create-parent-invitation.dto';
+import {
+  AcceptParentInvitationInput,
+  AcceptParentInvitationResponse,
+} from './dtos/create-parent-invitation.dto';
 import { PendingInvitation } from '../teacher/dtos/pending-invitation.output';
 import { ActiveUserData } from '../auth/interface/active-user.interface';
 import { RevokeInvitationResponse } from '../teacher/dtos/revoke-invitation.output';

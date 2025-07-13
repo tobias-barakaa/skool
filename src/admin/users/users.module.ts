@@ -18,7 +18,7 @@ import { UserTenantMembershipModule } from '../user-tenant-membership/user-tenan
     SchoolsModule,
     ConfigModule.forFeature(profileConfig),
     forwardRef(() => AuthModule),
-    InvitationModule,
+    forwardRef(() => InvitationModule),
     TenantsModule,
     UserTenantMembershipModule,
   ],

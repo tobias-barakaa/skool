@@ -7,10 +7,9 @@ import { Grade } from '../../grade/entities/grade.entity';
 import { Subject } from '../../subject/entities/subject.entity';
 import { GradeLevel } from '../../level/entities/grade-level.entity';
 import { School } from '../../school/entities/school.entity';
-import { Class } from '../../class/entities/class.entity';
 import { Teacher } from '../../teacher/entities/teacher.entity';
 import { Student } from '../../student/entities/student.entity';
-import { Attendance } from '../../attendance/entities/attendance.entity';
+// import { Attendance } from '../../attendance/entities/attendance.entity';
 import { User } from '../../users/entities/user.entity';
 import { Organization } from '../../organizations/entities/organizations-entity';
 import { Parent } from '../../parent/entities/parent.entity';
@@ -31,24 +30,22 @@ const AppDataSource = new DataSource({
         Subject,
         GradeLevel,
         School,
-        Attendance,
         Student,
         Teacher,
-        Class,
         User,
         Organization,
         Parent,
         SchoolLevelSetting
-        
-        
-        
+
+
+
       ],
     synchronize: true,
     ssl: {
       rejectUnauthorized: false,
     },
   });
-  
+
 
 
 async function fixNullSchoolTypes() {

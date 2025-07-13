@@ -1,8 +1,16 @@
 // 1. First, let's create the DTO for adding a teacher
 // src/teacher/dto/create-teacher-invitation.dto.ts
-import { Field, InputType } from '@nestjs/graphql';
-import { IsEmail, IsNotEmpty, IsOptional, IsEnum, IsString } from 'class-validator';
+import { Field, ID, InputType } from '@nestjs/graphql';
+// import { IsEmail, IsNotEmpty, IsOptional, IsEnum, IsString } from 'class-validator';
 
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsArray,
+  IsBoolean,
+} from 'class-validator';
 
 @InputType()
 export class CreateTeacherInvitationDto {
@@ -39,14 +47,33 @@ export class CreateTeacherInvitationDto {
   @IsNotEmpty()
   phoneNumber: string;
 
-
   @Field({ nullable: true })
   @IsOptional()
   address?: string;
 
-  @Field({ nullable: true })
+  @Field(() => [ID], { nullable: true })
   @IsOptional()
-  subject?: string;
+  @IsArray()
+  subjectIds?: string[];
+
+  @Field(() => [ID], { nullable: true })
+  @IsOptional()
+  @IsArray()
+  gradeLevelIds?: string[];
+
+  @Field(() => [ID], { nullable: true })
+  @IsOptional()
+  @IsArray()
+  streamIds?: string[];
+
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  isClassTeacher?: boolean;
+
+  @Field(() => ID, { nullable: true })
+  @IsOptional()
+  classTeacherStreamId?: string;
 
   @Field({ nullable: true })
   @IsOptional()

@@ -17,12 +17,6 @@ export class UsersCreateStudentProvider {
   constructor(
     private readonly hashingProvider: HashingProvider,
 
-    @InjectRepository(Student)
-    private studentRepository: Repository<Student>,
-
-    @InjectRepository(UserTenantMembership)
-    private membershipRepository: Repository<UserTenantMembership>,
-
     private dataSource: DataSource,
   ) {}
 

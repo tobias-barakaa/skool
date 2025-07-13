@@ -9,6 +9,9 @@ import { TeacherResolver } from './teacher.resolver';
 import { UserModule } from '../users/users.module';
 import { InvitationModule } from '../invitation/invitation.module';
 import { UserTenantMembershipModule } from '../user-tenant-membership/user-tenant-membership.module';
+import { SubjectModule } from '../subject/subject.module';
+import { LevelModule } from '../level/level.module';
+import { StreamsModule } from '../streams/streams.module';
 
 @Module({
   imports: [
@@ -19,6 +22,11 @@ import { UserTenantMembershipModule } from '../user-tenant-membership/user-tenan
     AuthModule,
     TenantsModule,
     UserTenantMembershipModule,
+    InvitationModule,
+    SubjectModule,
+    LevelModule,
+    StreamsModule
+
   ],
   providers: [TeacherService, TeacherResolver],
   exports: [TypeOrmModule],

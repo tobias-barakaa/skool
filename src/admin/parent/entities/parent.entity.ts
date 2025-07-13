@@ -40,13 +40,13 @@ export class Parent {
   @Column({ nullable: true })
   occupation?: string;
 
-    @OneToOne(() => User, { nullable: true })
-    @JoinColumn()
-    @Field(() => User, { nullable: true })
-    user?: User;
+  @OneToOne(() => User, { nullable: true })
+  @JoinColumn()
+  @Field(() => User, { nullable: true })
+  user?: User;
 
-    @Column({ nullable: true })
-    userId?: string;
+  @Column({ nullable: true })
+  userId?: string;
 
   @Field(() => ID)
   @Column('uuid')

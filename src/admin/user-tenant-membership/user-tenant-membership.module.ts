@@ -12,11 +12,9 @@ import profileConfig from '../users/config/profile.config';
     TypeOrmModule.forFeature([UserTenantMembership]),
     SchoolsModule,
     ConfigModule.forFeature(profileConfig),
-    OrganizationsModule
+    OrganizationsModule,
   ],
   providers: [],
   exports: [TypeOrmModule],
 })
-
-
 export class UserTenantMembershipModule {}

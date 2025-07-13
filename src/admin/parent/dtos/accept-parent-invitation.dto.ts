@@ -15,7 +15,7 @@ export enum ParentLinkingMethod {
 
 
 registerEnumType(ParentLinkingMethod, {
-  name: 'ParentLinkingMethod', // This name will be used in the GraphQL schema
+  name: 'ParentLinkingMethod',
   description: 'The method used by the parent to link to a student',
 });
 
@@ -40,19 +40,17 @@ export class CreateParentInvitationDto {
   @IsEnum(ParentLinkingMethod)
   linkingMethod: ParentLinkingMethod;
 
-  // For search by name
+  
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
   studentName?: string;
 
-  // For search by admission number
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
   admissionNumber?: string;
 
-  // For manual input - we'll use these to find the student
   @Field({ nullable: true })
   @IsOptional()
   @IsString()

@@ -10,7 +10,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Class } from '../../class/entities/class.entity';
 import { SchoolLevelSetting } from '../../school-level-setting/entities/school-level-setting.entity';
 import { SchoolType } from '../../school-type/entities/school-type';
 import { Teacher } from '../../teacher/entities/teacher.entity';
@@ -52,9 +51,6 @@ export class School {
   // @ManyToOne(() => Subject, (subject: Subject) => subject.subjectId)
   // subject: Subject;
 
-  @Field(() => [Class])
-  @OneToMany(() => Class, (cls) => cls.school)
-  classes: Class[];
 
   @UpdateDateColumn()
   @Field(() => Date)

@@ -5,6 +5,8 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -12,6 +14,9 @@ import {
 } from 'typeorm';
 import { School } from '../../school/entities/school.entity';
 import { User } from '../../users/entities/user.entity';
+import { Subject } from 'src/admin/subject/entities/subject.entity';
+import { GradeLevel } from 'src/admin/level/entities/grade-level.entity';
+import { Stream } from 'src/admin/streams/entities/streams.entity';
 
 @ObjectType()
 @Entity()
@@ -56,9 +61,34 @@ export class Teacher {
   @Column({ nullable: true })
   address?: string;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  subject?: string;
+  // Subjects (many-to-many)
+  @Field(() => [Subject], { nullable: true })
+  @ManyToMany(() => Subject, { cascade: true })
+  @JoinTable()
+  subjects?: Subject[];
+
+  // Grade Levels (many-to-many)
+  @Field(() => [GradeLevel], { nullable: true })
+  @ManyToMany(() => GradeLevel, { cascade: true })
+  @JoinTable()
+  gradeLevels?: GradeLevel[];
+
+  // Streams (many-to-many)
+  @Field(() => [Stream], { nullable: true })
+  @ManyToMany(() => Stream, { cascade: true })
+  @JoinTable()
+  streams?: Stream[];
+
+  // Class Teacher Boolean
+  @Field(() => Boolean)
+  @Column({ default: false })
+  isClassTeacher: boolean;
+
+  // Class Teacher Stream (only if isClassTeacher === true)
+  @Field(() => Stream, { nullable: true })
+  @ManyToOne(() => Stream, { nullable: true })
+  @JoinColumn()
+  classTeacherOf?: Stream;
 
   @Field({ nullable: true })
   @Column({ nullable: true })
@@ -79,11 +109,6 @@ export class Teacher {
   @Field({ nullable: true })
   @Column({ default: false })
   hasCompletedProfile: boolean;
-
-  // @OneToOne(() => User, (user) => user.teacherProfile, { nullable: true })
-  // @JoinColumn()
-  // @Field(() => User, { nullable: true })
-  // user?: User;
 
   @OneToOne(() => User, { nullable: true })
   @JoinColumn()

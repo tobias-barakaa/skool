@@ -8,7 +8,9 @@ input AcceptInvitationInput {
 }
 
 type AcceptInvitationResponse {
+  invitation: UserInvitation!
   message: String!
+  role: String!
   teacher: TeacherOutput
   tokens: TokensOutput!
   user: User!
@@ -47,26 +49,6 @@ enum AssessmentType {
   TEST
 }
 
-type Attendance {
-  attendanceId: ID!
-  class: Class
-  classId: String
-  date: DateTime!
-  remarks: String
-  status: AttendanceStatus!
-  studentId: String!
-  subjectId: String
-  timeIn: DateTime
-  timeOut: DateTime
-}
-
-enum AttendanceStatus {
-  ABSENT
-  EXCUSED
-  LATE
-  PRESENT
-}
-
 type AuthResponse {
   allMemberships: [UserTenantMembership!]
   membership: UserTenantMembership
@@ -80,52 +62,6 @@ input ChangePasswordInput {
   confirmPassword: String!
   currentPassword: String!
   newPassword: String!
-}
-
-type Class {
-  academicYear: String!
-  assignments: [String!]
-  assistantTeacherId: String
-  attendance: [Attendance!]!
-  branchId: String!
-  breakTimes: [String!]
-  building: String
-  classCode: String!
-  classEvents: [String!]
-  classId: ID!
-  classMonitorId: String
-  className: String!
-  classTeacherId: String!
-  classType: ClassType!
-  classroom: String
-  createdAt: DateTime!
-  createdBy: String!
-  currentStudents: Float!
-  exams: [String!]
-  floor: Float
-  grade: String!
-  grades: [Grade!]!
-  isActive: Boolean!
-  isPromoted: Boolean!
-  maxStudents: Float!
-  school: [School!]!
-  schoolDayEnd: String!
-  schoolDayStart: String!
-  schoolId: String!
-  section: String
-  specialNeeds: Boolean!
-  stream: String!
-  subjects: [String!]
-  teachers: [String!]
-  term: String!
-  timetable: [String!]
-  updatedAt: DateTime!
-}
-
-enum ClassType {
-  BOARDING
-  REGULAR
-  SPECIAL
 }
 
 input CreateParentInvitationDto {
@@ -190,6 +126,7 @@ type CreateStudentResponse {
 
 input CreateTeacherInvitationDto {
   address: String
+  classTeacherStreamId: ID
   dateOfBirth: DateTime
   department: String!
   email: String!
@@ -197,11 +134,14 @@ input CreateTeacherInvitationDto {
   firstName: String!
   fullName: String!
   gender: String!
+  gradeLevelIds: [ID!]
+  isClassTeacher: Boolean
   lastName: String!
   phoneNumber: String!
   qualifications: String
   role: String!
-  subject: String
+  streamIds: [ID!]
+  subjectIds: [ID!]
 }
 
 type CreateUserResponse {
@@ -252,7 +192,6 @@ type Grade {
   academicYear: String!
   assessmentName: String!
   assessmentType: AssessmentType!
-  class: Class!
   classId: String!
   dateRecorded: DateTime!
   gradeId: ID!
@@ -388,7 +327,6 @@ type Mutation {
   signIn(signInInput: SignInInput!): AuthResponse!
   updateStaff(tenantId: String!, updateStaffInput: UpdateStaffInput!): StaffDto!
   updateStream(input: UpdateStreamInput!): StreamType!
-  updateTeacherRole(newRole: MembershipRole!, tenantId: String!, userId: String!): String!
 }
 
 type Parent {
@@ -455,7 +393,6 @@ type Query {
   getStaffByTenant(tenantId: String!): [StaffDto!]!
   getStaffCount(tenantId: String!): Float!
   getStudentsForParent(parentId: String!, tenantId: String!): [StudentSearchResponse!]!
-  getTeachersByTenant(tenantId: String!): [TeacherDto!]!
   gradeLevelsWithStreams: [GradeLevelWithStreamsOutput!]!
   searchAvailableStudentsForParent(parentId: String!, searchTerm: String, tenantId: String!): [StudentSearchResponse!]!
   searchStaff(searchTerm: String!, tenantId: String!): [StaffDto!]!
@@ -481,7 +418,6 @@ type RevokeInvitationResponse {
 }
 
 type School {
-  classes: [Class!]!
   createdAt: DateTime!
   isActive: Boolean!
   schoolId: ID!
@@ -731,24 +667,6 @@ enum SubjectType {
   VOCATIONAL
 }
 
-type TeacherDto {
-  address: String
-  dateOfBirth: DateTime
-  department: String!
-  email: String!
-  employeeId: String
-  firstName: String!
-  fullName: String!
-  gender: String!
-  hasCompletedProfile: Boolean!
-  id: ID!
-  isActive: Boolean!
-  lastName: String!
-  phoneNumber: String!
-  subject: String
-  userId: String
-}
-
 type TeacherOutput {
   id: String!
   name: String!
@@ -845,6 +763,19 @@ type UserInfo {
   email: String!
   id: ID!
   name: String!
+}
+
+type UserInvitation {
+  createdAt: DateTime!
+  email: String!
+  expiresAt: DateTime!
+  id: ID!
+  invitedBy: User
+  role: String!
+  status: InvitationStatus!
+  tenant: Tenant!
+  token: String!
+  updatedAt: DateTime!
 }
 
 type UserResponse {

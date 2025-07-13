@@ -40,10 +40,6 @@ export class UsersService {
       });
     }
 
-    /**
-     * handle user does not exits
-     */
-
     if (!user) {
       throw new BadRequestException('User does not exist');
     }

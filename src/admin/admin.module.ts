@@ -6,9 +6,7 @@ import { SchoolTypeModule } from './school-type/school-type.module';
 import { ParentModule } from './parent/parent.module';
 import { StudentModule } from './student/student.module';
 import { GradeModule } from './grade/grade.module';
-import { AttendanceModule } from './attendance/attendance.module';
 import { SubjectModule } from './subject/subject.module';
-import { ClassModule } from './class/class.module';
 import { AuthModule } from './auth/auth.module';
 import { OrganizationsModule } from './organizations/organizations.module';
 import { TenantsModule } from './tenants/tenants.module';
@@ -34,9 +32,7 @@ import { EmailModule } from './email/email.module';
         ParentModule,
         StudentModule,
         GradeModule,
-        AttendanceModule,
         SubjectModule,
-        ClassModule,
         AuthModule,
         OrganizationsModule,
         TenantsModule,
