@@ -21,6 +21,8 @@ import { DataResponseInterceptor } from './admin/common/interceptor/data-respons
 import { AccessTokenGuard } from './admin/auth/guards/access-token.guard';
 import { StaffModule } from './admin/staff/staff.module';
 import { TeacherModule } from './teacher/teacher.module';
+import { StaffModule } from './staff/staff.module';
+import { ParentModule } from './parent/parent.module';
 
 
 
@@ -101,6 +103,9 @@ const ENV = process.env.NODE_ENV;
 
 
     TeacherModule,
+
+
+    ParentModule,
   ],
   controllers: [AppController],
   providers: [
