@@ -1,5 +1,5 @@
 // parent.resolver.ts
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, GraphQLExecutionContext, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { Auth } from 'src/admin/auth/decorator/auth.decorator';
 import { AuthType } from 'src/admin/auth/enums/auth-type.enum';
@@ -10,13 +10,17 @@ import { InviteParentResponse } from './dtos/invite-parent-response.dto';
 import { CreateParentInvitationDto } from './dtos/accept-parent-invitation.dto';
 import {
   AcceptParentInvitationInput,
-  AcceptParentInvitationResponse,
+
 } from './dtos/create-parent-invitation.dto';
 import { PendingInvitation } from '../teacher/dtos/pending-invitation.output';
 import { ActiveUserData } from '../auth/interface/active-user.interface';
 import { RevokeInvitationResponse } from '../teacher/dtos/revoke-invitation.output';
 import { Parent } from './entities/parent.entity';
-import { ForbiddenException } from '@nestjs/common';
+import { ForbiddenException, InternalServerErrorException } from '@nestjs/common';
+import { setAuthCookies } from '../auth/utils/set-auth-cookies';
+import { AcceptInvitationInput } from '../teacher/dtos/accept-teacher-invitation.dto';
+import { ParentOutput } from './dtos/parent-output';
+import { AcceptParentInvitationResponse } from './dtos/accept-parent-invitation.response.dto';
 
 @Resolver()
 export class ParentResolver {
@@ -48,35 +52,28 @@ export class ParentResolver {
   @Mutation(() => AcceptParentInvitationResponse)
   @Auth(AuthType.None)
   async acceptParentInvitation(
-    @Args('acceptInvitationInput') input: AcceptParentInvitationInput,
-    @Context() context,
+    @Args('acceptInvitationInput') input: AcceptInvitationInput,
+    @Context() context: GraphQLExecutionContext,
   ): Promise<AcceptParentInvitationResponse> {
-    const { message, user, tokens, parent } =
+    const { message, user, tokens, parent, invitation, role } =
       await this.parentService.acceptInvitation(input.token, input.password);
 
-    // Set cookies same as teacher invitation
-    context.res.cookie('access_token', tokens.accessToken, {
-      httpOnly: true,
-      sameSite: 'None',
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 1000 * 60 * 15,
-      domain: '.squl.co.ke',
-    });
+    if (!parent) {
+      // This should never happen because your service now throws earlier
+      throw new InternalServerErrorException('Parent profile is missing');
+    }
 
-    context.res.cookie('refresh_token', tokens.refreshToken, {
-      httpOnly: true,
-      sameSite: 'None',
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-      domain: '.squl.co.ke',
-    });
+    if (invitation?.tenant) {
+      setAuthCookies(context, tokens, invitation.tenant.id);
+    }
 
     return {
       message,
       user,
       tokens,
       parent,
-      role: user.role,
+      invitation,
+      role,
     };
   }
 
@@ -95,12 +92,11 @@ export class ParentResolver {
     );
   }
 
-  // Updated mutation to accept multiple student IDs
   @Mutation(() => InviteParentResponse)
   async inviteParent(
     @Args('createParentDto') createParentDto: CreateParentInvitationDto,
     @Args('tenantId') tenantId: string,
-    @Args('studentIds', { type: () => [String] }) studentIds: string[], // Changed to array
+    @Args('studentIds', { type: () => [String] }) studentIds: string[], 
     @ActiveUser() currentUser: User,
   ): Promise<InviteParentResponse> {
     return await this.parentService.inviteParent(

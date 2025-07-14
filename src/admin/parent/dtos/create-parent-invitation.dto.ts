@@ -30,20 +30,3 @@ class UserResponse {
   name: string;
 }
 
-@ObjectType()
-export class AcceptParentInvitationResponse {
-  @Field()
-  message: string;
-
-  @Field(() => UserResponse)
-  user: UserResponse;
-
-  @Field()
-  tokens: TokensOutput;
-
-  @Field(() => Parent, { nullable: true })
-  parent: Parent | null;
-
-  @Field(() => String, { nullable: true })
-  role?: string;
-}

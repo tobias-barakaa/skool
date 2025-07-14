@@ -25,12 +25,14 @@ import {
 import { EmailSendFailedException } from 'src/admin/common/exceptions/business.exception';
 import { Staff, StaffStatus } from '../entities/staff.entity';
 import {
+  AcceptStaffInvitationResponse,
   CreateStaffInvitationDto,
   StaffDto,
   UpdateStaffInput,
 } from '../dtos/create-staff-invitation.dto';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { UsersService } from 'src/admin/users/providers/users.service';
+import { InvitationService } from 'src/admin/invitation/providers/invitation.service';
 
 @Injectable()
 export class StaffService {
@@ -47,242 +49,113 @@ export class StaffService {
     private readonly tenantRepository: Repository<Tenant>,
     private readonly emailService: EmailService,
     private readonly generateTokensProvider: GenerateTokenProvider,
-
-    private readonly userService: UsersService,
+    private readonly invitationService: InvitationService,
   ) {}
+
+  // async inviteStaff(
+  //   createStaffDto: CreateStaffInvitationDto,
+  //   currentUser: ActiveUserData,
+  //   tenantId: string,
+  // ) {
+  //   return this.invitationService.inviteUser(
+  //     currentUser,
+  //     tenantId,
+  //     createStaffDto,
+  //     InvitationType.STAFF,
+  //     this.emailService.sendStaffInvitation.bind(this.emailService),
+  //     async () => {
+  //       // Check if staff record already exists for this email
+  //       const existing = await this.staffRepository.findOne({
+  //         where: { email: createStaffDto.email },
+  //       });
+
+  //       if (existing) return;
+
+  //       // Create staff record
+  //       const staff = this.staffRepository.create({
+  //         ...createStaffDto,
+  //         role: createStaffDto.role as any,
+  //         isActive: false,
+  //         hasCompletedProfile: false,
+  //         tenant: { id: tenantId },
+  //       });
+
+  //       await this.staffRepository.save(staff);
+  //     },
+  //   );
+  // }
 
   async inviteStaff(
     createStaffDto: CreateStaffInvitationDto,
     currentUser: ActiveUserData,
     tenantId: string,
   ) {
-    // Verify that current user is SCHOOL_ADMIN for this tenant
-    const membership = await this.membershipRepository.findOne({
-      where: {
-        user: { id: currentUser.sub },
-        tenant: { id: tenantId },
-        role: MembershipRole.SCHOOL_ADMIN,
-        status: MembershipStatus.ACTIVE,
-      },
-    });
+    return this.invitationService.inviteUser(
+      currentUser,
+      tenantId,
+      createStaffDto,
+      InvitationType.STAFF,
+      this.emailService.sendStaffInvitation.bind(this.emailService),
+      async () => {
+        // Check if staff record already exists for this email
+        const existing = await this.staffRepository.findOne({
+          where: { email: createStaffDto.email },
+        });
 
-    if (!membership) {
-      throw new ForbiddenException(
-        'Only SCHOOL_ADMIN can invite staff members',
-      );
-    }
+        if (existing) return;
 
-    // Check if user with this email already exists in this tenant
-    const existingUser = await this.userRepository.findOne({
-      where: { email: createStaffDto.email },
-    });
+        console.log(existing, 'existing email......................./////////////////////:')
 
-    if (existingUser) {
-      const existingMembership = await this.membershipRepository.findOne({
-        where: {
-          user: { id: existingUser.id },
+        // 👇 Save roleType to staff table
+        const staff = this.staffRepository.create({
+          ...createStaffDto,
+          role: MembershipRole.STAFF, // Save for display
+          isActive: false,
+          hasCompletedProfile: false,
           tenant: { id: tenantId },
-        },
-      });
+        });
 
-      if (existingMembership) {
-        throw new BadRequestException('User already exists in this tenant');
-      }
-    }
-
-    const tenMinutesAgo = new Date();
-    tenMinutesAgo.setMinutes(tenMinutesAgo.getMinutes() - 10);
-
-    const recentInvitation = await this.invitationRepository.findOne({
-      where: {
-        email: createStaffDto.email,
-        tenant: { id: tenantId },
-        status: InvitationStatus.PENDING,
-        createdAt: MoreThan(tenMinutesAgo),
-      },
-      order: {
-        createdAt: 'DESC',
-      },
-    });
-
-    if (recentInvitation) {
-      throw new BadRequestException(
-        'An invitation was already sent to this email recently. Please wait 10 minutes before sending another.',
-      );
-    }
-
-    // Expire old pending invitations for this email and tenant
-    await this.invitationRepository.update(
-      {
-        email: createStaffDto.email,
-        tenant: { id: tenantId },
-        status: InvitationStatus.PENDING,
-        expiresAt: LessThan(new Date()),
-      },
-      {
-        status: InvitationStatus.EXPIRED,
+        await this.staffRepository.save(staff);
       },
     );
-
-    // Get tenant info
-    const tenant = await this.tenantRepository.findOne({
-      where: { id: tenantId },
-    });
-
-    // Generate invitation token
-    const token = crypto.randomBytes(32).toString('hex');
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + 7);
-
-    // Create invitation record
-    const invitation = this.invitationRepository.create({
-      email: createStaffDto.email,
-      role: createStaffDto.role,
-      userData: createStaffDto,
-      token,
-      type: InvitationType.STAFF,
-      status: InvitationStatus.PENDING,
-      expiresAt,
-      invitedBy: currentUser,
-      tenant: { id: tenantId },
-    });
-
-    await this.invitationRepository.save(invitation);
-
-    // Check if staff record already exists for this email
-    let staff = await this.staffRepository.findOne({
-      where: { email: createStaffDto.email },
-    });
-
-    if (!staff) {
-      staff = this.staffRepository.create({
-        ...createStaffDto,
-        role: createStaffDto.role as any,
-        isActive: false,
-        hasCompletedProfile: false,
-        tenant: { id: tenantId },
-      });
-
-      await this.staffRepository.save(staff);
-    }
-
-    // Send invitation email
-
-    const user = await this.userService.findOneById(currentUser.sub);
-
-    try {
-      await this.emailService.sendStaffInvitation(
-        createStaffDto.email,
-        createStaffDto.fullName,
-        tenant?.name || 'Unknown Tenant',
-        token,
-        user.name,
-        tenantId,
-        createStaffDto.role,
-      );
-    } catch (error) {
-      console.error('[EmailService Error]', error);
-      throw new EmailSendFailedException(createStaffDto.email);
-    }
-
-    return {
-      email: invitation.email,
-      fullName: staff.fullName,
-      status: invitation.status,
-      createdAt: invitation.createdAt,
-    };
   }
 
-  async acceptInvitation(token: string, password: string) {
-    // Find invitation
-    const invitation = await this.invitationRepository.findOne({
-      where: {
-        token,
-        status: InvitationStatus.PENDING,
+  async acceptInvitation(
+    token: string,
+    password: string,
+  ): Promise<AcceptStaffInvitationResponse> {
+    const result = await this.invitationService.acceptInvitation(
+      token,
+      password,
+      async (user: User, invitation: UserInvitation) => {
+        await this.staffRepository.update(
+          { email: invitation.email },
+          {
+            isActive: true,
+            hasCompletedProfile: true,
+            userId: user.id,
+          },
+        );
       },
-      relations: ['tenant', 'invitedBy'],
-    });
-
-    if (!invitation) {
-      throw new NotFoundException('Invalid or expired invitation');
-    }
-
-    if (invitation.expiresAt < new Date()) {
-      await this.invitationRepository.update(invitation.id, {
-        status: InvitationStatus.EXPIRED,
-      });
-      throw new BadRequestException('Invitation has expired');
-    }
-
-    let user = await this.userRepository.findOne({
-      where: { email: invitation.email },
-    });
-
-    if (!user) {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const staffData = invitation.userData as CreateStaffInvitationDto;
-
-      user = this.userRepository.create({
-        email: invitation.email,
-        password: hashedPassword,
-        name: staffData.fullName,
-        schoolUrl: invitation.tenant.subdomain,
-      });
-
-      await this.userRepository.save(user);
-    }
-
-    // Create tenant membership
-    const membership = this.membershipRepository.create({
-      user,
-      tenant: invitation.tenant,
-      role: MembershipRole.STAFF,
-      status: MembershipStatus.ACTIVE,
-    });
-
-    await this.membershipRepository.save(membership);
-
-    // Find and link the staff profile
-    const staff = await this.staffRepository.findOne({
-      where: { email: invitation.email },
-    });
-
-    if (staff) {
-      staff.userId = user.id;
-      staff.isActive = true;
-      await this.staffRepository.save(staff);
-    }
-
-    // Update invitation status
-    await this.invitationRepository.update(invitation.id, {
-      status: InvitationStatus.ACCEPTED,
-    });
-
-    const tokens = await this.generateTokensProvider.generateTokens(
-      user,
-      membership,
-      invitation.tenant,
     );
-    const { accessToken, refreshToken } = tokens;
+
+    const staff = await this.staffRepository.findOne({
+      where: { email: result.user.email },
+    });
 
     return {
-      message: 'Invitation accepted successfully',
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-      },
-      tokens: {
-        accessToken,
-        refreshToken,
-      },
+      message: result.message,
+      user: result.user,
+      tokens: result.tokens,
       staff: staff
         ? {
             id: staff.id,
             name: staff.fullName,
-            role: staff.role,
+            role: staff.role, // Ensure the role is included
           }
-        : null,
+        : undefined,
+      invitation: result.invitation,
+      role: result.role,
     };
   }
 

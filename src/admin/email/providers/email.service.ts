@@ -251,10 +251,12 @@ export class EmailService {
     const subdomain = await this.getTenantSubdomain(data.tenantId);
     const invitationUrl = `https://${subdomain}.squl.co.ke/signup?token=${data.invitationToken}`;
 
-    const formattedRole = data.staffRole
-      .replace(/_/g, ' ')
-      .toLowerCase()
-      .replace(/\b\w/g, (l) => l.toUpperCase());
+   const formattedRole = data.staffRole
+     ? data.staffRole
+         .replace(/_/g, ' ')
+         .toLowerCase()
+         .replace(/\b\w/g, (l) => l.toUpperCase())
+     : 'Staff Member';
 
     const steps = [
       'Click the invitation link below to accept',

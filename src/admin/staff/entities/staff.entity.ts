@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql';
 import { Tenant } from 'src/admin/tenants/entities/tenant.entity';
+import { MembershipRole } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
 
 // export enum StaffRole {
 //   ADMINISTRATOR = 'ADMINISTRATOR',
@@ -73,9 +74,9 @@ export class Staff {
   @Column()
   gender: string;
 
-  @Field()
-  @Column()
-  role: string;
+  @Field(() => MembershipRole)
+  @Column({ type: 'enum', enum: MembershipRole, nullable: true })
+  role: MembershipRole;
 
   @Field(() => StaffStatus)
   @Column({
@@ -144,6 +145,10 @@ export class Staff {
   @Field({ nullable: true })
   @Column({ type: 'text', nullable: true })
   workExperience?: string;
+
+  @Field()
+  @Column({ type: 'text', nullable: true })
+  roleType: string;
 
   @Field()
   @Column({ default: false })

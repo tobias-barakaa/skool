@@ -82,7 +82,7 @@ export class GenericInviterProvider {
       role: dto.role,
       userData: dto,
       token,
-      type: InvitationType.TEACHER,
+      type,
       status: InvitationStatus.PENDING,
       expiresAt,
       invitedBy: inviter,

@@ -1,4 +1,4 @@
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, GraphQLExecutionContext, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { Auth } from 'src/admin/auth/decorator/auth.decorator';
 import { AuthType } from 'src/admin/auth/enums/auth-type.enum';
@@ -7,6 +7,7 @@ import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { AcceptStaffInvitationInput, AcceptStaffInvitationResponse, CreateStaffInvitationDto, InviteStaffResponse, StaffDto, UpdateStaffInput } from './dtos/create-staff-invitation.dto';
 import { User } from 'src/admin/users/entities/user.entity';
 import { AcceptInvitationInput } from 'src/admin/teacher/dtos/accept-teacher-invitation.dto';
+import { setAuthCookies } from '../auth/utils/set-auth-cookies';
 
 @Resolver()
 export class StaffResolver {
@@ -18,6 +19,11 @@ export class StaffResolver {
     @Args('tenantId') tenantId: string,
     @ActiveUser() currentUser: ActiveUserData,
   ) {
+    console.log(Object.keys(createStaffDto), 'DTO keys');
+    console.log(tenantId, 'this is the tenant id');
+    console.log(currentUser.tenantId, 'this is the user tenant id');
+    console.log(createStaffDto, 'received createStaffDto');
+
     return await this.staffService.inviteStaff(
       createStaffDto,
       currentUser,
@@ -30,32 +36,20 @@ export class StaffResolver {
   async acceptStaffInvitation(
     @Args('acceptInvitationInput', { type: () => AcceptStaffInvitationInput })
     input: AcceptInvitationInput,
-    @Context() context,
+    @Context() context: GraphQLExecutionContext,
   ): Promise<AcceptStaffInvitationResponse> {
-    const { message, user, tokens, staff } =
+    const { message, user, tokens, staff, invitation, role } =
       await this.staffService.acceptInvitation(input.token, input.password);
 
-    context.res.cookie('access_token', tokens.accessToken, {
-      httpOnly: true,
-      sameSite: 'None',
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 1000 * 60 * 15, // 15 minutes
-      domain: '.squl.co.ke',
-    });
-
-    context.res.cookie('refresh_token', tokens.refreshToken, {
-      httpOnly: true,
-      sameSite: 'None',
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-      domain: '.squl.co.ke',
-    });
+    setAuthCookies(context, tokens, invitation.tenant.id);
 
     return {
       message,
       user,
       tokens,
       staff: staff || undefined,
+      invitation,
+      role,
     };
   }
 
@@ -74,7 +68,7 @@ export class StaffResolver {
     @ActiveUser() currentUser: User,
   ) {
     console.log(`Fetching staff with ID: ${id} for tenant: ${tenantId}`);
-    
+
     return this.staffService.getStaffById(id, tenantId);
   }
 

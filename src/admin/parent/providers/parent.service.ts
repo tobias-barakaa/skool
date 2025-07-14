@@ -4,6 +4,7 @@ import {
   ForbiddenException,
   BadRequestException,
   NotFoundException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, MoreThan, LessThan } from 'typeorm';
@@ -31,6 +32,9 @@ import { InviteParentResponse } from '../dtos/invite-parent-response.dto';
 import { CreateParentInvitationDto } from '../dtos/accept-parent-invitation.dto';
 import { HashingProvider } from 'src/admin/auth/providers/hashing.provider';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
+import { AcceptParentInvitationResponse } from '../dtos/accept-parent-invitation.response.dto';
+import { InvitationService } from 'src/admin/invitation/providers/invitation.service';
+import { ParentOutput } from '../dtos/parent-output';
 
 @Injectable()
 export class ParentService {
@@ -50,9 +54,7 @@ export class ParentService {
     @InjectRepository(UserInvitation)
     private invitationRepository: Repository<UserInvitation>,
     private emailService: EmailService,
-    private generateTokensProvider: GenerateTokenProvider,
-
-    private readonly hashingProvider: HashingProvider,
+    private readonly invitationService: InvitationService,
   ) {}
 
   async searchStudentsByName(
@@ -619,96 +621,145 @@ export class ParentService {
     return { message: 'Parent invitation revoked successfully' };
   }
 
-  async acceptInvitation(token: string, password: string) {
-    // Find invitation
-    const invitation = await this.invitationRepository.findOne({
-      where: {
-        token,
-        status: InvitationStatus.PENDING,
+
+
+    async acceptInvitation(
+    token: string,
+    password: string,
+  ): Promise<AcceptParentInvitationResponse> {
+    // Use generic provider
+    const result = await this.invitationService.acceptInvitation(
+      token,
+      password,
+      async (user: User, invitation: UserInvitation) => {
+        const parent = await this.parentRepository.findOne({
+          where: { email: invitation.email },
+        });
+
+        if (!parent) {
+          throw new InternalServerErrorException(
+            'Parent profile not found during invitation processing',
+          );
+        }
+
+        parent.userId = user.id;
+        parent.isActive = true;
+
+        await this.parentRepository.save(parent);
       },
-      relations: ['tenant', 'invitedBy'],
-    });
-
-    if (!invitation) {
-      throw new NotFoundException('Invalid or expired invitation');
-    }
-
-    if (invitation.expiresAt < new Date()) {
-      await this.invitationRepository.update(invitation.id, {
-        status: InvitationStatus.EXPIRED,
-      });
-      throw new BadRequestException('Invitation has expired');
-    }
-
-    let user = await this.userRepository.findOne({
-      where: { email: invitation.email },
-    });
-
-    if (!user) {
-      const hashedPassword = await this.hashingProvider.hashPassword(password);
-
-      const parentData = invitation.userData as any;
-
-      user = this.userRepository.create({
-        email: invitation.email,
-        password: hashedPassword,
-        name: parentData.name,
-        schoolUrl: invitation.tenant.subdomain,
-      });
-
-      await this.userRepository.save(user);
-    }
-
-    // Create tenant membership
-    const membership = this.membershipRepository.create({
-      user,
-      tenant: invitation.tenant,
-      role: MembershipRole.PARENT,
-      status: MembershipStatus.ACTIVE,
-    });
-
-    await this.membershipRepository.save(membership);
-
-    // Find and link the parent profile
-    const parent = await this.parentRepository.findOne({
-      where: { email: invitation.email },
-    });
-
-    if (parent) {
-      parent.userId = user.id;
-      parent.isActive = true;
-      await this.parentRepository.save(parent);
-    }
-
-    // Update invitation status
-    await this.invitationRepository.update(invitation.id, {
-      status: InvitationStatus.ACCEPTED,
-    });
-
-    const tokens = await this.generateTokensProvider.generateTokens(
-      user,
-      membership,
-      invitation.tenant,
     );
-    const { accessToken, refreshToken } = tokens;
+
+    // After callback, double-check parent still exists
+    const parent = await this.parentRepository.findOne({
+      where: { email: result.user.email },
+    });
+
+    if (!parent) {
+      throw new InternalServerErrorException(
+        'Parent profile missing after invitation accepted',
+      );
+    }
 
     return {
-      message: 'Invitation accepted successfully',
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        role: membership.role,
-      },
-      tokens: {
-        accessToken,
-        refreshToken,
-      },
-      parent: parent
-        ? await this.parentRepository.findOne({ where: { id: parent.id } })
-        : null,
-    };
+      message: result.message,
+      user: result.user,
+      tokens: result.tokens,
+      parent,
+      invitation: result.invitation,
+      role: result.role,
+    } 
   }
+
+  // async acceptInvitation(token: string, password: string) {
+  //   // Find invitation
+  //   const invitation = await this.invitationRepository.findOne({
+  //     where: {
+  //       token,
+  //       status: InvitationStatus.PENDING,
+  //     },
+  //     relations: ['tenant', 'invitedBy'],
+  //   });
+
+  //   if (!invitation) {
+  //     throw new NotFoundException('Invalid or expired invitation');
+  //   }
+
+  //   if (invitation.expiresAt < new Date()) {
+  //     await this.invitationRepository.update(invitation.id, {
+  //       status: InvitationStatus.EXPIRED,
+  //     });
+  //     throw new BadRequestException('Invitation has expired');
+  //   }
+
+  //   let user = await this.userRepository.findOne({
+  //     where: { email: invitation.email },
+  //   });
+
+  //   if (!user) {
+  //     const hashedPassword = await this.hashingProvider.hashPassword(password);
+
+  //     const parentData = invitation.userData as any;
+
+  //     user = this.userRepository.create({
+  //       email: invitation.email,
+  //       password: hashedPassword,
+  //       name: parentData.name,
+  //       schoolUrl: invitation.tenant.subdomain,
+  //     });
+
+  //     await this.userRepository.save(user);
+  //   }
+
+  //   // Create tenant membership
+  //   const membership = this.membershipRepository.create({
+  //     user,
+  //     tenant: invitation.tenant,
+  //     role: MembershipRole.PARENT,
+  //     status: MembershipStatus.ACTIVE,
+  //   });
+
+  //   await this.membershipRepository.save(membership);
+
+  //   // Find and link the parent profile
+  //   const parent = await this.parentRepository.findOne({
+  //     where: { email: invitation.email },
+  //   });
+
+  //   if (parent) {
+  //     parent.userId = user.id;
+  //     parent.isActive = true;
+  //     await this.parentRepository.save(parent);
+  //   }
+
+  //   // Update invitation status
+  //   await this.invitationRepository.update(invitation.id, {
+  //     status: InvitationStatus.ACCEPTED,
+  //   });
+
+  //   const tokens = await this.generateTokensProvider.generateTokens(
+  //     user,
+  //     membership,
+  //     invitation.tenant,
+  //   );
+  //   const { accessToken, refreshToken } = tokens;
+
+  //   return {
+  //     message: 'Invitation accepted successfully',
+  //     user: {
+  //       id: user.id,
+  //       email: user.email,
+  //       name: user.name,
+  //       role: membership.role,
+  //     },
+  //     tokens: {
+  //       accessToken,
+  //       refreshToken,
+  //     },
+  //     parent: parent
+  //       ? await this.parentRepository.findOne({ where: { id: parent.id } })
+  //       : null,
+  //   };
+  // }
 }
 
 // async inviteParent(

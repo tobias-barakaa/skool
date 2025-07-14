@@ -16,17 +16,13 @@ type AcceptInvitationResponse {
   user: User!
 }
 
-input AcceptParentInvitationInput {
-  password: String!
-  token: String!
-}
-
 type AcceptParentInvitationResponse {
+  invitation: UserInvitation!
   message: String!
-  parent: Parent
-  role: String
+  parent: Parent!
+  role: MembershipRole!
   tokens: TokensOutput!
-  user: UserResponse!
+  user: User!
 }
 
 input AcceptStaffInvitationInput {
@@ -35,7 +31,9 @@ input AcceptStaffInvitationInput {
 }
 
 type AcceptStaffInvitationResponse {
+  invitation: UserInvitation!
   message: String!
+  role: String!
   staff: StaffInfo
   tokens: TokensOutput!
   user: UserInfo!
@@ -96,6 +94,7 @@ input CreateStaffInvitationDto {
   phoneNumber: String
   qualifications: String
   role: String!
+  roleType: String!
   salary: Float
   supervisor: String
   workExperience: String
@@ -302,7 +301,7 @@ enum MembershipStatus {
 }
 
 type Mutation {
-  acceptParentInvitation(acceptInvitationInput: AcceptParentInvitationInput!): AcceptParentInvitationResponse!
+  acceptParentInvitation(acceptInvitationInput: AcceptInvitationInput!): AcceptParentInvitationResponse!
   acceptStaffInvitation(acceptInvitationInput: AcceptStaffInvitationInput!): AcceptStaffInvitationResponse!
   acceptTeacherInvitation(acceptInvitationInput: AcceptInvitationInput!): AcceptInvitationResponse!
   addStudentsToParent(parentId: String!, studentIds: [String!]!, tenantId: String!): String!
@@ -776,12 +775,6 @@ type UserInvitation {
   tenant: Tenant!
   token: String!
   updatedAt: DateTime!
-}
-
-type UserResponse {
-  email: String!
-  id: String!
-  name: String!
 }
 
 type UserTenantMembership {

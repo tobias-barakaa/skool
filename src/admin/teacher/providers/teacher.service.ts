@@ -121,35 +121,7 @@ export class TeacherService {
       },
     );
   }
-  // async inviteTeacher(
-  //   createTeacherDto: CreateTeacherInvitationDto,
-  //   currentUser: ActiveUserData,
-  //   tenantId: string,
-  // ) {
-  //   return this.invitationService.inviteUser(
-  //     currentUser,
-  //     tenantId,
-  //     createTeacherDto,
-  //     InvitationType.TEACHER,
-  //     this.emailService.sendTeacherInvitation.bind(this.emailService),
-  //     async () => {
-  //       const teacherExists = await this.teacherRepository.findOne({
-  //         where: { email: createTeacherDto.email },
-  //       });
 
-  //       if (!teacherExists) {
-  //         const teacher = this.teacherRepository.create({
-  //           ...createTeacherDto,
-  //           isActive: false,
-  //           hasCompletedProfile: false,
-  //           tenant: { id: tenantId },
-  //         });
-
-  //         await this.teacherRepository.save(teacher);
-  //       }
-  //     },
-  //   );
-  // }
 
   async acceptInvitation(
     token: string,
@@ -287,3 +259,36 @@ export class TeacherService {
     );
   }
 }
+
+
+
+
+ // async inviteTeacher(
+  //   createTeacherDto: CreateTeacherInvitationDto,
+  //   currentUser: ActiveUserData,
+  //   tenantId: string,
+  // ) {
+  //   return this.invitationService.inviteUser(
+  //     currentUser,
+  //     tenantId,
+  //     createTeacherDto,
+  //     InvitationType.TEACHER,
+  //     this.emailService.sendTeacherInvitation.bind(this.emailService),
+  //     async () => {
+  //       const teacherExists = await this.teacherRepository.findOne({
+  //         where: { email: createTeacherDto.email },
+  //       });
+
+  //       if (!teacherExists) {
+  //         const teacher = this.teacherRepository.create({
+  //           ...createTeacherDto,
+  //           isActive: false,
+  //           hasCompletedProfile: false,
+  //           tenant: { id: tenantId },
+  //         });
+
+  //         await this.teacherRepository.save(teacher);
+  //       }
+  //     },
+  //   );
+  // }

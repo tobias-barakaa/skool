@@ -6,12 +6,13 @@ import {
   IsEnum,
   IsString,
   IsDateString,
-  IsNumber,
-  IsPhoneNumber,
+  IsNumber
+
 } from 'class-validator';
-import { InvitationType } from 'src/admin/invitation/entities/user-iInvitation.entity';
+import { InvitationType, UserInvitation } from 'src/admin/invitation/entities/user-iInvitation.entity';
 import { StaffStatus } from '../entities/staff.entity';
 import { TokensOutput } from 'src/admin/users/dtos/tokens.output';
+import { MembershipRole } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
 
 @InputType()
 export class CreateStaffInvitationDto {
@@ -121,6 +122,10 @@ export class CreateStaffInvitationDto {
   @IsOptional()
   @IsString()
   workExperience?: string;
+
+  @Field({ nullable: false })
+  @IsString()
+  roleType: string;
 }
 
 @ObjectType()
@@ -284,7 +289,18 @@ export class AcceptStaffInvitationResponse {
 
   @Field(() => StaffInfo, { nullable: true })
   staff?: StaffInfo;
+
+  // ✅ Add this line:
+  @Field(() => UserInvitation)
+  invitation: UserInvitation;
+
+  // ✅ New: role field
+  @Field(() => String)
+  role: MembershipRole;
 }
+
+
+
 
 
 

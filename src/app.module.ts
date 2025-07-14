@@ -20,6 +20,7 @@ import { AuthenticationGuard } from './admin/auth/guards/authentication.guard';
 import { DataResponseInterceptor } from './admin/common/interceptor/data-response/data-response.interceptor';
 import { AccessTokenGuard } from './admin/auth/guards/access-token.guard';
 import { StaffModule } from './admin/staff/staff.module';
+import { TeacherModule } from './teacher/teacher.module';
 
 
 
@@ -97,6 +98,9 @@ const ENV = process.env.NODE_ENV;
 
 
     StaffModule,
+
+
+    TeacherModule,
   ],
   controllers: [AppController],
   providers: [

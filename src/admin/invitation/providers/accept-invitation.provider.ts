@@ -33,7 +33,7 @@ export interface AcceptInvitationResult {
   };
   invitation: UserInvitation;
   membership: UserTenantMembership;
-  role: MembershipRole; // Added role property
+  role: MembershipRole; 
 }
 
 @Injectable()
@@ -112,7 +112,7 @@ export class AcceptInvitationProvider {
         refreshToken: tokens.refreshToken,
       },
       invitation,
-      membership, 
+      membership,
       role: membership.role,
     };
   }
