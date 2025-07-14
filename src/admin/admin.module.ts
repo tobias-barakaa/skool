@@ -18,6 +18,7 @@ import { UserTenantMembershipModule } from './user-tenant-membership/user-tenant
 import { InvitationModule } from './invitation/invitation.module';
 import { TeacherProfilesModule } from './teacher_profiles/teacher_profiles.module';
 import { EmailModule } from './email/email.module';
+import { StaffModule } from './staff/staff.module';
 
 
 @Module({
@@ -44,6 +45,9 @@ import { EmailModule } from './email/email.module';
         InvitationModule,
         TeacherProfilesModule,
         EmailModule,
+        StaffModule,
+        TeacherModule,
+        ParentModule
   ],
 })
 export class AdminModule {}
