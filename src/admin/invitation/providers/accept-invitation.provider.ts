@@ -33,7 +33,7 @@ export interface AcceptInvitationResult {
   };
   invitation: UserInvitation;
   membership: UserTenantMembership;
-  role: MembershipRole; 
+  role: MembershipRole;
 }
 
 @Injectable()
