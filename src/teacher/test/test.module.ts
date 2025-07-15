@@ -12,12 +12,14 @@ import { GenerateQuestionsProvider } from './providers/generate-questions.provid
 import { TestResolver } from './test.resolver';
 import { TeacherModule } from 'src/admin/teacher/teacher.module';
 import { LevelModule } from 'src/admin/level/level.module';
+import { UserModule } from 'src/admin/users/users.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Question, Option, Test, ReferenceMaterial]),
     TeacherModule,
-    LevelModule
+    LevelModule,
+    UserModule
   ],
   providers: [
     TestService,

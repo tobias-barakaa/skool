@@ -9,6 +9,7 @@ import { CreateTestInput } from '../dtos/create-test-input.dto';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { GradeLevel } from 'src/admin/level/entities/grade-level.entity';
 import { Teacher } from 'src/admin/teacher/entities/teacher.entity';
+import { User } from 'src/admin/users/entities/user.entity';
 
 @Injectable()
 export class CreateTestProvider {
@@ -31,6 +32,9 @@ export class CreateTestProvider {
     @InjectRepository(Teacher)
     private teacherRepo: Repository<Teacher>,
 
+    @InjectRepository(User)
+    private userRepo: Repository<User>,
+
     private dataSource: DataSource,
   ) {}
 
@@ -44,8 +48,16 @@ export class CreateTestProvider {
 
     try {
       // 🧠 Step 1: Fetch teacher entity with grade associations
+
+
+      const user = await this.userRepo.findOne({ where: { id: teacher.sub } });
+
+      if (!user) {
+        throw new BadRequestException('User not found.');
+      }
+
       const teacherEntity = await this.teacherRepo.findOne({
-        where: { id: teacher.sub },
+        where: { user },
         relations: ['gradeLevels'],
       });
 
