@@ -50,7 +50,9 @@ export class CreateTestProvider {
       // 🧠 Step 1: Fetch teacher entity with grade associations
 
 
+      console.log(teacher, 'teacher data')
       const user = await this.userRepo.findOne({ where: { id: teacher.sub } });
+      console.log(user, 'user not found')
 
       if (!user) {
         throw new BadRequestException('User not found.');
@@ -60,6 +62,8 @@ export class CreateTestProvider {
         where: { user },
         relations: ['gradeLevels'],
       });
+
+      console.log(teacherEntity, 'teacher entity not found')
 
       if (!teacherEntity) {
         throw new BadRequestException('Teacher not found.');
