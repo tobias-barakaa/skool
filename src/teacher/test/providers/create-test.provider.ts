@@ -59,7 +59,7 @@ export class CreateTestProvider {
       }
 
       const teacherEntity = await this.teacherRepo.findOne({
-        where: { userId: teacher.sub }, 
+        where: { userId: teacher.sub },
         relations: ['gradeLevels'],
       });
 
@@ -92,7 +92,7 @@ export class CreateTestProvider {
       const test = this.testRepository.create({
         ...createTestInput,
         date: new Date(createTestInput.date),
-        teacher: teacherEntity,
+        teacher: user, // ✅ correct
         gradeLevels,
         status: 'draft',
       });
