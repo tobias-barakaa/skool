@@ -8,6 +8,7 @@ import { CreateTestInput } from '../dtos/create-test-input.dto';
 import { Test } from '../entities/test.entity';
 import { GenerateQuestionsInput } from '../dtos/generate-questions-input.dto';
 import { UpdateTestInput } from '../dtos/update-test-input.dto';
+import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 
 @Injectable()
 export class TestService {
@@ -20,7 +21,7 @@ export class TestService {
 
   async createTest(
     createTestInput: CreateTestInput,
-    teacher: User,
+    teacher: ActiveUserData,
   ): Promise<Test> {
     return this.createTestProvider.createTest(createTestInput, teacher);
   }

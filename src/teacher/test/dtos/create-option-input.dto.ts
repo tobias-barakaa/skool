@@ -1,9 +1,5 @@
 import { InputType, Field, Int } from '@nestjs/graphql';
-import {
-  IsNotEmpty,
-  IsOptional,
-  IsNumber,
-} from 'class-validator';
+import { IsNotEmpty, IsBoolean, IsNumber, IsOptional } from 'class-validator';
 
 @InputType()
 export class CreateOptionInput {
@@ -12,13 +8,14 @@ export class CreateOptionInput {
   text: string;
 
   @Field()
+  @IsBoolean()
   isCorrect: boolean;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  imageUrl?: string;
 
   @Field(() => Int)
   @IsNumber()
   order: number;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  imageUrl?: string;
 }

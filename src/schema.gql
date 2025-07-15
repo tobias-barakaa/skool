@@ -62,6 +62,13 @@ input ChangePasswordInput {
   newPassword: String!
 }
 
+input CreateOptionInput {
+  imageUrl: String
+  isCorrect: Boolean!
+  order: Int!
+  text: String!
+}
+
 input CreateParentInvitationDto {
   admissionNumber: String
   email: String!
@@ -72,6 +79,23 @@ input CreateParentInvitationDto {
   studentGrade: String
   studentName: String
   studentPhone: String
+}
+
+input CreateQuestionInput {
+  aiPrompt: String
+  imageUrls: [String!]
+  isAIGenerated: Boolean!
+  marks: Int!
+  options: [CreateOptionInput!]
+  order: Int!
+  text: String!
+  type: QuestionType!
+}
+
+input CreateReferenceMaterialInput {
+  fileSize: Float
+  fileType: String!
+  fileUrl: String!
 }
 
 input CreateStaffInvitationDto {
@@ -143,6 +167,20 @@ input CreateTeacherInvitationDto {
   subjectIds: [ID!]
 }
 
+input CreateTestInput {
+  date: String!
+  duration: Int!
+  grade: String!
+  instructions: String
+  questions: [CreateQuestionInput!]
+  referenceMaterials: [CreateReferenceMaterialInput!]
+  resourceUrl: String
+  startTime: String!
+  subject: String!
+  title: String!
+  totalMarks: Int!
+}
+
 type CreateUserResponse {
   membership: UserTenantMembership
   school: School!
@@ -185,6 +223,31 @@ scalar DateTime
 
 input ForgotPasswordInput {
   email: String!
+}
+
+input GenerateQuestionsInput {
+  grade: String!
+  marksPerQuestion: Int!
+  numberOfQuestions: Int!
+  prompt: String!
+  sampleQuestion: String
+  subject: String!
+}
+
+type GeneratedOptionOutput {
+  isCorrect: Boolean!
+  order: Int!
+  text: String!
+}
+
+type GeneratedQuestionOutput {
+  aiPrompt: String
+  isAIGenerated: Boolean!
+  marks: Int!
+  options: [GeneratedOptionOutput!]!
+  order: Int!
+  text: String!
+  type: String!
 }
 
 type Grade {
@@ -310,11 +373,14 @@ type Mutation {
   createMultipleStudents(studentsData: [CreateStudentInput!]!): [CreateStudentResponse!]!
   createStream(input: CreateStreamInput!): StreamType!
   createStudent(createStudentInput: CreateStudentInput!): CreateStudentResponse!
+  createTest(createTestInput: CreateTestInput!): Test!
   createUser(signupInput: SignupInput!): CreateUserResponse!
   deleteStaff(id: String!, tenantId: String!): String!
   deleteStream(id: ID!): Boolean!
   deleteTeacher(id: String!, tenantId: String!): String!
+  deleteTest(id: String!): Boolean!
   forgotPassword(forgotPasswordInput: ForgotPasswordInput!): PasswordResetResponse!
+  generateQuestions(generateQuestionsInput: GenerateQuestionsInput!): [GeneratedQuestionOutput!]!
   inviteParent(createParentDto: CreateParentInvitationDto!, studentIds: [String!]!, tenantId: String!): InviteParentResponse!
   inviteStaff(createStaffDto: CreateStaffInvitationDto!, tenantId: String!): InviteStaffResponse!
   inviteTeacher(createTeacherDto: CreateTeacherInvitationDto!, tenantId: String!): InviteTeacherResponse!
@@ -326,6 +392,16 @@ type Mutation {
   signIn(signInInput: SignInInput!): AuthResponse!
   updateStaff(tenantId: String!, updateStaffInput: UpdateStaffInput!): StaffDto!
   updateStream(input: UpdateStreamInput!): StreamType!
+  updateTest(updateTestInput: UpdateTestInput!): Test!
+}
+
+type Option {
+  id: ID!
+  imageUrl: String
+  isCorrect: Boolean!
+  order: Float!
+  question: Question!
+  text: String!
 }
 
 type Parent {
@@ -393,6 +469,7 @@ type Query {
   getStaffCount(tenantId: String!): Float!
   getStudentsForParent(parentId: String!, tenantId: String!): [StudentSearchResponse!]!
   gradeLevelsWithStreams: [GradeLevelWithStreamsOutput!]!
+  myTests: [Test!]!
   searchAvailableStudentsForParent(parentId: String!, searchTerm: String, tenantId: String!): [StudentSearchResponse!]!
   searchStaff(searchTerm: String!, tenantId: String!): [StaffDto!]!
   searchStudentByAdmission(admissionNumber: String!, tenantId: String!): StudentSearchResponse
@@ -402,8 +479,37 @@ type Query {
   streams: [StreamType!]!
   streamsByGradeLevel(gradeLevelId: ID!): [StreamType!]!
   students: [StudentWithTenant!]!
+  testById(id: String!): Test
   users: [User!]!
   usersByTenant(role: String, tenantId: String!): [User!]!
+}
+
+type Question {
+  aiPrompt: String
+  id: ID!
+  imageUrls: [String!]
+  isAIGenerated: Boolean!
+  marks: Float!
+  options: [Option!]!
+  order: Float!
+  test: Test!
+  text: String!
+  type: String!
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  SHORT_ANSWER
+  TRUE_FALSE
+}
+
+type ReferenceMaterial {
+  createdAt: DateTime!
+  fileSize: Float
+  fileType: String!
+  fileUrl: String!
+  id: ID!
+  test: Test!
 }
 
 input ResetPasswordInput {
@@ -696,6 +802,26 @@ type TenantUserSummary {
   tenantId: String!
 }
 
+type Test {
+  createdAt: DateTime!
+  date: DateTime!
+  duration: Float!
+  endTime: String
+  grade: String!
+  id: ID!
+  instructions: String
+  questions: [Question!]!
+  referenceMaterials: [ReferenceMaterial!]!
+  resourceUrl: String
+  startTime: String!
+  status: String!
+  subject: String!
+  teacher: User!
+  title: String!
+  totalMarks: Float!
+  updatedAt: DateTime!
+}
+
 type TokenPair {
   accessToken: String!
   refreshToken: String!
@@ -746,6 +872,21 @@ input UpdateStreamInput {
   name: String
 }
 
+input UpdateTestInput {
+  date: String
+  duration: Int
+  grade: String
+  id: ID!
+  instructions: String
+  questions: [CreateQuestionInput!]
+  referenceMaterials: [CreateReferenceMaterialInput!]
+  resourceUrl: String
+  startTime: String
+  subject: String
+  title: String
+  totalMarks: Int
+}
+
 type User {
   createdAt: DateTime!
   email: String!
@@ -755,6 +896,7 @@ type User {
   name: String!
   password: String!
   schoolUrl: String!
+  tests: [Test!]
   updatedAt: DateTime!
 }
 

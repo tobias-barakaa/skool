@@ -9,6 +9,7 @@ import { CreateTestProvider } from './providers/create-test.provider';
 import { FindTestsProvider } from './providers/find-tests.provider';
 import { UpdateTestProvider } from './providers/update-test.provider';
 import { GenerateQuestionsProvider } from './providers/generate-questions.provider';
+import { TestResolver } from './test.resolver';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { GenerateQuestionsProvider } from './providers/generate-questions.provid
     FindTestsProvider,
     UpdateTestProvider,
     GenerateQuestionsProvider,
+    TestResolver
   ],
 })
 export class TestModule {}

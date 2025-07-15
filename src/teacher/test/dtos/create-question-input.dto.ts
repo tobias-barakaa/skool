@@ -1,4 +1,4 @@
-import { InputType, Field, Int } from '@nestjs/graphql';
+import { InputType, Field, Int, registerEnumType } from '@nestjs/graphql';
 import {
   IsNotEmpty,
   IsOptional,
@@ -8,33 +8,48 @@ import {
   IsString,
   IsArray,
   ValidateNested,
+  Min,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CreateOptionInput } from './create-option-input.dto';
+
+// ✅ 1. Define enum
+export enum QuestionType {
+  MULTIPLE_CHOICE = 'multiple_choice',
+  SHORT_ANSWER = 'short_answer',
+  TRUE_FALSE = 'true_false',
+}
+
+// ✅ 2. Register enum for GraphQL
+registerEnumType(QuestionType, {
+  name: 'QuestionType',
+});
 
 
 @InputType()
 export class CreateQuestionInput {
   @Field()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Question text is required' })
   text: string;
 
   @Field(() => [String], { nullable: true })
   @IsOptional()
-  @IsArray()
+  @IsArray({ message: 'Image URLs must be an array' })
   imageUrls?: string[];
 
   @Field(() => Int)
-  @IsNumber()
+  @IsNumber({}, { message: 'Marks must be a number' })
+  @Min(1, { message: 'Marks must be at least 1' })
   marks: number;
 
   @Field(() => Int)
-  @IsNumber()
+  @IsNumber({}, { message: 'Order must be a number' })
+  @Min(1, { message: 'Order must be at least 1' })
   order: number;
 
-  @Field()
-  @IsEnum(['multiple_choice', 'short_answer', 'true_false'])
-  type: 'multiple_choice' | 'short_answer' | 'true_false';
+  @Field(() => QuestionType)
+  @IsEnum(QuestionType, { message: 'Invalid question type' })
+  type: QuestionType;
 
   @Field({ nullable: true })
   @IsOptional()

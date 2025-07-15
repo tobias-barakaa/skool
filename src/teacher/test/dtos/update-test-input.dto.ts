@@ -1,4 +1,4 @@
-import { InputType,  PartialType, ID } from '@nestjs/graphql';
+import { InputType, Field, ID, PartialType } from '@nestjs/graphql';
 import { CreateTestInput } from './create-test-input.dto';
 
 @InputType()
@@ -8,7 +8,7 @@ export class UpdateTestInput extends PartialType(CreateTestInput) {
 }
 
 // src/teacher/test/dtos/test-output.dto.ts
-import { ObjectType, Field,  Int } from '@nestjs/graphql';
+import { ObjectType, Int } from '@nestjs/graphql';
 
 @ObjectType()
 export class TestOutput {

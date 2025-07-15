@@ -49,6 +49,7 @@ async function bootstrap() {
         transform: true,
         whitelist: true,
         forbidNonWhitelisted: true,
+        disableErrorMessages: false, 
         exceptionFactory: (errors) => {
           const formattedErrors = errors.map((err) => ({
             field: err.property,

@@ -1,16 +1,14 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { CreateQuestionInput } from '../dtos/create-question-input.dto';
 import { GenerateQuestionsInput } from '../dtos/generate-questions-input.dto';
+import { QuestionType } from '../dtos/create-question-input.dto'; // ✅ Import the enum
 
 @Injectable()
 export class GenerateQuestionsProvider {
-  constructor() {}
-
-  async generateQuestions(input: GenerateQuestionsInput): Promise<CreateQuestionInput[]> {
+  async generateQuestions(
+    input: GenerateQuestionsInput,
+  ): Promise<CreateQuestionInput[]> {
     try {
-      // This is a mock implementation. In a real app, you'd integrate with an AI service
-      // like OpenAI, Claude, or a custom AI model
-
       const questions: CreateQuestionInput[] = [];
 
       for (let i = 0; i < input.numberOfQuestions; i++) {
@@ -18,7 +16,7 @@ export class GenerateQuestionsProvider {
           text: `Generated question ${i + 1} for ${input.subject} - ${input.grade}: ${input.prompt}`,
           marks: input.marksPerQuestion,
           order: i + 1,
-          type: 'multiple_choice',
+          type: QuestionType.MULTIPLE_CHOICE, // ✅ Use the enum
           isAIGenerated: true,
           aiPrompt: input.prompt,
           options: [
@@ -50,7 +48,9 @@ export class GenerateQuestionsProvider {
 
       return questions;
     } catch (error) {
-      throw new BadRequestException(`Failed to generate questions: ${error.message}`);
+      throw new BadRequestException(
+        `Failed to generate questions: ${error.message}`,
+      );
     }
   }
 }
