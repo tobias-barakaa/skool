@@ -11,6 +11,8 @@ import { GradeLevel } from '../../level/entities/grade-level.entity';
 import { CreateStreamInput } from '../dtos/create-stream.input';
 import { Stream } from '../entities/streams.entity';
 
+
+
 @Injectable()
 export class CreateStreamProvider {
   constructor(
@@ -25,7 +27,6 @@ export class CreateStreamProvider {
     user: ActiveUserData,
     tenantId: string,
   ): Promise<Stream> {
-    //   async execute(input: CreateStreamInput, user: ActiveUserData): Promise<Stream> {
     // Check if user is authenticated
     if (!user || !user.sub) {
       throw new ForbiddenException(
@@ -38,12 +39,7 @@ export class CreateStreamProvider {
     // Validate grade level exists
     const gradeLevel = await this.gradeLevelRepository.findOne({
       where: { id: input.gradeLevelId },
-      relations: [
-        'schoolLevel',
-        'schoolLevel.schoolType',
-        //   'schoolLevel.schoolConfigs',
-        //   'schoolLevel.schoolConfigs.school'
-      ],
+      relations: ['schoolLevel', 'schoolLevel.schoolType'],
     });
 
     if (!gradeLevel) {
@@ -52,17 +48,18 @@ export class CreateStreamProvider {
       );
     }
 
-    // Check if stream name already exists for this grade level
+    // Check if stream name already exists for this grade level AND tenant
     const existingStream = await this.streamRepository.findOne({
       where: {
         name: input.name,
         gradeLevel: { id: input.gradeLevelId },
+        tenantId, // Add tenantId to the uniqueness check
       },
     });
 
     if (existingStream) {
       throw new BadRequestException(
-        `Stream with name "${input.name}" already exists for this grade level`,
+        `Stream with name "${input.name}" already exists for this grade level in your organization`,
       );
     }
 
