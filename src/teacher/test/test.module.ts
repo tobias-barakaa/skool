@@ -10,10 +10,14 @@ import { FindTestsProvider } from './providers/find-tests.provider';
 import { UpdateTestProvider } from './providers/update-test.provider';
 import { GenerateQuestionsProvider } from './providers/generate-questions.provider';
 import { TestResolver } from './test.resolver';
+import { TeacherModule } from 'src/admin/teacher/teacher.module';
+import { LevelModule } from 'src/admin/level/level.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Question, Option, Test, ReferenceMaterial]),
+    TeacherModule,
+    LevelModule
   ],
   providers: [
     TestService,
@@ -21,7 +25,7 @@ import { TestResolver } from './test.resolver';
     FindTestsProvider,
     UpdateTestProvider,
     GenerateQuestionsProvider,
-    TestResolver
+    TestResolver,
   ],
 })
 export class TestModule {}

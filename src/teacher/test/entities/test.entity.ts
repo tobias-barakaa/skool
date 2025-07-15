@@ -1,8 +1,9 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 import { User } from 'src/admin/users/entities/user.entity';
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Question } from './question.entity';
 import { ReferenceMaterial } from './reference-material.entity';
+import { GradeLevel } from 'src/admin/level/entities/grade-level.entity';
 
 @ObjectType()
 @Entity()
@@ -19,9 +20,20 @@ export class Test {
   @Column()
   subject: string;
 
-  @Field()
-  @Column()
-  grade: string;
+  @ManyToMany(() => GradeLevel, { eager: true })
+  @JoinTable({
+    name: 'test_grade_levels',
+    joinColumn: {
+      name: 'test_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'grade_level_id',
+      referencedColumnName: 'id',
+    },
+  })
+  @Field(() => [GradeLevel])
+  gradeLevels: GradeLevel[];
 
   @Field()
   @Column()

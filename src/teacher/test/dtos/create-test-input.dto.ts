@@ -28,11 +28,6 @@ export class CreateTestInput {
   subject: string;
 
   @Field()
-  @IsNotEmpty()
-  @IsString()
-  grade: string;
-
-  @Field()
   @IsDateString()
   date: string;
 
@@ -59,18 +54,14 @@ export class CreateTestInput {
   @IsString()
   instructions?: string;
 
-  // Option 1: Allow empty array or undefined
-  // @Field(() => [CreateQuestionInput], { nullable: true })
-  // @IsOptional()
-  // @ValidateNested({ each: true })
-  // @Type(() => CreateQuestionInput)
-  // questions?: CreateQuestionInput[];
 
   // Option 2: If you want to enforce non-empty when provided, use this instead:
   @Field(() => [CreateQuestionInput], { nullable: true })
   @IsOptional()
   @ValidateIf((o) => o.questions && o.questions.length > 0)
-  @ArrayMinSize(1, { message: 'Questions array must not be empty when provided' })
+  @ArrayMinSize(1, {
+    message: 'Questions array must not be empty when provided',
+  })
   // @ValidateNested({ each: true })
   @Type(() => CreateQuestionInput)
   questions?: CreateQuestionInput[];
@@ -80,6 +71,10 @@ export class CreateTestInput {
   @ValidateNested({ each: true })
   @Type(() => CreateReferenceMaterialInput)
   referenceMaterials?: CreateReferenceMaterialInput[];
+
+  @Field(() => [String])
+  @IsNotEmpty({ each: true })
+  gradeLevelIds: string[];
 }
 
 

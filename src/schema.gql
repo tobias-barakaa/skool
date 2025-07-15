@@ -170,7 +170,7 @@ input CreateTeacherInvitationDto {
 input CreateTestInput {
   date: String!
   duration: Int!
-  grade: String!
+  gradeLevelIds: [String!]!
   instructions: String
   questions: [CreateQuestionInput!]
   referenceMaterials: [CreateReferenceMaterialInput!]
@@ -807,7 +807,7 @@ type Test {
   date: DateTime!
   duration: Float!
   endTime: String
-  grade: String!
+  gradeLevels: [GradeLevel!]!
   id: ID!
   instructions: String
   questions: [Question!]!
@@ -875,7 +875,7 @@ input UpdateStreamInput {
 input UpdateTestInput {
   date: String
   duration: Int
-  grade: String
+  gradeLevelIds: [String!]
   id: ID!
   instructions: String
   questions: [CreateQuestionInput!]
