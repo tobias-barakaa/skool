@@ -62,12 +62,14 @@ export class TestResolver {
   }
 
   @Query(() => [Test])
-  async myTests(@ActiveUser() currentUser: ActiveUserData): Promise<Test[]> {
+  async myAssignMents(
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise<Test[]> {
     try {
       const teacher = currentUser;
       return this.testService.findTestsByTeacher(teacher);
     } catch (error) {
-      // Handle error appropriately
+    
       throw new BadRequestException('Failed to fetch tests');
     }
   }

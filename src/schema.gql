@@ -469,7 +469,7 @@ type Query {
   getStaffCount(tenantId: String!): Float!
   getStudentsForParent(parentId: String!, tenantId: String!): [StudentSearchResponse!]!
   gradeLevelsWithStreams: [GradeLevelWithStreamsOutput!]!
-  myTests: [Test!]!
+  myAssignMents: [Test!]!
   searchAvailableStudentsForParent(parentId: String!, searchTerm: String, tenantId: String!): [StudentSearchResponse!]!
   searchStaff(searchTerm: String!, tenantId: String!): [StaffDto!]!
   searchStudentByAdmission(admissionNumber: String!, tenantId: String!): StudentSearchResponse
