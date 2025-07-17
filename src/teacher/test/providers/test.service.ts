@@ -34,7 +34,7 @@ export class TestService {
     return this.findTestsProvider.findTestsByTeacher(teacher);
   }
 
-  async findTestById(id: string, teacher: User): Promise<Test> {
+  async findTestById(id: string, teacher: ActiveUserData): Promise<Test> {
     return this.findTestsProvider.findTestById(id, teacher);
   }
 
@@ -45,7 +45,7 @@ export class TestService {
     return this.updateTestProvider.updateTest(updateTestInput, teacher);
   }
 
-  async deleteTest(id: string, teacher: User): Promise<boolean> {
+  async deleteTest(id: string, teacher: ActiveUserData): Promise<boolean> {
     const test = await this.findTestsProvider.findTestById(id, teacher);
     if (!test) {
       return false;

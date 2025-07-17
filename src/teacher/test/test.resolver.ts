@@ -69,7 +69,6 @@ export class TestResolver {
       const teacher = currentUser;
       return this.testService.findTestsByTeacher(teacher);
     } catch (error) {
-    
       throw new BadRequestException('Failed to fetch tests');
     }
   }
@@ -77,10 +76,9 @@ export class TestResolver {
   @Query(() => Test, { nullable: true })
   async testById(
     @Args('id') id: string,
-    @Context() context: any,
+    @ActiveUser() currentUser: ActiveUserData, 
   ): Promise<Test | null> {
-    const teacher = context.req.user;
-    return this.testService.findTestById(id, teacher);
+    return this.testService.findTestById(id, currentUser);
   }
 
   @Mutation(() => Test)
