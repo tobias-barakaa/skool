@@ -49,5 +49,5 @@ export class TestService {
   return this.createTestProvider.deleteTest(id, teacher);
 }
 
-   
+
 }

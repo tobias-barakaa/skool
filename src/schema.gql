@@ -375,10 +375,10 @@ type Mutation {
   createStudent(createStudentInput: CreateStudentInput!): CreateStudentResponse!
   createTest(createTestInput: CreateTestInput!): Test!
   createUser(signupInput: SignupInput!): CreateUserResponse!
+  deleteAssignment(id: String!): Boolean!
   deleteStaff(id: String!, tenantId: String!): String!
   deleteStream(id: ID!): Boolean!
   deleteTeacher(id: String!, tenantId: String!): String!
-  deleteTest(id: String!): Boolean!
   forgotPassword(forgotPasswordInput: ForgotPasswordInput!): PasswordResetResponse!
   generateQuestions(generateQuestionsInput: GenerateQuestionsInput!): [GeneratedQuestionOutput!]!
   inviteParent(createParentDto: CreateParentInvitationDto!, studentIds: [String!]!, tenantId: String!): InviteParentResponse!
