@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource, In } from 'typeorm';
 import { Test } from '../entities/test.entity';
@@ -49,10 +49,9 @@ export class CreateTestProvider {
     try {
       // 🧠 Step 1: Fetch teacher entity with grade associations
 
-
-      console.log(teacher, 'teacher data')
+      console.log(teacher, 'teacher data');
       const user = await this.userRepo.findOne({ where: { id: teacher.sub } });
-      console.log(user, 'user')
+      console.log(user, 'user');
 
       if (!user) {
         throw new BadRequestException('User not found.');
@@ -63,8 +62,7 @@ export class CreateTestProvider {
         relations: ['gradeLevels'],
       });
 
-
-      console.log(teacherEntity, 'teacher entity not found')
+      console.log(teacherEntity, 'teacher entity not found');
 
       if (!teacherEntity) {
         throw new BadRequestException('Teacher not found.');
@@ -127,7 +125,10 @@ export class CreateTestProvider {
       }
 
       // 📎 Step 6: Add reference materials (if any)
-      if (createTestInput.referenceMaterials && createTestInput.referenceMaterials.length > 0) {
+      if (
+        createTestInput.referenceMaterials &&
+        createTestInput.referenceMaterials.length > 0
+      ) {
         for (const materialInput of createTestInput.referenceMaterials) {
           const material = this.referenceMaterialRepository.create({
             ...materialInput,
@@ -164,6 +165,71 @@ export class CreateTestProvider {
 
       throw new BadRequestException(
         `Failed to create test: ${error.message || error}`,
+      );
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  async deleteTest(id: string, teacher: ActiveUserData): Promise<boolean> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      // First, verify the test exists and belongs to the teacher
+      const test = await this.testRepository.findOne({
+        where: { id, teacher: { id: teacher.sub } },
+        relations: ['questions', 'questions.options', 'referenceMaterials'],
+      });
+
+      if (!test) {
+        throw new NotFoundException(
+          `Test with id ${id} not found or you don't have permission to delete it`,
+        );
+      }
+
+      // Delete related data in the correct order to avoid foreign key constraints
+
+      // 1. Delete options first
+      if (test.questions && test.questions.length > 0) {
+        for (const question of test.questions) {
+          if (question.options && question.options.length > 0) {
+            await queryRunner.manager.delete('Option', {
+              question: { id: question.id },
+            });
+          }
+        }
+      }
+
+      // 2. Delete questions
+      if (test.questions && test.questions.length > 0) {
+        await queryRunner.manager.delete('Question', { test: { id: test.id } });
+      }
+
+      // 3. Delete reference materials
+      if (test.referenceMaterials && test.referenceMaterials.length > 0) {
+        await queryRunner.manager.delete('ReferenceMaterial', {
+          test: { id: test.id },
+        });
+      }
+
+      // 4. Delete the test itself
+      await queryRunner.manager.delete('Test', { id: test.id });
+
+      await queryRunner.commitTransaction();
+      return true;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+
+      console.error('Test deletion error:', error);
+
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+
+      throw new BadRequestException(
+        `Failed to delete test: ${error.message || error}`,
       );
     } finally {
       await queryRunner.release();

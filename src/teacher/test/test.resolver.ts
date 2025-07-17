@@ -76,7 +76,7 @@ export class TestResolver {
   @Query(() => Test, { nullable: true })
   async testById(
     @Args('id') id: string,
-    @ActiveUser() currentUser: ActiveUserData, 
+    @ActiveUser() currentUser: ActiveUserData,
   ): Promise<Test | null> {
     return this.testService.findTestById(id, currentUser);
   }
@@ -93,9 +93,8 @@ export class TestResolver {
   @Mutation(() => Boolean)
   async deleteTest(
     @Args('id') id: string,
-    @Context() context: any,
+    @ActiveUser() currentUser: ActiveUserData, // Use same pattern as other methods
   ): Promise<boolean> {
-    const teacher = context.req.user;
-    return this.testService.deleteTest(id, teacher);
+    return this.testService.deleteTest(id, currentUser);
   }
 }

@@ -46,13 +46,8 @@ export class TestService {
   }
 
   async deleteTest(id: string, teacher: ActiveUserData): Promise<boolean> {
-    const test = await this.findTestsProvider.findTestById(id, teacher);
-    if (!test) {
-      return false;
-    }
+  return this.createTestProvider.deleteTest(id, teacher);
+}
 
-    // In a real implementation, you might want to soft delete or check if test is active
-    // For now, we'll just return true to indicate successful deletion
-    return true;
-  }
+   
 }
