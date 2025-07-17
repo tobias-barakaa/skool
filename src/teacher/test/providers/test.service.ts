@@ -30,7 +30,7 @@ export class TestService {
     return this.generateQuestionsProvider.generateQuestions(input);
   }
 
-  async findTestsByTeacher(teacher: User): Promise<Test[]> {
+  async findTestsByTeacher(teacher: ActiveUserData): Promise<Test[]> {
     return this.findTestsProvider.findTestsByTeacher(teacher);
   }
 

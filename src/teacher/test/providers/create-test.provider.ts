@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
+import { Repository, DataSource, In } from 'typeorm';
 import { Test } from '../entities/test.entity';
 import { Question } from '../entities/question.entity';
 import { Option } from '../entities/option.entity';
@@ -84,9 +84,13 @@ export class CreateTestProvider {
       }
 
       // 🧱 Step 3: Fetch the full GradeLevel entities
-      const gradeLevels = await this.gradeLevelRepo.findByIds(
-        createTestInput.gradeLevelIds,
-      );
+      // const gradeLevels = await this.gradeLevelRepo.findByIds(
+      //   createTestInput.gradeLevelIds,
+      // );
+
+      const gradeLevels = await this.gradeLevelRepo.findBy({
+        id: In(createTestInput.gradeLevelIds),
+      });
 
       // 📝 Step 4: Create the test
       const test = this.testRepository.create({
@@ -166,6 +170,9 @@ export class CreateTestProvider {
     }
   }
 }
+
+
+
 
 // import { Injectable, BadRequestException } from '@nestjs/common';
 // import { InjectRepository } from '@nestjs/typeorm';

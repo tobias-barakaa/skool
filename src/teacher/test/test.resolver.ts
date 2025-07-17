@@ -7,7 +7,7 @@ import { GenerateQuestionsInput } from './dtos/generate-questions-input.dto';
 import { UpdateTestInput } from './dtos/update-test-input.dto';
 import { GeneratedQuestionOutput } from './dtos/generated-question-output.dto';
 import { mapToGeneratedQuestionOutput } from './utils/map-create-to-output';
-import { ValidationPipe, UsePipes } from '@nestjs/common';
+import { ValidationPipe, UsePipes, BadRequestException } from '@nestjs/common';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 
@@ -62,9 +62,14 @@ export class TestResolver {
   }
 
   @Query(() => [Test])
-  async myTests(@Context() context: any): Promise<Test[]> {
-    const teacher = context.req.user;
-    return this.testService.findTestsByTeacher(teacher);
+  async myTests(@ActiveUser() currentUser: ActiveUserData): Promise<Test[]> {
+    try {
+      const teacher = currentUser;
+      return this.testService.findTestsByTeacher(teacher);
+    } catch (error) {
+      // Handle error appropriately
+      throw new BadRequestException('Failed to fetch tests');
+    }
   }
 
   @Query(() => Test, { nullable: true })
@@ -94,6 +99,3 @@ export class TestResolver {
     return this.testService.deleteTest(id, teacher);
   }
 }
-
-
-

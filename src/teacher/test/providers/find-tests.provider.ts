@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Test } from '../entities/test.entity';
 import { User } from 'src/admin/users/entities/user.entity';
+import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 
 @Injectable()
 export class FindTestsProvider {
@@ -11,10 +12,15 @@ export class FindTestsProvider {
     private testRepository: Repository<Test>,
   ) {}
 
-  async findTestsByTeacher(teacher: User): Promise<Test[]> {
+  async findTestsByTeacher(teacher: ActiveUserData): Promise<Test[]> {
     return this.testRepository.find({
-      where: { teacher: { id: teacher.id } },
-      relations: ['questions', 'questions.options', 'referenceMaterials'],
+      where: { teacher: { id: teacher.sub } },
+      relations: [
+        'questions',
+        'questions.options',
+        'referenceMaterials',
+        'gradeLevels', // Add this
+      ],
       order: { createdAt: 'DESC' },
     });
   }
