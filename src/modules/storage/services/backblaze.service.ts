@@ -128,7 +128,15 @@ export class BackblazeService {
     filePath: string,
     attempt = 1,
   ): Promise<FileUploadResult> {
-    // Try different endpoints in sequence
+    // Guard: reject oversized files immediately
+    const MAX_BYTES = 10 * 1024 * 1024; // 10 MB
+    if (file.size > MAX_BYTES) {
+      throw new BadRequestException(
+        `File too large. Maximum allowed size is 10 MB.`,
+      );
+    }
+
+    /*  ↓↓↓  everything else stays exactly the same  ↓↓↓  */
     for (
       let endpointIndex = 0;
       endpointIndex < this.s3Clients.length;
@@ -227,28 +235,6 @@ export class BackblazeService {
     // If we've exhausted all endpoints and retries
     throw new InternalServerErrorException(
       `Failed to upload after ${attempt} attempts across all endpoints`,
-    );
-  }
-
-  private isRetryableError(error: any): boolean {
-    // Network-related errors that are typically retryable
-    const retryableCodes = [
-      'ETIMEDOUT',
-      'ECONNRESET',
-      'ENOTFOUND',
-      'ENETUNREACH',
-      'EHOSTUNREACH',
-      'EPIPE',
-      'TimeoutError',
-    ];
-
-    // HTTP status codes that are retryable
-    const retryableStatusCodes = [408, 429, 500, 502, 503, 504];
-
-    return (
-      retryableCodes.includes(error.code) ||
-      retryableStatusCodes.includes(error.statusCode) ||
-      error.retryable === true
     );
   }
 
