@@ -21,7 +21,6 @@ import { FileUploadResult } from '../interfaces/file-upload.interface';
 import { FileUploadDto } from '../dto/upload.dto';
 import { Request } from 'express';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
-import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 
 
 @Controller('api/storage')
@@ -37,7 +36,10 @@ export class StorageController {
     @UploadedFile(
       new ParseFilePipe({
         validators: [
-          new MaxFileSizeValidator({ maxSize: 10 * 1024 * 1024 }), // 10MB
+          new MaxFileSizeValidator({
+            maxSize: 10 * 1024 * 1024, // 10 MB
+            message: 'File too large. Maximum allowed size is 10 MB.',
+          }),
           new FileTypeValidator({
             fileType: /(jpg|jpeg|png|gif|webp|pdf|doc|docx|txt)$/i,
           }),
@@ -47,14 +49,14 @@ export class StorageController {
     file: Express.Multer.File,
 
     @Body() uploadDto: FileUploadDto,
-
-    @ActiveUser() user: ActiveUserData, // <-- Use your decorator here
+    @Req() req: Request, // <-- Get user from request
   ): Promise<FileUploadResult> {
-    // Inject user data
+    const user = req.user as ActiveUserData;
+
+    // Fill in missing fields if they aren’t already set
     uploadDto.userId = uploadDto.userId || user.sub;
     uploadDto.tenantId = uploadDto.tenantId || user.tenantId;
 
-    // Validate entity info
     if (!uploadDto.entityType || !uploadDto.entityId) {
       throw new BadRequestException('Missing entityType or entityId');
     }
