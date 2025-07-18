@@ -93,11 +93,8 @@ export class TestResolver {
   @Mutation(() => Boolean)
   async deleteAssignment(
     @Args('id') id: string,
-    @ActiveUser() currentUser: ActiveUserData, // Use same pattern as other methods
+    @ActiveUser() currentUser: ActiveUserData,
   ): Promise<boolean> {
     return this.testService.deleteTest(id, currentUser);
   }
 }
-
-
-
