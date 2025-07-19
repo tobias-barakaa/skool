@@ -9,6 +9,7 @@ import { Student } from '../entities/student.entity';
 import { MembershipRole, UserTenantMembership } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
 import { User } from 'src/admin/users/entities/user.entity';
 import { UserAlreadyExistsException } from 'src/admin/common/exceptions/business.exception';
+import { GradeLevel } from 'src/admin/level/entities/grade-level.entity';
 
 @Injectable()
 export class UsersCreateStudentProvider {
@@ -41,7 +42,7 @@ export class UsersCreateStudentProvider {
         throw new UserAlreadyExistsException(createStudentInput.email);
       }
 
-      // Check if admission number already exists for this tenant
+      // Check if admission number already exists
       const existingStudent = await queryRunner.manager.findOne(Student, {
         where: { admission_number: createStudentInput.admission_number },
       });
@@ -55,7 +56,7 @@ export class UsersCreateStudentProvider {
       // Use admission number as password
       const generatedPassword = createStudentInput.admission_number;
 
-      // Create user
+      // Create User
       const user = queryRunner.manager.create(User, {
         email: createStudentInput.email,
         password: await this.hashingProvider.hashPassword(generatedPassword),
@@ -66,17 +67,29 @@ export class UsersCreateStudentProvider {
 
       const savedUser = await queryRunner.manager.save(user);
 
-      // Create student record
+      // Fetch GradeLevel entity
+      const gradeLevel = await queryRunner.manager.findOne(GradeLevel, {
+        where: { id: createStudentInput.grade },
+      });
+
+      if (!gradeLevel) {
+        throw new Error(
+          `Grade level with ID ${createStudentInput.grade} not found`,
+        );
+      }
+
+      // Create Student record
       const student = queryRunner.manager.create(Student, {
         user_id: savedUser.id,
         admission_number: createStudentInput.admission_number,
         phone: createStudentInput.phone,
         gender: createStudentInput.gender,
-        grade: createStudentInput.grade,
+        gradeLevel,
       });
 
       const savedStudent = await queryRunner.manager.save(student);
 
+      // Create UserTenantMembership
       const membership = queryRunner.manager.create(UserTenantMembership, {
         userId: savedUser.id,
         tenantId: tenantId,

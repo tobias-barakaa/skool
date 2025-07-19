@@ -724,7 +724,7 @@ type Student {
   createdAt: DateTime!
   feesOwed: Float!
   gender: String!
-  grade: String!
+  grade: GradeLevel!
   id: ID!
   isActive: Boolean!
   phone: String!
