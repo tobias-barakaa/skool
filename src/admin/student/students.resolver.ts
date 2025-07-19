@@ -51,7 +51,7 @@ export class StudentsResolver {
       admission_number: student.admission_number,
       phone: student.phone,
       gender: student.gender,
-      grade: student.grade,
+      grade: student.grade.toString(),
       user: student.user,
       user_id: student.user_id,
       feesOwed: student.feesOwed,

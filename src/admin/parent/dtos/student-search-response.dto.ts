@@ -12,7 +12,7 @@ export class StudentSearchResponse {
   admissionNumber: string;
 
   @Field()
-  grade: string;
+  grade: string; // This will be manually mapped from gradeLevel.name in your service
 
   @Field({ nullable: true })
   phone?: string;

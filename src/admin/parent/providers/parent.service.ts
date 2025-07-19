@@ -35,6 +35,7 @@ import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { AcceptParentInvitationResponse } from '../dtos/accept-parent-invitation.response.dto';
 import { InvitationService } from 'src/admin/invitation/providers/invitation.service';
 import { ParentOutput } from '../dtos/parent-output';
+import { GradeLevel } from 'src/admin/level/entities/grade-level.entity';
 
 @Injectable()
 export class ParentService {
@@ -85,7 +86,7 @@ export class ParentService {
             id: student.id,
             name: membership.user.name,
             admissionNumber: student.admission_number,
-            grade: student.grade,
+            grade: String(student.grade),
             phone: student.phone,
           });
         }
@@ -127,7 +128,7 @@ export class ParentService {
       id: student.id,
       name: membership.user.name,
       admissionNumber: student.admission_number,
-      grade: student.grade,
+      grade: String(student.grade),
       phone: student.phone,
     };
   }
@@ -177,7 +178,7 @@ export class ParentService {
       }
 
       // Check grade match
-      if (studentGrade && student.grade !== studentGrade) {
+      if (studentGrade && student.grade !== (studentGrade as unknown as GradeLevel)) {
         matches = false;
       }
 
@@ -191,7 +192,7 @@ export class ParentService {
           id: student.id,
           name: membership.user.name,
           admissionNumber: student.admission_number,
-          grade: student.grade,
+          grade: String(student.grade),
           phone: student.phone,
         });
       }
@@ -324,7 +325,7 @@ export class ParentService {
       id: student.id,
       name: membership.user.name,
       admissionNumber: student.admission_number,
-      grade: student.grade,
+      grade: String(student.grade),
     }));
 
     // Create invitation record with multiple students information
@@ -499,7 +500,7 @@ export class ParentService {
           id: student.id,
           name: studentMembership.user.name,
           admissionNumber: student.admission_number,
-          grade: student.grade,
+          grade: String(student.grade),
         });
       }
     }
@@ -540,7 +541,7 @@ export class ParentService {
           id: student.id,
           name: studentMembership.user.name,
           admissionNumber: student.admission_number,
-          grade: student.grade,
+          grade: String(student.grade),
           phone: student.phone,
         });
       }
@@ -667,7 +668,7 @@ export class ParentService {
       parent,
       invitation: result.invitation,
       role: result.role,
-    } 
+    }
   }
 
   // async acceptInvitation(token: string, password: string) {
