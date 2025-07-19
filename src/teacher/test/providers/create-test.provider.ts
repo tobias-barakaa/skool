@@ -57,10 +57,13 @@ export class CreateTestProvider {
         throw new BadRequestException('User not found.');
       }
 
-      const teacherEntity = await this.teacherRepo.findOne({
-        where: { userId: teacher.sub },
-        relations: ['gradeLevels'],
-      });
+     const teacherEntity = await this.teacherRepo.findOne({
+  where: {
+    userId: teacher.sub,
+    tenantId: teacher.tenantId,      // 👈 add this
+  },
+  relations: ['gradeLevels'],
+});
 
       console.log(teacherEntity, 'teacher entity not found');
 
@@ -81,10 +84,6 @@ export class CreateTestProvider {
         );
       }
 
-      // 🧱 Step 3: Fetch the full GradeLevel entities
-      // const gradeLevels = await this.gradeLevelRepo.findByIds(
-      //   createTestInput.gradeLevelIds,
-      // );
 
       const gradeLevels = await this.gradeLevelRepo.findBy({
         id: In(createTestInput.gradeLevelIds),
