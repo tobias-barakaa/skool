@@ -47,6 +47,31 @@ enum AssessmentType {
   TEST
 }
 
+type Attendance {
+  createdAt: DateTime!
+  date: String!
+  gradeId: String!
+  id: ID!
+  status: AttendanceStatus!
+  student: Student!
+  studentId: String!
+  teacher: User!
+  teacherId: String!
+  tenantId: String!
+}
+
+input AttendanceInput {
+  status: String!
+  studentId: String!
+}
+
+enum AttendanceStatus {
+  ABSENT
+  LATE
+  PRESENT
+  SUSPENDED
+}
+
 type AuthResponse {
   allMemberships: [UserTenantMembership!]
   membership: UserTenantMembership
@@ -60,6 +85,12 @@ input ChangePasswordInput {
   confirmPassword: String!
   currentPassword: String!
   newPassword: String!
+}
+
+input CreateAttendanceInput {
+  attendanceRecords: [AttendanceInput!]!
+  date: String!
+  gradeId: String!
 }
 
 input CreateOptionInput {
@@ -384,6 +415,7 @@ type Mutation {
   inviteParent(createParentDto: CreateParentInvitationDto!, studentIds: [String!]!, tenantId: String!): InviteParentResponse!
   inviteStaff(createStaffDto: CreateStaffInvitationDto!, tenantId: String!): InviteStaffResponse!
   inviteTeacher(createTeacherDto: CreateTeacherInvitationDto!, tenantId: String!): InviteTeacherResponse!
+  markAttendance(markAttendanceInput: CreateAttendanceInput!): [Attendance!]!
   resetPassword(resetPasswordInput: ResetPasswordInput!): PasswordResetResponse!
   revokeInvitation(invitationId: String!): RevokeInvitationResponse!
   revokeParentInvitation(invitationId: String!): RevokeInvitationResponse!
@@ -457,6 +489,7 @@ type Query {
   allUsersOfTenant(tenantId: String!): [TenantUserSummary!]!
   debugHost: String!
   getActiveStaffByTenant(tenantId: String!): [StaffDto!]!
+  getAttendanceByDate(date: String!, gradeId: String!): [Attendance!]!
   getAvailableLevelNames: [String!]!
   getParentsByTenant(tenantId: String!): [Parent!]!
   getPendingInvitations(tenantId: String!): [PendingInvitation!]!
@@ -467,6 +500,7 @@ type Query {
   getStaffById(id: String!, tenantId: String!): StaffDto!
   getStaffByTenant(tenantId: String!): [StaffDto!]!
   getStaffCount(tenantId: String!): Float!
+  getStudentsByGrade(gradeId: String!): [Student!]!
   getStudentsForParent(parentId: String!, tenantId: String!): [StudentSearchResponse!]!
   gradeLevelsWithStreams: [GradeLevelWithStreamsOutput!]!
   myAssignMents: [Test!]!
