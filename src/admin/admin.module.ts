@@ -19,35 +19,34 @@ import { InvitationModule } from './invitation/invitation.module';
 import { TeacherProfilesModule } from './teacher_profiles/teacher_profiles.module';
 import { EmailModule } from './email/email.module';
 import { StaffModule } from './staff/staff.module';
+import { SchoolConfigModule } from './config/config.module';
 
 
 @Module({
   imports: [
-
-
-
     UserModule,
-        SchoolsModule,
-        TeacherModule,
-        SchoolTypeModule,
-        ParentModule,
-        StudentModule,
-        GradeModule,
-        SubjectModule,
-        AuthModule,
-        OrganizationsModule,
-        TenantsModule,
-        LevelModule,
-        SchoolLevelSettingModule,
-        CurriculumModule,
-        StreamsModule,
-        UserTenantMembershipModule,
-        InvitationModule,
-        TeacherProfilesModule,
-        EmailModule,
-        StaffModule,
-        TeacherModule,
-        ParentModule
+    SchoolsModule,
+    TeacherModule,
+    SchoolTypeModule,
+    ParentModule,
+    StudentModule,
+    GradeModule,
+    SubjectModule,
+    AuthModule,
+    OrganizationsModule,
+    TenantsModule,
+    LevelModule,
+    SchoolLevelSettingModule,
+    CurriculumModule,
+    StreamsModule,
+    UserTenantMembershipModule,
+    InvitationModule,
+    TeacherProfilesModule,
+    EmailModule,
+    StaffModule,
+    TeacherModule,
+    ParentModule,
+    SchoolConfigModule,
   ],
 })
 export class AdminModule {}

@@ -10,6 +10,7 @@ import { StudentQueryProvider } from './student-query.provider';
 import { UsersCreateStudentProvider } from './student.create.provider';
 import { SchoolConfig } from 'src/admin/school-type/entities/school-config.entity';
 import { MembershipRole, UserTenantMembership } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
+import { SchoolSetupGuardService } from 'src/admin/config/school-config.guard';
 
 @Injectable()
 export class StudentsService {
@@ -28,6 +29,7 @@ export class StudentsService {
     private readonly membershipRepository: Repository<UserTenantMembership>,
 
     private readonly studentQueryProvider: StudentQueryProvider,
+    private readonly schoolSetupGuardService: SchoolSetupGuardService,
   ) {}
 
   async createStudent(
@@ -46,6 +48,11 @@ export class StudentsService {
     if (!membership) {
       throw new ForbiddenException('Only school admins can create students');
     }
+
+    // ✅ Enforce school setup is completed
+    await this.schoolSetupGuardService.validateSchoolIsConfigured(
+      membership.tenantId,
+    );
 
     return this.usersCreateStudentProvider.createStudent(
       createStudentInput,

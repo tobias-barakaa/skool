@@ -79,12 +79,20 @@ export class UsersCreateStudentProvider {
       }
 
       // Create Student record
+      // const student = queryRunner.manager.create(Student, {
+      //   user_id: savedUser.id,
+      //   admission_number: createStudentInput.admission_number,
+      //   phone: createStudentInput.phone,
+      //   gender: createStudentInput.gender,
+      //   gradeLevel,
+      // });
+
       const student = queryRunner.manager.create(Student, {
         user_id: savedUser.id,
         admission_number: createStudentInput.admission_number,
         phone: createStudentInput.phone,
         gender: createStudentInput.gender,
-        gradeLevel,
+        grade: gradeLevel,
       });
 
       const savedStudent = await queryRunner.manager.save(student);
@@ -145,3 +153,5 @@ export class UsersCreateStudentProvider {
     return results;
   }
 }
+
+

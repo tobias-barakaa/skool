@@ -8,6 +8,7 @@ import { StudentsService } from './providers/student.service';
 import { StudentsResolver } from './students.resolver';
 import { UserTenantMembershipModule } from '../user-tenant-membership/user-tenant-membership.module';
 import { SchoolTypeModule } from '../school-type/school-type.module';
+import { SchoolConfigModule } from '../config/config.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { SchoolTypeModule } from '../school-type/school-type.module';
     UserTenantMembershipModule,
     AuthModule,
     SchoolTypeModule,
+    SchoolConfigModule,
   ],
   providers: [
     StudentsService,
