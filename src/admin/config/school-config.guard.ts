@@ -26,4 +26,21 @@ export class SchoolSetupGuardService {
       );
     }
   }
+
+
+  async validateGradeLevelBelongsToTenant(tenantId: string, gradeLevelId: string): Promise<boolean> {
+  const config = await this.schoolConfigRepo.findOne({
+    where: { tenant: { id: tenantId } },
+    relations: [
+      'selectedLevels',
+      'selectedLevels.gradeLevels',
+    ],
+  });
+
+  const allowedGradeIds = config?.selectedLevels
+    ?.flatMap((level) => (level.gradeLevels ?? []).map((g) => g.id)) || [];
+
+  return allowedGradeIds.includes(gradeLevelId);
+}
+
 }

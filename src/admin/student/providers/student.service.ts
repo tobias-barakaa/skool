@@ -1,5 +1,5 @@
 // src/students/students.service.ts
-import { ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { Repository } from 'typeorm';
@@ -53,6 +53,19 @@ export class StudentsService {
     await this.schoolSetupGuardService.validateSchoolIsConfigured(
       membership.tenantId,
     );
+
+
+          const isValidGrade =
+            await this.schoolSetupGuardService.validateGradeLevelBelongsToTenant(
+              membership.tenantId,
+              createStudentInput.grade,
+            );
+
+          if (!isValidGrade) {
+            throw new BadRequestException(
+              `Grade level with ID ${createStudentInput.grade} is not part of the configured school for this tenant`,
+            );
+          }
 
     return this.usersCreateStudentProvider.createStudent(
       createStudentInput,

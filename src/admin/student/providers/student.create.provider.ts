@@ -1,5 +1,5 @@
 // src/users/providers/users-create-student.provider.ts
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HashingProvider } from 'src/admin/auth/providers/hashing.provider';
 import { DataSource, Repository } from 'typeorm';
@@ -8,8 +8,9 @@ import { CreateStudentResponse } from '../dtos/student-response.dto';
 import { Student } from '../entities/student.entity';
 import { MembershipRole, UserTenantMembership } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
 import { User } from 'src/admin/users/entities/user.entity';
-import { UserAlreadyExistsException } from 'src/admin/common/exceptions/business.exception';
+import { BusinessException, UserAlreadyExistsException } from 'src/admin/common/exceptions/business.exception';
 import { GradeLevel } from 'src/admin/level/entities/grade-level.entity';
+import { SchoolSetupGuardService } from 'src/admin/config/school-config.guard';
 
 @Injectable()
 export class UsersCreateStudentProvider {
@@ -19,6 +20,7 @@ export class UsersCreateStudentProvider {
     private readonly hashingProvider: HashingProvider,
 
     private dataSource: DataSource,
+    private readonly schoolSetupGuardService: SchoolSetupGuardService,
   ) {}
 
   async createStudent(
@@ -48,8 +50,33 @@ export class UsersCreateStudentProvider {
       });
 
       if (existingStudent) {
-        throw new Error(
+        throw new BusinessException(
           `Student with admission number ${createStudentInput.admission_number} already exists`,
+          'STUDENT_ADMISSION_EXISTS',
+          HttpStatus.CONFLICT,
+          { admission_number: createStudentInput.admission_number },
+        );
+      }
+
+      // ✅ 3. Validate that grade level belongs to tenant (before saving anything)
+      const isValidGrade =
+        await this.schoolSetupGuardService.validateGradeLevelBelongsToTenant(
+          tenantId,
+          createStudentInput.grade,
+        );
+      if (!isValidGrade) {
+        throw new BadRequestException(
+          `Grade level with ID ${createStudentInput.grade} is not part of the configured school for this tenant`,
+        );
+      }
+
+      // ✅ 4. Confirm grade level exists
+      const gradeLevel = await queryRunner.manager.findOne(GradeLevel, {
+        where: { id: createStudentInput.grade },
+      });
+      if (!gradeLevel) {
+        throw new Error(
+          `Grade level with ID ${createStudentInput.grade} not found`,
         );
       }
 
@@ -67,25 +94,7 @@ export class UsersCreateStudentProvider {
 
       const savedUser = await queryRunner.manager.save(user);
 
-      // Fetch GradeLevel entity
-      const gradeLevel = await queryRunner.manager.findOne(GradeLevel, {
-        where: { id: createStudentInput.grade },
-      });
 
-      if (!gradeLevel) {
-        throw new Error(
-          `Grade level with ID ${createStudentInput.grade} not found`,
-        );
-      }
-
-      // Create Student record
-      // const student = queryRunner.manager.create(Student, {
-      //   user_id: savedUser.id,
-      //   admission_number: createStudentInput.admission_number,
-      //   phone: createStudentInput.phone,
-      //   gender: createStudentInput.gender,
-      //   gradeLevel,
-      // });
 
       const student = queryRunner.manager.create(Student, {
         user_id: savedUser.id,
@@ -153,5 +162,3 @@ export class UsersCreateStudentProvider {
     return results;
   }
 }
-
-
