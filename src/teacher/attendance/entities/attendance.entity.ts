@@ -18,7 +18,7 @@ registerEnumType(AttendanceStatus, {
 @Entity()
 @ObjectType()
 export class Attendance {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   @Field(() => ID)
   id: string;
 

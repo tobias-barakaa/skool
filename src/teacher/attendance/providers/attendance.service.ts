@@ -1,7 +1,7 @@
 // attendance.service.ts
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Attendance } from '../entities/attendance.entity';
 import { CreateAttendanceInput } from '../dtos/attendance.input';
 import { Student } from 'src/admin/student/entities/student.entity';
@@ -59,7 +59,7 @@ export class AttendanceService {
     const validStudents = await this.studentRepository
       .createQueryBuilder('student')
       .innerJoin('student.user', 'user')
-      .innerJoin('user.userTenantMemberships', 'membership') // Adjust relation name
+      .innerJoin('user.memberships', 'membership') // Adjust relation name
       .where('student.grade = :gradeId', { gradeId })
       .andWhere('membership.tenantId = :tenantId', { tenantId })
       .andWhere('membership.role = :role', { role: MembershipRole.STUDENT })
@@ -118,7 +118,12 @@ export class AttendanceService {
       }),
     );
 
-    return this.attendanceRepository.save(attendanceEntities);
+    const saved = await this.attendanceRepository.save(attendanceEntities);
+
+    return this.attendanceRepository.find({
+      where: { id: In(saved.map((a) => a.id)) },
+      relations: ['student'],
+    });
   }
 
   // Helper method to validate individual student access
@@ -130,7 +135,7 @@ export class AttendanceService {
     const student = await this.studentRepository
       .createQueryBuilder('student')
       .innerJoin('student.user', 'user')
-      .innerJoin('user.userTenantMemberships', 'membership')
+      .innerJoin('user.memberships', 'membership')
       .where('student.id = :studentId', { studentId })
       .andWhere('student.grade = :gradeId', { gradeId })
       .andWhere('membership.tenantId = :tenantId', { tenantId })
@@ -152,7 +157,7 @@ export class AttendanceService {
     return this.studentRepository
       .createQueryBuilder('student')
       .innerJoin('student.user', 'user')
-      .innerJoin('user.userTenantMemberships', 'membership')
+      .innerJoin('user.memberships', 'membership')
       .where('student.grade = :gradeId', { gradeId })
       .andWhere('membership.tenantId = :tenantId', { tenantId })
       .andWhere('membership.role = :role', { role: MembershipRole.STUDENT })
@@ -161,7 +166,7 @@ export class AttendanceService {
         'student.admissionNumber',
         'student.grade',
         'user.id',
-        'user.name'
+        'user.name',
       ])
       .getMany();
   }
@@ -171,3 +176,4 @@ export class AttendanceService {
     return date instanceof Date && !isNaN(date.getTime());
   }
 }
+
