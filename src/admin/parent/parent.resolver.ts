@@ -92,17 +92,40 @@ export class ParentResolver {
     );
   }
 
+  // @Mutation(() => InviteParentResponse)
+  // async inviteParent(
+  //   @Args('createParentDto') createParentDto: CreateParentInvitationDto,
+  //   @Args('tenantId') tenantId: string,
+  //   @Args('studentIds', { type: () => [String] }) studentIds: string[],
+  //   @ActiveUser() currentUser: ActiveUserData,
+  // ): Promise<InviteParentResponse> {
+  //   return await this.parentService.inviteParent(
+  //     createParentDto,
+  //     currentUser,
+  //     tenantId,
+  //     studentIds,
+  //   );
+  // }
+
   @Mutation(() => InviteParentResponse)
   async inviteParent(
     @Args('createParentDto') createParentDto: CreateParentInvitationDto,
-    @Args('tenantId') tenantId: string,
+    @Args('tenantId') tenantId: string, // Keep this for frontend compatibility
     @Args('studentIds', { type: () => [String] }) studentIds: string[],
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<InviteParentResponse> {
+    // SECURITY: Validate that the provided tenantId matches the user's tenantId
+    if (tenantId !== currentUser.tenantId) {
+      throw new ForbiddenException(
+        'Cannot invite parents for a different tenant',
+      );
+    }
+
+    // Use the validated tenantId (which is the same as currentUser.tenantId)
     return await this.parentService.inviteParent(
       createParentDto,
       currentUser,
-      tenantId,
+      currentUser.tenantId, // Use currentUser.tenantId instead of the argument
       studentIds,
     );
   }

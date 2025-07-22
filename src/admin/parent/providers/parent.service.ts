@@ -178,7 +178,10 @@ export class ParentService {
       }
 
       // Check grade match
-      if (studentGrade && student.grade !== (studentGrade as unknown as GradeLevel)) {
+      if (
+        studentGrade &&
+        student.grade !== (studentGrade as unknown as GradeLevel)
+      ) {
         matches = false;
       }
 
@@ -207,11 +210,16 @@ export class ParentService {
     tenantId: string,
     studentIds: string[],
   ): Promise<InviteParentResponse> {
+    // SECURITY: Double-check tenant validation in service layer
+    if (tenantId !== currentUser.tenantId) {
+      throw new ForbiddenException('Tenant ID mismatch');
+    }
+
     // Verify that current user is SCHOOL_ADMIN for this tenant
     const membership = await this.membershipRepository.findOne({
       where: {
         user: { id: currentUser.sub },
-        tenant: { id: currentUser.tenantId },
+        tenant: { id: currentUser.tenantId }, // Use currentUser.tenantId consistently
         role: MembershipRole.SCHOOL_ADMIN,
         status: MembershipStatus.ACTIVE,
       },
@@ -221,11 +229,14 @@ export class ParentService {
       throw new ForbiddenException('Only SCHOOL_ADMIN can invite parents');
     }
 
-    // Validate that all students exist and belong to this tenant
+    // Rest of your existing code...
+    // Replace all instances of 'tenantId' with 'currentUser.tenantId' for consistency
+
     const validatedStudents: {
       student: Student;
       membership: UserTenantMembership;
     }[] = [];
+
     for (const studentId of studentIds) {
       const student = await this.studentRepository.findOne({
         where: { id: studentId },
@@ -238,7 +249,7 @@ export class ParentService {
       const studentMembership = await this.membershipRepository.findOne({
         where: {
           user: { id: student.user_id },
-          tenant: { id: tenantId },
+          tenant: { id: currentUser.tenantId }, // Use currentUser.tenantId
           role: MembershipRole.STUDENT,
           status: MembershipStatus.ACTIVE,
         },
@@ -256,6 +267,61 @@ export class ParentService {
         membership: studentMembership,
       });
     }
+    // async inviteParent(
+    //   createParentDto: CreateParentInvitationDto,
+    //   currentUser: ActiveUserData,
+    //   tenantId: string,
+    //   studentIds: string[],
+    // ): Promise<InviteParentResponse> {
+    //   // Verify that current user is SCHOOL_ADMIN for this tenant
+    //   const membership = await this.membershipRepository.findOne({
+    //     where: {
+    //       user: { id: currentUser.sub },
+    //       tenant: { id: currentUser.tenantId },
+    //       role: MembershipRole.SCHOOL_ADMIN,
+    //       status: MembershipStatus.ACTIVE,
+    //     },
+    //   });
+
+    //   if (!membership) {
+    //     throw new ForbiddenException('Only SCHOOL_ADMIN can invite parents');
+    //   }
+
+    //   // Validate that all students exist and belong to this tenant
+    //   const validatedStudents: {
+    //     student: Student;
+    //     membership: UserTenantMembership;
+    //   }[] = [];
+    //   for (const studentId of studentIds) {
+    //     const student = await this.studentRepository.findOne({
+    //       where: { id: studentId },
+    //     });
+
+    //     if (!student) {
+    //       throw new NotFoundException(`Student with ID ${studentId} not found`);
+    //     }
+
+    //     const studentMembership = await this.membershipRepository.findOne({
+    //       where: {
+    //         user: { id: student.user_id },
+    //         tenant: { id: tenantId },
+    //         role: MembershipRole.STUDENT,
+    //         status: MembershipStatus.ACTIVE,
+    //       },
+    //       relations: ['user'],
+    //     });
+
+    //     if (!studentMembership) {
+    //       throw new ForbiddenException(
+    //         `Student ${studentId} does not belong to this tenant`,
+    //       );
+    //     }
+
+    //     validatedStudents.push({
+    //       student,
+    //       membership: studentMembership,
+    //     });
+    //   }
 
     // Check if user with this email already exists in this tenant
     const existingUser = await this.userRepository.findOne({
@@ -622,9 +688,7 @@ export class ParentService {
     return { message: 'Parent invitation revoked successfully' };
   }
 
-
-
-    async acceptInvitation(
+  async acceptInvitation(
     token: string,
     password: string,
   ): Promise<AcceptParentInvitationResponse> {
@@ -668,7 +732,7 @@ export class ParentService {
       parent,
       invitation: result.invitation,
       role: result.role,
-    }
+    };
   }
 
   // async acceptInvitation(token: string, password: string) {
