@@ -23,6 +23,7 @@ import { StaffModule } from './admin/staff/staff.module';
 import { TeacherModule } from './teacher/teacher.module';
 import { ParentModule } from './parent/parent.module';
 import { StorageModule } from './modules/storage/storage.module';
+import { MessagingModule } from './messaging/messaging.module';
 
 
 
@@ -98,7 +99,8 @@ const ENV = process.env.NODE_ENV;
 
     AdminModule,
     TeacherModule,
-    StorageModule
+    StorageModule,
+    MessagingModule
 
 
 

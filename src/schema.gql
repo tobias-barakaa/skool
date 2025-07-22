@@ -61,7 +61,7 @@ type Attendance {
 }
 
 input AttendanceInput {
-  status: String!
+  status: AttendanceStatus!
   studentId: String!
 }
 
@@ -451,6 +451,15 @@ type Parent {
   user: User
 }
 
+type ParentInfo {
+  email: String!
+  isPrimary: Boolean!
+  name: String!
+  parentId: ID!
+  phone: String!
+  relationship: String!
+}
+
 """The method used by the parent to link to a student"""
 enum ParentLinkingMethod {
   MANUAL_INPUT
@@ -513,6 +522,16 @@ type Query {
   streams: [StreamType!]!
   streamsByGradeLevel(gradeLevelId: ID!): [StreamType!]!
   students: [StudentWithTenant!]!
+  teacherGetParentById(parentId: String!): Parent
+  teacherGetParents: [Parent!]!
+  teacherGetParentsByStudentId(studentId: String!): [Parent!]!
+  teacherGetPrimaryParentByStudentId(studentId: String!): Parent
+  teacherGetStudentById(studentId: String!): Student
+  teacherGetStudentParentRelationships: [ParentStudent!]!
+  teacherGetStudents: [Student!]!
+  teacherGetStudentsByGradeLevel(gradeLevelId: String!): [Student!]!
+  teacherGetStudentsByStream(streamId: String!): [Student!]!
+  teacherGetStudentsWithParents: [StudentWithParentsType!]!
   testById(id: String!): Test
   users: [User!]!
   usersByTenant(role: String, tenantId: String!): [User!]!
@@ -748,6 +767,12 @@ type StudentSummaryDto {
   grade: String!
   id: String!
   name: String!
+}
+
+type StudentWithParentsType {
+  admissionNumber: String!
+  parents: [ParentInfo!]!
+  studentId: ID!
 }
 
 type StudentWithTenant {
