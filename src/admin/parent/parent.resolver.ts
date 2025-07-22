@@ -96,8 +96,8 @@ export class ParentResolver {
   async inviteParent(
     @Args('createParentDto') createParentDto: CreateParentInvitationDto,
     @Args('tenantId') tenantId: string,
-    @Args('studentIds', { type: () => [String] }) studentIds: string[], 
-    @ActiveUser() currentUser: User,
+    @Args('studentIds', { type: () => [String] }) studentIds: string[],
+    @ActiveUser() currentUser: ActiveUserData,
   ): Promise<InviteParentResponse> {
     return await this.parentService.inviteParent(
       createParentDto,

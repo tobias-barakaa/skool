@@ -203,15 +203,15 @@ export class ParentService {
 
   async inviteParent(
     createParentDto: CreateParentInvitationDto,
-    currentUser: User,
+    currentUser: ActiveUserData,
     tenantId: string,
     studentIds: string[],
   ): Promise<InviteParentResponse> {
     // Verify that current user is SCHOOL_ADMIN for this tenant
     const membership = await this.membershipRepository.findOne({
       where: {
-        user: { id: currentUser.id },
-        tenant: { id: tenantId },
+        user: { id: currentUser.sub },
+        tenant: { id: currentUser.tenantId },
         role: MembershipRole.SCHOOL_ADMIN,
         status: MembershipStatus.ACTIVE,
       },
@@ -395,7 +395,7 @@ export class ParentService {
         createParentDto.name,
         tenant?.name || 'Unknown Tenant',
         token,
-        currentUser.name,
+        currentUser.sub, // Replace with a valid property or value
         tenantId,
         studentsData, // Pass array of students
       );
