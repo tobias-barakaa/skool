@@ -528,7 +528,7 @@ type Query {
   teacherGetPrimaryParentByStudentId(studentId: String!): Parent
   teacherGetStudentById(studentId: String!): Student
   teacherGetStudentParentRelationships: [ParentStudent!]!
-  teacherGetStudents: [Student!]!
+  teacherGetStudents: [TeacherStudentDto!]!
   teacherGetStudentsByGradeLevel(gradeLevelId: String!): [Student!]!
   teacherGetStudentsByStream(streamId: String!): [Student!]!
   teacherGetStudentsWithParents: [StudentWithParentsType!]!
@@ -833,6 +833,32 @@ enum SubjectType {
 
 type TeacherOutput {
   id: String!
+  name: String!
+}
+
+type TeacherStudentDto {
+  admission_number: String!
+  createdAt: DateTime!
+  feesOwed: Float!
+  gender: String!
+  grade: TeacherStudentGradeDto
+  grade_level_id: ID
+  id: ID!
+  phone: String!
+  stream: TeacherStudentStreamDto
+  streamId: ID
+  totalFeesPaid: Float!
+  updatedAt: DateTime!
+}
+
+type TeacherStudentGradeDto {
+  code: String!
+  id: ID!
+  name: String!
+}
+
+type TeacherStudentStreamDto {
+  id: ID!
   name: String!
 }
 

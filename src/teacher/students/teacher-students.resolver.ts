@@ -3,6 +3,7 @@ import { Student } from 'src/admin/student/entities/student.entity';
 import { TeacherStudentsService } from './providers/teacher-students.service';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
+import { TeacherStudentDto } from '../dtos/teacher-student.dto';
 
 @Resolver(() => Student)
 export class TeacherStudentsResolver {
@@ -10,14 +11,24 @@ export class TeacherStudentsResolver {
     private readonly teacherStudentsService: TeacherStudentsService,
   ) {}
 
-  @Query(() => [Student], { name: 'teacherGetStudents' })
+  // @Query(() => [Student], { name: 'teacherGetStudents' })
+  // async getStudents(
+  //   @ActiveUser() userTenant: ActiveUserData,
+  // ): Promise<Student[]> {
+  //   return await this.teacherStudentsService.getStudentsByTenant(
+  //     userTenant.tenantId,
+  //   );
+  // }
+
+  @Query(() => [TeacherStudentDto], { name: 'teacherGetStudents' })
   async getStudents(
     @ActiveUser() userTenant: ActiveUserData,
-  ): Promise<Student[]> {
+  ): Promise<TeacherStudentDto[]> {
     return await this.teacherStudentsService.getStudentsByTenant(
       userTenant.tenantId,
     );
-  }
+
+}
 
   @Query(() => Student, { name: 'teacherGetStudentById', nullable: true })
   async getStudentById(

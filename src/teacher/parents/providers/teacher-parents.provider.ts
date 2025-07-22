@@ -39,7 +39,7 @@ export class TeacherParentsProvider {
   ): Promise<Parent[]> {
     return await this.parentRepository
       .createQueryBuilder('parent')
-      .innerJoin('parent.studentParents', 'studentParent')
+      .innerJoin('parent.parentStudents', 'studentParent')
       .where('studentParent.studentId = :studentId', { studentId })
       .andWhere('parent.tenantId = :tenantId', { tenantId })
       .andWhere('parent.isActive = :isActive', { isActive: true })
@@ -114,3 +114,4 @@ export class TeacherParentsProvider {
       .getOne();
   }
 }
+

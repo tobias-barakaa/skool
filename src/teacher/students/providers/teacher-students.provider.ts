@@ -10,27 +10,47 @@ export class TeacherStudentsProvider {
     private readonly studentRepository: Repository<Student>,
   ) {}
 
-  async findStudentsByTenant(tenantId: string): Promise<Student[]> {
-    return await this.studentRepository
-      .createQueryBuilder('student')
-      .innerJoin('student.user', 'user')
-      .where('user.tenantId = :tenantId', { tenantId })
-      .andWhere('student.isActive = :isActive', { isActive: true })
-      .select([
-        'student.id',
-        'student.admission_number',
-        'student.user_id',
-        'student.phone',
-        'student.gender',
-        'student.feesOwed',
-        'student.totalFeesPaid',
-        'student.createdAt',
-        'student.updatedAt',
-        'student.streamId',
-        'student.grade_level_id',
-      ])
-      .getMany();
-  }
+    async findStudentsByTenant(tenantId: string): Promise<Student[]> {
+
+  return await this.studentRepository
+    .createQueryBuilder('student')
+    .leftJoinAndSelect('student.user', 'user')
+    .leftJoin('user.memberships', 'membership')
+    .leftJoinAndSelect('student.grade', 'grade')
+    .leftJoinAndSelect('student.stream', 'stream')
+    .where('membership.tenantId = :tenantId', { tenantId })
+    .andWhere('student.isActive = :isActive', { isActive: true })
+    .getMany();
+}
+
+
+
+  // async findStudentsByTenant(tenantId: string): Promise<Student[]> {
+  //   return await this.studentRepository
+  //     .createQueryBuilder('student')
+  //     .innerJoin('student.user', 'user')
+  //     .leftJoinAndSelect('student.grade', 'grade')
+  //     .leftJoinAndSelect('student.stream', 'stream')
+  //     .where('user.tenantId = :tenantId', { tenantId })
+  //     .andWhere('student.isActive = :isActive', { isActive: true })
+  //     .select([
+  //       'student.id',
+  //       'student.admission_number',
+  //       'student.user_id',
+  //       'student.phone',
+  //       'student.gender',
+  //       'student.feesOwed',
+  //       'student.totalFeesPaid',
+  //       'student.createdAt',
+  //       'student.updatedAt',
+  //       'grade.id',
+  //       'grade.name',
+  //       'grade.code',
+  //       'stream.id',
+  //       'stream.name',
+  //     ])
+  //     .getMany();
+  // }
 
   async findStudentById(
     studentId: string,
@@ -71,3 +91,6 @@ export class TeacherStudentsProvider {
       .getMany();
   }
 }
+
+
+
