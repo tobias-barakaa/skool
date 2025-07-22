@@ -393,20 +393,24 @@ export class ParentService {
     }));
 
     // Create invitation record with multiple students information
-    const invitation = this.invitationRepository.create({
-      email: createParentDto.email,
-      role: MembershipRole.PARENT,
-      userData: {
-        ...createParentDto,
-        students: studentsData, // Store array of students
-      },
-      token,
-      type: InvitationType.PARENT,
-      status: InvitationStatus.PENDING,
-      expiresAt,
-      invitedBy: currentUser,
-      tenant: { id: tenantId },
-    });
+   const invitation = this.invitationRepository.create({
+     email: createParentDto.email,
+     role: MembershipRole.PARENT,
+     userData: {
+       ...createParentDto,
+       fullName: createParentDto.name, // Map name to fullName for consistency
+       students: studentsData,
+     },
+     token,
+     type: InvitationType.PARENT,
+     status: InvitationStatus.PENDING,
+     expiresAt,
+     invitedBy: currentUser,
+     tenant: { id: currentUser.tenantId }, // Use secure tenantId
+   });
+
+
+
 
     await this.invitationRepository.save(invitation);
 

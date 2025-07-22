@@ -89,6 +89,7 @@ export class GenericInviterProvider {
       tenant: { id: tenantId },
     });
 
+
     await this.invitationRepository.save(invitation);
 
     await createProfileFn();
