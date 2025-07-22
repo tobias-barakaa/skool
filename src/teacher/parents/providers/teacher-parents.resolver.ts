@@ -26,6 +26,7 @@ export class TeacherParentsResolver {
     @Args('studentId') studentId: string,
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<Parent[]> {
+    // console.log('Fetching parents for student ID:::::', currentUser);
     return await this.teacherParentsService.getParentsByStudentId(
       studentId,
       currentUser.tenantId,

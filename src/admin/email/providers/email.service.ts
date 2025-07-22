@@ -379,7 +379,6 @@ export class EmailService {
     parentName: string,
     schoolName: string,
     invitationToken: string,
-    inviterName: string,
     tenantId: string,
     students: {
       id: string;
@@ -393,7 +392,6 @@ export class EmailService {
       recipientName: parentName,
       schoolName,
       invitationToken,
-      inviterName,
       tenantId,
       students,
     });
