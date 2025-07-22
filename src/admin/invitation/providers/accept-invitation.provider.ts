@@ -57,7 +57,6 @@ export class AcceptInvitationProvider {
       invitation: UserInvitation,
     ) => Promise<void>,
   ): Promise<AcceptInvitationResult> {
-
     const invitation = await this.invitationRepository.findOne({
       where: {
         token,
@@ -121,8 +120,17 @@ export class AcceptInvitationProvider {
     invitation: UserInvitation,
     password: string,
   ): Promise<User> {
+    const userData = invitation.userData as any; // Type this properly based on your DTO
+
+    // Validate that we have the required name field
+    if (!userData || !userData.name) {
+      throw new BadRequestException(
+        'Invitation data is incomplete - missing name',
+      );
+    }
+
     const hashedPassword = await this.hashPassword.hashPassword(password);
-    const userData = invitation.userData as any;
+    // const userData = invitation.userData as any;
 
     const user = this.userRepository.create({
       email: invitation.email,
@@ -131,7 +139,18 @@ export class AcceptInvitationProvider {
       schoolUrl: invitation.tenant.subdomain,
     });
 
-    return await this.userRepository.save(user);
+
+    const savedUser = await this.userRepository.save(user);
+
+console.log('Created user:', {
+  id: savedUser.id,
+  email: savedUser.email,
+  name: savedUser.name,
+  invitationUserData: userData,
+});
+
+    return savedUser;
+
   }
 
   private async createMembership(
@@ -147,6 +166,4 @@ export class AcceptInvitationProvider {
 
     return await this.membershipRepository.save(membership);
   }
-
-
 }
