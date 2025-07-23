@@ -67,6 +67,8 @@ export class TeacherStudentsResolver {
     @Args('gradeLevelId') gradeLevelId: string,
     @ActiveUser() userTenant: ActiveUserData, // assuming this holds tenantId
   ): Promise<Student[]> {
+    console.log(userTenant);
+
     return this.teacherStudentsService.getStudentsByGradeLevel(
       gradeLevelId,
       userTenant.tenantId,

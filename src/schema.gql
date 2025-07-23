@@ -530,7 +530,6 @@ type Query {
   teacherGetStudentParentRelationships: [ParentStudent!]!
   teacherGetStudents: [TeacherStudentDto!]!
   teacherGetStudentsByGradeLevel(gradeLevelId: String!): [Student!]!
-  teacherGetStudentsByGradeLevels(gradeLevelId: String!): [Student!]!
   teacherGetStudentsByStream(streamId: String!): [Student!]!
   teacherGetStudentsWithParents: [StudentWithParentsType!]!
   testById(id: String!): Test
