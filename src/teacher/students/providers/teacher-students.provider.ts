@@ -66,13 +66,18 @@ export class TeacherStudentsProvider {
     gradeLevelId: string,
     tenantId: string,
   ): Promise<Student[]> {
+    console.log(tenantId, gradeLevelId, 'this is whats working')
     return await this.studentRepository
       .createQueryBuilder('student')
       .leftJoinAndSelect('student.grade', 'grade')
-      .leftJoin('parent_student', 'ps', 'ps.studentId = student.id')
-      .leftJoin('parent', 'p', 'p.id = ps.parentId')
-      .where('grade.id = :gradeLevelId', { gradeLevelId })
-      .andWhere('p.tenantId = :tenantId', { tenantId })
+      .leftJoin(
+        'parent_student_relationship',
+        'psr',
+        'psr.studentId = student.id',
+      )
+      .leftJoin('parent', 'p', 'p.id = psr.parentId')
+      .where('student.grade_level_id = :gradeLevelId', { gradeLevelId })
+      .andWhere('psr.tenantId = :tenantId', { tenantId })
       .getMany();
   }
 
