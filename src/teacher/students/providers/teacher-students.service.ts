@@ -96,7 +96,9 @@ export class TeacherStudentsService {
   ): Promise<Student[]> {
     return await this.studentRepository
       .createQueryBuilder('student')
+      .leftJoin('student.user', 'user') // join with user table
       .where('student.grade_level_id = :gradeLevelId', { gradeLevelId })
+      .andWhere('user.tenantId = :tenantId', { tenantId }) // filter by tenant
       .getMany();
   }
 }
