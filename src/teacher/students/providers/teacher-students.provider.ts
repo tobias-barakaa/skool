@@ -69,9 +69,10 @@ export class TeacherStudentsProvider {
     return await this.studentRepository
       .createQueryBuilder('student')
       .leftJoinAndSelect('student.grade', 'grade')
-      .leftJoin('parent', 'parent', 'parent.studentId = student.id') // or use user_roles
+      .leftJoin('parent_student', 'ps', 'ps.studentId = student.id')
+      .leftJoin('parent', 'p', 'p.id = ps.parentId')
       .where('grade.id = :gradeLevelId', { gradeLevelId })
-      .andWhere('parent.tenantId = :tenantId', { tenantId }) // adjust for actual table used
+      .andWhere('p.tenantId = :tenantId', { tenantId })
       .getMany();
   }
 
