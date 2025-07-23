@@ -62,7 +62,7 @@ export class TeacherStudentsResolver {
     );
   }
 
-  @Query(() => [Student], { name: 'teacherGetStudentsByGradeLevel' })
+  @Query(() => [Student], { name: 'teacherGetStudentsByGradeLevels' })
   async getStudentssByGradeLevel(
     @Args('gradeLevelId') gradeLevelId: string,
     @ActiveUser() userTenant: ActiveUserData, // assuming this holds tenantId
