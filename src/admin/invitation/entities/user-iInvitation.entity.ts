@@ -89,6 +89,9 @@ export class UserInvitation {
   @Field(() => User, { nullable: true })
   invitedBy?: User;
 
+  @Column({ nullable: true })
+  name?: string;
+
   @Field()
   @CreateDateColumn()
   createdAt: Date;

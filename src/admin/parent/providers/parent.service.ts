@@ -265,63 +265,7 @@ export class ParentService {
       membership: studentMembership,
     });
   }
-  // async inviteParent(
-  //   createParentDto: CreateParentInvitationDto,
-  //   currentUser: ActiveUserData,
-  //   tenantId: string,
-  //   studentIds: string[],
-  // ): Promise<InviteParentResponse> {
-  //   // Verify that current user is SCHOOL_ADMIN for this tenant
-  //   const membership = await this.membershipRepository.findOne({
-  //     where: {
-  //       user: { id: currentUser.sub },
-  //       tenant: { id: currentUser.tenantId },
-  //       role: MembershipRole.SCHOOL_ADMIN,
-  //       status: MembershipStatus.ACTIVE,
-  //     },
-  //   });
 
-  //   if (!membership) {
-  //     throw new ForbiddenException('Only SCHOOL_ADMIN can invite parents');
-  //   }
-
-  //   // Validate that all students exist and belong to this tenant
-  //   const validatedStudents: {
-  //     student: Student;
-  //     membership: UserTenantMembership;
-  //   }[] = [];
-  //   for (const studentId of studentIds) {
-  //     const student = await this.studentRepository.findOne({
-  //       where: { id: studentId },
-  //     });
-
-  //     if (!student) {
-  //       throw new NotFoundException(`Student with ID ${studentId} not found`);
-  //     }
-
-  //     const studentMembership = await this.membershipRepository.findOne({
-  //       where: {
-  //         user: { id: student.user_id },
-  //         tenant: { id: tenantId },
-  //         role: MembershipRole.STUDENT,
-  //         status: MembershipStatus.ACTIVE,
-  //       },
-  //       relations: ['user'],
-  //     });
-
-  //     if (!studentMembership) {
-  //       throw new ForbiddenException(
-  //         `Student ${studentId} does not belong to this tenant`,
-  //       );
-  //     }
-
-  //     validatedStudents.push({
-  //       student,
-  //       membership: studentMembership,
-  //     });
-  //   }
-
-    // Check if user with this email already exists in this tenant
     const existingUser = await this.userRepository.findOne({
       where: { email: createParentDto.email },
     });
@@ -395,10 +339,11 @@ export class ParentService {
     // Create invitation record with multiple students information
    const invitation = this.invitationRepository.create({
      email: createParentDto.email,
+     name: createParentDto.name, 
      role: MembershipRole.PARENT,
      userData: {
        ...createParentDto,
-       fullName: createParentDto.name, // Map name to fullName for consistency
+       fullName: createParentDto.name,
        students: studentsData,
      },
      token,
@@ -406,7 +351,7 @@ export class ParentService {
      status: InvitationStatus.PENDING,
      expiresAt,
      invitedBy: currentUser,
-     tenant: { id: currentUser.tenantId }, // Use secure tenantId
+     tenant: { id: currentUser.tenantId },
    });
 
 
@@ -466,22 +411,6 @@ export class ParentService {
         tenantId,
         studentsData, // Pass array of students
       );
-
-
-
-// async sendParentInvitation(
-//     email: string,
-//     parentName: string,
-//     schoolName: string,
-//     invitationToken: string,
-//     inviterName: string,
-//     tenantId: string,
-//     students: {
-//       id: string;
-//       name: string;
-//       admissionNumber: string;
-//       grade: string;
-//     }[],
 
 
 

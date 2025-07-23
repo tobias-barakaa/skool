@@ -30,7 +30,7 @@ export class ParentResolver {
   async searchStudentsByName(
     @Args('name') name: string,
     @Args('tenantId') tenantId: string,
-    @ActiveUser() currentUser: User,
+    @ActiveUser() currentUser: ActiveUserData,
   ): Promise<StudentSearchResponse[]> {
     console.log('Searching students by name:', name, 'for tenant:', tenantId);
     console.log(currentUser, 'searchStudentsByName');
