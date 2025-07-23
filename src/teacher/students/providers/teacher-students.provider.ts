@@ -69,11 +69,11 @@ export class TeacherStudentsProvider {
     return await this.studentRepository
       .createQueryBuilder('students')
       .leftJoin(
-        'parent_student_relationship',
+        'parent_students', // Changed from 'parent_student_relationship'
         'psr',
         'psr.studentId = students.id',
       )
-      .where('student.grade_level_id = :gradeLevelId', { gradeLevelId })
+      .where('students.grade_level_id = :gradeLevelId', { gradeLevelId }) // Also fixed 'student' to 'students' to match the alias
       .andWhere('psr.tenantId = :tenantId', { tenantId })
       .getMany();
   }
