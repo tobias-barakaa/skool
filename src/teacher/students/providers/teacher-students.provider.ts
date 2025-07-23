@@ -10,20 +10,17 @@ export class TeacherStudentsProvider {
     private readonly studentRepository: Repository<Student>,
   ) {}
 
-    async findStudentsByTenant(tenantId: string): Promise<Student[]> {
-
-  return await this.studentRepository
-    .createQueryBuilder('student')
-    .leftJoinAndSelect('student.user', 'user')
-    .leftJoin('user.memberships', 'membership')
-    .leftJoinAndSelect('student.grade', 'grade')
-    .leftJoinAndSelect('student.stream', 'stream')
-    .where('membership.tenantId = :tenantId', { tenantId })
-    .andWhere('student.isActive = :isActive', { isActive: true })
-    .getMany();
-}
-
-
+  async findStudentsByTenant(tenantId: string): Promise<Student[]> {
+    return await this.studentRepository
+      .createQueryBuilder('student')
+      .leftJoinAndSelect('student.user', 'user')
+      .leftJoin('user.memberships', 'membership')
+      .leftJoinAndSelect('student.grade', 'grade')
+      .leftJoinAndSelect('student.stream', 'stream')
+      .where('membership.tenantId = :tenantId', { tenantId })
+      .andWhere('student.isActive = :isActive', { isActive: true })
+      .getMany();
+  }
 
   // async findStudentsByTenant(tenantId: string): Promise<Student[]> {
   //   return await this.studentRepository
@@ -72,7 +69,8 @@ export class TeacherStudentsProvider {
     return await this.studentRepository
       .createQueryBuilder('student')
       .innerJoin('student.user', 'user')
-      .where('student.grade_level_id = :gradeLevelId', { gradeLevelId })
+      .innerJoin('student.gradeLevel', 'gradeLevel') 
+      .where('gradeLevel.id = :gradeLevelId', { gradeLevelId })
       .andWhere('user.tenantId = :tenantId', { tenantId })
       .andWhere('student.isActive = :isActive', { isActive: true })
       .getMany();
@@ -91,6 +89,3 @@ export class TeacherStudentsProvider {
       .getMany();
   }
 }
-
-
-
