@@ -62,18 +62,30 @@ export class TeacherStudentsProvider {
       .getOne();
   }
 
+  // async findStudentsByGradeLevel(
+  //   gradeLevelId: string,
+  //   tenantId: string,
+  // ): Promise<Student[]> {
+  //   return await this.studentRepository
+  //     .createQueryBuilder('students')
+  //     .leftJoin(
+  //       'parent_students', // Changed from 'parent_student_relationship'
+  //       'psr',
+  //       'psr.studentId = students.id',
+  //     )
+  //     .where('students.grade_level_id = :gradeLevelId', { gradeLevelId }) // Also fixed 'student' to 'students' to match the alias
+  //     .andWhere('psr.tenantId = :tenantId', { tenantId })
+  //     .getMany();
+  // }
+
   async findStudentsByGradeLevel(
     gradeLevelId: string,
     tenantId: string,
   ): Promise<Student[]> {
     return await this.studentRepository
       .createQueryBuilder('students')
-      .leftJoin(
-        'parent_students', // Changed from 'parent_student_relationship'
-        'psr',
-        'psr.studentId = students.id',
-      )
-      .where('students.grade_level_id = :gradeLevelId', { gradeLevelId }) // Also fixed 'student' to 'students' to match the alias
+      .leftJoin('parent_students', 'psr', 'psr.studentId = students.id')
+      .where('students.grade_level_id = :gradeLevelId', { gradeLevelId })
       .andWhere('psr.tenantId = :tenantId', { tenantId })
       .getMany();
   }
