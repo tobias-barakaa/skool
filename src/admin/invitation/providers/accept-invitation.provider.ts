@@ -123,7 +123,7 @@ export class AcceptInvitationProvider {
     const userData = invitation.userData as any; // Type this properly based on your DTO
 
     // Validate that we have the required name field
-    if (!userData || !userData.name) {
+    if (!userData || !userData.fullName) {
       throw new BadRequestException(
         'Invitation data is incomplete - missing name',
       );
