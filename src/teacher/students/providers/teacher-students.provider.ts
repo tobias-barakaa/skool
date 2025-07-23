@@ -66,12 +66,13 @@ export class TeacherStudentsProvider {
     gradeLevelId: string,
     tenantId: string,
   ): Promise<Student[]> {
-   return await this.studentRepository
-  .createQueryBuilder('student')
-  .leftJoinAndSelect('student.grade', 'grade')
-  .where('grade.id = :gradeLevelId', { gradeLevelId })
-  .andWhere('student.user_id IN (SELECT id FROM users WHERE tenant_id = :tenantId)', { tenantId })
-  .getMany();
+    return await this.studentRepository
+      .createQueryBuilder('student')
+      .leftJoinAndSelect('student.grade', 'grade')
+      .leftJoin('parent', 'parent', 'parent.studentId = student.id') // or use user_roles
+      .where('grade.id = :gradeLevelId', { gradeLevelId })
+      .andWhere('parent.tenantId = :tenantId', { tenantId }) // adjust for actual table used
+      .getMany();
   }
 
   async findStudentsByStream(
