@@ -67,12 +67,12 @@ export class TeacherStudentsProvider {
     tenantId: string,
   ): Promise<Student[]> {
     return await this.studentRepository
-      .createQueryBuilder('student')
-      .leftJoinAndSelect('student.grade', 'grade')
-      .leftJoinAndSelect('student.user', 'user')
-      .where('grade.id = :gradeLevelId', { gradeLevelId })
-      .andWhere('user.tenantId = :tenantId', { tenantId }) // <- this ensures tenant isolation
-      .getMany();
+  .createQueryBuilder('student')
+  .leftJoin('student.user', 'user') // no need to select if not using fields
+  .leftJoinAndSelect('student.grade', 'grade')
+  .where('grade.id = :gradeLevelId', { gradeLevelId })
+  .andWhere('user.tenant_id = :tenantId', { tenantId }) // correct table + field
+  .getMany();
   }
 
   async findStudentsByStream(
