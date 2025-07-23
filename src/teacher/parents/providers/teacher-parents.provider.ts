@@ -77,41 +77,14 @@ export class TeacherParentsProvider {
   ): Promise<ParentStudent[]> {
     return await this.studentParentRepository
       .createQueryBuilder('studentParent')
-      .innerJoin('studentParent.parent', 'parent')
-      .innerJoin('studentParent.student', 'student')
-      .innerJoin('student.user', 'user')
-      .leftJoin('student.grade', 'grade')
-      .leftJoin('student.stream', 'stream')
+      .leftJoinAndSelect('studentParent.parent', 'parent')
+      .leftJoinAndSelect('studentParent.student', 'student')
+      .leftJoinAndSelect('student.grade', 'grade')
+      .leftJoinAndSelect('student.stream', 'stream')
+      .leftJoinAndSelect('student.user', 'user')
       .where('studentParent.tenantId = :tenantId', { tenantId })
       .andWhere('parent.isActive = :isActive', { isActive: true })
       .andWhere('user.tenantId = :tenantId', { tenantId })
-      .select([
-        // studentParent fields
-        'studentParent.id',
-        'studentParent.parentId',
-        'studentParent.studentId',
-        'studentParent.relationship',
-        'studentParent.isPrimary',
-        'studentParent.tenantId',
-        'studentParent.createdAt',
-        'studentParent.updatedAt',
-
-        // parent fields
-        'parent.id',
-        'parent.name',
-        'parent.email',
-        'parent.phone',
-
-        // student fields
-        'student.id',
-        'student.admission_number',
-        'student.gender',
-        'student.phone',
-
-        // grade/stream (optional but you're referencing)
-        'grade.name',
-        'stream.name',
-      ])
       .getMany();
   }
 
