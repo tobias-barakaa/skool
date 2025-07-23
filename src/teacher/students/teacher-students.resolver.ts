@@ -40,16 +40,16 @@ export class TeacherStudentsResolver {
     );
   }
 
-  @Query(() => [Student], { name: 'teacherGetStudentsByGradeLevel' })
-  async getStudentsByGradeLevel(
-    @Args('gradeLevelId') gradeLevelId: string,
-    @ActiveUser() userTenant: ActiveUserData,
-  ): Promise<Student[]> {
-    return await this.teacherStudentsService.getStudentsByGradeLevel(
-      gradeLevelId,
-      userTenant.tenantId,
-    );
-  }
+  // @Query(() => [Student], { name: 'teacherGetStudentsByGradeLevel' })
+  // async getStudentsByGradeLevel(
+  //   @Args('gradeLevelId') gradeLevelId: string,
+  //   @ActiveUser() userTenant: ActiveUserData,
+  // ): Promise<Student[]> {
+  //   return await this.teacherStudentsService.getStudentsByGradeLevel(
+  //     gradeLevelId,
+  //     userTenant.tenantId,
+  //   );
+  // }
 
   @Query(() => [Student], { name: 'teacherGetStudentsByStream' })
   async getStudentsByStream(
@@ -62,12 +62,12 @@ export class TeacherStudentsResolver {
     );
   }
 
-  @Query(() => [Student], { name: 'teacherGetStudentsByGradeLevels' })
-  async getStudentssByGradeLevel(
+  @Query(() => [Student], { name: 'teacherGetStudentsByGradeLevel' })
+  async getStudentsByGradeLevel(
     @Args('gradeLevelId') gradeLevelId: string,
     @ActiveUser() userTenant: ActiveUserData, // assuming this holds tenantId
   ): Promise<Student[]> {
-    return this.teacherStudentsService.getStudentssByGradeLevel(
+    return this.teacherStudentsService.getStudentsByGradeLevel(
       gradeLevelId,
       userTenant.tenantId,
     );

@@ -58,15 +58,15 @@ export class TeacherStudentsService {
     );
   }
 
-  async getStudentsByGradeLevel(
-    gradeLevelId: string,
-    tenantId: string,
-  ): Promise<Student[]> {
-    return await this.teacherStudentsProvider.findStudentsByGradeLevel(
-      gradeLevelId,
-      tenantId,
-    );
-  }
+  // async getStudentsByGradeLevel(
+  //   gradeLevelId: string,
+  //   tenantId: string,
+  // ): Promise<Student[]> {
+  //   return await this.teacherStudentsProvider.findStudentsByGradeLevel(
+  //     gradeLevelId,
+  //     tenantId,
+  //   );
+  // }
 
   async getStudentsByStream(
     streamId: string,
@@ -90,7 +90,7 @@ export class TeacherStudentsService {
   //     .getMany();
   // }
 
-  async getStudentssByGradeLevel(
+  async getStudentsByGradeLevel(
     gradeLevelId: string,
     tenantId: string,
   ): Promise<Student[]> {
