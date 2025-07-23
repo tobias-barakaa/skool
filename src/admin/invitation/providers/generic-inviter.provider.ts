@@ -79,6 +79,7 @@ export class GenericInviterProvider {
 
     const invitation = this.invitationRepository.create({
       email: dto.email,
+      name: dto.fullName,
       role: dto.role,
       userData: dto,
       token,
@@ -88,6 +89,7 @@ export class GenericInviterProvider {
       invitedBy: inviter,
       tenant: { id: tenantId },
     });
+
 
 
     await this.invitationRepository.save(invitation);
