@@ -68,11 +68,10 @@ export class TeacherStudentsProvider {
   ): Promise<Student[]> {
     return await this.studentRepository
       .createQueryBuilder('student')
-      .innerJoin('student.user', 'user')
-      .innerJoin('student.gradeLevel', 'gradeLevel') 
-      .where('gradeLevel.id = :gradeLevelId', { gradeLevelId })
-      .andWhere('user.tenantId = :tenantId', { tenantId })
-      .andWhere('student.isActive = :isActive', { isActive: true })
+      .leftJoinAndSelect('student.grade', 'grade')
+      .leftJoinAndSelect('student.user', 'user')
+      .where('grade.id = :gradeLevelId', { gradeLevelId })
+      .andWhere('user.tenantId = :tenantId', { tenantId }) // <- this ensures tenant isolation
       .getMany();
   }
 
