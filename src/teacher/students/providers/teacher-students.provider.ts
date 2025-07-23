@@ -66,12 +66,11 @@ export class TeacherStudentsProvider {
     gradeLevelId: string,
     tenantId: string,
   ): Promise<Student[]> {
-    return await this.studentRepository
+   return await this.studentRepository
   .createQueryBuilder('student')
-  .leftJoin('student.user', 'user') // no need to select if not using fields
   .leftJoinAndSelect('student.grade', 'grade')
   .where('grade.id = :gradeLevelId', { gradeLevelId })
-  .andWhere('user.tenant_id = :tenantId', { tenantId }) // correct table + field
+  .andWhere('student.user_id IN (SELECT id FROM users WHERE tenant_id = :tenantId)', { tenantId })
   .getMany();
   }
 
