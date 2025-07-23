@@ -84,7 +84,8 @@ export class TeacherParentsProvider {
       .leftJoinAndSelect('student.user', 'user')
       .where('studentParent.tenantId = :tenantId', { tenantId })
       .andWhere('parent.isActive = :isActive', { isActive: true })
-      .andWhere('user.tenantId = :tenantId', { tenantId })
+      // ⚠️ only use this if every student has a linked user
+      // .andWhere('user.tenantId = :tenantId', { tenantId })
       .getMany();
   }
 
