@@ -78,15 +78,25 @@ export class TeacherStudentsService {
     );
   }
 
+  // async getStudentssByGradeLevel(
+  //   gradeLevelId: string,
+  //   tenantId: string,
+  // ): Promise<Student[]> {
+  //   return await this.studentRepository
+  //     .createQueryBuilder('student')
+  //     .leftJoin('student.tenant', 'tenant')
+  //     .where('student.grade_level_id = :gradeLevelId', { gradeLevelId })
+  //     .andWhere('tenant.id = :tenantId', { tenantId })
+  //     .getMany();
+  // }
+
   async getStudentssByGradeLevel(
     gradeLevelId: string,
     tenantId: string,
   ): Promise<Student[]> {
     return await this.studentRepository
       .createQueryBuilder('student')
-      .leftJoin('student.tenant', 'tenant')
       .where('student.grade_level_id = :gradeLevelId', { gradeLevelId })
-      .andWhere('tenant.id = :tenantId', { tenantId })
       .getMany();
   }
 }
