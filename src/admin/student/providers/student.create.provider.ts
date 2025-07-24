@@ -102,6 +102,7 @@ export class UsersCreateStudentProvider {
         phone: createStudentInput.phone,
         gender: createStudentInput.gender,
         grade: gradeLevel,
+        tenant_id: tenantId,
       });
 
       const savedStudent = await queryRunner.manager.save(student);

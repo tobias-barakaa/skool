@@ -94,16 +94,12 @@ export class TeacherStudentsService {
     gradeLevelId: string,
     tenantId: string,
   ): Promise<Student[]> {
-    return await this.studentRepository
-      .createQueryBuilder('student')
-      .innerJoin('student.user', 'user')
-      .innerJoin(
-        'user_tenant_memberships', // Use the actual table name
-        'membership',
-        'membership.userId = user.id AND membership.tenantId = :tenantId',
-        { tenantId },
-      )
-      .where('student.grade_level_id = :gradeLevelId', { gradeLevelId })
-      .getMany();
+    return await this.studentRepository.find({
+      where: {
+        tenant_id: tenantId,
+        grade: { id: gradeLevelId },
+      },
+      relations: ['user', 'grade'], // add others like 'stream' if needed
+    });
   }
 }

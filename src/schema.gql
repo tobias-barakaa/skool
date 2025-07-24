@@ -747,6 +747,8 @@ type Student {
   id: ID!
   isActive: Boolean!
   phone: String!
+  tenant: Tenant!
+  tenant_id: ID!
   totalFeesPaid: Float!
   updatedAt: DateTime!
   user: User!

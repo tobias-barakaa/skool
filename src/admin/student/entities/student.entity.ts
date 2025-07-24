@@ -2,6 +2,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { GradeLevel } from 'src/admin/level/entities/grade-level.entity';
 import { Stream } from 'src/admin/streams/entities/streams.entity';
+import { Tenant } from 'src/admin/tenants/entities/tenant.entity';
 import { User } from 'src/admin/users/entities/user.entity';
 import {
   Column,
@@ -42,11 +43,6 @@ export class Student {
   @Field()
   gender: string;
 
-  // @Column()
-  // @Field()
-  // grade: string;
-
-  // NEW: Foreign key relationship to GradeLevel
   @ManyToOne(() => GradeLevel, {
     eager: true,
     nullable: false,
@@ -81,4 +77,13 @@ export class Student {
     onDelete: 'SET NULL',
   })
   stream: Stream;
+
+  @ManyToOne(() => Tenant, { nullable: false, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'tenant_id' })
+  @Field(() => Tenant)
+  tenant: Tenant;
+
+  @Column('uuid')
+  @Field(() => ID)
+  tenant_id: string;
 }
