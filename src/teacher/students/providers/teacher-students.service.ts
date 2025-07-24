@@ -98,9 +98,9 @@ export class TeacherStudentsService {
       .createQueryBuilder('student')
       .innerJoin('student.user', 'user')
       .innerJoin(
-        'user.tenantMemberships',
+        'user_tenant_memberships', // Use the actual table name
         'membership',
-        'membership.tenantId = :tenantId',
+        'membership.userId = user.id AND membership.tenantId = :tenantId',
         { tenantId },
       )
       .where('student.grade_level_id = :gradeLevelId', { gradeLevelId })
