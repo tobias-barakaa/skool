@@ -36,6 +36,7 @@ import { AcceptParentInvitationResponse } from '../dtos/accept-parent-invitation
 import { InvitationService } from 'src/admin/invitation/providers/invitation.service';
 import { ParentOutput } from '../dtos/parent-output';
 import { GradeLevel } from 'src/admin/level/entities/grade-level.entity';
+import { SchoolSetupGuardService } from 'src/admin/config/school-config.guard';
 
 @Injectable()
 export class ParentService {
@@ -56,6 +57,9 @@ export class ParentService {
     private invitationRepository: Repository<UserInvitation>,
     private emailService: EmailService,
     private readonly invitationService: InvitationService,
+
+    private readonly schoolSetupGuardService: SchoolSetupGuardService,
+
   ) {}
 
   async searchStudentsByName(
@@ -227,6 +231,11 @@ export class ParentService {
     throw new ForbiddenException('Only SCHOOL_ADMIN can invite parents');
   }
 
+  // ✅ Enforce school setup is completed
+  await this.schoolSetupGuardService.validateSchoolIsConfigured(
+    membership.tenantId,
+  );
+
   // Rest of your existing code...
   // Replace all instances of 'tenantId' with 'currentUser.tenantId' for consistency
 
@@ -266,175 +275,164 @@ export class ParentService {
     });
   }
 
-    const existingUser = await this.userRepository.findOne({
-      where: { email: createParentDto.email },
-    });
+  const existingUser = await this.userRepository.findOne({
+    where: { email: createParentDto.email },
+  });
 
-    if (existingUser) {
-      const existingMembership = await this.membershipRepository.findOne({
-        where: {
-          user: { id: existingUser.id },
-          tenant: { id: tenantId },
-        },
-      });
-
-      if (existingMembership) {
-        throw new BadRequestException('User already exists in this tenant');
-      }
-    }
-
-    // Check for recent pending invitation (within last 10 minutes)
-    const tenMinutesAgo = new Date();
-    tenMinutesAgo.setMinutes(tenMinutesAgo.getMinutes() - 10);
-
-    const recentInvitation = await this.invitationRepository.findOne({
+  if (existingUser) {
+    const existingMembership = await this.membershipRepository.findOne({
       where: {
-        email: createParentDto.email,
+        user: { id: existingUser.id },
         tenant: { id: tenantId },
-        status: InvitationStatus.PENDING,
-        createdAt: MoreThan(tenMinutesAgo),
-      },
-      order: {
-        createdAt: 'DESC',
       },
     });
 
-    if (recentInvitation) {
-      throw new BadRequestException(
-        'An invitation was already sent to this email recently. Please wait 10 minutes before sending another.',
-      );
+    if (existingMembership) {
+      throw new BadRequestException('User already exists in this tenant');
     }
+  }
 
-    // Expire old pending invitations for this email and tenant
-    await this.invitationRepository.update(
-      {
-        email: createParentDto.email,
-        tenant: { id: tenantId },
-        status: InvitationStatus.PENDING,
-        expiresAt: LessThan(new Date()),
-      },
-      {
-        status: InvitationStatus.EXPIRED,
-      },
+  // Check for recent pending invitation (within last 10 minutes)
+  const tenMinutesAgo = new Date();
+  tenMinutesAgo.setMinutes(tenMinutesAgo.getMinutes() - 10);
+
+  const recentInvitation = await this.invitationRepository.findOne({
+    where: {
+      email: createParentDto.email,
+      tenant: { id: tenantId },
+      status: InvitationStatus.PENDING,
+      createdAt: MoreThan(tenMinutesAgo),
+    },
+    order: {
+      createdAt: 'DESC',
+    },
+  });
+
+  if (recentInvitation) {
+    throw new BadRequestException(
+      'An invitation was already sent to this email recently. Please wait 10 minutes before sending another.',
     );
+  }
 
-    // Get tenant info
-    const tenant = await this.tenantRepository.findOne({
-      where: { id: tenantId },
+  // Expire old pending invitations for this email and tenant
+  await this.invitationRepository.update(
+    {
+      email: createParentDto.email,
+      tenant: { id: tenantId },
+      status: InvitationStatus.PENDING,
+      expiresAt: LessThan(new Date()),
+    },
+    {
+      status: InvitationStatus.EXPIRED,
+    },
+  );
+
+  // Get tenant info
+  const tenant = await this.tenantRepository.findOne({
+    where: { id: tenantId },
+  });
+
+  // Generate invitation token
+  const token = crypto.randomBytes(32).toString('hex');
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + 7);
+
+  // Prepare student data for invitation
+  const studentsData = validatedStudents.map(({ student, membership }) => ({
+    id: student.id,
+    name: membership.user.name,
+    admissionNumber: student.admission_number,
+    grade: String(student.grade),
+  }));
+
+  // Create invitation record with multiple students information
+  const invitation = this.invitationRepository.create({
+    email: createParentDto.email,
+    name: createParentDto.name,
+    role: MembershipRole.PARENT,
+    userData: {
+      ...createParentDto,
+      fullName: createParentDto.name,
+      students: studentsData,
+    },
+    token,
+    type: InvitationType.PARENT,
+    status: InvitationStatus.PENDING,
+    expiresAt,
+    invitedBy: currentUser,
+    tenant: { id: currentUser.tenantId },
+  });
+
+  await this.invitationRepository.save(invitation);
+
+  // Check if parent record already exists for this email
+  let parent = await this.parentRepository.findOne({
+    where: { email: createParentDto.email },
+  });
+
+  if (!parent) {
+    parent = this.parentRepository.create({
+      email: createParentDto.email,
+      name: createParentDto.name,
+      phone: createParentDto.phone,
+      isActive: false,
+      tenantId: tenantId,
     });
 
-    // Generate invitation token
-    const token = crypto.randomBytes(32).toString('hex');
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + 7);
+    await this.parentRepository.save(parent);
+  }
 
-    // Prepare student data for invitation
-    const studentsData = validatedStudents.map(({ student, membership }) => ({
-      id: student.id,
-      name: membership.user.name,
-      admissionNumber: student.admission_number,
-      grade: String(student.grade),
-    }));
-
-    // Create invitation record with multiple students information
-   const invitation = this.invitationRepository.create({
-     email: createParentDto.email,
-     name: createParentDto.name, 
-     role: MembershipRole.PARENT,
-     userData: {
-       ...createParentDto,
-       fullName: createParentDto.name,
-       students: studentsData,
-     },
-     token,
-     type: InvitationType.PARENT,
-     status: InvitationStatus.PENDING,
-     expiresAt,
-     invitedBy: currentUser,
-     tenant: { id: currentUser.tenantId },
-   });
-
-
-
-
-    await this.invitationRepository.save(invitation);
-
-    // Check if parent record already exists for this email
-    let parent = await this.parentRepository.findOne({
-      where: { email: createParentDto.email },
+  // Create parent-student relationships for all students
+  const parentStudentRelations: ParentStudent[] = [];
+  for (const studentId of studentIds) {
+    // Check if relationship already exists
+    const existingRelation = await this.parentStudentRepository.findOne({
+      where: {
+        parent: { id: parent.id },
+        student: { id: studentId },
+      },
     });
 
-    if (!parent) {
-      parent = this.parentRepository.create({
-        email: createParentDto.email,
-        name: createParentDto.name,
-        phone: createParentDto.phone,
-        isActive: false,
+    if (!existingRelation) {
+      const parentStudent = this.parentStudentRepository.create({
+        parent: { id: parent.id },
+        student: { id: studentId },
         tenantId: tenantId,
       });
-
-      await this.parentRepository.save(parent);
+      parentStudentRelations.push(parentStudent);
     }
-
-    // Create parent-student relationships for all students
-    const parentStudentRelations: ParentStudent[] = [];
-    for (const studentId of studentIds) {
-      // Check if relationship already exists
-      const existingRelation = await this.parentStudentRepository.findOne({
-        where: {
-          parent: { id: parent.id },
-          student: { id: studentId },
-        },
-      });
-
-      if (!existingRelation) {
-        const parentStudent = this.parentStudentRepository.create({
-          parent: { id: parent.id },
-          student: { id: studentId },
-          tenantId: tenantId,
-        });
-        parentStudentRelations.push(parentStudent);
-      }
-    }
-
-    if (parentStudentRelations.length > 0) {
-      await this.parentStudentRepository.save(parentStudentRelations);
-    }
-
-    // Send invitation email with multiple students info
-    try {
-      await this.emailService.sendParentInvitation(
-        createParentDto.email,
-        createParentDto.name,
-        currentUser.subdomain,
-        token,
-        tenantId,
-        studentsData, // Pass array of students
-      );
-
-
-
-
-
-
-
-
-    } catch (error) {
-      console.error('[EmailService Error]', error);
-      throw new BadRequestException('Failed to send invitation email');
-    }
-
-    return {
-      email: invitation.email,
-      name: parent.name,
-      status: invitation.status,
-      createdAt: invitation.createdAt,
-      students: studentsData,
-      studentAdmissionNumber: studentsData
-        .map((student) => student.admissionNumber)
-        .join(', '),
-    };
   }
+
+  if (parentStudentRelations.length > 0) {
+    await this.parentStudentRepository.save(parentStudentRelations);
+  }
+
+  // Send invitation email with multiple students info
+  try {
+    await this.emailService.sendParentInvitation(
+      createParentDto.email,
+      createParentDto.name,
+      currentUser.subdomain,
+      token,
+      tenantId,
+      studentsData, // Pass array of students
+    );
+  } catch (error) {
+    console.error('[EmailService Error]', error);
+    throw new BadRequestException('Failed to send invitation email');
+  }
+
+  return {
+    email: invitation.email,
+    name: parent.name,
+    status: invitation.status,
+    createdAt: invitation.createdAt,
+    students: studentsData,
+    studentAdmissionNumber: studentsData
+      .map((student) => student.admissionNumber)
+      .join(', '),
+  };
+}
 
   // Method to add additional students to an existing parent
   async addStudentsToParent(

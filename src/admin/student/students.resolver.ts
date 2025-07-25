@@ -25,10 +25,10 @@ export class StudentsResolver {
     @Args('createStudentInput') createStudentInput: CreateStudentInput,
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<CreateStudentResponse> {
-    console.log(currentUser, 'this is the currentUser..:')
-    this.logger.log(
-      `Admin ${currentUser.email} creating student: ${createStudentInput.email}`,
-    );
+    // console.log(currentUser, 'this is the currentUser..:')
+    // this.logger.log(
+    //   `Admin ${currentUser.email} creating student: ${createStudentInput.email}`,
+    // );
 
     console.log('ActiveUserdfdffddddddddddd:', currentUser);
 

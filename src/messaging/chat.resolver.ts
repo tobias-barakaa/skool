@@ -21,25 +21,47 @@ const pubSub = new PubSub();
 export class ChatResolver {
   constructor(private readonly chatService: ChatService) {}
 
-  @Mutation(() => ChatMessage)
+   @Mutation(() => ChatMessage)
   async sendMessageToStudent(
     @Args('input') input: SendMessageInput,
-    // @Context() context: any,
-    @ActiveUser() currentUser: ActiveUserData
+    @ActiveUser() currentUser: ActiveUserData,
   ): Promise<ChatMessage> {
-    const teacherId = currentUser.sub; // Assuming you have authentication
+    const teacherId = currentUser.sub;
+    const tenantId = currentUser.tenantId;
 
     const message = await this.chatService.sendMessageToStudent(
       teacherId,
+      tenantId,
       input.recipientId,
       input,
     );
 
-    // Publish for real-time subscription
     pubSub.publish('messageAdded', { messageAdded: message });
 
     return message;
   }
+
+  @Mutation(() => [ChatMessage])
+  async sendMessageToAllStudents(
+    @Args('input') input: SendMessageInput,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise<ChatMessage[]> {
+    const teacherId = currentUser.sub;
+    const tenantId = currentUser.tenantId;
+
+    const messages = await this.chatService.sendMessageToAllStudents(
+      teacherId,
+      tenantId,
+      input,
+    );
+
+    for (const message of messages) {
+      pubSub.publish('messageAdded', { messageAdded: message });
+    }
+
+    return messages;
+  }
+
 
   @Mutation(() => ChatMessage)
   async sendMessageToParent(

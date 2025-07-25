@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { ChatProvider } from '../providers/chat.provider';
 import { RedisChatProvider } from '../providers/redis-chat.provider';
 import { ChatMessage } from '../entities/chat-message.entity';
@@ -12,19 +12,28 @@ export class ChatService {
     private readonly redisChatProvider: RedisChatProvider,
   ) {}
 
-  async sendMessageToStudent(
+   async sendMessageToStudent(
     teacherId: string,
+    tenantId: string,
     studentId: string,
     messageData: SendMessageInput,
   ): Promise<ChatMessage> {
-    // Create or find chat room between teacher and student
+    const student = await this.chatProvider.getStudentById(studentId);
+
+    if (!student) {
+      throw new NotFoundException('Student not found');
+    }
+
+    if (student.tenant_id !== tenantId) {
+      throw new ForbiddenException('Unauthorized: Student is in a different tenant');
+    }
+
     const chatRoom = await this.chatProvider.findOrCreateChatRoom(
       [teacherId, studentId],
       'TEACHER_STUDENT',
       `Teacher-Student Chat`,
     );
 
-    // Create the message
     const message = await this.chatProvider.createMessage(
       teacherId,
       'TEACHER',
@@ -32,11 +41,34 @@ export class ChatService {
       messageData,
     );
 
-    // Cache in Redis for real-time features
     await this.redisChatProvider.cacheMessage(message);
 
     return message;
   }
+
+  async sendMessageToAllStudents(
+    teacherId: string,
+    tenantId: string,
+    input: SendMessageInput,
+  ): Promise<ChatMessage[]> {
+    const students = await this.chatProvider.getAllStudentsByTenant(tenantId);
+
+    const messages: ChatMessage[] = [];
+
+    for (const student of students) {
+      const message = await this.sendMessageToStudent(
+        teacherId,
+        tenantId,
+        student.id,
+        input,
+      );
+      messages.push(message);
+    }
+
+    return messages;
+  }
+
+
 
   async sendMessageToParent(
     teacherId: string,

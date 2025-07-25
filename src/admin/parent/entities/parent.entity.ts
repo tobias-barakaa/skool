@@ -45,6 +45,8 @@ export class Parent {
   @Field(() => User, { nullable: true })
   user?: User;
 
+  
+
   @Column({ nullable: true })
   userId?: string;
 

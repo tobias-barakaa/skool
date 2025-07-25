@@ -11,6 +11,7 @@ import { InvitationModule } from '../invitation/invitation.module';
 import { UserTenantMembershipModule } from '../user-tenant-membership/user-tenant-membership.module';
 import { StudentModule } from '../student/student.module';
 import { EmailModule } from '../email/email.module';
+import { SchoolConfigModule } from '../config/config.module';
 // import { ParentService } from './providers/parent.service';
 
 @Module({
@@ -23,6 +24,7 @@ import { EmailModule } from '../email/email.module';
     UserTenantMembershipModule,
     StudentModule,
     EmailModule,
+    SchoolConfigModule,
   ],
   providers: [ParentService, ParentResolver],
   exports: [],
