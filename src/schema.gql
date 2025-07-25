@@ -87,6 +87,29 @@ input ChangePasswordInput {
   newPassword: String!
 }
 
+type ChatMessage {
+  chatRoom: ChatRoom!
+  chatRoomId: String!
+  createdAt: DateTime!
+  id: ID!
+  imageUrl: String
+  isRead: Boolean!
+  message: String!
+  senderId: String!
+  senderType: String!
+  subject: String
+}
+
+type ChatRoom {
+  createdAt: DateTime!
+  id: ID!
+  messages: [ChatMessage!]
+  name: String!
+  participantIds: [String!]!
+  type: String!
+  updatedAt: DateTime!
+}
+
 input CreateAttendanceInput {
   attendanceRecords: [AttendanceInput!]!
   date: String!
@@ -416,11 +439,15 @@ type Mutation {
   inviteStaff(createStaffDto: CreateStaffInvitationDto!, tenantId: String!): InviteStaffResponse!
   inviteTeacher(createTeacherDto: CreateTeacherInvitationDto!, tenantId: String!): InviteTeacherResponse!
   markAttendance(markAttendanceInput: CreateAttendanceInput!): [Attendance!]!
+  markChatAsRead(chatRoomId: String!): Boolean!
   resetPassword(resetPasswordInput: ResetPasswordInput!): PasswordResetResponse!
   revokeInvitation(invitationId: String!): RevokeInvitationResponse!
   revokeParentInvitation(invitationId: String!): RevokeInvitationResponse!
   revokeStaffInvitation(invitationId: String!): String!
   revokeStudent(studentId: String!): String!
+  runFullSocketTest: String!
+  sendMessageToParent(input: SendMessageInput!): ChatMessage!
+  sendMessageToStudent(input: SendMessageInput!): ChatMessage!
   signIn(signInInput: SignInInput!): AuthResponse!
   updateStaff(tenantId: String!, updateStaffInput: UpdateStaffInput!): StaffDto!
   updateStream(input: UpdateStreamInput!): StreamType!
@@ -500,17 +527,21 @@ type Query {
   getActiveStaffByTenant(tenantId: String!): [StaffDto!]!
   getAttendanceByDate(date: String!, gradeId: String!): [Attendance!]!
   getAvailableLevelNames: [String!]!
+  getChatMessages(chatRoomId: String!, limit: Float = 50, offset: Float = 0): [ChatMessage!]!
+  getMyChats: [ChatRoom!]!
   getParentsByTenant(tenantId: String!): [Parent!]!
   getPendingInvitations(tenantId: String!): [PendingInvitation!]!
   getPendingParentInvitations(tenantId: String!): [PendingInvitation!]!
   getPendingStaffInvitations(tenantId: String!): String!
   getSchoolConfiguration: SchoolConfigurationResponse
+  getSocketClients: [String!]!
   getStaffByDepartment(department: String!, tenantId: String!): [StaffDto!]!
   getStaffById(id: String!, tenantId: String!): StaffDto!
   getStaffByTenant(tenantId: String!): [StaffDto!]!
   getStaffCount(tenantId: String!): Float!
   getStudentsByGrade(gradeId: String!): [Student!]!
   getStudentsForParent(parentId: String!, tenantId: String!): [StudentSearchResponse!]!
+  getUnreadMessageCount: Float!
   gradeLevelsWithStreams: [GradeLevelWithStreamsOutput!]!
   myAssignMents: [Test!]!
   searchAvailableStudentsForParent(parentId: String!, searchTerm: String, tenantId: String!): [StudentSearchResponse!]!
@@ -533,6 +564,7 @@ type Query {
   teacherGetStudentsByStream(streamId: String!): [Student!]!
   teacherGetStudentsWithParents: [StudentWithParentsType!]!
   testById(id: String!): Test
+  testSocket(scenario: String): String!
   users: [User!]!
   usersByTenant(role: String, tenantId: String!): [User!]!
 }
@@ -651,6 +683,14 @@ type SelectedLevelResponse {
   id: ID!
   name: String!
   subjects: [SubjectResponse!]
+}
+
+input SendMessageInput {
+  imageUrl: String
+  message: String!
+  recipientId: String!
+  recipientType: String!
+  subject: String
 }
 
 input SignInInput {
@@ -831,6 +871,10 @@ enum SubjectType {
   SPORTS
   THEORY
   VOCATIONAL
+}
+
+type Subscription {
+  messageAdded: ChatMessage!
 }
 
 type TeacherOutput {
