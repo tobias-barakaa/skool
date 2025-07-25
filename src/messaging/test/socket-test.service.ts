@@ -10,7 +10,7 @@ export class SocketTestService implements OnModuleInit {
     // Auto-start test when module initializes
     setTimeout(() => {
       this.runTest();
-    }, 2000); // Wait 2 seconds for server to be ready
+    }, 2000); 
   }
 
   async runTest() {
@@ -80,7 +80,6 @@ export class SocketTestService implements OnModuleInit {
     const teacherClient = this.clients.get('teacher-123');
 
     if (teacherClient) {
-      // This would trigger your GraphQL mutation, but let's simulate the socket event
       teacherClient.emit('testMessage', {
         roomId: 'test-room-123',
         message: 'Hello students! This is a test message.',

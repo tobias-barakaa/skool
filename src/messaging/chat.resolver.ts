@@ -11,6 +11,8 @@ import { ChatMessage } from './entities/chat-message.entity';
 import { ChatService } from './providers/chat.service';
 import { SendMessageInput } from './dtos/send-message.input';
 import { ChatRoom } from './entities/chat-room.entity';
+import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
+import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 
 
 const pubSub = new PubSub();
@@ -22,9 +24,10 @@ export class ChatResolver {
   @Mutation(() => ChatMessage)
   async sendMessageToStudent(
     @Args('input') input: SendMessageInput,
-    @Context() context: any,
+    // @Context() context: any,
+    @ActiveUser() currentUser: ActiveUserData
   ): Promise<ChatMessage> {
-    const teacherId = context.req.user.id; // Assuming you have authentication
+    const teacherId = currentUser.sub; // Assuming you have authentication
 
     const message = await this.chatService.sendMessageToStudent(
       teacherId,

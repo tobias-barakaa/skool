@@ -30,7 +30,7 @@ export class RedisChatProvider {
     const key = `room:${message.chatRoomId}:recent_messages`;
     await this.redis.lpush(key, JSON.stringify(message));
     await this.redis.ltrim(key, 0, 99);
-    await this.redis.expire(key, 3600); 
+    await this.redis.expire(key, 3600);
   }
 
   async getRecentMessages(roomId: string): Promise<any[]> {
