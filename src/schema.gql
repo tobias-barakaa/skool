@@ -81,6 +81,13 @@ type AuthResponse {
   user: User!
 }
 
+input BroadcastMessageInput {
+  imageUrl: String
+  message: String!
+  recipientType: String!
+  subject: String
+}
+
 input ChangePasswordInput {
   confirmPassword: String!
   currentPassword: String!
@@ -446,6 +453,8 @@ type Mutation {
   revokeStaffInvitation(invitationId: String!): String!
   revokeStudent(studentId: String!): String!
   runFullSocketTest: String!
+  sendMessageToAllParents(input: BroadcastMessageInput!): [ChatMessage!]!
+  sendMessageToAllStudents(input: BroadcastMessageInput!): [ChatMessage!]!
   sendMessageToParent(input: SendMessageInput!): ChatMessage!
   sendMessageToStudent(input: SendMessageInput!): ChatMessage!
   signIn(signInInput: SignInInput!): AuthResponse!

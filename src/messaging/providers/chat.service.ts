@@ -3,7 +3,7 @@ import { ChatProvider } from '../providers/chat.provider';
 import { RedisChatProvider } from '../providers/redis-chat.provider';
 import { ChatMessage } from '../entities/chat-message.entity';
 import { ChatRoom } from '../entities/chat-room.entity';
-import { SendMessageInput } from '../dtos/send-message.input';
+import { BroadcastMessageInput, SendMessageInput } from '../dtos/send-message.input';
 
 @Injectable()
 export class ChatService {
@@ -12,7 +12,7 @@ export class ChatService {
     private readonly redisChatProvider: RedisChatProvider,
   ) {}
 
-   async sendMessageToStudent(
+  async sendMessageToStudent(
     teacherId: string,
     tenantId: string,
     studentId: string,
@@ -25,7 +25,9 @@ export class ChatService {
     }
 
     if (student.tenant_id !== tenantId) {
-      throw new ForbiddenException('Unauthorized: Student is in a different tenant');
+      throw new ForbiddenException(
+        'Unauthorized: Student is in a different tenant',
+      );
     }
 
     const chatRoom = await this.chatProvider.findOrCreateChatRoom(
@@ -49,33 +51,57 @@ export class ChatService {
   async sendMessageToAllStudents(
     teacherId: string,
     tenantId: string,
-    input: SendMessageInput,
+    input: BroadcastMessageInput,
   ): Promise<ChatMessage[]> {
     const students = await this.chatProvider.getAllStudentsByTenant(tenantId);
 
     const messages: ChatMessage[] = [];
 
     for (const student of students) {
-      const message = await this.sendMessageToStudent(
-        teacherId,
-        tenantId,
-        student.id,
-        input,
-      );
-      messages.push(message);
+      try {
+        const studentInput: SendMessageInput = {
+          ...input,
+          recipientId: student.id, // <- inject dynamically
+        };
+
+        const message = await this.sendMessageToStudent(
+          teacherId,
+          tenantId,
+          student.id,
+          studentInput,
+        );
+
+        if (message) {
+          messages.push(message);
+        }
+      } catch (error) {
+        console.warn(`Skipping student ${student.id}: ${error.message}`);
+        continue;
+      }
     }
 
     return messages;
   }
 
-
-
   async sendMessageToParent(
     teacherId: string,
+    tenantId: string,
     parentId: string,
     messageData: SendMessageInput,
   ): Promise<ChatMessage> {
     // Create or find chat room between teacher and parent
+
+    const parent = await this.chatProvider.getParentById(parentId);
+
+    if (!parent) {
+      throw new NotFoundException('Student not found');
+    }
+
+    if (parent.tenantId !== tenantId) {
+      throw new ForbiddenException(
+        'Unauthorized: Student is in a different tenant',
+      );
+    }
     const chatRoom = await this.chatProvider.findOrCreateChatRoom(
       [teacherId, parentId],
       'TEACHER_PARENT',
@@ -94,6 +120,41 @@ export class ChatService {
     await this.redisChatProvider.cacheMessage(message);
 
     return message;
+  }
+
+  async sendMessageToAllParents(
+    teacherId: string,
+    tenantId: string,
+    input: BroadcastMessageInput, // This does NOT contain recipientId
+  ): Promise<ChatMessage[]> {
+    const parents = await this.chatProvider.getAllParentsByTenant(tenantId);
+
+    const messages: ChatMessage[] = [];
+
+    for (const parent of parents) {
+      try {
+        const parentInput: SendMessageInput = {
+          ...input,
+          recipientId: parent.id, // Inject recipientId dynamically
+        };
+
+        const message = await this.sendMessageToParent(
+          teacherId,
+          tenantId,
+          parent.id,
+          parentInput,
+        );
+
+        if (message) {
+          messages.push(message);
+        }
+      } catch (error) {
+        console.warn(`Skipping parent ${parent.id}: ${error.message}`);
+        continue;
+      }
+    }
+
+    return messages;
   }
 
   async sendMessageToGrade(

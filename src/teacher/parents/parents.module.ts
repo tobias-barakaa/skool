@@ -5,6 +5,7 @@ import { Parent } from 'src/admin/parent/entities/parent.entity';
 import { ParentStudent } from 'src/admin/parent/entities/parent-student.entity';
 import { TeacherParentsService } from './providers/teacher-parents.service';
 import { TeacherParentsResolver } from './providers/teacher-parents.resolver';
+import { ParentService } from 'src/admin/parent/providers/parent.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Parent, ParentStudent])],
@@ -13,6 +14,10 @@ import { TeacherParentsResolver } from './providers/teacher-parents.resolver';
     TeacherParentsService,
     TeacherParentsResolver,
   ],
-  exports: [TeacherParentsService],
+  exports: [
+
+    TypeOrmModule.forFeature([Parent, ParentStudent]),
+    
+  ],
 })
 export class TeacherParentsModule {}

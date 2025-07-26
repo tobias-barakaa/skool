@@ -25,8 +25,7 @@ import { StreamsModule } from '../streams/streams.module';
     InvitationModule,
     SubjectModule,
     LevelModule,
-    StreamsModule
-
+    StreamsModule,
   ],
   providers: [TeacherService, TeacherResolver],
   exports: [TypeOrmModule],

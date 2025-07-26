@@ -9,7 +9,7 @@ import {
 import { PubSub } from 'graphql-subscriptions';
 import { ChatMessage } from './entities/chat-message.entity';
 import { ChatService } from './providers/chat.service';
-import { SendMessageInput } from './dtos/send-message.input';
+import { BroadcastMessageInput, SendMessageInput } from './dtos/send-message.input';
 import { ChatRoom } from './entities/chat-room.entity';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
@@ -21,7 +21,7 @@ const pubSub = new PubSub();
 export class ChatResolver {
   constructor(private readonly chatService: ChatService) {}
 
-   @Mutation(() => ChatMessage)
+  @Mutation(() => ChatMessage)
   async sendMessageToStudent(
     @Args('input') input: SendMessageInput,
     @ActiveUser() currentUser: ActiveUserData,
@@ -43,7 +43,7 @@ export class ChatResolver {
 
   @Mutation(() => [ChatMessage])
   async sendMessageToAllStudents(
-    @Args('input') input: SendMessageInput,
+    @Args('input') input: BroadcastMessageInput,
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<ChatMessage[]> {
     const teacherId = currentUser.sub;
@@ -59,19 +59,20 @@ export class ChatResolver {
       pubSub.publish('messageAdded', { messageAdded: message });
     }
 
-    return messages;
+    return messages.filter(Boolean);
   }
-
 
   @Mutation(() => ChatMessage)
   async sendMessageToParent(
     @Args('input') input: SendMessageInput,
-    @Context() context: any,
+    @ActiveUser() currentUser: ActiveUserData,
   ): Promise<ChatMessage> {
-    const teacherId = context.req.user.id;
+    const teacherId = currentUser.sub;
+    const tenantId = currentUser.tenantId;
 
     const message = await this.chatService.sendMessageToParent(
       teacherId,
+      tenantId,
       input.recipientId,
       input,
     );
@@ -79,6 +80,27 @@ export class ChatResolver {
     pubSub.publish('messageAdded', { messageAdded: message });
 
     return message;
+  }
+
+  @Mutation(() => [ChatMessage])
+  async sendMessageToAllParents(
+    @Args('input') input: BroadcastMessageInput,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise<ChatMessage[]> {
+    const teacherId = currentUser.sub;
+    const tenantId = currentUser.tenantId;
+
+    const messages = await this.chatService.sendMessageToAllParents(
+      teacherId,
+      tenantId,
+      input,
+    );
+
+    for (const message of messages) {
+      pubSub.publish('messageAdded', { messageAdded: message });
+    }
+
+    return messages;
   }
 
   @Query(() => [ChatRoom])

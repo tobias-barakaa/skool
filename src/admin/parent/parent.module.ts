@@ -27,6 +27,9 @@ import { SchoolConfigModule } from '../config/config.module';
     SchoolConfigModule,
   ],
   providers: [ParentService, ParentResolver],
-  exports: [],
+  exports: [
+    TypeOrmModule.forFeature([Parent, ParentStudent]), // <- Fix this
+    ParentService,
+  ],
 })
 export class ParentModule {}

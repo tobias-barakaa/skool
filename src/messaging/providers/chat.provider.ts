@@ -5,6 +5,7 @@ import { ChatRoom } from '../entities/chat-room.entity';
 import { ChatMessage } from '../entities/chat-message.entity';
 import { SendMessageInput } from '../dtos/send-message.input';
 import { Student } from 'src/admin/student/entities/student.entity';
+import { Parent } from 'src/admin/parent/entities/parent.entity';
 
 @Injectable()
 export class ChatProvider {
@@ -18,6 +19,9 @@ export class ChatProvider {
 
     @InjectRepository(Student)
     private studentRepository: Repository<Student>,
+
+    @InjectRepository(Parent)
+    private parentRepository: Repository<Parent>,
   ) {}
 
   async findOrCreateChatRoom(
@@ -124,6 +128,27 @@ export class ChatProvider {
   async getStudentById(studentId: string): Promise<Student | null> {
     return this.studentRepository.findOne({
       where: { id: studentId },
+      relations: ['user'],
+    });
+  }
+
+  async getParentById(parentId: string): Promise<Parent | null> {
+    return this.parentRepository.findOne({
+      where: { id: parentId },
+      relations: ['user'],
+    });
+  }
+
+  async getAllParentsByTenant(tenantId: string): Promise<Parent[]> {
+    return this.parentRepository.find({
+      where: { tenantId },
+      relations: ['user'],
+    });
+  }
+  
+  async getAllStudentsByGrade(gradeId: string): Promise<Student[]> {
+    return this.studentRepository.find({
+      where: { grade: { id: gradeId }, isActive: true },
       relations: ['user'],
     });
   }

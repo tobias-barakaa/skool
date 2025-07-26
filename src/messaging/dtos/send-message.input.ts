@@ -26,6 +26,22 @@ export class SendMessageInput {
 }
 
 
+@InputType()
+export class BroadcastMessageInput {
+  @Field()
+  recipientType: string; // 'STUDENT', 'PARENT'
+
+  @Field({ nullable: true })
+  subject?: string;
+
+  @Field()
+  message: string;
+
+  @Field({ nullable: true })
+  imageUrl?: string;
+}
+
+
 
 @InputType()
 export class CreateChatRoomInput {

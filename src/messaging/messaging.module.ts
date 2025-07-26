@@ -10,6 +10,8 @@ import { SocketTestResolver } from './test/socket-test.resolver';
 import { RedisModule } from '@nestjs-modules/ioredis';
 import { ChatService } from './providers/chat.service';
 import { ChatResolver } from './chat.resolver';
+import { StudentModule } from 'src/admin/student/student.module';
+import { ParentModule } from 'src/admin/parent/parent.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { ChatResolver } from './chat.resolver';
       type: 'single',
       url: process.env.REDIS_URL || 'redis://localhost:6379',
     }),
+    StudentModule,
+    ParentModule
   ],
   providers: [
     ChatProvider,
@@ -25,7 +29,6 @@ import { ChatResolver } from './chat.resolver';
     ChatService,
     ChatResolver,
     ChatGateway,
-    // Test services (remove in production)
     SocketTestService,
     SocketTestResolver,
   ],
