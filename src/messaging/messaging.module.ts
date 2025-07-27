@@ -16,15 +16,10 @@ import { ParentModule } from 'src/admin/parent/parent.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([ChatRoom, ChatMessage]),
-    // RedisModule.forRoot({
-    //   type: 'single',
-    //   url: process.env.REDIS_URL || 'redis://localhost:6379',
-    // }),
-
-    RedisModule.forRoot({
+     RedisModule.forRoot({
   type: 'single',
   url: process.env.REDIS_URL || 'redis://redis:6379',   // <-- use service name
-})
+}),
     StudentModule,
     ParentModule
   ],
