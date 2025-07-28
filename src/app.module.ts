@@ -24,6 +24,7 @@ import { TeacherModule } from './teacher/teacher.module';
 import { ParentModule } from './parent/parent.module';
 import { StorageModule } from './modules/storage/storage.module';
 import { MessagingModule } from './messaging/messaging.module';
+import redisConfig from './admin/config/redis.config';
 
 
 
@@ -34,7 +35,7 @@ const ENV = process.env.NODE_ENV;
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: !ENV ? '.env.development' : `.env.${ENV}`,
-      load: [appConfig, databaseConfig, resendConfig],
+      load: [appConfig, databaseConfig, resendConfig, redisConfig],
       validationSchema: environmentValidation,
     }),
     TypeOrmModule.forRootAsync({
@@ -96,15 +97,10 @@ const ENV = process.env.NODE_ENV;
       },
     }),
 
-
     AdminModule,
     TeacherModule,
     StorageModule,
-    MessagingModule
-
-
-
-
+    MessagingModule,
   ],
   controllers: [AppController],
   providers: [
