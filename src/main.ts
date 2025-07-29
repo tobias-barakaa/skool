@@ -8,6 +8,7 @@ import { AppModule } from './app.module';
 import { CustomLogger } from './admin/common/custom-logger.service';
 import { EntityNotFoundFilter } from './admin/common/filter/entity-not-found.filter';
 import { GraphQLExceptionsFilter } from './admin/common/filter/graphQLException.filter';
+import { SeedingService } from './admin/school-type/seeds/school-type';
 
 async function bootstrap() {
   const logger = new CustomLogger('Bootstrap');
@@ -88,11 +89,16 @@ async function bootstrap() {
 
     //     const seedingService = app.get(SeedingService);
     // await seedingService.seedAllSchoolTypes();
+    //  const seeder = app.get(SeedingService);
+    //  await seeder.seedAllSchoolTypes();
 
     app.enableCors({
       origin: ['https://subdomain.squl.co.ke', 'http://localhost:3000'],
       credentials: true, // ✅ allow cookies
     });
+    // const seeder = app.get(SeedingService);
+    // await seedingService.seedAllSchoolTypes();
+
     await app.listen(port, '0.0.0.0');
     console.log('ENV TEST::::::g', process.env.PORT);
 

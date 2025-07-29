@@ -29,10 +29,41 @@ export class SeedingService {
     const allSubjects = await this.createAllUniqueSubjects();
 
     // STEP 1: Seed SchoolTypes only (no levels yet)
-    const cbcSchoolType = await this.schoolTypeRepo.save({ name: 'CBC', code: 'CBC' });
-    const internationalSchool = await this.schoolTypeRepo.save({ name: 'International', code: 'INTL' });
-    const madrasaSchool = await this.schoolTypeRepo.save({ name: 'Madrasa', code: 'MDR' });
-    const homeschoolType = await this.schoolTypeRepo.save({ name: 'Homeschool', code: 'HMS' });
+    // const cbcSchoolType = await this.schoolTypeRepo.save({ name: 'CBC', code: 'CBC' });
+    let cbcSchoolType = await this.schoolTypeRepo.findOneBy({ code: 'CBC' });
+    if (!cbcSchoolType) {
+      cbcSchoolType = await this.schoolTypeRepo.save({
+        name: 'CBC',
+        code: 'CBC',
+      });
+    }
+
+    let internationalSchool = await this.schoolTypeRepo.findOneBy({
+      code: 'INTL',
+    });
+    if (!internationalSchool) {
+      internationalSchool = await this.schoolTypeRepo.save({
+        name: 'International',
+        code: 'INTL',
+      });
+    }
+
+    let madrasaSchool = await this.schoolTypeRepo.findOneBy({ code: 'MDR' });
+    if (!madrasaSchool) {
+      madrasaSchool = await this.schoolTypeRepo.save({
+        name: 'Madrasa',
+        code: 'MDR',
+      });
+    }
+
+    let homeschoolType = await this.schoolTypeRepo.findOneBy({ code: 'HMS' });
+    if (!homeschoolType) {
+      homeschoolType = await this.schoolTypeRepo.save({
+        name: 'Homeschool',
+        code: 'HMS',
+      });
+    }
+
 
     // STEP 2: Seed Levels (reference schoolType in each)
     await this.levelRepo.save([
@@ -237,9 +268,7 @@ await this.gradeLevelRepo.save([
   { name: 'Grade 12', code: 'G12', order: 14, curriculum: cbcCurricula[4], level: seniorSecondary }
 ]);
 
-    // Create curriculum subjects for CBC
-    // await this.createCBCCurriculumSubjects(cbcCurricula, allSubjects);
-    // Fetch all grade levels from the database
+
         const allGradeLevels = await this.gradeLevelRepo.find({
   relations: ['curriculum'],
 });
@@ -247,10 +276,6 @@ await this.gradeLevelRepo.save([
 
   }
 
-  // IGCSE School Seeding (International)
-
-
-  // async seedInternationalSchool(allSubjects: Subject[]): Promise<void> {
   async seedInternationalSchool(internationalSchool: SchoolType, allSubjects: Subject[]): Promise<void> {
 
 

@@ -9,5 +9,5 @@ export default registerAs('database', ()  => ({
     synchronize: process.env.DATABASE_SYNC === 'true',
     autoLoadEntities: process.env.DATABASE_AUTOLOAD === 'true',
 
-    
+
 }))

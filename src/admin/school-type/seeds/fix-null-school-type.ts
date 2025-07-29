@@ -15,64 +15,61 @@ import { Organization } from '../../organizations/entities/organizations-entity'
 import { Parent } from '../../parent/entities/parent.entity';
 import { SchoolLevelSetting } from '../../school-level-setting/entities/school-level-setting.entity';
 
-// Adjust to your actual credentials
+
 const AppDataSource = new DataSource({
-    type: 'postgres',
-    host: 'host',
-    port: 5432,
-    username: 'owner',
-    password: 'password',
-    database: 'database_name',
-    entities: [
-        SchoolType,
-        Level,
-        Grade,
-        Subject,
-        GradeLevel,
-        School,
-        Student,
-        Teacher,
-        User,
-        Organization,
-        Parent,
-        SchoolLevelSetting
+  type: 'postgres',
+  host: 'host',
+  port: 5432,
+  username: 'owner',
+  password: 'password',
+  database: 'database_name',
+  entities: [
+    SchoolType,
+    Level,
+    Grade,
+    Subject,
+    GradeLevel,
+    School,
+    Student,
+    Teacher,
+    User,
+    Organization,
+    Parent,
+    SchoolLevelSetting,
+  ],
+  synchronize: false, // ❗ safer — don't let this auto-sync in prod
+  ssl: { rejectUnauthorized: false },
+});
 
+async function seedSchoolTypes() {
+  const repo = AppDataSource.getRepository(SchoolType);
 
+  const typesToSeed = [
+    { code: 'CBC', name: 'CBC' },
+    { code: 'INTL', name: 'International' },
+    { code: 'MDR', name: 'Madrasa' },
+    { code: 'HMS', name: 'Homeschool' },
+  ];
 
-      ],
-    synchronize: true,
-    ssl: {
-      rejectUnauthorized: false,
-    },
-  });
-
-
-
-async function fixNullSchoolTypes() {
-  await AppDataSource.initialize();
-  const schoolRepo = AppDataSource.getRepository(School);
-  const schoolTypeRepo = AppDataSource.getRepository(SchoolType);
-
-  const defaultType = await schoolTypeRepo.findOneBy({ name: 'CBC School' });
-
-  if (!defaultType) {
-    console.error('❌ Default school type "CBC School" not found.');
-    process.exit(1);
+  for (const type of typesToSeed) {
+    let existing = await repo.findOneBy({ code: type.code });
+    if (!existing) {
+      await repo.save(type);
+      console.log(`✅ Inserted school type: ${type.name}`);
+    } else {
+      console.log(`ℹ️ School type already exists: ${type.name}`);
+    }
   }
-
-  const result = await schoolRepo
-    .createQueryBuilder()
-    .update()
-    .set({ schoolType: defaultType })
-    .where('schoolTypeId IS NULL')
-    .execute();
-
-  console.log(`✅ Updated ${result.affected} school(s) with default type "CBC School"`);
-
-  await AppDataSource.destroy();
 }
 
-fixNullSchoolTypes().catch((err) => {
-  console.error('❌ Error updating school types:', err);
-  process.exit(1);
-});
+AppDataSource.initialize()
+  .then(async () => {
+    console.log('📦 Database connected. Running seeder...');
+    await seedSchoolTypes();
+    console.log('✅ Seeding complete.');
+    process.exit(0);
+  })
+  .catch((error) => {
+    console.error('❌ Error during seeding:', error);
+    process.exit(1);
+  });
