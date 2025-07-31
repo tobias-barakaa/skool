@@ -5,10 +5,15 @@ import { AuthType } from 'src/admin/auth/enums/auth-type.enum';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { SchoolTypeService } from '../services/school-type.service';
 import { SchoolConfigurationResponse } from '../dtos/school-configuration';
+import { DataSource } from 'typeorm';
+import { SchoolConfig } from '../entities/school-config.entity'; // Adjust the path as needed
 
 @Resolver()
 export class SchoolTypeResolver {
-  constructor(private readonly schoolTypeService: SchoolTypeService) {}
+  constructor(
+    private readonly schoolTypeService: SchoolTypeService,
+    private readonly dataSource: DataSource,
+  ) {}
 
   @Mutation(() => SchoolConfigurationResponse)
   async configureSchoolLevelsByNames(
@@ -27,18 +32,39 @@ export class SchoolTypeResolver {
     );
   }
 
-  // @Query(() => SchoolConfigurationResponse, { nullable: true })
-  // async getSchoolConfiguration(@ActiveUser() user: ActiveUserData) {
-  //   console.log('ActiveUser:', user);
+  @Query(() => SchoolConfigurationResponse, { nullable: true })
+  async getSchoolConfiguration(@ActiveUser() user: ActiveUserData) {
+    console.log('ActiveUser:', user);
 
-  //   const subdomain = user.subdomain;
-  //   console.log('Extracted subdomain:', subdomain);
+    const subdomain = user.subdomain;
+    const manager = this.dataSource.manager;
 
-  //   return await this.schoolTypeService.getSchoolConfiguration(
-  //     subdomain || 'default',
-  //     user.sub
-  //   );
-  // }
+    const schoolConfig = await manager.findOne(SchoolConfig, {
+      where: {
+        tenant: { subdomain }, // lookup by tenant.subdomain
+      },
+      relations: [
+        'tenant',
+        'configLevels',
+        'configLevels.level',
+        'configLevels.level.curriculum',
+        'configLevels.gradeLevels',
+        'configLevels.gradeLevels.gradeLevel',
+        'configLevels.gradeLevels.gradeLevel.level',
+        'configLevels.subjects',
+        'configLevels.subjects.subject',
+      ],
+    });
+
+    if (!schoolConfig) {
+      throw new Error(`SchoolConfig not found for subdomain: ${subdomain}`);
+    }
+
+    return await this.schoolTypeService.getSchoolConfiguration(
+      schoolConfig.id,
+      manager,
+    );
+  }
 
   // @Query(() => SchoolConfigurationResponse, { nullable: true })
   // @Auth(AuthType.Bearer)
@@ -55,7 +81,7 @@ export class SchoolTypeResolver {
   //     userId,
   //     { tenantId },
   //   );
-  // }
+  // };
 
   @Query(() => [String])
   async getAvailableLevelNames() {

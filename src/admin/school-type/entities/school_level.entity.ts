@@ -28,12 +28,6 @@ export class SchoolLevel {
   })
   schoolType: SchoolType;
 
-  //   @OneToMany(() => GradeLevel, gradeLevel => gradeLevel.schoolLevel, {
-  //     cascade: true,
-  //     eager: false,
-  //   })
-  //   @Field(() => [GradeLevel], { nullable: true })
-  //   gradeLevels?: GradeLevel[];
 
   @OneToMany(() => GradeLevel, (gradeLevel) => gradeLevel.schoolLevel, {
     cascade: true,

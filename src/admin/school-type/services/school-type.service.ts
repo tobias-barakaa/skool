@@ -57,7 +57,7 @@ export class SchoolTypeService {
     // If we have cached config and levelNames match, return it
     if (cached) {
       const cachedConfig = JSON.parse(cached);
-      const cachedLevelNames = cachedConfig.selectedLevels.map((l) =>
+      const cachedLevelNames: string[] = (cachedConfig.selectedLevels as { name: string }[]).map((l: { name: string }) =>
         l.name.toLowerCase(),
       );
       const requestedLevelNames = levelNames.map((name) =>
@@ -77,7 +77,6 @@ export class SchoolTypeService {
     const normalizedLevelNames = levelNames.map((name) =>
       name.toLowerCase().trim().replace(/\s+/g, ' '),
     );
-
     // Use transaction for data consistency
     return await this.dataSource.transaction(async (manager) => {
       const result = await this.processSchoolConfiguration(
@@ -113,9 +112,9 @@ export class SchoolTypeService {
     }
 
     // 2. Validate single school type
-    const schoolTypes = [
-      ...new Set(matchingCurricula.map((c) => c.schoolType.id)),
-    ];
+    const schoolTypes: string[] = [
+      ...new Set(matchingCurricula.map((c: Curriculum) => c.schoolType.id as string)),
+    ] as string[];
     if (schoolTypes.length > 1) {
       throw new BadRequestException(
         'Cannot select levels from different school types. Please select levels from the same school type only.',
@@ -142,7 +141,7 @@ export class SchoolTypeService {
     }
 
     // 4. Create new configuration
-    const configLevels = await this.createConfigurationLevels(
+    await this.createConfigurationLevels(
       matchingCurricula,
       schoolConfig,
       manager,
@@ -212,7 +211,6 @@ export class SchoolTypeService {
       }
     }
 
-
     return configLevels;
   }
 
@@ -268,7 +266,7 @@ export class SchoolTypeService {
         'configLevels.level.curriculum',
         'configLevels.gradeLevels',
         'configLevels.gradeLevels.gradeLevel',
-        'configLevels.gradeLevels.gradeLevel.level', 
+        'configLevels.gradeLevels.gradeLevel.level',
         'configLevels.subjects',
         'configLevels.subjects.subject',
       ],
@@ -284,9 +282,9 @@ export class SchoolTypeService {
 
     if (firstLevel) {
       const curriculum = await manager.findOne(Curriculum, {
-  where: { id: firstLevel.level.curriculum.id },
-  relations: ['schoolType'],
-});
+        where: { id: firstLevel.level.curriculum.id },
+        relations: ['schoolType'],
+      });
       schoolType = curriculum?.schoolType;
     }
 
@@ -341,7 +339,7 @@ export class SchoolTypeService {
     config: SchoolConfigurationResponse,
   ): Promise<void> {
     const cacheKey = `school_config:${subdomain}`;
-    const ttl = 3600; // 1 hour
+    const ttl = 3600;
 
     await this.redis.setex(cacheKey, ttl, JSON.stringify(config));
 
@@ -351,42 +349,99 @@ export class SchoolTypeService {
   }
 
   async getSchoolConfiguration(
-    subdomain: string,
-  ): Promise<SchoolConfigurationResponse | null> {
-    const cacheKey = `school_config:${subdomain}`;
-    const cached = await this.redis.get(cacheKey);
-
-    if (cached) {
-      return JSON.parse(cached);
-    }
-
-    // Fetch from database if not cached
-    const tenant = await this.tenantRepo.findOne({ where: { subdomain } });
-    if (!tenant) return null;
-
-    const config = await this.schoolConfigRepo.findOne({
-      where: { tenant: { id: tenant.id } },
+    schoolConfigId: string,
+    manager: any,
+  ): Promise<SchoolConfigurationResponse> {
+    const result = await manager.findOne(SchoolConfig, {
+      where: { id: schoolConfigId },
       relations: [
         'tenant',
         'configLevels',
         'configLevels.level',
+        'configLevels.level.curriculum',
         'configLevels.gradeLevels',
         'configLevels.gradeLevels.gradeLevel',
+        'configLevels.gradeLevels.gradeLevel.level',
         'configLevels.subjects',
         'configLevels.subjects.subject',
       ],
     });
 
-    if (config) {
-      const response = await this.buildConfigurationResponse(
-        config.id,
-        this.dataSource.manager,
-      );
-      await this.cacheSchoolConfiguration(subdomain, response);
-      return response;
+    if (!result) {
+      throw new Error('School configuration not found');
     }
 
-    return null;
+    const firstLevel = result.configLevels?.[0];
+    let schoolType: { id: string; name: string } | null = null;
+
+    if (firstLevel) {
+      const curriculum = await manager.findOne(Curriculum, {
+        where: { id: firstLevel.level.curriculum.id },
+        relations: ['schoolType'],
+      });
+      schoolType = curriculum?.schoolType;
+    }
+
+    return {
+      id: result.id,
+      createdAt: result.createdAt,
+      updatedAt: result.updatedAt,
+      tenant: {
+        id: result.tenant.id,
+        schoolName: result.tenant.name,
+        subdomain: result.tenant.subdomain,
+      },
+      schoolType: schoolType
+        ? {
+            id: schoolType.id,
+            name: schoolType.name,
+            displayName: schoolType.name,
+          }
+        : undefined,
+      selectedLevels: result.configLevels.map((configLevel) => ({
+        id: configLevel.id,
+        name: configLevel.level.name,
+        description: configLevel.level.description || null,
+        curriculum: {
+          id: configLevel.level.id,
+          name: configLevel.level.name,
+        },
+        gradeLevels:
+          configLevel.gradeLevels?.map((gl) => ({
+            id: gl.id,
+            name: gl.gradeLevel.name,
+            streams: null, // Add stream relation if needed
+            age: gl.gradeLevel.age || null,
+            level: {
+              id: gl.gradeLevel.level.id,
+              name: gl.gradeLevel.level.name,
+            },
+          })) ?? [],
+        subjects:
+          configLevel.subjects?.map((cs) => ({
+            id: cs.subject.id,
+            name: cs.subject.name,
+            code: cs.subject.code || null,
+            subjectType: cs.subjectType || 'core',
+            category: cs.subject.category || null,
+            department: cs.subject.department || null,
+            shortName: cs.subject.shortName || null,
+            isCompulsory: cs.subject.isCompulsory || false,
+            totalMarks: cs.subject.totalMarks || null,
+            passingMarks: cs.subject.passingMarks || null,
+            creditHours: cs.subject.creditHours || null,
+            curriculum: cs.subject.curriculum || null,
+          })) ?? [],
+        curriculumSubjects:
+          configLevel.subjects?.map((cs) => ({
+            id: cs.id,
+            subject: {
+              id: cs.subject.id,
+              name: cs.subject.name,
+            },
+          })) ?? [],
+      })),
+    };
   }
 
   async invalidateSchoolConfigCache(
