@@ -542,7 +542,6 @@ type Query {
   getPendingInvitations(tenantId: String!): [PendingInvitation!]!
   getPendingParentInvitations(tenantId: String!): [PendingInvitation!]!
   getPendingStaffInvitations(tenantId: String!): String!
-  getSchoolConfiguration: SchoolConfigurationResponse
   getSocketClients: [String!]!
   getStaffByDepartment(department: String!, tenantId: String!): [StaffDto!]!
   getStaffById(id: String!, tenantId: String!): StaffDto!

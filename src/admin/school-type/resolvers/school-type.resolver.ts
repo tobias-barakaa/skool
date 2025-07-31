@@ -3,8 +3,8 @@ import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { Auth } from 'src/admin/auth/decorator/auth.decorator';
 import { AuthType } from 'src/admin/auth/enums/auth-type.enum';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
-import { SchoolConfigurationResponse } from '../dtos/school-configuration';
 import { SchoolTypeService } from '../services/school-type.service';
+import { SchoolConfigurationResponse } from '../dtos/school-configuration';
 
 @Resolver()
 export class SchoolTypeResolver {
@@ -40,22 +40,22 @@ export class SchoolTypeResolver {
   //   );
   // }
 
-  @Query(() => SchoolConfigurationResponse, { nullable: true })
-  @Auth(AuthType.Bearer)
-  async getSchoolConfiguration(@ActiveUser() user: ActiveUserData) {
-    console.log('ActiveUser:', user);
+  // @Query(() => SchoolConfigurationResponse, { nullable: true })
+  // @Auth(AuthType.Bearer)
+  // async getSchoolConfiguration(@ActiveUser() user: ActiveUserData) {
+  //   console.log('ActiveUser:', user);
 
-    const tenantId = user.tenantId;
-    console.log('Tenant ID:', tenantId);
+  //   const tenantId = user.tenantId;
+  //   console.log('Tenant ID:', tenantId);
 
-    const subdomain = user.subdomain || 'default';
-    const userId = user.sub;
-    return await this.schoolTypeService.getSchoolConfiguration(
-      subdomain,
-      userId,
-      { tenantId },
-    );
-  }
+  //   const subdomain = user.subdomain || 'default';
+  //   const userId = user.sub;
+  //   return await this.schoolTypeService.getSchoolConfiguration(
+  //     subdomain,
+  //     userId,
+  //     { tenantId },
+  //   );
+  // }
 
   @Query(() => [String])
   async getAvailableLevelNames() {

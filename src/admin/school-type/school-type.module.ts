@@ -13,6 +13,9 @@ import { Level } from '../level/entities/level.entities';
 import { SubjectModule } from '../subject/subject.module';
 import { SchoolsModule } from '../school/school.module';
 import { TenantsModule } from '../tenants/tenants.module';
+import { SchoolConfigGradeLevel } from './entities/school_config_grade_level';
+import { SchoolConfigSubject } from './entities/school_config_subject';
+import { SchoolConfigLevel } from './entities/school_config_level';
 
 @Module({
   imports: [
@@ -24,6 +27,10 @@ import { TenantsModule } from '../tenants/tenants.module';
       UserSchoolSelection,
       SchoolLevel,
       SchoolConfig,
+      SchoolConfigGradeLevel,
+      SchoolConfigSubject,
+      SchoolConfigLevel
+
     ]),
     SubjectModule,
     CurriculumModule,
