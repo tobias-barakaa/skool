@@ -111,3 +111,5 @@ export class SchoolTypeResolver {
     return req.headers['x-forwarded-host'] || req.headers.host;
   }
 }
+
+

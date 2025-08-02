@@ -4,6 +4,7 @@ import { AttendanceModule } from './attendance/attendance.module';
 
 import { TeacherStudentsModule } from './students/students.module';
 import { TeacherParentsModule } from './parents/parents.module';
+import { MarksheetModule } from './marksheet/marksheet.module';
 
 
 @Module({
@@ -12,6 +13,7 @@ import { TeacherParentsModule } from './parents/parents.module';
     AttendanceModule,
     TeacherParentsModule,
     TeacherStudentsModule,
+    MarksheetModule,
   ],
   exports: [TestModule],
   providers: [],
