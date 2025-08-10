@@ -21,6 +21,7 @@ import { setAuthCookies } from '../auth/utils/set-auth-cookies';
 import { AcceptInvitationInput } from '../teacher/dtos/accept-teacher-invitation.dto';
 import { ParentOutput } from './dtos/parent-output';
 import { AcceptParentInvitationResponse } from './dtos/accept-parent-invitation.response.dto';
+import { error } from 'console';
 
 @Resolver()
 export class ParentResolver {

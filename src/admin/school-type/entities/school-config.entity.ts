@@ -14,6 +14,7 @@ import { SchoolLevel } from './school_level.entity';
 import { Tenant } from 'src/admin/tenants/entities/tenant.entity';
 import { SchoolType } from './school-type';
 import { SchoolConfigLevel } from './school_config_level';
+import { SchoolConfigCurriculum } from './curriculum_config';
 
 @ObjectType()
 @Entity()
@@ -21,9 +22,13 @@ export class SchoolConfig {
   @Field(() => ID)
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+
   @OneToOne(() => Tenant, { eager: true, onDelete: 'CASCADE' })
   @JoinColumn()
   tenant: Tenant;
+
+
   @ManyToOne(() => SchoolType, { eager: true })
   @JoinColumn()
   schoolType: SchoolType;
@@ -36,6 +41,9 @@ export class SchoolConfig {
   @OneToMany(() => SchoolConfigLevel, (configLevel) => configLevel.schoolConfig)
   configLevels: SchoolConfigLevel[];
 
+  @OneToMany(() => SchoolConfigCurriculum, (scc) => scc.schoolConfig)
+configCurricula: SchoolConfigCurriculum[];
+
   @Field(() => Date)
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
@@ -44,33 +52,3 @@ export class SchoolConfig {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 }
-
-
-
-// @ObjectType()
-// @Entity()
-// export class SchoolConfig {
-//   @Field(() => ID)
-//   @PrimaryGeneratedColumn('uuid')
-//   id: string;
-
-//   @OneToOne(() => Tenant, { eager: true, onDelete: 'CASCADE' })
-//   @JoinColumn()
-//   tenant: Tenant;
-
-//   @ManyToOne(() => SchoolType, { eager: true })
-//   @JoinColumn()
-//   schoolType: SchoolType;
-
-//   @Field(() => Boolean)
-//   @Column({ default: true })
-//   isActive: boolean;
-
-//   @Field(() => Date)
-//   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-//   createdAt: Date;
-
-//   @Field(() => Date)
-//   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-//   updatedAt: Date;
-// }

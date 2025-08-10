@@ -7,6 +7,6 @@ import { CurriculumSubject } from './entities/curriculum_subjects.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([Curriculum, CurriculumSubject])],
   exports: [CurriculumService, TypeOrmModule],
-  providers: [CurriculumService]
+  providers: [CurriculumService],
 })
 export class CurriculumModule {}

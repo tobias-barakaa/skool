@@ -118,7 +118,7 @@ export class SchoolConfigurationResponse {
   @Field(() => ID)
   id: string;
 
-  @Field(() => TenantResponse) // or your Tenant GraphQL type
+  @Field(() => TenantResponse) 
   tenant: TenantResponse;
 
   @Field(() => SchoolTypeResponse, { nullable: true })

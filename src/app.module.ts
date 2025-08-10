@@ -1,32 +1,30 @@
-import { Module } from '@nestjs/common';
-import { AppService } from './app.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { join as pathJoin } from 'path';
-import { GraphQLError } from 'graphql';
-import { AppController } from './app.controller';
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { GraphQLModule } from '@nestjs/graphql';
 import { JwtModule } from '@nestjs/jwt';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { GraphQLError } from 'graphql';
+import { join as pathJoin } from 'path';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
+import { RedisModule } from '@nestjs-modules/ioredis';
 import { AdminModule } from './admin/admin.module';
-import appConfig from './admin/config/app.config';
-import databaseConfig from './admin/config/database.config';
-import resendConfig from './admin/email/config/resend.config';
-import environmentValidation from './admin/config/environment.validation';
 import jwtConfig from './admin/auth/config/jwt.config';
+import { AccessTokenGuard } from './admin/auth/guards/access-token.guard';
 import { AuthenticationGuard } from './admin/auth/guards/authentication.guard';
 import { DataResponseInterceptor } from './admin/common/interceptor/data-response/data-response.interceptor';
-import { AccessTokenGuard } from './admin/auth/guards/access-token.guard';
-import { StaffModule } from './admin/staff/staff.module';
-import { TeacherModule } from './teacher/teacher.module';
-import { ParentModule } from './parent/parent.module';
-import { StorageModule } from './modules/storage/storage.module';
-import { MessagingModule } from './messaging/messaging.module';
+import appConfig from './admin/config/app.config';
+import databaseConfig from './admin/config/database.config';
+import environmentValidation from './admin/config/environment.validation';
 import redisConfig from './admin/config/redis.config';
-
-
+import resendConfig from './admin/email/config/resend.config';
+import { CommonModule } from './common/common.module';
+import { MessagingModule } from './messaging/messaging.module';
+import { StorageModule } from './modules/storage/storage.module';
+import { TeacherModule } from './teacher/teacher.module';
 
 const ENV = process.env.NODE_ENV;
 
@@ -101,6 +99,13 @@ const ENV = process.env.NODE_ENV;
     TeacherModule,
     StorageModule,
     MessagingModule,
+
+    RedisModule.forRoot({
+      type: 'single',
+      url: process.env.REDIS_URL || 'redis://localhost:6379',
+    }),
+
+    CommonModule,
   ],
   controllers: [AppController],
   providers: [
@@ -117,6 +122,9 @@ const ENV = process.env.NODE_ENV;
   ],
 })
 export class AppModule {}
-function join(arg0: string, arg1: string): import("@nestjs/graphql").AutoSchemaFileValue {
+function join(
+  arg0: string,
+  arg1: string,
+): import('@nestjs/graphql').AutoSchemaFileValue {
   return pathJoin(arg0, arg1);
 }

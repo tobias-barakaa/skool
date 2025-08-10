@@ -17,18 +17,26 @@ import { Tenant } from 'src/admin/tenants/entities/tenant.entity';
 import { SchoolConfig } from './school-config.entity';
 import { SchoolConfigGradeLevel } from './school_config_grade_level';
 import { SchoolConfigSubject } from './school_config_subject';
+import { Level } from 'src/admin/level/entities/level.entities';
 
 
+
+@ObjectType() // ✅ Add this line
 @Entity()
 export class SchoolConfigLevel {
+  @Field(() => ID)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => SchoolConfig, { onDelete: 'CASCADE' })
-  schoolConfig: SchoolConfig;
+  @Field(() => Level)
+  @ManyToOne(() => Level, { eager: true })
+  @JoinColumn()
+  level: Level;
 
-  @ManyToOne(() => SchoolLevel)
-  level: SchoolLevel;
+  @ManyToOne(() => SchoolConfig, (config) => config.configLevels, {
+    onDelete: 'CASCADE',
+  })
+  schoolConfig: SchoolConfig;
 
   @OneToMany(() => SchoolConfigGradeLevel, (g) => g.configLevel)
   gradeLevels: SchoolConfigGradeLevel[];

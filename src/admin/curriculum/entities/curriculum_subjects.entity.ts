@@ -2,6 +2,7 @@ import { ObjectType, Field, ID } from '@nestjs/graphql';
 import {
   Column,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
@@ -21,17 +22,17 @@ export class CurriculumSubject {
   id: string;
 
   @Field(() => Curriculum)
-  @ManyToOne(() => Curriculum, curriculum => curriculum.curriculumSubjects)
+  @ManyToOne(() => Curriculum, (curriculum) => curriculum.curriculumSubjects)
   curriculum: Curriculum;
 
   @Field(() => Subject)
-  @ManyToOne(() => Subject, subject => subject.curriculumSubjects)
+  @ManyToOne(() => Subject, (subject) => subject.curriculumSubjects)
   subject: Subject;
 
   @Field(() => SubjectType)
   @Column({
     type: 'enum',
-    enum: SubjectType
+    enum: SubjectType,
   })
   subjectType: SubjectType;
 
@@ -71,4 +72,11 @@ export class CurriculumSubject {
   @Field({ nullable: true })
   @Column({ nullable: true })
   creditHours?: number;
+
+  @ManyToOne(() => GradeLevel)
+  @JoinColumn({ name: 'gradeLevelId' })
+  gradeLevel: GradeLevel;
+
+  @Column({ nullable: true })
+  gradeLevelId: string;
 }

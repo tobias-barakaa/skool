@@ -3,7 +3,6 @@
   "workbench.colorTheme": "Brogrammer",
   "workbench.iconTheme": "vs-seti",
   "workbench.productIconTheme": "material-product-icons",
-
   // Window and layout
   "window.titleBarStyle": "custom",
   "window.menuBarVisibility": "compact",
@@ -11,7 +10,6 @@
   "workbench.sideBar.location": "left",
   "workbench.statusBar.visible": true,
   "workbench.panel.defaultLocation": "bottom",
-
   // Editor appearance
   "editor.fontFamily": "'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, 'Courier New', monospace",
   "editor.fontSize": 14,
@@ -22,7 +20,6 @@
   "editor.smoothScrolling": true,
   "editor.mouseWheelScrollSensitivity": 1,
   "editor.fastScrollSensitivity": 5,
-
   // Line numbers and gutter
   "editor.lineNumbers": "on",
   "editor.renderLineHighlight": "all",
@@ -30,27 +27,26 @@
   "editor.folding": true,
   "editor.foldingStrategy": "indentation",
   "editor.showFoldingControls": "mouseover",
-
   // Minimap
   "editor.minimap.enabled": true,
   "editor.minimap.side": "right",
   "editor.minimap.showSlider": "always",
   "editor.minimap.renderCharacters": false,
-
   // Indentation and formatting
   "editor.insertSpaces": true,
   "editor.tabSize": 2,
   "editor.detectIndentation": true,
   "editor.renderWhitespace": "selection",
-  "editor.rulers": [80, 120],
-
+  "editor.rulers": [
+    80,
+    120
+  ],
   // Syntax highlighting and colors
   "editor.semanticHighlighting.enabled": true,
   "editor.bracketPairColorization.enabled": true,
   "editor.guides.bracketPairs": "active",
   "editor.guides.highlightActiveIndentation": true,
   "editor.guides.indentation": true,
-
   // Search and suggestions
   "editor.find.autoFindInSelection": "multiline",
   "editor.suggestSelection": "first",
@@ -62,7 +58,6 @@
   "editor.parameterHints.enabled": true,
   "editor.hover.enabled": true,
   "editor.hover.delay": 300,
-
   // File explorer
   "explorer.compactFolders": false,
   "explorer.confirmDelete": false,
@@ -70,7 +65,6 @@
   "explorer.sortOrder": "type",
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.expand": false,
-
   // Terminal
   "terminal.integrated.fontFamily": "'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, 'Courier New', monospace",
   "terminal.integrated.fontSize": 13,
@@ -78,7 +72,6 @@
   "terminal.integrated.cursorBlinking": true,
   "terminal.integrated.cursorStyle": "line",
   "terminal.integrated.smoothScrolling": true,
-
   // Git integration
   "git.enableSmartCommit": true,
   "git.autofetch": true,
@@ -87,19 +80,16 @@
   "gitlens.views.repositories.files.layout": "tree",
   "gitlens.views.fileHistory.enabled": true,
   "gitlens.views.lineHistory.enabled": true,
-
   // Breadcrumbs
   "breadcrumbs.enabled": true,
   "breadcrumbs.filePath": "on",
   "breadcrumbs.symbolPath": "on",
-
   // Tab behavior
   "workbench.editor.showTabs": "multiple",
   "workbench.editor.tabCloseButton": "right",
   "workbench.editor.tabSizing": "shrink",
   "workbench.editor.wrapTabs": true,
   "workbench.editor.scrollToSwitchTabs": true,
-
   // Command palette and search
   "workbench.commandPalette.history": 50,
   "search.useIgnoreFiles": true,
@@ -111,14 +101,12 @@
     "**/build": true,
     "**/.git": true
   },
-
   // Auto-save and file handling
   "files.autoSave": "afterDelay",
   "files.autoSaveDelay": 1000,
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,
   "files.trimFinalNewlines": true,
-
   // Format on save
   "editor.formatOnSave": true,
   "editor.formatOnPaste": true,
@@ -127,7 +115,6 @@
     "source.fixAll": "explicit",
     "source.organizeImports": "explicit"
   },
-
   // Language-specific settings
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -153,13 +140,11 @@
     "editor.defaultFormatter": "ms-python.black-formatter",
     "editor.tabSize": 4
   },
-
   // IntelliSense and completions
   "typescript.suggest.autoImports": true,
   "typescript.updateImportsOnFileMove.enabled": "always",
   "javascript.suggest.autoImports": true,
   "javascript.updateImportsOnFileMove.enabled": "always",
-
   // Performance and memory
   "files.watcherExclude": {
     "**/.git/objects/**": true,
@@ -168,13 +153,11 @@
     "**/dist/**": true,
     "**/build/**": true
   },
-
   // Zen mode and focus
   "zenMode.fullScreen": false,
   "zenMode.hideActivityBar": false,
   "zenMode.hideStatusBar": false,
   "zenMode.centerLayout": false,
-
   // Custom color overrides for Windsurf-like appearance
   "workbench.colorCustomizations": {
     "activityBar.background": "#1e1e1e",

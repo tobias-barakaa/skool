@@ -11,6 +11,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 
+
 export enum AssessmentType {
   CA = 'CA',
   EXAM = 'EXAM',
@@ -31,10 +32,10 @@ export class Assessment {
   type: AssessmentType;
 
   @Column({ length: 50 })
-  title: string;
+  title: string; // e.g., CA1, CA2, Midterm, Final
 
   @Column({ type: 'numeric' })
-  cutoff: number;
+  cutoff: number; // e.g., 30 for CA, 70 for Exam
 
   @Column({ enum: AssessmentStatus, default: AssessmentStatus.UPCOMING })
   status: AssessmentStatus;
@@ -52,6 +53,9 @@ export class Assessment {
 
   @Column()
   gradeLevelId: string;
+
+  @Column()
+  term: string; // e.g., TERM 1, TERM 2, or 2024 TERM 1
 
   @ManyToOne(() => Tenant)
   @JoinColumn({ name: 'tenantId' })

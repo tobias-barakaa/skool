@@ -2,6 +2,7 @@
 import { Global, Module } from '@nestjs/common';
 import { RedisModule as IoRedisModule } from '@nestjs-modules/ioredis';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { RedisService } from './redis.service';
 
 @Global()
 @Module({
@@ -16,6 +17,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       }),
     }),
   ],
-  exports: [IoRedisModule],
+  providers: [RedisService],
+  exports: [IoRedisModule, RedisService],
 })
 export class RedisModule {}
+
+
+// Odesk and Elance

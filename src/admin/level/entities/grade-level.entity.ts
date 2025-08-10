@@ -24,6 +24,7 @@ export class GradeLevel {
   @Column()
   name: string;
 
+  @Field(() => Level)
   @ManyToOne(() => Level, (level) => level.gradeLevels, {
     nullable: false,
     onDelete: 'CASCADE',
@@ -31,12 +32,14 @@ export class GradeLevel {
   @JoinColumn({ name: 'level_id' })
   level: Level;
 
+  @Field(() => SchoolLevel, { nullable: true })
   @ManyToOne(() => SchoolLevel, (schoolLevel) => schoolLevel.gradeLevels, {
     nullable: true,
     onDelete: 'SET NULL',
   })
   schoolLevel?: SchoolLevel;
 
+  @Field(() => Curriculum)
   @ManyToOne(() => Curriculum, (curriculum) => curriculum.gradeLevels, {
     nullable: false,
     onDelete: 'CASCADE',
@@ -54,6 +57,10 @@ export class GradeLevel {
   @Field()
   @Column({ type: 'int' })
   order: number; // For sorting/progression
+
+  @Field({ nullable: true })
+  @Column({ type: 'int', nullable: true })
+  age?: number;
 
   @OneToMany(() => Stream, (stream) => stream.gradeLevel, {
     cascade: true,

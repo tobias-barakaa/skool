@@ -6,21 +6,27 @@ import { SchoolConfig } from './entities/school-config.entity';
 import { SchoolType } from './entities/school-type';
 import { SchoolLevel } from './entities/school_level.entity';
 import { UserSchoolSelection } from './entities/user.school-selection.entity';
-import { SchoolTypeResolver } from './resolvers/school-type.resolver';
-import { SchoolTypeService } from './services/school-type.service';
+// import { SchoolTypeResolver } from './resolvers/school-type.resolver';
+// import { SchoolConfigurationService } from './services/school-type.service';
 import { GradeLevel } from '../level/entities/grade-level.entity';
 import { Level } from '../level/entities/level.entities';
-import { SubjectModule } from '../subject/subject.module';
 import { SchoolsModule } from '../school/school.module';
+import { SubjectModule } from '../subject/subject.module';
 import { TenantsModule } from '../tenants/tenants.module';
 import { SchoolConfigGradeLevel } from './entities/school_config_grade_level';
-import { SchoolConfigSubject } from './entities/school_config_subject';
 import { SchoolConfigLevel } from './entities/school_config_level';
+import { SchoolConfigSubject } from './entities/school_config_subject';
+import { SchoolConfigProvider } from './providers/school-config.provider';
+import { SchoolConfigResolver } from './resolvers/school-config.resolver';
+import { SchoolConfigService } from './services/school-config.service';
+import { CommonModule } from 'src/common/common.module';
+import { SchoolConfigCurriculum } from './entities/curriculum_config';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       CBCSchoolSelectionEntity,
+      SchoolConfigCurriculum,
       SchoolType,
       GradeLevel,
       Level,
@@ -29,15 +35,15 @@ import { SchoolConfigLevel } from './entities/school_config_level';
       SchoolConfig,
       SchoolConfigGradeLevel,
       SchoolConfigSubject,
-      SchoolConfigLevel
-
+      SchoolConfigLevel,
+      CommonModule,
     ]),
     SubjectModule,
     CurriculumModule,
     SchoolsModule,
     TenantsModule,
   ],
-  providers: [SchoolTypeService, SchoolTypeResolver],
-  exports: [SchoolTypeService, TypeOrmModule],
+  providers: [SchoolConfigService, SchoolConfigResolver, SchoolConfigProvider],
+  exports: [SchoolConfigService, TypeOrmModule],
 })
 export class SchoolTypeModule {}

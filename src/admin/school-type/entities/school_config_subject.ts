@@ -14,9 +14,10 @@ export class SchoolConfigSubject {
   @ManyToOne(() => SchoolConfigLevel, { onDelete: 'CASCADE' })
   configLevel: SchoolConfigLevel;
 
-  @ManyToOne(() => Subject)
+  @ManyToOne(() => Subject, { eager: true })
+  @JoinColumn()
   subject: Subject;
 
-  @Column({ default: 'core' }) 
+  @Column({ default: 'core' })
   subjectType: 'core' | 'elective';
 }
