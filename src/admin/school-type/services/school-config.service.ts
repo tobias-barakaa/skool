@@ -380,6 +380,7 @@ export class SchoolConfigService {
       createdAt: config.createdAt,
     };
   }
+  
   //   private mapToSchoolConfigurationReadResponse(
   //   config: SchoolConfig,
   // ): SchoolConfigurationReadResponse {

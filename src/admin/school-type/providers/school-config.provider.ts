@@ -79,7 +79,7 @@ export class SchoolConfigProvider {
         relations: [
           'configCurricula',
           'configCurricula.curriculum',
-          'schoolType'
+          'schoolType',
         ],
       });
 
@@ -91,7 +91,6 @@ export class SchoolConfigProvider {
     }
 
     return config;
-
   }
 
   async findBasicConfigByTenant(
@@ -248,199 +247,187 @@ export class SchoolConfigProvider {
     await this.cacheProvider.invalidateByPattern(`tenant:${tenantId}`);
   }
 
+  // async findCompleteConfigByTenant(
+  //   tenantId: string,
+  // ): Promise<SchoolConfig | null> {
+  //   const cacheKey = this.cacheProvider.generateCompleteConfigKey(tenantId);
 
+  //   // Try to get from cache first
+  //   let config = await this.cacheProvider.get<SchoolConfig>(cacheKey);
 
-// async findCompleteConfigByTenant(
-//   tenantId: string,
-// ): Promise<SchoolConfig | null> {
-//   const cacheKey = this.cacheProvider.generateCompleteConfigKey(tenantId);
+  //   if (config) {
+  //     this.logger.debug(`Cache hit for complete config tenant: ${tenantId}`);
+  //     return config;
+  //   }
 
-//   // Try to get from cache first
-//   let config = await this.cacheProvider.get<SchoolConfig>(cacheKey);
+  //   this.logger.debug(`Cache miss for complete config tenant: ${tenantId}, fetching from DB`);
 
-//   if (config) {
-//     this.logger.debug(`Cache hit for complete config tenant: ${tenantId}`);
-//     return config;
-//   }
+  //   try {
+  //     const raw = await this.dataSource.query(
+  //       `
+  //       SELECT
+  //         sc.id            AS "configId",
+  //         sc."createdAt",
+  //         sc."updatedAt",
+  //         t.id             AS "tenantId",
+  //         t.name           AS "tenantName",
+  //         t.subdomain      AS "tenantSubdomain",
 
-//   this.logger.debug(`Cache miss for complete config tenant: ${tenantId}, fetching from DB`);
+  //         c.id             AS "levelId",
+  //         c.name           AS "levelName",
+  //         c.display_name   AS "levelDesc",
 
-//   try {
-//     const raw = await this.dataSource.query(
-//       `
-//       SELECT
-//         sc.id            AS "configId",
-//         sc."createdAt",
-//         sc."updatedAt",
-//         t.id             AS "tenantId",
-//         t.name           AS "tenantName",
-//         t.subdomain      AS "tenantSubdomain",
+  //         gl.id            AS "gradeId",
+  //         gl.name          AS "gradeName",
+  //         gl.code          AS "gradeCode",
+  //         gl."order"       AS "gradeOrder",
+  //         gl.age           AS "gradeAge",
 
-//         c.id             AS "levelId",
-//         c.name           AS "levelName",
-//         c.display_name   AS "levelDesc",
+  //         st.id            AS "streamId",
+  //         st.name          AS "streamName",
 
-//         gl.id            AS "gradeId",
-//         gl.name          AS "gradeName",
-//         gl.code          AS "gradeCode",
-//         gl."order"       AS "gradeOrder",
-//         gl.age           AS "gradeAge",
+  //         s.id             AS "subjectId",
+  //         s.name           AS "subjectName",
+  //         s.code           AS "subjectCode",
+  //         s.category,
+  //         s.department,
+  //         s."shortName",
 
-//         st.id            AS "streamId",
-//         st.name          AS "streamName",
+  //         cs."isCompulsory",
+  //         cs."totalMarks",
+  //         cs."passingMarks",
+  //         cs."creditHours",
+  //         cs."subjectType",
+  //         c.name           AS "curriculum"
+  //       FROM school_config sc
+  //       JOIN tenants t ON t.id = sc."tenantId"
+  //       JOIN school_config_curriculum scc ON scc."schoolConfigId" = sc.id
+  //       JOIN curricula c ON c.id = scc."curriculumId"
+  //       LEFT JOIN grade_level gl ON gl.curriculum_id = c.id
+  //       LEFT JOIN streams st ON st."gradeLevelId" = gl.id
+  //       LEFT JOIN curriculum_subjects cs ON cs."curriculumId" = c.id
+  //       LEFT JOIN subjects s ON s.id = cs."subjectId"
+  //       WHERE sc."tenantId" = $1
+  //         AND sc."isActive" = true
+  //       ORDER BY c.display_name, gl."order" NULLS LAST, s.name NULLS LAST;
+  //       `,
+  //       [tenantId],
+  //     );
 
-//         s.id             AS "subjectId",
-//         s.name           AS "subjectName",
-//         s.code           AS "subjectCode",
-//         s.category,
-//         s.department,
-//         s."shortName",
+  //     if (!raw?.length) {
+  //       // Cache negative result for shorter time
+  //       await this.cacheProvider.set(cacheKey, null, 300); // 5 minutes
+  //       return null;
+  //     }
 
-//         cs."isCompulsory",
-//         cs."totalMarks",
-//         cs."passingMarks",
-//         cs."creditHours",
-//         cs."subjectType",
-//         c.name           AS "curriculum"
-//       FROM school_config sc
-//       JOIN tenants t ON t.id = sc."tenantId"
-//       JOIN school_config_curriculum scc ON scc."schoolConfigId" = sc.id
-//       JOIN curricula c ON c.id = scc."curriculumId"
-//       LEFT JOIN grade_level gl ON gl.curriculum_id = c.id
-//       LEFT JOIN streams st ON st."gradeLevelId" = gl.id
-//       LEFT JOIN curriculum_subjects cs ON cs."curriculumId" = c.id
-//       LEFT JOIN subjects s ON s.id = cs."subjectId"
-//       WHERE sc."tenantId" = $1
-//         AND sc."isActive" = true
-//       ORDER BY c.display_name, gl."order" NULLS LAST, s.name NULLS LAST;
-//       `,
-//       [tenantId],
-//     );
+  //     // Build the config object more efficiently
+  //     config = this.buildCompleteConfigFromRawData(raw);
 
-//     if (!raw?.length) {
-//       // Cache negative result for shorter time
-//       await this.cacheProvider.set(cacheKey, null, 300); // 5 minutes
-//       return null;
-//     }
+  //     // Cache the result with longer TTL since this is expensive to compute
+  //     await this.cacheProvider.set(cacheKey, config, 3600); // 1 hour
 
-//     // Build the config object more efficiently
-//     config = this.buildCompleteConfigFromRawData(raw);
+  //     this.logger.debug(`Cached complete config for tenant: ${tenantId}`);
+  //     return config;
 
-//     // Cache the result with longer TTL since this is expensive to compute
-//     await this.cacheProvider.set(cacheKey, config, 3600); // 1 hour
+  //   } catch (error) {
+  //     this.logger.error(`Error fetching complete config for tenant ${tenantId}:`, error);
+  //     throw new Error('Failed to fetch school configuration');
+  //   }
+  // }
 
-//     this.logger.debug(`Cached complete config for tenant: ${tenantId}`);
-//     return config;
+  // private buildCompleteConfigFromRawData(raw: any[]): SchoolConfig {
+  //   const levelMap = new Map<string, any>();
+  //   const gradeMap = new Map<string, any>();
 
-//   } catch (error) {
-//     this.logger.error(`Error fetching complete config for tenant ${tenantId}:`, error);
-//     throw new Error('Failed to fetch school configuration');
-//   }
-// }
+  //   // Process raw data more efficiently
+  //   for (const r of raw) {
+  //     // Initialize level if not exists
+  //     if (!levelMap.has(r.levelId)) {
+  //       levelMap.set(r.levelId, {
+  //         id: r.levelId,
+  //         name: r.levelName,
+  //         description: r.levelDesc,
+  //         subjects: new Map(), // Use Map for O(1) lookups
+  //         gradeLevels: new Map(),
+  //       });
+  //     }
 
+  //     const level = levelMap.get(r.levelId);
 
+  //     // Handle grade levels
+  //     if (r.gradeId && !level.gradeLevels.has(r.gradeId)) {
+  //       const gradeData = {
+  //         id: r.gradeId,
+  //         name: r.gradeName,
+  //         code: r.gradeCode,
+  //         order: r.gradeOrder,
+  //         age: r.gradeAge,
+  //         streams: new Map(),
+  //       };
+  //       level.gradeLevels.set(r.gradeId, gradeData);
+  //       gradeMap.set(r.gradeId, gradeData);
+  //     }
 
+  //     // Handle streams
+  //     if (r.streamId && r.gradeId) {
+  //       const grade = gradeMap.get(r.gradeId);
+  //       if (grade && !grade.streams.has(r.streamId)) {
+  //         grade.streams.set(r.streamId, {
+  //           id: r.streamId,
+  //           name: r.streamName,
+  //         });
+  //       }
+  //     }
 
+  //     // Handle subjects
+  //     if (r.subjectId && !level.subjects.has(r.subjectId)) {
+  //       level.subjects.set(r.subjectId, {
+  //         id: r.subjectId,
+  //         name: r.subjectName,
+  //         code: r.subjectCode,
+  //         subjectType: r.subjectType,
+  //         category: r.category,
+  //         department: r.department,
+  //         shortName: r.shortName,
+  //         isCompulsory: r.isCompulsory,
+  //         totalMarks: r.totalMarks,
+  //         passingMarks: r.passingMarks,
+  //         creditHours: r.creditHours,
+  //         curriculum: r.curriculum,
+  //       });
+  //     }
+  //   }
 
-// private buildCompleteConfigFromRawData(raw: any[]): SchoolConfig {
-//   const levelMap = new Map<string, any>();
-//   const gradeMap = new Map<string, any>();
+  //   // Convert Maps back to arrays and sort
+  //   const configLevels = Array.from(levelMap.values()).map((level) => ({
+  //     level: {
+  //       ...level,
+  //       subjects: Array.from(level.subjects.values()),
+  //       gradeLevels: Array.from(level.gradeLevels.values())
+  //   .map((grade: any) => ({
+  //     id: grade.id,
+  //     name: grade.name,
+  //     code: grade.code,
+  //     order: grade.order,
+  //     age: grade.age,
+  //     streams: Array.from(grade.streams.values()),
+  //   }))
+  //   .sort((a, b) => (a.order || 0) - (b.order || 0)),
+  //     },
+  //   }));
 
-//   // Process raw data more efficiently
-//   for (const r of raw) {
-//     // Initialize level if not exists
-//     if (!levelMap.has(r.levelId)) {
-//       levelMap.set(r.levelId, {
-//         id: r.levelId,
-//         name: r.levelName,
-//         description: r.levelDesc,
-//         subjects: new Map(), // Use Map for O(1) lookups
-//         gradeLevels: new Map(),
-//       });
-//     }
-
-//     const level = levelMap.get(r.levelId);
-
-//     // Handle grade levels
-//     if (r.gradeId && !level.gradeLevels.has(r.gradeId)) {
-//       const gradeData = {
-//         id: r.gradeId,
-//         name: r.gradeName,
-//         code: r.gradeCode,
-//         order: r.gradeOrder,
-//         age: r.gradeAge,
-//         streams: new Map(),
-//       };
-//       level.gradeLevels.set(r.gradeId, gradeData);
-//       gradeMap.set(r.gradeId, gradeData);
-//     }
-
-//     // Handle streams
-//     if (r.streamId && r.gradeId) {
-//       const grade = gradeMap.get(r.gradeId);
-//       if (grade && !grade.streams.has(r.streamId)) {
-//         grade.streams.set(r.streamId, {
-//           id: r.streamId,
-//           name: r.streamName,
-//         });
-//       }
-//     }
-
-//     // Handle subjects
-//     if (r.subjectId && !level.subjects.has(r.subjectId)) {
-//       level.subjects.set(r.subjectId, {
-//         id: r.subjectId,
-//         name: r.subjectName,
-//         code: r.subjectCode,
-//         subjectType: r.subjectType,
-//         category: r.category,
-//         department: r.department,
-//         shortName: r.shortName,
-//         isCompulsory: r.isCompulsory,
-//         totalMarks: r.totalMarks,
-//         passingMarks: r.passingMarks,
-//         creditHours: r.creditHours,
-//         curriculum: r.curriculum,
-//       });
-//     }
-//   }
-
-//   // Convert Maps back to arrays and sort
-//   const configLevels = Array.from(levelMap.values()).map((level) => ({
-//     level: {
-//       ...level,
-//       subjects: Array.from(level.subjects.values()),
-//       gradeLevels: Array.from(level.gradeLevels.values())
-//   .map((grade: any) => ({
-//     id: grade.id,
-//     name: grade.name,
-//     code: grade.code,
-//     order: grade.order,
-//     age: grade.age,
-//     streams: Array.from(grade.streams.values()),
-//   }))
-//   .sort((a, b) => (a.order || 0) - (b.order || 0)),
-//     },
-//   }));
-
-//   return {
-//     id: raw[0].configId,
-//     createdAt: raw[0].createdAt,
-//     updatedAt: raw[0].updatedAt,
-//     tenant: {
-//       id: raw[0].tenantId,
-//       name: raw[0].tenantName,
-//       subdomain: raw[0].tenantSubdomain,
-//     },
-//     configLevels,
-//   } as SchoolConfig;
-// }
-
-
-
-
-
-
+  //   return {
+  //     id: raw[0].configId,
+  //     createdAt: raw[0].createdAt,
+  //     updatedAt: raw[0].updatedAt,
+  //     tenant: {
+  //       id: raw[0].tenantId,
+  //       name: raw[0].tenantName,
+  //       subdomain: raw[0].tenantSubdomain,
+  //     },
+  //     configLevels,
+  //   } as SchoolConfig;
+  // }
 
   async findCompleteConfigByTenant(
     tenantId: string,
@@ -458,7 +445,7 @@ export class SchoolConfigProvider {
         t.name           AS "tenantName",
         t.subdomain      AS "tenantSubdomain",
 
-        c.id             AS "levelId",     -- curriculum row
+        c.id             AS "levelId",
         c.name           AS "levelName",
         c.display_name   AS "levelDesc",
 
@@ -478,24 +465,20 @@ export class SchoolConfigProvider {
         s.department,
         s."shortName",
         cs."isCompulsory",
-
-        cs."totalMarks"            AS "totalMarks",
-              cs."passingMarks"             AS "passingMarks",
-
-              cs."creditHours"              AS "creditHours",
-
-              cs."subjectType"              AS "subjectType",
-
+        cs."totalMarks",
+        cs."passingMarks",
+        cs."creditHours",
+        cs."subjectType",
         c.name           AS "curriculum"
       FROM school_config sc
       JOIN tenants               t  ON t.id = sc."tenantId"
       JOIN school_config_level   cl ON cl."schoolConfigId" = sc.id
-      JOIN curricula             c  ON c.id = cl."levelId" -- curriculum
+      JOIN curricula             c  ON c.id = cl."levelId"
       LEFT JOIN grade_level      gl ON gl.curriculum_id = c.id
       LEFT JOIN streams          st ON st."gradeLevelId" = gl.id
-      LEFT JOIN curriculum_subjects cs ON cs."curriculumId" = c.id
-
-      LEFT JOIN subjects s ON s.id = cs."subjectId"
+                                   AND st.tenant_id = sc.tenant_id   -- TENANT FILTER
+      LEFT JOIN curriculum_subjects cs ON cs.curriculumId = c.id
+      LEFT JOIN subjects s ON s.id = cs.subjectId
 
       WHERE sc."tenantId" = $1
         AND sc."isActive" = true
@@ -521,29 +504,32 @@ export class SchoolConfigProvider {
         const level = levelMap.get(r.levelId);
 
         /* Grade */
-        if (r.gradeId && !level.gradeLevels.find((g) => g.id === r.gradeId)) {
+        if (
+          r.gradeId &&
+          !level.gradeLevels.find((g: any) => g.id === r.gradeId)
+        ) {
           level.gradeLevels.push({
             id: r.gradeId,
             name: r.gradeName,
             code: r.gradeCode,
             order: r.gradeOrder,
-            age: r.gradeAge,
+            age: r.age,
             streams: [],
           });
         }
 
         /* Stream */
-        const grade = level.gradeLevels.find((g) => g.id === r.gradeId);
+        const grade = level.gradeLevels.find((g: any) => g.id === r.gradeId);
         if (
           grade &&
           r.streamId &&
-          !grade.streams.find((s) => s.id === r.streamId)
+          !grade.streams.find((s: any) => s.id === r.streamId)
         ) {
           grade.streams.push({ id: r.streamId, name: r.streamName });
         }
 
         /* Subject */
-        if (r.subjectId && !level.subjects.find((s) => s.id === r.subjectId)) {
+        if (r.subjectId && !level.subjects.find((s: any) => s.id === r.subjectId)) {
           level.subjects.push({
             id: r.subjectId,
             name: r.subjectName,
