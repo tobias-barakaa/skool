@@ -475,13 +475,12 @@ export class SchoolConfigProvider {
       JOIN school_config_level   cl ON cl."schoolConfigId" = sc.id
       JOIN curricula             c  ON c.id = cl."levelId"
       LEFT JOIN grade_level      gl ON gl.curriculum_id = c.id
-      LEFT JOIN streams          st ON st."gradeLevelId" = gl.id
-                                   AND st.tenant_id = sc.tenant_id   -- TENANT FILTER
-      LEFT JOIN curriculum_subjects cs ON cs.curriculumId = c.id
-      LEFT JOIN subjects s ON s.id = cs.subjectId
-
-      WHERE sc."tenantId" = $1
-        AND sc."isActive" = true
+      LEFT JOIN streams          st ON st.grade_level_id = gl.id
+                                   AND st.tenant_id = sc.tenant_id   -- <-- TENANT FILTER
+      LEFT JOIN curriculum_subjects cs ON cs.curriculum_id = c.id
+      LEFT JOIN subjects s ON s.id = cs.subject_id
+      WHERE sc.tenant_id = $1
+        AND sc.is_active = true
       ORDER BY c.display_name, gl.order, s.name;
       `,
         [tenantId],
@@ -529,7 +528,10 @@ export class SchoolConfigProvider {
         }
 
         /* Subject */
-        if (r.subjectId && !level.subjects.find((s: any) => s.id === r.subjectId)) {
+        if (
+          r.subjectId &&
+          !level.subjects.find((s: any) => s.id === r.subjectId)
+        ) {
           level.subjects.push({
             id: r.subjectId,
             name: r.subjectName,
