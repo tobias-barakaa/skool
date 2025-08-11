@@ -365,25 +365,18 @@ type GradeLevel {
   schoolLevel: SchoolLevel
 }
 
-type GradeLevelDto {
-  code: String!
+type GradeLevelInfo {
+  age: Float
+  code: String
   id: ID!
   name: String!
-  order: Float!
+  order: Float
+  streams: [StreamInfo!]!
 }
 
 type GradeLevelOutput {
   id: ID!
   name: String!
-}
-
-type GradeLevelReadDto {
-  age: Float
-  code: String!
-  id: ID!
-  name: String!
-  order: Float!
-  streams: [StreamDto!]
 }
 
 type GradeLevelWithStreamsOutput {
@@ -444,20 +437,6 @@ type Level {
   id: ID!
   name: String!
   schoolType: SchoolTypeConfig!
-}
-
-type LevelDto {
-  gradeLevels: [GradeLevelDto!]!
-  id: ID!
-  name: String!
-}
-
-type LevelReadDto {
-  description: String
-  gradeLevels: [GradeLevelReadDto!]!
-  id: ID!
-  name: String!
-  subjects: [SubjectDto!]!
 }
 
 enum MembershipRole {
@@ -589,16 +568,13 @@ type Query {
   allUsersOfTenant(tenantId: String!): [TenantUserSummary!]!
   getActiveStaffByTenant(tenantId: String!): [StaffDto!]!
   getAttendanceByDate(date: String!, gradeId: String!): [Attendance!]!
-
-  """Get basic school configuration without subjects and streams"""
-  getBasicSchoolConfiguration: SchoolConfigurationReadResponse
   getChatMessages(chatRoomId: String!, limit: Float = 50, offset: Float = 0): [ChatMessage!]!
   getMyChats: [ChatRoom!]!
   getParentsByTenant(tenantId: String!): [Parent!]!
   getPendingInvitations(tenantId: String!): [PendingInvitation!]!
   getPendingParentInvitations(tenantId: String!): [PendingInvitation!]!
   getPendingStaffInvitations(tenantId: String!): String!
-  getSchoolConfiguration: SchoolConfigurationReadResponse
+  getSchoolConfiguration: SchoolConfigurationResponse!
   getSocketClients: [String!]!
   getStaffByDepartment(department: String!, tenantId: String!): [StaffDto!]!
   getStaffById(id: String!, tenantId: String!): StaffDto!
@@ -687,18 +663,12 @@ type SchoolConfigLevel {
   level: Level!
 }
 
-type SchoolConfigurationReadResponse {
-  createdAt: DateTime!
-  id: ID!
-  selectedLevels: [LevelReadDto!]!
-  tenant: TenantReadDto!
-}
-
 type SchoolConfigurationResponse {
   createdAt: DateTime!
   id: ID!
-  selectedLevels: [LevelDto!]!
-  tenant: TenantDto!
+  selectedLevels: [SelectedLevel!]!
+  subjects: [SubjectInfo!]
+  tenant: TenantInfo!
 }
 
 type SchoolLevel {
@@ -741,6 +711,14 @@ type SchoolTypeLevel {
   description: String!
   grades: [SchoolTypeGrade!]!
   name: String!
+}
+
+type SelectedLevel {
+  description: String
+  gradeLevels: [GradeLevelInfo!]!
+  id: ID!
+  name: String!
+  subjects: [SubjectInfo!]!
 }
 
 input SendMessageInput {
@@ -820,7 +798,7 @@ type Stream {
   updatedAt: DateTime!
 }
 
-type StreamDto {
+type StreamInfo {
   id: ID!
   name: String!
 }
@@ -914,19 +892,18 @@ type Subject {
   totalMarks: Float
 }
 
-type SubjectDto {
-  category: String!
-  code: String!
-  creditHours: Float!
-  curriculum: String!
-  department: String!
+type SubjectInfo {
+  category: String
+  code: String
+  creditHours: Float
+  department: String
   id: ID!
   isCompulsory: Boolean!
   name: String!
-  passingMarks: Float!
-  shortName: String!
+  passingMarks: Float
+  shortName: String
   subjectType: String!
-  totalMarks: Float!
+  totalMarks: Float
 }
 
 type SubjectOutput {
@@ -995,12 +972,7 @@ type Tenant {
   updatedAt: DateTime!
 }
 
-type TenantDto {
-  id: ID!
-  schoolName: String!
-}
-
-type TenantReadDto {
+type TenantInfo {
   id: ID!
   schoolName: String!
   subdomain: String

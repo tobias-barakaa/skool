@@ -2,13 +2,10 @@ import { Resolver, Mutation, Query, Args } from '@nestjs/graphql';
 import { GraphQLResolveInfo } from 'graphql';
 import { UseGuards, Logger, UseInterceptors } from '@nestjs/common';
 import { SchoolConfigService } from '../services/school-config.service';
-import { AuthenticationGuard } from '../../auth/guards/authentication.guard';
 import { SchoolConfigurationResponse } from '../dtos/config/school-configuration.response';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
-import { CacheInterceptor } from 'src/common/interceptors/cache.interceptor';
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { SchoolConfigurationReadResponse } from '../dtos/config/school-config-read.dto';
 
 @Resolver()
 export class SchoolConfigResolver {
@@ -30,32 +27,32 @@ export class SchoolConfigResolver {
     );
   }
 
-  @Query(() => SchoolConfigurationReadResponse, { nullable: true })
+  @Query(() => SchoolConfigurationResponse)
   async getSchoolConfiguration(
     @ActiveUser() user: ActiveUserData,
-    @Info() info: GraphQLResolveInfo,
-  ): Promise<SchoolConfigurationReadResponse | null> {
-    console.log('Getting school configuration for tenant:', user.tenantId);
-
-    return await this.schoolConfigService.getSchoolConfigurationss(user.tenantId);
-  }
-
-  @Query(() => SchoolConfigurationReadResponse, {
-    nullable: true,
-    description: 'Get basic school configuration without subjects and streams',
-  })
-  @UseInterceptors(CacheInterceptor)
-  // 1 hour cache for basic config
-  async getBasicSchoolConfiguration(
-    @ActiveUser() user: ActiveUserData,
-  ): Promise<SchoolConfigurationResponse | null> {
+  ): Promise<SchoolConfigurationResponse> {
     this.logger.log(
-      `GraphQL query getBasicSchoolConfiguration called by user ${user.sub}`,
+      `GraphQL query getSchoolConfiguration called by user ${user.sub}`,
     );
-    return await this.schoolConfigService.getBasicSchoolConfiguration(
-      user.tenantId,
-    );
+    return await this.schoolConfigService.getSchoolConfiguration(user);
   }
+
+  // @Query(() => SchoolConfigurationReadResponse, {
+  //   nullable: true,
+  //   description: 'Get basic school configuration without subjects and streams',
+  // })
+  // @UseInterceptors(CacheInterceptor)
+  // // 1 hour cache for basic config
+  // async getBasicSchoolConfiguration(
+  //   @ActiveUser() user: ActiveUserData,
+  // ): Promise<SchoolConfigurationReadResponse | null> {
+  //   this.logger.log(
+  //     `GraphQL query getBasicSchoolConfiguration called by user ${user.sub}`,
+  //   );
+  //   return await this.schoolConfigService.getBasicSchoolConfiguration(
+  //     user.tenantId,
+  //   );
+  // }
 
   private getFieldNames(info: GraphQLResolveInfo): string[] {
     // Simple field name extraction - you might want to use a more sophisticated approach

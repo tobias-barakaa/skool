@@ -21,6 +21,9 @@ import { SchoolConfigResolver } from './resolvers/school-config.resolver';
 import { SchoolConfigService } from './services/school-config.service';
 import { CommonModule } from 'src/common/common.module';
 import { SchoolConfigCurriculum } from './entities/curriculum_config';
+import { TenantSubject } from './entities/tenant-specific-subject';
+import { TenantStream } from './entities/tenant-stream';
+import { TenantGradeLevel } from './entities/tenant-grade-level';
 
 @Module({
   imports: [
@@ -37,6 +40,9 @@ import { SchoolConfigCurriculum } from './entities/curriculum_config';
       SchoolConfigSubject,
       SchoolConfigLevel,
       CommonModule,
+      TenantSubject,
+      TenantStream,
+      TenantGradeLevel
     ]),
     SubjectModule,
     CurriculumModule,

@@ -26,4 +26,8 @@ export class SchoolConfigGradeLevel {
 
   @ManyToOne(() => GradeLevel)
   gradeLevel: GradeLevel;
+
+  @ManyToOne(() => Tenant, { eager: true, onDelete: 'CASCADE' })
+  @JoinColumn()
+  tenant: Tenant;
 }
