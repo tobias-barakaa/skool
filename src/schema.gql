@@ -474,6 +474,7 @@ type Mutation {
   deleteStaff(id: String!, tenantId: String!): String!
   deleteStream(id: ID!): Boolean!
   deleteTeacher(id: String!, tenantId: String!): String!
+  deleteTenantSubject(tenantSubjectId: String!): Boolean!
   forgotPassword(forgotPasswordInput: ForgotPasswordInput!): PasswordResetResponse!
   generateQuestions(generateQuestionsInput: GenerateQuestionsInput!): [GeneratedQuestionOutput!]!
   inviteParent(createParentDto: CreateParentInvitationDto!, studentIds: [String!]!, tenantId: String!): InviteParentResponse!
@@ -494,6 +495,7 @@ type Mutation {
   signIn(signInInput: SignInInput!): AuthResponse!
   updateStaff(tenantId: String!, updateStaffInput: UpdateStaffInput!): StaffDto!
   updateStream(input: UpdateStreamInput!): StreamType!
+  updateTenantSubject(input: UpdateTenantSubjectInput!, tenantSubjectId: String!): TenantSubject!
   updateTest(updateTestInput: UpdateTestInput!): Test!
 }
 
@@ -582,6 +584,7 @@ type Query {
   getStaffCount(tenantId: String!): Float!
   getStudentsByGrade(gradeId: String!): [Student!]!
   getStudentsForParent(parentId: String!, tenantId: String!): [StudentSearchResponse!]!
+  getTenantSubjects(curriculumId: String): [TenantSubject!]!
   getUnreadMessageCount: Float!
   gradeLevelsWithStreams: [GradeLevelWithStreamsOutput!]!
   myAssignMents: [Test!]!
@@ -894,8 +897,9 @@ type Subject {
 
 type SubjectInfo {
   category: String
-  code: String
+  code: String!
   creditHours: Float
+  curriculum: String!
   department: String
   id: ID!
   isCompulsory: Boolean!
@@ -924,6 +928,11 @@ enum SubjectType {
   SPORTS
   THEORY
   VOCATIONAL
+}
+
+enum SubjectTypeEnum {
+  CORE
+  ELECTIVE
 }
 
 type Subscription {
@@ -976,6 +985,20 @@ type TenantInfo {
   id: ID!
   schoolName: String!
   subdomain: String
+}
+
+type TenantSubject {
+  createdAt: DateTime!
+  creditHours: Float
+  curriculum: Curriculum!
+  id: ID!
+  isActive: Boolean!
+  isCompulsory: Boolean!
+  passingMarks: Float
+  subject: Subject!
+  subjectType: String!
+  totalMarks: Float
+  updatedAt: DateTime!
 }
 
 type TenantUserSummary {
@@ -1054,6 +1077,14 @@ input UpdateStreamInput {
   id: ID!
   isActive: Boolean
   name: String
+}
+
+input UpdateTenantSubjectInput {
+  creditHours: Float
+  isCompulsory: Boolean
+  passingMarks: Float
+  subjectType: SubjectTypeEnum
+  totalMarks: Float
 }
 
 input UpdateTestInput {

@@ -6,12 +6,12 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { Repository } from 'typeorm';
-import { CreateStreamInput } from '../dtos/create-stream.input';
-import { UpdateStreamInput } from '../dtos/update-stream.input';
-import { Stream } from '../entities/streams.entity';
-import { DeleteStreamProvider } from './delete-stream.provider';
-import { CreateStreamProvider } from './stream.create.provider';
-import { UpdateStreamProvider } from './update-stream.provider';
+import { CreateStreamInput } from '../../dtos/create-stream.input';
+import { UpdateStreamInput } from '../../dtos/update-stream.input';
+import { Stream } from '../../entities/streams.entity';
+import { DeleteStreamProvider } from '../delete-stream.provider';
+import { CreateStreamProvider } from '../stream.create.provider';
+import { UpdateStreamProvider } from '../update-stream.provider';
 
 @Injectable()
 export class StreamsService {

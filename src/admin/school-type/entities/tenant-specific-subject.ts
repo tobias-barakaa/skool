@@ -17,10 +17,12 @@ export class TenantSubject {
   @JoinColumn()
   tenant: Tenant;
 
+  @Field(() => Curriculum) // <-- add this
   @ManyToOne(() => Curriculum, { eager: true })
   @JoinColumn()
   curriculum: Curriculum;
 
+  @Field(() => Subject) // <-- add this
   @ManyToOne(() => Subject, { eager: true })
   @JoinColumn()
   subject: Subject;

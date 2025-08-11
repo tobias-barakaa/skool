@@ -1,16 +1,32 @@
 import { Module } from '@nestjs/common';
-import { StreamsService } from './providers/stream.service';
-import { CreateStreamProvider } from './providers/stream.create.provider';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Stream } from './entities/streams.entity';
-import { StreamsResolver } from './streams.resolver';
-import { DeleteStreamProvider } from './providers/delete-stream.provider';
-import { UpdateStreamProvider } from './providers/update-stream.provider';
 import { LevelModule } from '../level/level.module';
+import { Stream } from './entities/streams.entity';
+import { DeleteStreamProvider } from './providers/delete-stream.provider';
+import { StreamsService } from './providers/services/stream.service';
+import { CreateStreamProvider } from './providers/stream.create.provider';
+import { UpdateStreamProvider } from './providers/update-stream.provider';
+import { StreamsResolver } from './streams.resolver';
+import { CreateTenantStreamProvider } from './providers/create-tenant-stream.provider';
+import { CreateTenantStreamService } from './providers/services/create-tenant-stream.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Stream]), LevelModule],
-  exports: [StreamsService, TypeOrmModule],
-  providers: [StreamsService, CreateStreamProvider,DeleteStreamProvider,UpdateStreamProvider, StreamsResolver]
+  exports: [
+    StreamsService,
+    TypeOrmModule,
+
+    CreateTenantStreamProvider,
+    CreateTenantStreamService,
+  ],
+  providers: [
+    StreamsService,
+    CreateStreamProvider,
+    DeleteStreamProvider,
+    UpdateStreamProvider,
+    StreamsResolver,
+    CreateTenantStreamProvider,
+    CreateTenantStreamService,
+  ],
 })
 export class StreamsModule {}

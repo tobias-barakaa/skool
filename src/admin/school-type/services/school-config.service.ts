@@ -4,19 +4,10 @@ import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { DataSource, Repository } from 'typeorm';
 import { SchoolConfig } from '../entities/school-config.entity';
 // import { SchoolConfigCurriculum } from '../entities/school-config-curriculum.entity';
-import { SchoolConfigGradeLevel } from '../entities/school_config_grade_level';
-import { SchoolConfigLevel } from '../entities/school_config_level';
-import { SchoolConfigSubject } from '../entities/school_config_subject';
 import { SchoolConfigProvider } from '../providers/school-config.provider';
 import { SubjectType } from 'src/admin/subject/enums/subject.type.enum';
 import { GradeLevel } from 'src/admin/level/entities/grade-level.entity';
 import { SchoolConfigurationResponse } from '../dtos/config/school-configuration.response';
-import { LevelReadDto, SchoolConfigurationReadResponse } from '../dtos/config/school-config-read.dto';
-import { CurriculumSubject } from 'src/admin/curriculum/entities/curriculum_subjects.entity';
-import { Curriculum } from 'src/admin/curriculum/entities/curicula.entity';
-import { SchoolConfigCurriculum } from '../entities/curriculum_config';
-import { SchoolType } from '../entities/school-type';
-import { GradeLevelReadResponseGQL, SelectedLevelReadResponseGQL, SubjectReadResponseGQL } from '../dtos/config/school-config-gql.dto';
 import { CacheProvider } from 'src/common/providers/cache.provider';
 import { TenantGradeLevel } from '../entities/tenant-grade-level';
 import { TenantSubject } from '../entities/tenant-specific-subject';
@@ -29,10 +20,8 @@ export class SchoolConfigService {
   constructor(
     @InjectRepository(SchoolConfig)
     private readonly schoolConfigRepo: Repository<SchoolConfig>,
-    @InjectRepository(SchoolConfigLevel)
-    private readonly schoolConfigLevelRepo: Repository<SchoolConfigLevel>,
-    @InjectRepository(SchoolConfigGradeLevel)
-    private readonly schoolConfigGradeLevelRepo: Repository<SchoolConfigGradeLevel>,
+
+
     @InjectRepository(TenantSubject)
     private readonly tenantSubjectRepo: Repository<TenantSubject>,
 
@@ -240,6 +229,7 @@ export class SchoolConfigService {
           totalMarks: ts.totalMarks,
           passingMarks: ts.passingMarks,
           creditHours: ts.creditHours,
+          curriculum: ts.curriculum.id,
         });
       }
     });
@@ -263,8 +253,6 @@ export class SchoolConfigService {
       selectedLevels,
     };
   }
-
-
 
 
    async getSchoolConfiguration(user: ActiveUserData): Promise<SchoolConfigurationResponse> {

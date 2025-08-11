@@ -7,7 +7,7 @@ import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { CreateStreamInput } from './dtos/create-stream.input';
 import { StreamType } from './dtos/stream.object-type';
 import { UpdateStreamInput } from './dtos/update-stream.input';
-import { StreamsService } from './providers/stream.service';
+import { StreamsService } from './providers/services/stream.service';
 
 @Resolver(() => StreamType)
 @Auth(AuthType.Bearer) // Apply auth guard to all operations
