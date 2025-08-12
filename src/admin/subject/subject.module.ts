@@ -5,9 +5,12 @@ import { UserSubjectSelection } from './entities/user.subject_selection.entity';
 import { CreateTenantSubjectProvider } from './providers/create-tenant-subject.provider';
 import { CreateTenantSubjectService } from './providers/services/create-tenant-subject.service';
 import { TenantSubjectResolver } from './resolvers/tenant-subject.resolver';
+import { CustomSubject } from './entities/cusotm-subject.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Subject, UserSubjectSelection])],
+  imports: [
+    TypeOrmModule.forFeature([Subject, UserSubjectSelection, CustomSubject]),
+  ],
   providers: [
     CreateTenantSubjectProvider,
     CreateTenantSubjectService,

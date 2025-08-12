@@ -4,6 +4,7 @@ import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { Tenant } from 'src/admin/tenants/entities/tenant.entity';
 import { Curriculum } from 'src/admin/curriculum/entities/curicula.entity';
 import { Subject } from 'src/admin/subject/entities/subject.entity';
+import { CustomSubject } from 'src/admin/subject/entities/cusotm-subject.entity';
 
 
 @ObjectType()
@@ -22,14 +23,23 @@ export class TenantSubject {
   @JoinColumn()
   curriculum: Curriculum;
 
-  @Field(() => Subject) // <-- add this
-  @ManyToOne(() => Subject, { eager: true })
-  @JoinColumn()
-  subject: Subject;
+  // @Field(() => Subject) // <-- add this
+  // @ManyToOne(() => Subject, { eager: true })
+  // @JoinColumn()
+  // subject: Subject;
 
   @Field(() => String)
   @Column({ default: 'core' })
   subjectType: 'core' | 'elective';
+
+  @Field(() => Subject) // <-- add this
+  @ManyToOne(() => Subject, { eager: true, nullable: true })
+  @JoinColumn()
+  subject?: Subject; // Global subject
+
+  @ManyToOne(() => CustomSubject, { eager: true, nullable: true })
+  @JoinColumn()
+  customSubject?: CustomSubject; // Tenant's own subject
 
   @Field(() => Boolean)
   @Column({ default: true })

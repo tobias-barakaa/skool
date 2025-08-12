@@ -12,6 +12,7 @@ import { CacheProvider } from 'src/common/providers/cache.provider';
 import { TenantGradeLevel } from '../entities/tenant-grade-level';
 import { TenantSubject } from '../entities/tenant-specific-subject';
 import { TenantStream } from '../entities/tenant-stream';
+import { CustomSubject } from 'src/admin/subject/entities/cusotm-subject.entity';
 
 @Injectable()
 export class SchoolConfigService {
@@ -30,6 +31,9 @@ export class SchoolConfigService {
 
     @InjectRepository(TenantStream)
     private readonly tenantStreamRepo: Repository<TenantStream>,
+
+    @InjectRepository(CustomSubject)
+    private readonly customSubjectRepo: Repository<CustomSubject>,
 
     private readonly schoolConfigProvider: SchoolConfigProvider,
     private readonly cacheProvider: CacheProvider,
@@ -169,36 +173,37 @@ export class SchoolConfigService {
     // Get tenant-specific grade levels with curricula
     const tenantGradeLevels = await this.tenantGradeLevelRepo.find({
       where: { tenant: { id: tenantId }, isActive: true },
-      relations: [
-        'curriculum',
-        'gradeLevel',
-        'gradeLevel.streams'
-      ],
-      order: { gradeLevel: { order: 'ASC' } }
+      relations: ['curriculum', 'gradeLevel', 'gradeLevel.streams'],
+      order: { gradeLevel: { order: 'ASC' } },
     });
 
     // Get tenant-specific subjects
     const tenantSubjects = await this.tenantSubjectRepo.find({
       where: { tenant: { id: tenantId }, isActive: true },
-      relations: ['curriculum', 'subject']
+      relations: ['curriculum', 'subject'],
     });
 
     // Get tenant-specific streams
     const tenantStreams = await this.tenantStreamRepo.find({
       where: { tenant: { id: tenantId }, isActive: true },
-      relations: ['tenantGradeLevel', 'stream']
+      relations: ['tenantGradeLevel', 'stream'],
+    });
+
+    const tenantCustomSubjects = await this.customSubjectRepo.find({
+      where: { tenant: { id: tenantId }, isActive: true },
+      relations: ['curriculum'],
     });
 
     // Group by curriculum
     const curriculumMap = new Map();
 
-    tenantGradeLevels.forEach(tgl => {
+    tenantGradeLevels.forEach((tgl) => {
       const curriculumId = tgl.curriculum.id;
       if (!curriculumMap.has(curriculumId)) {
         curriculumMap.set(curriculumId, {
           curriculum: tgl.curriculum,
           gradeLevels: [],
-          subjects: []
+          subjects: [],
         });
       }
 
@@ -206,40 +211,70 @@ export class SchoolConfigService {
       const gradeLevel = {
         ...tgl.gradeLevel,
         streams: tenantStreams
-          .filter(ts => ts.tenantGradeLevel.gradeLevel.id === tgl.gradeLevel.id)
-          .map(ts => ts.stream)
+          .filter(
+            (ts) => ts.tenantGradeLevel.gradeLevel.id === tgl.gradeLevel.id,
+          )
+          .map((ts) => ts.stream),
       };
 
       curriculumMap.get(curriculumId).gradeLevels.push(gradeLevel);
     });
 
     // Add subjects to curricula
-    tenantSubjects.forEach(ts => {
+    // Add subjects from global Subject table
+    tenantSubjects.forEach((ts) => {
       const curriculumId = ts.curriculum.id;
       if (curriculumMap.has(curriculumId)) {
+        if (ts.subject) {
+          curriculumMap.get(curriculumId).subjects.push({
+            id: ts.subject.id,
+            name: ts.subject.name,
+            code: ts.subject.code,
+            subjectType: ts.subjectType,
+            category: ts.subject.category,
+            department: ts.subject.department,
+            shortName: ts.subject.shortName,
+            isCompulsory: ts.isCompulsory,
+            totalMarks: ts.totalMarks,
+            passingMarks: ts.passingMarks,
+            creditHours: ts.creditHours,
+            curriculum: ts.curriculum.id,
+            isCustom: false,
+          });
+        }
+      }
+    });
+
+    // ✅ Add subjects from CustomSubject table
+    tenantCustomSubjects.forEach((cs) => {
+      const curriculumId = cs.curriculum.id;
+      if (curriculumMap.has(curriculumId)) {
         curriculumMap.get(curriculumId).subjects.push({
-          id: ts.subject.id,
-          name: ts.subject.name,
-          code: ts.subject.code,
-          subjectType: ts.subjectType,
-          category: ts.subject.category,
-          department: ts.subject.department,
-          shortName: ts.subject.shortName,
-          isCompulsory: ts.isCompulsory,
-          totalMarks: ts.totalMarks,
-          passingMarks: ts.passingMarks,
-          creditHours: ts.creditHours,
-          curriculum: ts.curriculum.id,
+          id: cs.id,
+          name: cs.name,
+          code: cs.code,
+          subjectType: cs.subjectType,
+          category: cs.category,
+          department: cs.department,
+          shortName: cs.shortName,
+          isCompulsory: cs.isCompulsory,
+          totalMarks: cs.totalMarks,
+          passingMarks: cs.passingMarks,
+          creditHours: cs.creditHours,
+          curriculum: cs.curriculum.id,
+          isCustom: true,
         });
       }
     });
 
     // Build selected levels
-    const selectedLevels = Array.from(curriculumMap.values()).map(item => ({
+    const selectedLevels = Array.from(curriculumMap.values()).map((item) => ({
       id: item.curriculum.id,
       name: item.curriculum.display_name,
       description: item.curriculum.name,
-      gradeLevels: item.gradeLevels.sort((a, b) => (a.order || 0) - (b.order || 0)),
+      gradeLevels: item.gradeLevels.sort(
+        (a, b) => (a.order || 0) - (b.order || 0),
+      ),
       subjects: item.subjects,
     }));
 
