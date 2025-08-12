@@ -5,6 +5,7 @@ import { CreateTenantSubjectService } from '../providers/services/create-tenant-
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { CreateTenantSubjectInput, UpdateTenantSubjectInput } from '../dtos/tenant-subject.input';
+import { CreateCustomSubjectInput } from '../dtos/create-custom-subject.input';
 
 
 @Resolver(() => TenantSubject)
@@ -15,6 +16,13 @@ export class TenantSubjectResolver {
     private readonly createTenantSubjectService: CreateTenantSubjectService,
   ) {}
 
+  @Mutation(() => TenantSubject)
+  async createCustomSubject(
+    @Args('input') input: CreateCustomSubjectInput,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<TenantSubject> {
+    return this.createTenantSubjectService.create(input, user);
+  }
 
   @Mutation(() => TenantSubject)
   async updateTenantSubject(
@@ -50,5 +58,4 @@ export class TenantSubjectResolver {
       curriculumId,
     );
   }
-
 }

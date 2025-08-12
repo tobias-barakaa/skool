@@ -22,7 +22,6 @@ export class SchoolConfigService {
     @InjectRepository(SchoolConfig)
     private readonly schoolConfigRepo: Repository<SchoolConfig>,
 
-
     @InjectRepository(TenantSubject)
     private readonly tenantSubjectRepo: Repository<TenantSubject>,
 
@@ -37,10 +36,8 @@ export class SchoolConfigService {
 
     private readonly schoolConfigProvider: SchoolConfigProvider,
     private readonly cacheProvider: CacheProvider,
-    private readonly dataSource: DataSource
+    private readonly dataSource: DataSource,
   ) {}
-
-
 
   async configureSchoolLevelsByNames(
     levelNames: string[],
@@ -51,14 +48,22 @@ export class SchoolConfigService {
     const lockTTL = 30;
 
     try {
-      const lockAcquired = await this.cacheProvider.acquireLock(lockKey, lockValue, lockTTL);
+      const lockAcquired = await this.cacheProvider.acquireLock(
+        lockKey,
+        lockValue,
+        lockTTL,
+      );
       if (!lockAcquired) {
-        throw new BadRequestException('School configuration is currently being processed. Please try again.');
+        throw new BadRequestException(
+          'School configuration is currently being processed. Please try again.',
+        );
       }
 
       return await this.dataSource.transaction(async (manager) => {
         /* 1. Check if tenant exists */
-        const tenant = await this.schoolConfigProvider.findTenantById(user.tenantId);
+        const tenant = await this.schoolConfigProvider.findTenantById(
+          user.tenantId,
+        );
         if (!tenant) {
           throw new BadRequestException('Tenant not found');
         }
@@ -71,7 +76,7 @@ export class SchoolConfigService {
         if (existing) {
           // Check if tenant already has grade levels configured
           const existingGradeLevels = await manager.count(TenantGradeLevel, {
-            where: { tenant: { id: tenant.id }, isActive: true }
+            where: { tenant: { id: tenant.id }, isActive: true },
           });
 
           if (existingGradeLevels > 0) {
@@ -80,7 +85,10 @@ export class SchoolConfigService {
         }
 
         /* 3. Validate levels and school type */
-        const { levels, schoolType } = await this.schoolConfigProvider.validateLevelsAndSchoolType(levelNames);
+        const { levels, schoolType } =
+          await this.schoolConfigProvider.validateLevelsAndSchoolType(
+            levelNames,
+          );
 
         /* 4. Create or update SchoolConfig */
         let config = existing;
@@ -101,42 +109,42 @@ export class SchoolConfigService {
         /* 6. Create tenant-specific grade levels, subjects, and streams */
         for (const curriculum of levels) {
           // Create tenant grade levels
-          const tenantGradeLevels = curriculum.gradeLevels.map(gradeLevel =>
+          const tenantGradeLevels = curriculum.gradeLevels.map((gradeLevel) =>
             manager.create(TenantGradeLevel, {
               tenant: { id: tenant.id },
               curriculum: { id: curriculum.id },
               gradeLevel: { id: gradeLevel.id },
               isActive: true,
-            })
+            }),
           );
           const savedGradeLevels = await manager.save(tenantGradeLevels);
 
           // Create tenant subjects
-          const tenantSubjects = curriculum.curriculumSubjects.map(cs =>
+          const tenantSubjects = curriculum.curriculumSubjects.map((cs) =>
             manager.create(TenantSubject, {
               tenant: { id: tenant.id },
               curriculum: { id: curriculum.id },
               subject: { id: cs.subject.id },
-              subjectType: cs.subjectType as "core" | "elective",
+              subjectType: cs.subjectType as 'core' | 'elective',
               isCompulsory: cs.isCompulsory,
               totalMarks: cs.totalMarks,
               passingMarks: cs.passingMarks,
               creditHours: cs.creditHours,
               isActive: true,
-            })
+            }),
           );
           await manager.save(tenantSubjects);
 
           // Create tenant streams for each grade level
           for (const savedGradeLevel of savedGradeLevels) {
             const streams = savedGradeLevel.gradeLevel.streams || [];
-            const tenantStreams = streams.map(stream =>
+            const tenantStreams = streams.map((stream) =>
               manager.create(TenantStream, {
                 tenant: { id: tenant.id },
                 tenantGradeLevel: { id: savedGradeLevel.id },
                 stream: { id: stream.id },
                 isActive: true,
-              })
+              }),
             );
             if (tenantStreams.length > 0) {
               await manager.save(tenantStreams);
@@ -145,7 +153,11 @@ export class SchoolConfigService {
         }
 
         /* 7. Load complete configuration for response */
-        const finalConfig = await this.loadCompleteConfiguration(manager, config.id, tenant.id);
+        const finalConfig = await this.loadCompleteConfiguration(
+          manager,
+          config.id,
+          tenant.id,
+        );
         return this.mapToSchoolConfigurationResponse(finalConfig, tenant.id);
       });
     } finally {
@@ -154,15 +166,16 @@ export class SchoolConfigService {
     }
   }
 
-  private async loadCompleteConfiguration(manager: any, configId: string, tenantId: string) {
+  private async loadCompleteConfiguration(
+    manager: any,
+    configId: string,
+    tenantId: string,
+  ) {
     return await manager.findOne(SchoolConfig, {
       where: { id: configId },
       relations: ['tenant', 'schoolType'],
     });
-  };
-
-
-
+  }
 
   private async mapToSchoolConfigurationResponse(
     config: SchoolConfig,
@@ -170,44 +183,37 @@ export class SchoolConfigService {
   ): Promise<SchoolConfigurationResponse> {
     if (!config) throw new Error('School configuration is null');
 
-    // Get tenant-specific grade levels with curricula
+    /* 1. Tenant-specific grade levels w/ curriculum & streams */
     const tenantGradeLevels = await this.tenantGradeLevelRepo.find({
       where: { tenant: { id: tenantId }, isActive: true },
       relations: ['curriculum', 'gradeLevel', 'gradeLevel.streams'],
       order: { gradeLevel: { order: 'ASC' } },
     });
 
-    // Get tenant-specific subjects
+    /* 2. Tenant-specific subjects (global + custom) */
     const tenantSubjects = await this.tenantSubjectRepo.find({
       where: { tenant: { id: tenantId }, isActive: true },
-      relations: ['curriculum', 'subject'],
+      relations: ['curriculum', 'subject', 'customSubject'],
     });
 
-    // Get tenant-specific streams
+    /* 3. Tenant-specific streams */
     const tenantStreams = await this.tenantStreamRepo.find({
       where: { tenant: { id: tenantId }, isActive: true },
       relations: ['tenantGradeLevel', 'stream'],
     });
 
-    const tenantCustomSubjects = await this.customSubjectRepo.find({
-      where: { tenant: { id: tenantId }, isActive: true },
-      relations: ['curriculum'],
-    });
-
-    // Group by curriculum
+    /* 4. Build curriculum map from grade levels */
     const curriculumMap = new Map();
-
     tenantGradeLevels.forEach((tgl) => {
-      const curriculumId = tgl.curriculum.id;
-      if (!curriculumMap.has(curriculumId)) {
-        curriculumMap.set(curriculumId, {
+      const cid = tgl.curriculum.id;
+      if (!curriculumMap.has(cid)) {
+        curriculumMap.set(cid, {
           curriculum: tgl.curriculum,
           gradeLevels: [],
           subjects: [],
         });
       }
 
-      // Add grade level with tenant-specific streams
       const gradeLevel = {
         ...tgl.gradeLevel,
         streams: tenantStreams
@@ -217,57 +223,57 @@ export class SchoolConfigService {
           .map((ts) => ts.stream),
       };
 
-      curriculumMap.get(curriculumId).gradeLevels.push(gradeLevel);
+      curriculumMap.get(cid).gradeLevels.push(gradeLevel);
     });
 
-    // Add subjects to curricula
-    // Add subjects from global Subject table
+    /* 5. Populate subjects (global and custom) */
     tenantSubjects.forEach((ts) => {
-      const curriculumId = ts.curriculum.id;
-      if (curriculumMap.has(curriculumId)) {
-        if (ts.subject) {
-          curriculumMap.get(curriculumId).subjects.push({
-            id: ts.subject.id,
-            name: ts.subject.name,
-            code: ts.subject.code,
-            subjectType: ts.subjectType,
-            category: ts.subject.category,
-            department: ts.subject.department,
-            shortName: ts.subject.shortName,
-            isCompulsory: ts.isCompulsory,
-            totalMarks: ts.totalMarks,
-            passingMarks: ts.passingMarks,
-            creditHours: ts.creditHours,
-            curriculum: ts.curriculum.id,
-            isCustom: false,
-          });
-        }
-      }
-    });
+      if (!ts.curriculum) return; // skip if no curriculum
 
-    // ✅ Add subjects from CustomSubject table
-    tenantCustomSubjects.forEach((cs) => {
-      const curriculumId = cs.curriculum.id;
-      if (curriculumMap.has(curriculumId)) {
-        curriculumMap.get(curriculumId).subjects.push({
+      const cid = ts.curriculum.id;
+      if (!curriculumMap.has(cid)) return; // curriculum not in map -> skip
+
+      /* 5a. Global subject */
+      if (ts.subject) {
+        curriculumMap.get(cid).subjects.push({
+          id: ts.subject.id,
+          name: ts.subject.name,
+          code: ts.subject.code,
+          subjectType: ts.subjectType,
+          category: ts.subject.category,
+          department: ts.subject.department,
+          shortName: ts.subject.shortName,
+          isCompulsory: ts.isCompulsory,
+          totalMarks: ts.totalMarks,
+          passingMarks: ts.passingMarks,
+          creditHours: ts.creditHours,
+          curriculum: ts.curriculum.id,
+          isCustom: false,
+        });
+      }
+
+      /* 5b. Custom subject */
+      if (ts.customSubject) {
+        const cs = ts.customSubject;
+        curriculumMap.get(cid).subjects.push({
           id: cs.id,
           name: cs.name,
           code: cs.code,
-          subjectType: cs.subjectType,
+          subjectType: ts.subjectType, // from TenantSubject
           category: cs.category,
           department: cs.department,
           shortName: cs.shortName,
-          isCompulsory: cs.isCompulsory,
-          totalMarks: cs.totalMarks,
-          passingMarks: cs.passingMarks,
-          creditHours: cs.creditHours,
-          curriculum: cs.curriculum.id,
+          isCompulsory: ts.isCompulsory,
+          totalMarks: ts.totalMarks,
+          passingMarks: ts.passingMarks,
+          creditHours: ts.creditHours,
+          curriculum: ts.curriculum.id,
           isCustom: true,
         });
       }
     });
 
-    // Build selected levels
+    /* 6. Build final array */
     const selectedLevels = Array.from(curriculumMap.values()).map((item) => ({
       id: item.curriculum.id,
       name: item.curriculum.display_name,
@@ -289,11 +295,12 @@ export class SchoolConfigService {
     };
   }
 
-
-   async getSchoolConfiguration(user: ActiveUserData): Promise<SchoolConfigurationResponse> {
+  async getSchoolConfiguration(
+    user: ActiveUserData,
+  ): Promise<SchoolConfigurationResponse> {
     const config = await this.schoolConfigRepo.findOne({
       where: { tenant: { id: user.tenantId }, isActive: true },
-      relations: ['tenant', 'schoolType']
+      relations: ['tenant', 'schoolType'],
     });
 
     if (!config) {

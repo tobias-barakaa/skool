@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CurriculumModule } from 'src/admin/curriculum/curriculum.module';
 import { SchoolConfig } from './entities/school-config.entity';
@@ -39,7 +39,7 @@ import { TenantStream } from './entities/tenant-stream';
       TenantGradeLevel,
       TenantStream,
     ]),
-    SubjectModule,
+    forwardRef(() => SubjectModule),
     CurriculumModule,
     SchoolsModule,
     TenantsModule,

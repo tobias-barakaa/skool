@@ -147,6 +147,20 @@ input CreateAttendanceInput {
   gradeId: String!
 }
 
+input CreateCustomSubjectInput {
+  category: String
+  code: String!
+  creditHours: Float
+  curriculumId: String!
+  department: String
+  isCompulsory: Boolean! = true
+  name: String!
+  passingMarks: Float
+  shortName: String
+  subjectType: String! = "core"
+  totalMarks: Float
+}
+
 input CreateOptionInput {
   imageUrl: String
   isCorrect: Boolean!
@@ -298,6 +312,21 @@ type CurriculumSubject {
   schoolLevel: SchoolLevel
   subject: Subject!
   subjectType: SubjectType!
+  totalMarks: Float
+}
+
+type CustomSubject {
+  category: String
+  code: String
+  creditHours: Float
+  department: String
+  id: ID!
+  isActive: Boolean!
+  isCompulsory: Boolean
+  name: String!
+  passingMarks: Float
+  shortName: String
+  subjectType: SubjectTypeEnum
   totalMarks: Float
 }
 
@@ -465,6 +494,7 @@ type Mutation {
   changePassword(changePasswordInput: ChangePasswordInput!): PasswordResetResponse!
   configureSchoolLevelsByNames(levelNames: [String!]!): SchoolConfigurationResponse!
   createAssessment(input: CreateAssessmentInput!): AssessmentOutput!
+  createCustomSubject(input: CreateCustomSubjectInput!): TenantSubject!
   createMultipleStudents(studentsData: [CreateStudentInput!]!): [CreateStudentResponse!]!
   createStream(input: CreateStreamInput!): StreamType!
   createStudent(createStudentInput: CreateStudentInput!): CreateStudentResponse!
@@ -991,6 +1021,7 @@ type TenantSubject {
   createdAt: DateTime!
   creditHours: Float
   curriculum: Curriculum!
+  customSubject: CustomSubject
   id: ID!
   isActive: Boolean!
   isCompulsory: Boolean!

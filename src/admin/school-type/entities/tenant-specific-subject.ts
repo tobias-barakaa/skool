@@ -37,9 +37,10 @@ export class TenantSubject {
   @JoinColumn()
   subject?: Subject; // Global subject
 
+  @Field(() => CustomSubject, { nullable: true })
   @ManyToOne(() => CustomSubject, { eager: true, nullable: true })
   @JoinColumn()
-  customSubject?: CustomSubject; // Tenant's own subject
+  customSubject?: CustomSubject; // Tenant's own subject// Tenant's own subject
 
   @Field(() => Boolean)
   @Column({ default: true })

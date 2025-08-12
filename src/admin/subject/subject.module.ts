@@ -6,15 +6,18 @@ import { CreateTenantSubjectProvider } from './providers/create-tenant-subject.p
 import { CreateTenantSubjectService } from './providers/services/create-tenant-subject.service';
 import { TenantSubjectResolver } from './resolvers/tenant-subject.resolver';
 import { CustomSubject } from './entities/cusotm-subject.entity';
+import { SchoolTypeModule } from '../school-type/school-type.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Subject, UserSubjectSelection, CustomSubject]),
+    SchoolTypeModule,
   ],
   providers: [
     CreateTenantSubjectProvider,
     CreateTenantSubjectService,
     TenantSubjectResolver,
+
   ],
   exports: [
     TypeOrmModule,

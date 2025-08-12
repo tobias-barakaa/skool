@@ -46,6 +46,8 @@ export class CreateTenantSubjectProvider {
       }
 
       const schoolConfig = await queryRunner.manager.findOne(SchoolConfig, { where: { id: dto.schoolConfigId } });
+
+      console.log(schoolConfig, 'this is school config.....')
       if (!schoolConfig) {
         throw new BadRequestException('You must configure school first');
       }
