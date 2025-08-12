@@ -9,6 +9,7 @@ import { UpdateStreamProvider } from './providers/update-stream.provider';
 import { StreamsResolver } from './streams.resolver';
 import { CreateTenantStreamProvider } from './providers/create-tenant-stream.provider';
 import { CreateTenantStreamService } from './providers/services/create-tenant-stream.service';
+import { TenantStreamResolver } from './resolvers/tenant-stream.resolver';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Stream]), LevelModule],
@@ -27,6 +28,7 @@ import { CreateTenantStreamService } from './providers/services/create-tenant-st
     StreamsResolver,
     CreateTenantStreamProvider,
     CreateTenantStreamService,
+    TenantStreamResolver,
   ],
 })
 export class StreamsModule {}

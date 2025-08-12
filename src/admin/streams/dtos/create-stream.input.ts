@@ -28,3 +28,28 @@ export class CreateStreamInput {
   @IsUUID()
   gradeLevelId: string;
 }
+
+
+
+
+@InputType()
+export class CreateTenantStreamInput {
+  @Field()
+  @IsString()
+  name: string;
+
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  capacity?: number;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @Field()
+  @IsUUID()
+  tenantGradeLevelId: string;
+}

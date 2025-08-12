@@ -4,6 +4,7 @@ import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { TenantStream } from 'src/admin/school-type/entities/tenant-stream';
 import { CreateTenantStreamService } from '../providers/services/create-tenant-stream.service';
+import { CreateTenantStreamInput } from '../dtos/create-stream.input';
 
 @Resolver(() => TenantStream)
 export class TenantStreamResolver {
@@ -14,16 +15,14 @@ export class TenantStreamResolver {
   ) {}
 
   @Mutation(() => TenantStream)
-  async createTenantStream(
-    @Args('tenantGradeLevelId') tenantGradeLevelId: string,
-    @Args('streamId') streamId: string,
+  async createTenantStreamFromScratch(
+    @Args('input') input: CreateTenantStreamInput,
     @ActiveUser() user: ActiveUserData,
   ): Promise<TenantStream> {
-    return await this.createTenantStreamService.createTenantStream({
-      tenantId: user.tenantId,
-      tenantGradeLevelId,
-      streamId,
-    });
+    return this.createTenantStreamService.createTenantStreamFromScratch(
+      input,
+      user,
+    );
   }
 
   @Mutation(() => Boolean)

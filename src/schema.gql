@@ -266,6 +266,13 @@ input CreateTeacherInvitationDto {
   subjectIds: [ID!]
 }
 
+input CreateTenantStreamInput {
+  capacity: Int
+  description: String
+  name: String!
+  tenantGradeLevelId: String!
+}
+
 input CreateTestInput {
   date: String!
   duration: Int!
@@ -498,12 +505,14 @@ type Mutation {
   createMultipleStudents(studentsData: [CreateStudentInput!]!): [CreateStudentResponse!]!
   createStream(input: CreateStreamInput!): StreamType!
   createStudent(createStudentInput: CreateStudentInput!): CreateStudentResponse!
+  createTenantStreamFromScratch(input: CreateTenantStreamInput!): TenantStream!
   createTest(createTestInput: CreateTestInput!): Test!
   createUser(signupInput: SignupInput!): CreateUserResponse!
   deleteAssignment(id: String!): Boolean!
   deleteStaff(id: String!, tenantId: String!): String!
   deleteStream(id: ID!): Boolean!
   deleteTeacher(id: String!, tenantId: String!): String!
+  deleteTenantStream(tenantStreamId: String!): Boolean!
   deleteTenantSubject(tenantSubjectId: String!): Boolean!
   forgotPassword(forgotPasswordInput: ForgotPasswordInput!): PasswordResetResponse!
   generateQuestions(generateQuestionsInput: GenerateQuestionsInput!): [GeneratedQuestionOutput!]!
@@ -614,6 +623,7 @@ type Query {
   getStaffCount(tenantId: String!): Float!
   getStudentsByGrade(gradeId: String!): [Student!]!
   getStudentsForParent(parentId: String!, tenantId: String!): [StudentSearchResponse!]!
+  getTenantStreams(tenantGradeLevelId: String): [TenantStream!]!
   getTenantSubjects(curriculumId: String): [TenantSubject!]!
   getUnreadMessageCount: Float!
   gradeLevelsWithStreams: [GradeLevelWithStreamsOutput!]!
@@ -1011,10 +1021,30 @@ type Tenant {
   updatedAt: DateTime!
 }
 
+type TenantGradeLevel {
+  createdAt: DateTime!
+  curriculum: Curriculum!
+  gradeLevel: GradeLevel!
+  id: ID!
+  isActive: Boolean!
+  tenant: Tenant!
+  updatedAt: DateTime!
+}
+
 type TenantInfo {
   id: ID!
   schoolName: String!
   subdomain: String
+}
+
+type TenantStream {
+  createdAt: DateTime!
+  id: ID!
+  isActive: Boolean!
+  stream: Stream!
+  tenant: Tenant!
+  tenantGradeLevel: TenantGradeLevel!
+  updatedAt: DateTime!
 }
 
 type TenantSubject {

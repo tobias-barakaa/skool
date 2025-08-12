@@ -11,14 +11,17 @@ export class TenantGradeLevel {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Field(() => Tenant) // ← add
   @ManyToOne(() => Tenant, { onDelete: 'CASCADE' })
   @JoinColumn()
   tenant: Tenant;
 
+  @Field(() => Curriculum) // ← optional, add if you need it
   @ManyToOne(() => Curriculum, { eager: true })
   @JoinColumn()
   curriculum: Curriculum;
 
+  @Field(() => GradeLevel) // ← add
   @ManyToOne(() => GradeLevel, { eager: true })
   @JoinColumn()
   gradeLevel: GradeLevel;

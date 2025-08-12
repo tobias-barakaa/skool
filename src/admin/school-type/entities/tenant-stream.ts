@@ -12,17 +12,31 @@ export class TenantStream {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Field(() => Tenant) // ← add
   @ManyToOne(() => Tenant, { onDelete: 'CASCADE' })
   @JoinColumn()
   tenant: Tenant;
 
+  @Field(() => TenantGradeLevel) // ← add
   @ManyToOne(() => TenantGradeLevel, { onDelete: 'CASCADE' })
   @JoinColumn()
   tenantGradeLevel: TenantGradeLevel;
 
+  @Field(() => Stream) // ← add
   @ManyToOne(() => Stream, { eager: true })
   @JoinColumn()
   stream: Stream;
+  // @ManyToOne(() => Tenant, { onDelete: 'CASCADE' })
+  // @JoinColumn()
+  // tenant: Tenant;
+
+  // @ManyToOne(() => TenantGradeLevel, { onDelete: 'CASCADE' })
+  // @JoinColumn()
+  // tenantGradeLevel: TenantGradeLevel;
+
+  // @ManyToOne(() => Stream, { eager: true })
+  // @JoinColumn()
+  // stream: Stream;
 
   @Field(() => Boolean)
   @Column({ default: true })
