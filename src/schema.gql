@@ -508,12 +508,13 @@ type Mutation {
   createTenantStreamFromScratch(input: CreateTenantStreamInput!): TenantStream!
   createTest(createTestInput: CreateTestInput!): Test!
   createUser(signupInput: SignupInput!): CreateUserResponse!
+  deactivateTenantSubject(tenantSubjectId: String!): Boolean!
   deleteAssignment(id: String!): Boolean!
+  deleteCustomSubject(tenantSubjectId: String!): Boolean!
   deleteStaff(id: String!, tenantId: String!): String!
   deleteStream(id: ID!): Boolean!
   deleteTeacher(id: String!, tenantId: String!): String!
   deleteTenantStream(tenantStreamId: String!): Boolean!
-  deleteTenantSubject(tenantSubjectId: String!): Boolean!
   forgotPassword(forgotPasswordInput: ForgotPasswordInput!): PasswordResetResponse!
   generateQuestions(generateQuestionsInput: GenerateQuestionsInput!): [GeneratedQuestionOutput!]!
   inviteParent(createParentDto: CreateParentInvitationDto!, studentIds: [String!]!, tenantId: String!): InviteParentResponse!
@@ -532,9 +533,9 @@ type Mutation {
   sendMessageToParent(input: SendMessageInput!): ChatMessage!
   sendMessageToStudent(input: SendMessageInput!): ChatMessage!
   signIn(signInInput: SignInInput!): AuthResponse!
+  updateCustomSubject(input: UpdateTenantSubjectInput!, tenantSubjectId: String!): TenantSubject!
   updateStaff(tenantId: String!, updateStaffInput: UpdateStaffInput!): StaffDto!
   updateStream(input: UpdateStreamInput!): StreamType!
-  updateTenantSubject(input: UpdateTenantSubjectInput!, tenantSubjectId: String!): TenantSubject!
   updateTest(updateTestInput: UpdateTestInput!): Test!
 }
 
@@ -647,6 +648,7 @@ type Query {
   teacherGetStudentsByGradeLevel(gradeLevelId: String!): [Student!]!
   teacherGetStudentsByStream(streamId: String!): [Student!]!
   teacherGetStudentsWithParents: [StudentWithParentsType!]!
+  tenantSubjects: [TenantSubject!]!
   testById(id: String!): Test
   testSocket(scenario: String): String!
   users: [User!]!
@@ -1056,7 +1058,7 @@ type TenantSubject {
   isActive: Boolean!
   isCompulsory: Boolean!
   passingMarks: Float
-  subject: Subject!
+  subject: Subject
   subjectType: String!
   totalMarks: Float
   updatedAt: DateTime!
@@ -1141,10 +1143,16 @@ input UpdateStreamInput {
 }
 
 input UpdateTenantSubjectInput {
+  category: String
+  code: String
   creditHours: Float
+  department: String
+  isActive: Boolean
   isCompulsory: Boolean
+  name: String
   passingMarks: Float
-  subjectType: SubjectTypeEnum
+  shortName: String
+  subjectType: String
   totalMarks: Float
 }
 

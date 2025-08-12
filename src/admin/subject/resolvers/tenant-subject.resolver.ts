@@ -4,7 +4,7 @@ import { TenantSubject } from 'src/admin/school-type/entities/tenant-specific-su
 import { CreateTenantSubjectService } from '../providers/services/create-tenant-subject.service';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
-import { CreateTenantSubjectInput, UpdateTenantSubjectInput } from '../dtos/tenant-subject.input';
+import { UpdateTenantSubjectInput } from '../dtos/tenant-subject.input';
 import { CreateCustomSubjectInput } from '../dtos/create-custom-subject.input';
 
 
@@ -25,27 +25,33 @@ export class TenantSubjectResolver {
   }
 
   @Mutation(() => TenantSubject)
-  async updateTenantSubject(
-    @Args('tenantSubjectId') tenantSubjectId: string,
+  async updateCustomSubject(
+    @Args('tenantSubjectId') id: string,
     @Args('input') input: UpdateTenantSubjectInput,
     @ActiveUser() user: ActiveUserData,
   ): Promise<TenantSubject> {
-    return await this.createTenantSubjectService.updateTenantSubject(
-      tenantSubjectId,
-      user.tenantId,
-      input,
-    );
+    return this.createTenantSubjectService.update(id, user, input);
   }
 
   @Mutation(() => Boolean)
-  async deleteTenantSubject(
-    @Args('tenantSubjectId') tenantSubjectId: string,
+  async deleteCustomSubject(
+    @Args('tenantSubjectId') id: string,
     @ActiveUser() user: ActiveUserData,
   ): Promise<boolean> {
-    return await this.createTenantSubjectService.deleteTenantSubject(
-      tenantSubjectId,
-      user.tenantId,
-    );
+    return this.createTenantSubjectService.delete(id, user);
+  }
+
+  @Query(() => [TenantSubject])
+  async tenantSubjects(@ActiveUser() user: ActiveUserData) {
+    return this.createTenantSubjectService.findAllByTenant(user);
+  }
+
+  @Mutation(() => Boolean)
+  async deactivateTenantSubject(
+    @Args('tenantSubjectId') id: string,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<boolean> {
+    return this.createTenantSubjectService.deactivate(id, user);
   }
 
   @Query(() => [TenantSubject])
@@ -59,3 +65,5 @@ export class TenantSubjectResolver {
     );
   }
 }
+
+

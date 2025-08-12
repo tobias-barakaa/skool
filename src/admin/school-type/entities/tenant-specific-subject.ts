@@ -23,19 +23,14 @@ export class TenantSubject {
   @JoinColumn()
   curriculum: Curriculum;
 
-  // @Field(() => Subject) // <-- add this
-  // @ManyToOne(() => Subject, { eager: true })
-  // @JoinColumn()
-  // subject: Subject;
-
   @Field(() => String)
   @Column({ default: 'core' })
   subjectType: 'core' | 'elective';
 
-  @Field(() => Subject) // <-- add this
+  @Field(() => Subject, { nullable: true }) // 👈 allow null
   @ManyToOne(() => Subject, { eager: true, nullable: true })
   @JoinColumn()
-  subject?: Subject; // Global subject
+  subject?: Subject | null;
 
   @Field(() => CustomSubject, { nullable: true })
   @ManyToOne(() => CustomSubject, { eager: true, nullable: true })
@@ -70,3 +65,4 @@ export class TenantSubject {
   @UpdateDateColumn()
   updatedAt: Date;
 }
+

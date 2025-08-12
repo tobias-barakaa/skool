@@ -1,5 +1,5 @@
 import { InputType, Field, registerEnumType } from '@nestjs/graphql';
-import { IsNotEmpty, IsOptional, IsBoolean, IsNumber, IsEnum, Min } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsBoolean, IsNumber, IsEnum, Min, IsString } from 'class-validator';
 
 export enum SubjectTypeEnum {
   CORE = 'core',
@@ -51,31 +51,53 @@ export class CreateTenantSubjectInput {
 
 @InputType()
 export class UpdateTenantSubjectInput {
-  @Field(() => SubjectTypeEnum, { nullable: true })
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  code?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  shortName?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  category?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  department?: string;
+
+  @Field(() => String, { nullable: true })
   @IsOptional()
   @IsEnum(SubjectTypeEnum)
   subjectType?: SubjectTypeEnum;
 
-  @Field({ nullable: true })
+  @Field(() => Boolean, { nullable: true })
   @IsOptional()
-  @IsBoolean()
   isCompulsory?: boolean;
 
-  @Field({ nullable: true })
+  @Field(() => Number, { nullable: true })
   @IsOptional()
-  @IsNumber()
-  @Min(0)
   totalMarks?: number;
 
-  @Field({ nullable: true })
+  @Field(() => Number, { nullable: true })
   @IsOptional()
-  @IsNumber()
-  @Min(0)
   passingMarks?: number;
 
-  @Field({ nullable: true })
+  @Field(() => Number, { nullable: true })
   @IsOptional()
-  @IsNumber()
-  @Min(0)
   creditHours?: number;
+
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  isActive?: boolean;
 }

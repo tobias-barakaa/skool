@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateTenantSubjectDto, CreateTenantSubjectProvider, UpdateTenantSubjectDto } from '../create-tenant-subject.provider';
 import { TenantSubject } from 'src/admin/school-type/entities/tenant-specific-subject';
 import { DataSource, Repository } from 'typeorm';
@@ -7,7 +7,8 @@ import { SchoolConfig } from 'src/admin/school-type/entities/school-config.entit
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateCustomSubjectInput } from '../../dtos/create-custom-subject.input';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
-import { SubjectTypeEnum } from '../../dtos/tenant-subject.input';
+import { SubjectTypeEnum, UpdateTenantSubjectInput } from '../../dtos/tenant-subject.input';
+import { CacheProvider } from 'src/common/providers/cache.provider';
 
 
 @Injectable()
@@ -24,7 +25,12 @@ export class CreateTenantSubjectService {
     private readonly tenantSubjectRepo: Repository<TenantSubject>,
     @InjectRepository(SchoolConfig)
     private readonly schoolConfigRepo: Repository<SchoolConfig>,
+    private readonly cacheProvider: CacheProvider,
   ) {}
+
+  private async invalidateCache(tenantId: string): Promise<void> {
+    await this.cacheProvider.invalidateByPattern(`tenant_streams:${tenantId}*`);
+  }
 
   async create(
     input: CreateCustomSubjectInput,
@@ -39,7 +45,7 @@ export class CreateTenantSubjectService {
       const schoolConfig = await qr.manager.findOne(SchoolConfig, {
         where: { tenant: { id: user.tenantId } },
       });
-      console.log(schoolConfig, 'this is the schoolconfig /////$$$$$$$$$$$$')
+      console.log(schoolConfig, 'this is the schoolconfig /////$$$$$$$$$$$$');
       if (!schoolConfig) {
         throw new BadRequestException('Tenant has no school configuration');
       }
@@ -82,32 +88,140 @@ export class CreateTenantSubjectService {
     }
   }
 
-  async updateTenantSubject(
+  async update(
     tenantSubjectId: string,
-    tenantId: string,
-    updateDto: UpdateTenantSubjectDto,
+    user: ActiveUserData,
+    input: UpdateTenantSubjectInput,
   ): Promise<TenantSubject> {
-    this.logger.log(
-      `Updating tenant subject: ${tenantSubjectId} for tenant: ${tenantId}`,
-    );
-    return await this.createTenantSubjectProvider.updateTenantSubject(
-      tenantSubjectId,
-      tenantId,
-      updateDto,
-    );
+    const qr = this.dataSource.createQueryRunner();
+    await qr.connect();
+    await qr.startTransaction();
+
+    try {
+      // Tenant must exist
+      const schoolConfig = await qr.manager.findOne(SchoolConfig, {
+        where: { tenant: { id: user.tenantId } },
+      });
+      if (!schoolConfig) {
+        throw new BadRequestException('Tenant has no school configuration');
+      }
+
+      //Load the TenantSubject row
+      const tenantSubject = await qr.manager.findOne(TenantSubject, {
+        where: { id: tenantSubjectId, tenant: { id: user.tenantId } },
+        relations: ['customSubject', 'curriculum'],
+      });
+
+      if (!tenantSubject) {
+        throw new NotFoundException('Subject not found');
+      }
+
+      console.log(
+        tenantSubject.customSubject,
+        'this is custom subject###########3',
+      );
+      console.log(
+        tenantSubject.curriculum,
+        'this is custom suject###########3',
+      );
+
+      if (!tenantSubject) {
+        throw new NotFoundException('Subject not found');
+      }
+      if (!tenantSubject.customSubject) {
+        throw new BadRequestException('Only custom subjects can be updated');
+      }
+
+      // 3. Update the CustomSubject
+      Object.assign(tenantSubject.customSubject, input);
+      await qr.manager.save(CustomSubject, tenantSubject.customSubject);
+
+      // 4. Update TenantSubject fields if provided
+      if (input.isCompulsory !== undefined)
+        tenantSubject.isCompulsory = input.isCompulsory;
+      if (input.subjectType) tenantSubject.subjectType = input.subjectType;
+      if (input.totalMarks !== undefined)
+        tenantSubject.totalMarks = input.totalMarks;
+      if (input.passingMarks !== undefined)
+        tenantSubject.passingMarks = input.passingMarks;
+      if (input.creditHours !== undefined)
+        tenantSubject.creditHours = input.creditHours;
+      if (input.isActive !== undefined) tenantSubject.isActive = input.isActive;
+
+      const updated = await qr.manager.save(TenantSubject, tenantSubject);
+
+      await qr.commitTransaction();
+      await this.invalidateCache(user.tenantId);
+      this.logger.log(`Updated custom subject ${updated.id}`);
+      return updated;
+    } catch (err) {
+      await qr.rollbackTransaction();
+      this.logger.error(err);
+      throw err;
+    } finally {
+      await qr.release();
+    }
   }
 
-  async deleteTenantSubject(
+  async deactivate(
     tenantSubjectId: string,
-    tenantId: string,
+    user: ActiveUserData,
   ): Promise<boolean> {
-    this.logger.log(
-      `Deleting tenant subject: ${tenantSubjectId} for tenant: ${tenantId}`,
-    );
-    return await this.createTenantSubjectProvider.deleteTenantSubject(
-      tenantSubjectId,
-      tenantId,
-    );
+    const ts = await this.tenantSubjectRepo.findOne({
+      where: { id: tenantSubjectId, tenant: { id: user.tenantId } },
+    });
+    if (!ts) throw new NotFoundException('Subject not found');
+    ts.isActive = false;
+    await this.tenantSubjectRepo.save(ts);
+    await this.invalidateCache(user.tenantId);
+    return true;
+  }
+
+  async delete(
+    tenantSubjectId: string,
+    user: ActiveUserData,
+  ): Promise<boolean> {
+    const qr = this.dataSource.createQueryRunner();
+    await qr.connect();
+    await qr.startTransaction();
+
+    try {
+      const ts = await qr.manager.findOne(TenantSubject, {
+        where: { id: tenantSubjectId, tenant: { id: user.tenantId } },
+        relations: ['customSubject'],
+      });
+      if (!ts) throw new NotFoundException('Subject not found');
+      if (!ts.customSubject)
+        throw new BadRequestException('Only custom subjects can be deleted');
+
+      // soft-delete: set inactive
+      ts.isActive = false;
+      await qr.manager.save(TenantSubject, ts);
+
+      await qr.commitTransaction();
+      await this.invalidateCache(user.tenantId);
+      this.logger.log(`Soft-deleted custom subject ${tenantSubjectId}`);
+      return true;
+    } catch (err) {
+      await qr.rollbackTransaction();
+      throw err;
+    } finally {
+      await qr.release();
+    }
+  }
+
+  async findAllByTenant(user: ActiveUserData): Promise<TenantSubject[]> {
+    return this.tenantSubjectRepo.find({
+      where: { tenant: { id: user.tenantId }, isActive: true },
+      relations: [
+        'curriculum',
+        'subject',
+        'customSubject',
+        'customSubject.curriculum',
+        'customSubject.tenant',
+      ],
+      order: { createdAt: 'DESC' },
+    });
   }
 
   async getTenantSubjects(

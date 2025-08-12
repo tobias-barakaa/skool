@@ -1,0 +1,226 @@
+{
+  "data": {
+    "tenantSubjects": [
+      {
+        "id": "8b2f2025-dceb-4239-b5da-1105108a6861",
+        "subjectType": "elective",
+        "isCompulsory": false,
+        "totalMarks": 100,
+        "passingMarks": 40,
+        "creditHours": 2,
+        "isActive": true,
+        "curriculum": {
+          "id": "51994334-e4de-4c78-8092-3382762ebdf5",
+          "name": "Homeschool_EarlyYears"
+        },
+        "subject": null,
+        "customSubject": {
+          "id": "a21d43a9-e2f3-474f-ad46-9527a5d5a40a",
+          "name": "mi sikujui",
+          "code": "SWL-301",
+          "category": null,
+          "department": null,
+          "shortName": null
+        }
+      },
+      {
+        "id": "3e45b313-eba4-4c97-acfe-4f3ce21d18f9",
+        "subjectType": "elective",
+        "isCompulsory": false,
+        "totalMarks": 100,
+        "passingMarks": 40,
+        "creditHours": 2,
+        "isActive": true,
+        "curriculum": {
+          "id": "51994334-e4de-4c78-8092-3382762ebdf5",
+          "name": "Homeschool_EarlyYears"
+        },
+        "subject": null,
+        "customSubject": {
+          "id": "86403677-37b3-4c97-a140-03a3a2d12521",
+          "name": "Swahili Literature",
+          "code": "SWL-301",
+          "category": null,
+          "department": null,
+          "shortName": null
+        }
+      },
+      {
+        "id": "1d3020fd-1c24-438c-a3a9-40712597d92a",
+        "subjectType": "core",
+        "isCompulsory": true,
+        "totalMarks": 100,
+        "passingMarks": 40,
+        "creditHours": 3,
+        "isActive": true,
+        "curriculum": {
+          "id": "2856861e-ce54-43a4-ac78-f6695838b8d8",
+          "name": "Homeschool_LowerPrimary"
+        },
+        "subject": {
+          "id": "9eae20fe-94e3-4a17-b91b-fa2fd42b77b5",
+          "name": "Mathematics",
+          "code": "MAT",
+          "category": null,
+          "department": null,
+          "shortName": null
+        },
+        "customSubject": null
+      },
+      {
+        "id": "635db0d0-d864-49b6-98fb-c8d53d4bd147",
+        "subjectType": "core",
+        "isCompulsory": true,
+        "totalMarks": 100,
+        "passingMarks": 40,
+        "creditHours": 3,
+        "isActive": true,
+        "curriculum": {
+          "id": "a6cf9b5f-17fe-45af-877d-4c1259caf219",
+          "name": "Homeschool_UpperPrimary"
+        },
+        "subject": {
+          "id": "7642b012-a6eb-44d8-873a-8e4d68d40680",
+          "name": "Religious Education",
+          "code": "REL_EDU",
+          "category": null,
+          "department": null,
+          "shortName": null
+        },
+        "customSubject": null
+      },
+      {
+        "id": "4139675b-8ea8-4df0-a2e6-b1fc6bf5ce80",
+        "subjectType": "core",
+        "isCompulsory": true,
+        "totalMarks": 100,
+        "passingMarks": 40,
+        "creditHours": 3,
+        "isActive": true,
+        "curriculum": {
+          "id": "a6cf9b5f-17fe-45af-877d-4c1259caf219",
+          "name": "Homeschool_UpperPrimary"
+        },
+        "subject": {
+          "id": "ed086086-4cdf-4ca6-a0b4-1c3068f60fc1",
+          "name": "Physical Education",
+          "code": "PHY_EDU",
+          "category": null,
+          "department": null,
+          "shortName": null
+        },
+        "customSubject": null
+      },
+      {
+        "id": "97b14829-a836-45e7-87d1-8e889f1a1b19",
+        "subjectType": "core",
+        "isCompulsory": true,
+        "totalMarks": 100,
+        "passingMarks": 40,
+        "creditHours": 3,
+        "isActive": true,
+        "curriculum": {
+          "id": "2856861e-ce54-43a4-ac78-f6695838b8d8",
+          "name": "Homeschool_LowerPrimary"
+        },
+        "subject": {
+          "id": "661ff9bf-425d-439f-81a1-bce1bce3bf8d",
+          "name": "English Language",
+          "code": "ENG_LAN",
+          "category": null,
+          "department": null,
+          "shortName": null
+        },
+        "customSubject": null
+      },
+      {
+        "id": "4aee6a06-6e24-47af-a30e-a1e6c62ed065",
+        "subjectType": "core",
+        "isCompulsory": true,
+        "totalMarks": 100,
+        "passingMarks": 40,
+        "creditHours": 3,
+        "isActive": true,
+        "curriculum": {
+          "id": "51994334-e4de-4c78-8092-3382762ebdf5",
+          "name": "Homeschool_EarlyYears"
+        },
+        "subject": {
+          "id": "81b6190e-4e10-4b3c-bcac-f7ab870c8d84",
+          "name": "Literacy (Reading & Phonics)",
+          "code": "LIT_REA__PHO",
+          "category": null,
+          "department": null,
+          "shortName": null
+        },
+        "customSubject": null
+      },
+      {
+        "id": "b943b4a4-d29e-4744-9849-55ff93f54760",
+        "subjectType": "core",
+        "isCompulsory": true,
+        "totalMarks": 100,
+        "passingMarks": 40,
+        "creditHours": 3,
+        "isActive": true,
+        "curriculum": {
+          "id": "51994334-e4de-4c78-8092-3382762ebdf5",
+          "name": "Homeschool_EarlyYears"
+        },
+        "subject": {
+          "id": "53f07546-85f6-4346-9bcb-6552f8f14837",
+          "name": "Numeracy (Counting & Basic Math)",
+          "code": "NUM_COU__BAS_MAT",
+          "category": null,
+          "department": null,
+          "shortName": null
+        },
+        "customSubject": null
+      },
+      {
+        "id": "178434d4-bc93-4a8a-9457-2add39987a10",
+        "subjectType": "core",
+        "isCompulsory": true,
+        "totalMarks": 100,
+        "passingMarks": 40,
+        "creditHours": 3,
+        "isActive": true,
+        "curriculum": {
+          "id": "51994334-e4de-4c78-8092-3382762ebdf5",
+          "name": "Homeschool_EarlyYears"
+        },
+        "subject": {
+          "id": "ca1dd10a-fea3-436c-b6ea-c414a2be1c8b",
+          "name": "Creative Arts (Drawing, Coloring, Singing)",
+          "code": "CRE_ART_DRA_COL_SIN",
+          "category": null,
+          "department": null,
+          "shortName": null
+        },
+        "customSubject": null
+      },
+      {
+        "id": "70f8e2ca-bf6b-4abe-9d8b-c5d11d92f1d7",
+        "subjectType": "core",
+        "isCompulsory": true,
+        "totalMarks": 100,
+        "passingMarks": 40,
+        "creditHours": 3,
+        "isActive": true,
+        "curriculum": {
+          "id": "51994334-e4de-4c78-8092-3382762ebdf5",
+          "name": "Homeschool_EarlyYears"
+        },
+        "subject": {
+          "id": "360d8b7d-8847-49cf-b784-03b059bad143",
+          "name": "Life Skills (Toileting, Dressing, Manners)",
+          "code": "LIF_SKI_TOI_DRE_MAN",
+          "category": null,
+          "department": null,
+          "shortName": null
+        },
+        "customSubject": null
+      }
+    ]
+  }
+}
