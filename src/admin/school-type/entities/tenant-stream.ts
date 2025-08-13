@@ -26,17 +26,7 @@ export class TenantStream {
   @ManyToOne(() => Stream, { eager: true })
   @JoinColumn()
   stream: Stream;
-  // @ManyToOne(() => Tenant, { onDelete: 'CASCADE' })
-  // @JoinColumn()
-  // tenant: Tenant;
-
-  // @ManyToOne(() => TenantGradeLevel, { onDelete: 'CASCADE' })
-  // @JoinColumn()
-  // tenantGradeLevel: TenantGradeLevel;
-
-  // @ManyToOne(() => Stream, { eager: true })
-  // @JoinColumn()
-  // stream: Stream;
+  
 
   @Field(() => Boolean)
   @Column({ default: true })

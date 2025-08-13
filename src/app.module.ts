@@ -25,6 +25,8 @@ import { CommonModule } from './common/common.module';
 import { MessagingModule } from './messaging/messaging.module';
 import { StorageModule } from './modules/storage/storage.module';
 import { TeacherModule } from './teacher/teacher.module';
+import { TenantRoleGuard } from './iam/guards/tenant-role.guard';
+import { IamModule } from './iam/iam.module';
 
 const ENV = process.env.NODE_ENV;
 
@@ -99,6 +101,7 @@ const ENV = process.env.NODE_ENV;
     TeacherModule,
     StorageModule,
     MessagingModule,
+    IamModule,
 
     RedisModule.forRoot({
       type: 'single',
@@ -114,6 +117,7 @@ const ENV = process.env.NODE_ENV;
       provide: APP_GUARD,
       useClass: AuthenticationGuard,
     },
+    { provide: APP_GUARD, useClass: TenantRoleGuard },
     {
       provide: APP_INTERCEPTOR,
       useClass: DataResponseInterceptor,

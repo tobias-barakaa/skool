@@ -10,9 +10,10 @@ import { StreamsResolver } from './streams.resolver';
 import { CreateTenantStreamProvider } from './providers/create-tenant-stream.provider';
 import { CreateTenantStreamService } from './providers/services/create-tenant-stream.service';
 import { TenantStreamResolver } from './resolvers/tenant-stream.resolver';
+import { SchoolTypeModule } from '../school-type/school-type.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Stream]), LevelModule],
+  imports: [TypeOrmModule.forFeature([Stream]), LevelModule, SchoolTypeModule],
   exports: [
     StreamsService,
     TypeOrmModule,
@@ -29,6 +30,8 @@ import { TenantStreamResolver } from './resolvers/tenant-stream.resolver';
     CreateTenantStreamProvider,
     CreateTenantStreamService,
     TenantStreamResolver,
+
   ],
 })
 export class StreamsModule {}
+

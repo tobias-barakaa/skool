@@ -5,6 +5,8 @@ import { Tenant } from '../../tenants/entities/tenant.entity';
 import { TenantStream } from 'src/admin/school-type/entities/tenant-stream';
 import { TenantGradeLevel } from 'src/admin/school-type/entities/tenant-grade-level';
 import { CacheProvider } from 'src/common/providers/cache.provider';
+import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
+import { UpdateTenantStreamInput } from '../dtos/update-stream.input';
 
 export interface CreateTenantStreamDto {
   tenantId: string;
@@ -30,7 +32,7 @@ export class CreateTenantStreamProvider {
     try {
       // Validate tenant exists
       const tenant = await queryRunner.manager.findOne(Tenant, {
-        where: { id: dto.tenantId }
+        where: { id: dto.tenantId },
       });
 
       if (!tenant) {
@@ -38,21 +40,26 @@ export class CreateTenantStreamProvider {
       }
 
       // Validate tenant grade level exists and belongs to tenant
-      const tenantGradeLevel = await queryRunner.manager.findOne(TenantGradeLevel, {
-        where: {
-          id: dto.tenantGradeLevelId,
-          tenant: { id: dto.tenantId }
+      const tenantGradeLevel = await queryRunner.manager.findOne(
+        TenantGradeLevel,
+        {
+          where: {
+            id: dto.tenantGradeLevelId,
+            tenant: { id: dto.tenantId },
+          },
+          relations: ['tenant', 'gradeLevel'],
         },
-        relations: ['tenant', 'gradeLevel']
-      });
+      );
 
       if (!tenantGradeLevel) {
-        throw new BadRequestException('Tenant grade level not found or does not belong to this tenant');
+        throw new BadRequestException(
+          'Tenant grade level not found or does not belong to this tenant',
+        );
       }
 
       // Validate stream exists
       const stream = await queryRunner.manager.findOne(Stream, {
-        where: { id: dto.streamId }
+        where: { id: dto.streamId },
       });
 
       if (!stream) {
@@ -60,28 +67,38 @@ export class CreateTenantStreamProvider {
       }
 
       // Check if tenant stream already exists
-      const existingTenantStream = await queryRunner.manager.findOne(TenantStream, {
-        where: {
-          tenant: { id: dto.tenantId },
-          tenantGradeLevel: { id: dto.tenantGradeLevelId },
-          stream: { id: dto.streamId }
-        }
-      });
+      const existingTenantStream = await queryRunner.manager.findOne(
+        TenantStream,
+        {
+          where: {
+            tenant: { id: dto.tenantId },
+            tenantGradeLevel: { id: dto.tenantGradeLevelId },
+            stream: { id: dto.streamId },
+          },
+        },
+      );
 
       if (existingTenantStream) {
         if (existingTenantStream.isActive) {
-          throw new BadRequestException('Tenant stream already exists and is active');
+          throw new BadRequestException(
+            'Tenant stream already exists and is active',
+          );
         }
 
         // Reactivate existing tenant stream
         existingTenantStream.isActive = true;
         existingTenantStream.updatedAt = new Date();
-        const result = await queryRunner.manager.save(TenantStream, existingTenantStream);
+        const result = await queryRunner.manager.save(
+          TenantStream,
+          existingTenantStream,
+        );
 
         await queryRunner.commitTransaction();
         await this.invalidateCache(dto.tenantId);
 
-        this.logger.log(`Reactivated tenant stream: ${result.id} for tenant: ${dto.tenantId}`);
+        this.logger.log(
+          `Reactivated tenant stream: ${result.id} for tenant: ${dto.tenantId}`,
+        );
         return result;
       }
 
@@ -90,7 +107,7 @@ export class CreateTenantStreamProvider {
         tenant: { id: dto.tenantId },
         tenantGradeLevel: { id: dto.tenantGradeLevelId },
         stream: { id: dto.streamId },
-        isActive: true
+        isActive: true,
       });
 
       const result = await queryRunner.manager.save(TenantStream, tenantStream);
@@ -98,9 +115,10 @@ export class CreateTenantStreamProvider {
       await queryRunner.commitTransaction();
       await this.invalidateCache(dto.tenantId);
 
-      this.logger.log(`Created tenant stream: ${result.id} for tenant: ${dto.tenantId}`);
+      this.logger.log(
+        `Created tenant stream: ${result.id} for tenant: ${dto.tenantId}`,
+      );
       return result;
-
     } catch (error) {
       await queryRunner.rollbackTransaction();
       this.logger.error('Failed to create tenant stream:', error.message);
@@ -110,7 +128,11 @@ export class CreateTenantStreamProvider {
     }
   }
 
-  async deleteTenantStream(tenantStreamId: string, tenantId: string): Promise<boolean> {
+
+  async deleteTenantStream(
+    tenantStreamId: string,
+    tenantId: string,
+  ): Promise<boolean> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -120,12 +142,14 @@ export class CreateTenantStreamProvider {
       const tenantStream = await queryRunner.manager.findOne(TenantStream, {
         where: {
           id: tenantStreamId,
-          tenant: { id: tenantId }
-        }
+          tenant: { id: tenantId },
+        },
       });
 
       if (!tenantStream) {
-        throw new NotFoundException('Tenant stream not found or does not belong to this tenant');
+        throw new NotFoundException(
+          'Tenant stream not found or does not belong to this tenant',
+        );
       }
 
       // Soft delete by setting isActive to false
@@ -137,9 +161,10 @@ export class CreateTenantStreamProvider {
       await queryRunner.commitTransaction();
       await this.invalidateCache(tenantId);
 
-      this.logger.log(`Deleted tenant stream: ${tenantStreamId} for tenant: ${tenantId}`);
+      this.logger.log(
+        `Deleted tenant stream: ${tenantStreamId} for tenant: ${tenantId}`,
+      );
       return true;
-
     } catch (error) {
       await queryRunner.rollbackTransaction();
       this.logger.error('Failed to delete tenant stream:', error.message);
@@ -149,7 +174,10 @@ export class CreateTenantStreamProvider {
     }
   }
 
-  async getTenantStreams(tenantId: string, tenantGradeLevelId?: string): Promise<TenantStream[]> {
+  async getTenantStreams(
+    tenantId: string,
+    tenantGradeLevelId?: string,
+  ): Promise<TenantStream[]> {
     const cacheKey = `tenant_streams:${tenantId}${tenantGradeLevelId ? `:${tenantGradeLevelId}` : ''}`;
 
     let cached = await this.cacheProvider.get<TenantStream[]>(cacheKey);
@@ -163,7 +191,7 @@ export class CreateTenantStreamProvider {
     try {
       const whereClause: any = {
         tenant: { id: tenantId },
-        isActive: true
+        isActive: true,
       };
 
       if (tenantGradeLevelId) {
@@ -173,12 +201,11 @@ export class CreateTenantStreamProvider {
       const tenantStreams = await queryRunner.manager.find(TenantStream, {
         where: whereClause,
         relations: ['tenant', 'tenantGradeLevel', 'stream'],
-        order: { createdAt: 'ASC' }
+        order: { createdAt: 'ASC' },
       });
 
       await this.cacheProvider.set(cacheKey, tenantStreams, 3600);
       return tenantStreams;
-
     } finally {
       await queryRunner.release();
     }

@@ -8,9 +8,11 @@ import { CreateStreamInput } from './dtos/create-stream.input';
 import { StreamType } from './dtos/stream.object-type';
 import { UpdateStreamInput } from './dtos/update-stream.input';
 import { StreamsService } from './providers/services/stream.service';
+import { MembershipRole } from '../user-tenant-membership/entities/user-tenant-membership.entity';
+import { Roles } from 'src/iam/decorators/roles.decorator';
 
 @Resolver(() => StreamType)
-@Auth(AuthType.Bearer) // Apply auth guard to all operations
+@Roles(MembershipRole.SUPER_ADMIN, MembershipRole.SCHOOL_ADMIN)
 export class StreamsResolver {
   private readonly logger = new Logger(StreamsResolver.name);
 

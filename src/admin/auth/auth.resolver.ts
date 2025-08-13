@@ -1,4 +1,4 @@
-import { UseFilters } from '@nestjs/common';
+import { SetMetadata, UseFilters } from '@nestjs/common';
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
@@ -19,8 +19,11 @@ import { ForgotPasswordProvider } from './providers/forgot-password.provider';
 import { SignInProvider } from './providers/sign-in.provider';
 import { GraphQLExceptionsFilter } from '../common/filter/graphQLException.filter';
 import { User } from '../users/entities/user.entity';
+import { MembershipRole } from '../user-tenant-membership/entities/user-tenant-membership.entity';
+import { Roles } from 'src/iam/decorators/roles.decorator';
 
 @Resolver()
+@Roles(MembershipRole.SUPER_ADMIN, MembershipRole.SCHOOL_ADMIN)
 @UseFilters(GraphQLExceptionsFilter)
 export class AuthResolver {
   constructor(
@@ -32,8 +35,9 @@ export class AuthResolver {
   ) {}
 
   @Mutation(() => AuthResponse, { name: 'signIn' })
-  @Auth(AuthType.None)
-  @SkipTenantValidation()
+      @Auth(AuthType.None)
+      @SkipTenantValidation()
+      @SetMetadata('isPublic', true)
   async signIn(
     @Args('signInInput') signInInput: SignInInput,
     @Context() context,

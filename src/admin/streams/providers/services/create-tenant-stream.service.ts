@@ -1,13 +1,15 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { TenantStream } from 'src/admin/school-type/entities/tenant-stream';
 import { CreateTenantStreamDto, CreateTenantStreamProvider } from '../create-tenant-stream.provider';
 import { CacheProvider } from 'src/common/providers/cache.provider';
-import { DataSource } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { CreateTenantStreamInput } from '../../dtos/create-stream.input';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { Tenant } from 'src/admin/tenants/entities/tenant.entity';
 import { TenantGradeLevel } from 'src/admin/school-type/entities/tenant-grade-level';
 import { Stream } from '../../entities/streams.entity';
+import { UpdateTenantStreamInput } from '../../dtos/update-stream.input';
+import { InjectRepository } from '@nestjs/typeorm';
 
 
 @Injectable()
@@ -18,6 +20,9 @@ export class CreateTenantStreamService {
     private readonly createTenantStreamProvider: CreateTenantStreamProvider,
     private readonly dataSource: DataSource,
     private readonly cacheProvider: CacheProvider,
+
+    @InjectRepository(TenantStream)
+    private readonly tenantStreamRepo: Repository<TenantStream>, // Updated to use Repository<TenantStream>
   ) {}
 
   private async invalidateCache(tenantId: string): Promise<void> {
@@ -52,12 +57,11 @@ export class CreateTenantStreamService {
         );
       }
 
-      // 3. Create the global Stream (scoped to tenant)
       const stream = qr.manager.create(Stream, {
         name: dto.name,
         capacity: dto.capacity,
         description: dto.description,
-        gradeLevel: tenantGradeLevel.gradeLevel, // underlying global GradeLevel
+        gradeLevel: tenantGradeLevel.gradeLevel,
         tenant,
       });
       const createdStream = await qr.manager.save(Stream, stream);
@@ -87,6 +91,82 @@ export class CreateTenantStreamService {
     }
   }
 
+  async updateTenantStream(
+    id: string,
+    user: ActiveUserData,
+    input: UpdateTenantStreamInput,
+  ): Promise<TenantStream> {
+    const qr = this.dataSource.createQueryRunner();
+    await qr.connect();
+    await qr.startTransaction();
+
+    try {
+      const stream = await qr.manager.findOne(TenantStream, {
+        where: { id, tenant: { id: user.tenantId } },
+        relations: ['stream', 'tenantGradeLevel'],
+      });
+      if (!stream) throw new NotFoundException('Stream not found');
+
+      Object.assign(stream, input);
+      const updated = await qr.manager.save(TenantStream, stream);
+
+      await qr.commitTransaction();
+      await this.invalidateCache(user.tenantId);
+      this.logger.log(`Updated tenant stream ${updated.id}`);
+      return updated;
+    } catch (err) {
+      await qr.rollbackTransaction();
+      throw err;
+    } finally {
+      await qr.release();
+    }
+  }
+
+  async toggleActive(
+    id: string,
+    user: ActiveUserData,
+    activate: boolean,
+  ): Promise<boolean> {
+    const qr = this.dataSource.createQueryRunner();
+    await qr.connect();
+    await qr.startTransaction();
+
+    try {
+      const stream = await qr.manager.findOne(TenantStream, {
+        where: { id, tenant: { id: user.tenantId } },
+      });
+      if (!stream) throw new NotFoundException('Stream not found');
+
+      stream.isActive = activate;
+      await qr.manager.save(TenantStream, stream);
+
+      await qr.commitTransaction();
+      await this.invalidateCache(user.tenantId);
+      this.logger.log(
+        `${activate ? 'Activated' : 'Deactivated'} tenant stream ${id}`,
+      );
+      return true;
+    } catch (err) {
+      await qr.rollbackTransaction();
+      throw err;
+    } finally {
+      await qr.release();
+    }
+  }
+
+  async findAllByTenant(tenantId: string): Promise<TenantStream[]> {
+    return this.tenantStreamRepo.find({
+      where: { tenant: { id: tenantId }, isActive: true },
+      relations: [
+        'stream',
+        'tenantGradeLevel',
+        'tenantGradeLevel.gradeLevel',
+        'tenant',
+      ],
+      order: { createdAt: 'DESC' },
+    });
+  }
+
   async deleteTenantStream(
     tenantStreamId: string,
     tenantId: string,
@@ -111,5 +191,3 @@ export class CreateTenantStreamService {
     );
   }
 }
-
-

@@ -533,9 +533,11 @@ type Mutation {
   sendMessageToParent(input: SendMessageInput!): ChatMessage!
   sendMessageToStudent(input: SendMessageInput!): ChatMessage!
   signIn(signInInput: SignInInput!): AuthResponse!
+  toggleTenantStream(activate: Boolean!, tenantStreamId: String!): Boolean!
   updateCustomSubject(input: UpdateTenantSubjectInput!, tenantSubjectId: String!): TenantSubject!
   updateStaff(tenantId: String!, updateStaffInput: UpdateStaffInput!): StaffDto!
   updateStream(input: UpdateStreamInput!): StreamType!
+  updateTenantStream(input: UpdateTenantStreamInput!, tenantStreamId: String!): TenantStream!
   updateTest(updateTestInput: UpdateTestInput!): Test!
 }
 
@@ -648,6 +650,7 @@ type Query {
   teacherGetStudentsByGradeLevel(gradeLevelId: String!): [Student!]!
   teacherGetStudentsByStream(streamId: String!): [Student!]!
   teacherGetStudentsWithParents: [StudentWithParentsType!]!
+  tenantStreams: [TenantStream!]!
   tenantSubjects: [TenantSubject!]!
   testById(id: String!): Test
   testSocket(scenario: String): String!
@@ -1140,6 +1143,10 @@ input UpdateStreamInput {
   id: ID!
   isActive: Boolean
   name: String
+}
+
+input UpdateTenantStreamInput {
+  isActive: Boolean
 }
 
 input UpdateTenantSubjectInput {

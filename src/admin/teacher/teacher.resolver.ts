@@ -2,7 +2,6 @@ import { Args, Context, GraphQLExecutionContext, Mutation, Query, Resolver } fro
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { Auth } from 'src/admin/auth/decorator/auth.decorator';
 import { AuthType } from 'src/admin/auth/enums/auth-type.enum';
-import { User } from '../users/entities/user.entity';
 import { AcceptInvitationResponse } from './dtos/accept-teacher-invitation-response.dto';
 import { AcceptInvitationInput } from './dtos/accept-teacher-invitation.dto';
 import { CreateTeacherInvitationDto } from './dtos/create-teacher-invitation.dto';
@@ -10,11 +9,18 @@ import { InviteTeacherResponse } from './dtos/invite-teacher-response.dto';
 import { TeacherService } from './providers/teacher.service';
 import { PendingInvitation } from './dtos/pending-invitation.output';
 import { RevokeInvitationResponse } from './dtos/revoke-invitation.output';
-import { BadRequestException, ForbiddenException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, SetMetadata } from '@nestjs/common';
 import { ActiveUserData } from '../auth/interface/active-user.interface';
 import { setAuthCookies } from '../auth/utils/set-auth-cookies';
+import { MembershipRole } from '../user-tenant-membership/entities/user-tenant-membership.entity';
+import { Roles } from 'src/iam/decorators/roles.decorator';
+import { SkipTenantValidation } from '../auth/decorator/skip-tenant-validation.decorator';
 
 @Resolver()
+@Roles(
+  MembershipRole.SUPER_ADMIN,
+  MembershipRole.SCHOOL_ADMIN,
+)
 export class TeacherResolver {
   constructor(private teacherService: TeacherService) {}
 
@@ -43,6 +49,8 @@ export class TeacherResolver {
 
   @Mutation(() => AcceptInvitationResponse)
   @Auth(AuthType.None)
+  @SkipTenantValidation()
+  @SetMetadata('isPublic', true)
   async acceptTeacherInvitation(
     @Args('acceptInvitationInput') input: AcceptInvitationInput,
     @Context() context: GraphQLExecutionContext,

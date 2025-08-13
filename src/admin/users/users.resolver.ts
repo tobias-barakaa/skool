@@ -1,5 +1,5 @@
 // src/users/users.resolver.ts
-import { Logger, UseFilters } from '@nestjs/common';
+import { Logger, SetMetadata, UseFilters } from '@nestjs/common';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Auth } from 'src/admin/auth/decorator/auth.decorator';
 import { SkipTenantValidation } from 'src/admin/auth/decorator/skip-tenant-validation.decorator';
@@ -19,9 +19,10 @@ export class UsersResolver {
 
   constructor(private readonly usersService: UsersService) {}
 
+  @SkipTenantValidation()
+  @SetMetadata('isPublic', true)
   @Mutation(() => CreateUserResponse, { name: 'createUser' })
   @Auth(AuthType.None)
-  @SkipTenantValidation()
   async createUser(
     @Args('signupInput') signupInput: SignupInput,
     @Context() context,
@@ -66,7 +67,7 @@ export class UsersResolver {
 
     return {
       user,
-      membership, // ✅ include this
+      membership, 
       tokens,
       subdomainUrl,
       tenant,
@@ -75,12 +76,10 @@ export class UsersResolver {
 
   @Query(() => [User], { name: 'users' })
   async findAll(): Promise<User[]> {
-    // this.logger.log('Fetching all users');
     return await this.usersService.findAll();
   }
 
   @Query(() => [User], { name: 'usersByTenant' })
-  @Auth(AuthType.Bearer) // or any role that should access this
   async usersByTenant(
     @Args('tenantId') tenantId: string,
     @Args('role', { nullable: true }) role?: MembershipRole,
@@ -89,7 +88,6 @@ export class UsersResolver {
   }
 
   @Query(() => [TenantUserSummary], { name: 'allUsersOfTenant' })
-  @Auth(AuthType.Bearer) // or other allowed roles
   async allUsersOfTenant(
     @Args('tenantId') tenantId: string,
   ): Promise<TenantUserSummary[]> {

@@ -8,8 +8,16 @@ import { AcceptStaffInvitationInput, AcceptStaffInvitationResponse, CreateStaffI
 import { User } from 'src/admin/users/entities/user.entity';
 import { AcceptInvitationInput } from 'src/admin/teacher/dtos/accept-teacher-invitation.dto';
 import { setAuthCookies } from '../auth/utils/set-auth-cookies';
+import { SetMetadata } from '@nestjs/common';
+import { SkipTenantValidation } from '../auth/decorator/skip-tenant-validation.decorator';
+import { Roles } from 'src/iam/decorators/roles.decorator';
+import { MembershipRole } from '../user-tenant-membership/entities/user-tenant-membership.entity';
 
 @Resolver()
+@Roles(
+  MembershipRole.SUPER_ADMIN,
+  MembershipRole.SCHOOL_ADMIN,
+)
 export class StaffResolver {
   constructor(private staffService: StaffService) {}
 
@@ -33,6 +41,8 @@ export class StaffResolver {
 
   @Mutation(() => AcceptStaffInvitationResponse)
   @Auth(AuthType.None)
+  @SkipTenantValidation()
+  @SetMetadata('isPublic', true)
   async acceptStaffInvitation(
     @Args('acceptInvitationInput', { type: () => AcceptStaffInvitationInput })
     input: AcceptInvitationInput,
@@ -72,15 +82,7 @@ export class StaffResolver {
     return this.staffService.getStaffById(id, tenantId);
   }
 
-  // @Query(() => [StaffDto])
-  // async getStaffByRole(
-  //   @Args('role', { type: () => String })
-  //   @Args('tenantId') tenantId: string,
-  //   @ActiveUser() currentUser: User,
-  // ) {
-  //   return this.staffService.getStaffByRole(role, tenantId);
-  // }
-
+  
   @Mutation(() => StaffDto)
   async updateStaff(
     @Args('updateStaffInput') updateStaffInput: UpdateStaffInput,

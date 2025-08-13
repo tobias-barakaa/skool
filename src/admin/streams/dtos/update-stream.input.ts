@@ -33,3 +33,16 @@ export class UpdateStreamInput {
   @IsBoolean()
   isActive?: boolean;
 }
+
+
+
+
+@InputType()
+export class UpdateTenantStreamInput {
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  isActive?: boolean;
+
+  /* add any other tenant-specific overrides you need, e.g. capacity */
+}
