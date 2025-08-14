@@ -37,7 +37,7 @@ export class AssessmentCacheProvider {
     tenantId: string,
     subjectId: string,
     gradeLevelId: string,
-    term: string,
+    term: string, // Keep as string for Redis keys
   ): Promise<number> {
     const key = this.getCACountKey(tenantId, subjectId, gradeLevelId, term);
     const count = await this.redis.incr(key);
@@ -54,7 +54,7 @@ export class AssessmentCacheProvider {
     term: string,
   ): Promise<boolean> {
     const key = this.getExamLockKey(tenantId, subjectId, gradeLevelId, term);
-    const result = await this.redis.set(key, '1', 'EX', 300, 'NX'); 
+    const result = await this.redis.set(key, '1', 'EX', 300, 'NX');
     return result === 'OK';
   }
 
@@ -71,9 +71,9 @@ export class AssessmentCacheProvider {
   async cacheAssessment(assessment: any): Promise<void> {
     const key = this.getAssessmentKey(
       assessment.tenantId,
-      assessment.subjectId,
-      assessment.gradeLevelId,
-      assessment.term,
+      assessment.tenantSubjectId, // Fixed: was subjectId, should be tenantSubjectId
+      assessment.tenantGradeLevelId, // Fixed: was gradeLevelId, should be tenantGradeLevelId
+      assessment.term.toString(), // Convert number to string for Redis key
     );
 
     await this.redis.hset(key, {
@@ -94,6 +94,28 @@ export class AssessmentCacheProvider {
     const cached = await this.redis.hgetall(key);
 
     return Object.values(cached).map((item) => JSON.parse(item));
+  }
+
+  async acquireLock(
+    lockKey: string,
+    lockValue: string,
+    ttlSeconds: number,
+  ): Promise<boolean> {
+    const result = await this.redis.set(
+      lockKey,
+      lockValue,
+      'EX',
+      ttlSeconds,
+      'NX',
+    );
+    return result === 'OK';
+  }
+
+  async releaseLock(lockKey: string, lockValue: string): Promise<void> {
+    const currentValue = await this.redis.get(lockKey);
+    if (currentValue === lockValue) {
+      await this.redis.del(lockKey);
+    }
   }
 
   async invalidateAssessmentCache(

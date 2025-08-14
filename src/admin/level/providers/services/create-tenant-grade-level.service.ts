@@ -1,6 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { TenantGradeLevel } from 'src/admin/school-type/entities/tenant-grade-level';
 import { CreateTenantGradeLevelDto, CreateTenantGradeLevelProvider } from '../create-tenant-grade-level.provider';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { SchoolConfig } from 'src/admin/school-type/entities/school-config.entity';
 
 @Injectable()
 export class CreateTenantGradeLevelService {
@@ -8,6 +11,10 @@ export class CreateTenantGradeLevelService {
 
   constructor(
     private readonly createTenantGradeLevelProvider: CreateTenantGradeLevelProvider,
+     @InjectRepository(TenantGradeLevel)
+       private readonly repo: Repository<TenantGradeLevel>,
+        @InjectRepository(SchoolConfig)
+        private readonly configRepo: Repository<SchoolConfig>,
   ) {}
 
   async createTenantGradeLevel(
@@ -76,5 +83,9 @@ export class CreateTenantGradeLevelService {
       tenantId,
       curriculumId,
     );
-  }
+  };
+
+
+
+
 }

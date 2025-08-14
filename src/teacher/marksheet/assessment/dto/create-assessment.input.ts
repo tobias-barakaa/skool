@@ -1,47 +1,36 @@
-import { InputType, Field, Float } from '@nestjs/graphql';
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-  IsUUID,
-  Min,
-  Max,
-  IsOptional,
-} from 'class-validator';
-import { AssessmentStatus, AssessmentType } from '../entity/assessment.entity';
-
+import { InputType, Field } from '@nestjs/graphql';
+import { AssesStatus } from '../enums/assesment-status.enum';
+import { AssessType } from '../enums/assesment-type.enum';
 
 @InputType()
 export class CreateAssessmentInput {
+  @Field(() => AssessType)
+  type: AssessType;
+
   @Field()
-  @IsEnum(AssessmentType)
-  type: AssessmentType;
+  tenantGradeLevelId: string;
+
+  @Field()
+  tenantSubjectId: string;
+
+  @Field(() => Number)
+  term: number;
 
   @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
   title?: string;
 
-  @Field(() => Float)
-  @IsNumber()
-  @Min(0)
-  @Max(100)
-  cutoff: number;
+  @Field({ nullable: true })
+  cutoff?: number;
 
-  @Field()
-  @IsEnum(AssessmentStatus)
-  status: AssessmentStatus;
+  @Field(() => AssesStatus, { nullable: true })
+  status?: AssesStatus;
 
-  @Field()
-  @IsUUID()
-  subjectId: string;
+  @Field({ nullable: true })
+  date?: Date;
 
-  @Field()
-  @IsUUID()
-  gradeLevelId: string;
+  @Field(() => Number, { nullable: true })
+  maxScore?: number;
 
-  @Field()
-  @IsString()
-  term: string;
+  @Field({ nullable: true })
+  description?: string;
 }

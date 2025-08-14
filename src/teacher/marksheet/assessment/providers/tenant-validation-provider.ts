@@ -1,53 +1,53 @@
-import {
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+// src/assessment/providers/tenant-validation-provider.ts
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
-import { GradeLevel } from 'src/admin/level/entities/grade-level.entity';
-import { CurriculumSubject } from 'src/admin/curriculum/entities/curriculum_subjects.entity';
-import { SchoolConfig } from 'src/admin/school-type/entities/school-config.entity';
-
-
-
+import { Repository } from 'typeorm';
+import { BadRequestException } from '@nestjs/common';
+import { TenantGradeLevel } from 'src/admin/school-type/entities/tenant-grade-level';
+import { TenantSubject } from 'src/admin/school-type/entities/tenant-specific-subject';
 
 @Injectable()
 export class TenantValidationServiceProvider {
   constructor(
-    @InjectRepository(GradeLevel)
-    private readonly gradeLevelRepo: Repository<GradeLevel>,
-
-    @InjectRepository(CurriculumSubject)
-    private readonly curriculumSubjectRepo: Repository<CurriculumSubject>,
-
-    @InjectRepository(SchoolConfig)
-    private readonly schoolConfigRepo: Repository<SchoolConfig>,
+    @InjectRepository(TenantGradeLevel)
+    private readonly tglRepo: Repository<TenantGradeLevel>,
+    @InjectRepository(TenantSubject)
+    private readonly tsRepo: Repository<TenantSubject>,
   ) {}
 
-  async validateGradeLevelOwnership(gradeLevelId: string, tenantId: string) {
-    const grade = await this.gradeLevelRepo.findOne({
-      where: { id: gradeLevelId },
-      relations: ['level', 'level.schoolType'],
-    });
+  async validateGradeLevelOwnership(
+    tenantGradeLevelId: string,
+    tenantId: string,
+  ): Promise<void> {
+    const exists = await this.tglRepo
+      .createQueryBuilder('tgl')
+      .where('tgl.id = :id', { id: tenantGradeLevelId })
+      .andWhere('tgl.tenantId = :tenantId', { tenantId })
+      .getExists();
 
-    if (!grade) throw new NotFoundException('Grade level not found');
-
-    // You might need a join here through SchoolConfig -> Level -> GradeLevel
-    const schoolConfig = await this.schoolConfigRepo.findOne({
-      where: { tenant: { id: tenantId } },
-      relations: ['schoolType'], // Adjust relations to match actual structure
-    });
-
-    const isValid: boolean =
-      schoolConfig?.schoolType?.id === grade.level.schoolType?.id;
-
-    if (!isValid) {
-      throw new ForbiddenException(
-        'You do not have access to this grade level',
+    if (!exists) {
+      throw new BadRequestException(
+        `Grade level ${tenantGradeLevelId} does not belong to tenant ${tenantId}.`,
       );
     }
   }
+
+  async validateSubjectOwnership(
+    tenantSubjectId: string,
+    tenantId: string,
+  ): Promise<void> {
+    const count = await this.tsRepo.count({
+      where: { id: tenantSubjectId, tenant: { id: tenantId } },
+      take: 1, // stops after 1 match
+    });
+
+    if (count === 0) {
+      throw new BadRequestException(
+        `Subject ${tenantSubjectId} does not belong to tenant ${tenantId}.`,
+      );
+    }
+  }
+}
 
   // async validateSubjectOwnership(
   //   subjectId: string,
@@ -82,4 +82,3 @@ export class TenantValidationServiceProvider {
   //     );
   //   }
   // }
-}

@@ -1,4 +1,7 @@
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { GradeLevel } from 'src/admin/level/entities/grade-level.entity';
+import { TenantGradeLevel } from 'src/admin/school-type/entities/tenant-grade-level';
+import { TenantSubject } from 'src/admin/school-type/entities/tenant-specific-subject';
 import { Subject } from 'src/admin/subject/entities/subject.entity';
 import { Tenant } from 'src/admin/tenants/entities/tenant.entity';
 import {
@@ -10,63 +13,87 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
+import { AssessType } from '../enums/assesment-type.enum';
+import { AssesStatus } from '../enums/assesment-status.enum';
 
-
-export enum AssessmentType {
-  CA = 'CA',
-  EXAM = 'EXAM',
-}
-
-export enum AssessmentStatus {
-  UPCOMING = 'UPCOMING',
-  PENDING = 'PENDING',
-  COMPLETED = 'COMPLETED',
-}
-
+@ObjectType()
 @Entity()
 export class Assessment {
+  @Field(() => ID)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ enum: AssessmentType })
-  type: AssessmentType;
-
-  @Column({ length: 50 })
-  title: string; // e.g., CA1, CA2, Midterm, Final
-
-  @Column({ type: 'numeric' })
-  cutoff: number; // e.g., 30 for CA, 70 for Exam
-
-  @Column({ enum: AssessmentStatus, default: AssessmentStatus.UPCOMING })
-  status: AssessmentStatus;
-
-  @ManyToOne(() => Subject, { eager: true })
-  @JoinColumn({ name: 'subjectId' })
-  subject: Subject;
-
-  @Column()
-  subjectId: string;
-
-  @ManyToOne(() => GradeLevel, { eager: true })
-  @JoinColumn({ name: 'gradeLevelId' })
-  gradeLevel: GradeLevel;
-
-  @Column()
-  gradeLevelId: string;
-
-  @Column()
-  term: string; // e.g., TERM 1, TERM 2, or 2024 TERM 1
-
-  @ManyToOne(() => Tenant)
+  /* --- tenant ownership --------------------------------------------- */
+  @Field(() => Tenant)
+  @ManyToOne(() => Tenant, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'tenantId' })
   tenant: Tenant;
 
   @Column()
   tenantId: string;
 
+  /* --- tenant grade level ------------------------------------------- */
+  @Field(() => TenantGradeLevel)
+  @ManyToOne(() => TenantGradeLevel, { eager: true })
+  @JoinColumn({ name: 'tenantGradeLevelId' })
+  tenantGradeLevel: TenantGradeLevel;
+
+  @Column()
+  tenantGradeLevelId: string;
+
+  /* --- tenant subject ----------------------------------------------- */
+  @Field(() => TenantSubject)
+  @ManyToOne(() => TenantSubject, { eager: true })
+  @JoinColumn({ name: 'tenantSubjectId' })
+  tenantSubject: TenantSubject;
+
+  @Field()
+  @Column()
+  tenantSubjectId: string;
+
+  // FIXED: Changed from 'number' to 'decimal' or 'float' for PostgreSQL
+  @Field({ nullable: true })
+  @Column({ type: 'decimal', precision: 5, scale: 2, nullable: true })
+  cutoff?: number;
+
+  /* everything else stays the same … */
+  @Field()
+  @Column()
+  title: string;
+
+  @Field(() => AssessType)
+  @Column({ type: 'enum', enum: AssessType })
+  type: AssessType;
+
+  @Field(() => AssesStatus)
+  @Column({
+    type: 'enum',
+    enum: AssesStatus,
+    default: AssesStatus.UPCOMING,
+  })
+  status: AssesStatus;
+
+  @Field()
+  @Column({ type: 'int' })
+  term: number;
+
+  @Field({ nullable: true })
+  @Column({ type: 'date', nullable: true })
+  date?: Date;
+
+  @Field({ nullable: true })
+  @Column({ type: 'int', nullable: true })
+  maxScore?: number;
+
+  @Field({ nullable: true })
+  @Column({ type: 'text', nullable: true })
+  description?: string;
+
+  @Field(() => Date)
   @CreateDateColumn()
   createdAt: Date;
 
+  @Field(() => Date)
   @UpdateDateColumn()
   updatedAt: Date;
 }

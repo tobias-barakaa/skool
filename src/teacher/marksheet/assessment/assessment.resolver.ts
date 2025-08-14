@@ -18,7 +18,10 @@ export class AssessmentResolver {
     if (!user.tenantId) {
       throw new Error('User tenant information is missing');
     }
-
-    return this.assessmentService.create(input, user.tenantId);
+    const assessment = await this.assessmentService.create(
+      input,
+      user.tenantId,
+    );
+    return AssessmentOutput.from(assessment); 
   }
 }

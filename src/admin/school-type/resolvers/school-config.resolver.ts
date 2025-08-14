@@ -6,12 +6,10 @@ import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { Roles } from 'src/iam/decorators/roles.decorator';
 import { MembershipRole } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
+import { TenantGradeLevel } from '../entities/tenant-grade-level';
 
 @Resolver()
-@Roles(
-  MembershipRole.SUPER_ADMIN,
-  MembershipRole.SCHOOL_ADMIN,
-)
+@Roles(MembershipRole.SUPER_ADMIN, MembershipRole.SCHOOL_ADMIN)
 export class SchoolConfigResolver {
   private readonly logger = new Logger(SchoolConfigResolver.name);
 
@@ -45,5 +43,12 @@ export class SchoolConfigResolver {
     return await this.schoolConfigService.getSchoolConfiguration(user);
   }
 
-
+  @Query(() => [TenantGradeLevel], { name: 'gradeLevelsForSchoolType' })
+  async gradeLevelsForSchoolType(
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<TenantGradeLevel[]> {
+    return this.schoolConfigService.getWholeGradeLevelForSchoolType(
+      user.tenantId,
+    );
+  }
 }

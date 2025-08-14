@@ -1,7 +1,6 @@
-// src/marksheet/assessment/dto/assessment.output.ts
-
 import { ObjectType, Field, ID, Float } from '@nestjs/graphql';
-import { AssessmentStatus, AssessmentType } from '../entity/assessment.entity';
+import { AssessType } from '../enums/assesment-type.enum';
+import { AssesStatus } from '../enums/assesment-status.enum';
 
 @ObjectType()
 export class SubjectOutput {
@@ -10,8 +9,14 @@ export class SubjectOutput {
 
   @Field()
   name: string;
-}
 
+  static from(entity: any): SubjectOutput {
+    const output = new SubjectOutput();
+    output.id = entity.id;
+    output.name = entity.name;
+    return output;
+  }
+}
 
 @ObjectType()
 export class GradeLevelOutput {
@@ -20,42 +25,115 @@ export class GradeLevelOutput {
 
   @Field()
   name: string;
+
+  static from(entity: any): GradeLevelOutput {
+    const output = new GradeLevelOutput();
+    output.id = entity.id;
+    output.name = entity.name;
+    return output;
+  }
 }
 
+@ObjectType()
+export class TenantGradeLevelOutput {
+  @Field(() => ID)
+  id: string;
 
+  @Field(() => GradeLevelOutput, { nullable: true })
+  gradeLevel?: GradeLevelOutput;
+
+  static from(entity: any): TenantGradeLevelOutput {
+    const output = new TenantGradeLevelOutput();
+    output.id = entity.id;
+    output.gradeLevel = entity.gradeLevel
+      ? GradeLevelOutput.from(entity.gradeLevel)
+      : undefined;
+    return output;
+  }
+}
+
+@ObjectType()
+export class TenantSubjectOutput {
+  @Field(() => ID)
+  id: string;
+
+  @Field(() => SubjectOutput, { nullable: true })
+  subject?: SubjectOutput;
+
+  static from(entity: any): TenantSubjectOutput {
+    const output = new TenantSubjectOutput();
+    output.id = entity.id;
+    output.subject = entity.subject
+      ? SubjectOutput.from(entity.subject)
+      : undefined;
+    return output;
+  }
+}
 
 @ObjectType()
 export class AssessmentOutput {
   @Field(() => ID)
   id: string;
 
-  @Field()
-  type: AssessmentType;
+  @Field(() => AssessType)
+  type: AssessType;
 
   @Field()
   title: string;
 
-  @Field(() => Float)
-  cutoff: number;
+  @Field(() => Float, { nullable: true })
+  cutoff?: number;
+
+  @Field(() => AssesStatus)
+  status: AssesStatus;
 
   @Field()
-  status: AssessmentStatus;
+  term: number;
 
-  @Field(() => SubjectOutput, { nullable: true })
-  subject?: SubjectOutput;
+  @Field({ nullable: true })
+  date?: Date;
 
-  @Field(() => GradeLevelOutput, { nullable: true })
-  gradeLevel?: GradeLevelOutput;
+  @Field(() => Number, { nullable: true })
+  maxScore?: number;
 
-  @Field()
-  term: string;
+  @Field({ nullable: true })
+  description?: string;
 
   @Field()
   tenantId: string;
+
+  @Field(() => TenantGradeLevelOutput, { nullable: true })
+  tenantGradeLevel?: TenantGradeLevelOutput;
+
+  @Field(() => TenantSubjectOutput, { nullable: true })
+  tenantSubject?: TenantSubjectOutput;
 
   @Field(() => Date)
   createdAt: Date;
 
   @Field(() => Date)
   updatedAt: Date;
+
+  static from(entity: any): AssessmentOutput {
+    const output = new AssessmentOutput();
+    output.id = entity.id;
+    output.type = entity.type;
+    output.title = entity.title;
+    output.cutoff = entity.cutoff;
+    output.status = entity.status;
+    output.term = entity.term;
+    output.date = entity.date;
+    output.maxScore = entity.maxScore;
+    output.description = entity.description;
+    output.tenantId = entity.tenantId;
+    output.tenantGradeLevel = entity.tenantGradeLevel
+      ? TenantGradeLevelOutput.from(entity.tenantGradeLevel)
+      : undefined;
+    output.tenantSubject = entity.tenantSubject
+      ? TenantSubjectOutput.from(entity.tenantSubject)
+      : undefined;
+    output.createdAt = entity.createdAt;
+    output.updatedAt = entity.updatedAt;
+    return output;
+  }
 }

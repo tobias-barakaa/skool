@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AssessmentProviders } from './providers/assessment-providers';
 import { AssessmentResolver } from './assessment.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Assessment, AssessmentStatus } from './entity/assessment.entity';
+import { Assessment } from './entity/assessment.entity';
 import { AssessmentService } from './providers/assessment.service';
 import { AssessmentCreateProvider } from './providers/assessment.create.provider';
 import { UserTenantMembershipModule } from 'src/admin/user-tenant-membership/user-tenant-membership.module';
@@ -25,6 +25,7 @@ import { SchoolConfig } from 'src/admin/school-type/entities/school-config.entit
     LevelModule,
     CurriculumModule,
     SchoolTypeModule,
+    AssessmentCacheProvider,
   ],
   imports: [
     TypeOrmModule.forFeature([
@@ -34,6 +35,7 @@ import { SchoolConfig } from 'src/admin/school-type/entities/school-config.entit
       SchoolConfig,
     ]),
     UserTenantMembershipModule,
+    SchoolTypeModule
   ],
 })
 export class AssessmentModule {}

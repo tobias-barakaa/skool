@@ -39,17 +39,33 @@ type AcceptStaffInvitationResponse {
   user: UserInfo!
 }
 
+"""The status of assessment"""
+enum AssesStatus {
+  COMPLETED
+  PENDING
+  UPCOMING
+}
+
+"""The type of assessment"""
+enum AssessType {
+  CA
+  EXAM
+}
+
 type AssessmentOutput {
   createdAt: DateTime!
-  cutoff: Float!
-  gradeLevel: GradeLevelOutput
+  cutoff: Float
+  date: DateTime
+  description: String
   id: ID!
-  status: String!
-  subject: SubjectOutput
+  maxScore: Float
+  status: AssesStatus!
+  tenantGradeLevel: TenantGradeLevelOutput
   tenantId: String!
-  term: String!
+  tenantSubject: TenantSubjectOutput
+  term: Float!
   title: String!
-  type: String!
+  type: AssessType!
   updatedAt: DateTime!
 }
 
@@ -132,13 +148,16 @@ type ChatRoom {
 }
 
 input CreateAssessmentInput {
-  cutoff: Float!
-  gradeLevelId: String!
-  status: String!
-  subjectId: String!
-  term: String!
+  cutoff: Float
+  date: DateTime
+  description: String
+  maxScore: Float
+  status: AssesStatus
+  tenantGradeLevelId: String!
+  tenantSubjectId: String!
+  term: Float!
   title: String
-  type: String!
+  type: AssessType!
 }
 
 input CreateAttendanceInput {
@@ -629,6 +648,7 @@ type Query {
   getTenantStreams(tenantGradeLevelId: String): [TenantStream!]!
   getTenantSubjects(curriculumId: String): [TenantSubject!]!
   getUnreadMessageCount: Float!
+  gradeLevelsForSchoolType: [TenantGradeLevel!]!
   gradeLevelsWithStreams: [GradeLevelWithStreamsOutput!]!
   myAssignMents: [Test!]!
   searchAvailableStudentsForParent(parentId: String!, searchTerm: String, tenantId: String!): [StudentSearchResponse!]!
@@ -1032,8 +1052,16 @@ type TenantGradeLevel {
   gradeLevel: GradeLevel!
   id: ID!
   isActive: Boolean!
+  shortName: String
+  sortOrder: Float
+  streams: [Stream!]
   tenant: Tenant!
   updatedAt: DateTime!
+}
+
+type TenantGradeLevelOutput {
+  gradeLevel: GradeLevelOutput
+  id: ID!
 }
 
 type TenantInfo {
@@ -1065,6 +1093,11 @@ type TenantSubject {
   subjectType: String!
   totalMarks: Float
   updatedAt: DateTime!
+}
+
+type TenantSubjectOutput {
+  id: ID!
+  subject: SubjectOutput
 }
 
 type TenantUserSummary {

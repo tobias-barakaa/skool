@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { DataSource, Repository } from 'typeorm';
 import { SchoolConfig } from '../entities/school-config.entity';
-// import { SchoolConfigCurriculum } from '../entities/school-config-curriculum.entity';
 import { SchoolConfigProvider } from '../providers/school-config.provider';
 import { SchoolConfigurationResponse } from '../dtos/config/school-configuration.response';
 import { CacheProvider } from 'src/common/providers/cache.provider';
@@ -287,4 +286,36 @@ export class SchoolConfigService {
 
     return this.mapToSchoolConfigurationResponse(config, user.tenantId);
   }
+
+  async getWholeGradeLevelForSchoolType(
+    tenantId: string,
+  ): Promise<TenantGradeLevel[]> {
+    // 1. Grab the tenant's single active config
+    const config = await this.schoolConfigRepo.findOne({
+      where: { tenant: { id: tenantId }, isActive: true },
+      relations: ['schoolType'],
+    });
+
+    if (!config) {
+      throw new Error('Tenant has no active school configuration');
+    }
+
+    // 2. Pull every tenant_grade_level whose curriculum's schoolType matches
+    return this.tenantGradeLevelRepo
+      .createQueryBuilder('tgl')
+      .innerJoinAndSelect('tgl.gradeLevel', 'gradeLevel')
+      .leftJoinAndSelect('tgl.streams', 'streams') // Corrected this from your original post which had 'gradeLevel.streams'
+      .innerJoin('tgl.curriculum', 'curriculum')
+      .where('tgl.tenantId = :tenantId', { tenantId })
+      .andWhere('tgl.isActive = true')
+      .andWhere('curriculum.schoolTypeId = :schoolTypeId', {
+        schoolTypeId: config.schoolType.id,
+      })
+      .orderBy('tgl.sortOrder', 'ASC') // ← FIX IS HERE
+      .getMany();
+  }
 }
+
+
+
+// sudo systemctl enable --now servicename

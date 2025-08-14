@@ -5,9 +5,10 @@ import { Level } from './entities/level.entities';
 import { GradeLevel } from './entities/grade-level.entity';
 import { CreateTenantGradeLevelProvider } from './providers/create-tenant-grade-level.provider';
 import { CreateTenantGradeLevelService } from './providers/services/create-tenant-grade-level.service';
+import { SchoolTypeModule } from '../school-type/school-type.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Level, GradeLevel])],
+  imports: [TypeOrmModule.forFeature([Level, GradeLevel]), SchoolTypeModule],
   providers: [
     LevelService,
 
