@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from 'typeorm';
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { Tenant } from 'src/admin/tenants/entities/tenant.entity';
 import { GradeLevel } from 'src/admin/level/entities/grade-level.entity';
@@ -53,3 +62,4 @@ export class TenantGradeLevel {
   @UpdateDateColumn()
   updatedAt: Date;
 }
+
