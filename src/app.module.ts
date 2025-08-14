@@ -7,6 +7,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GraphQLError } from 'graphql';
 import { join } from 'path';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
