@@ -51,4 +51,5 @@ export class SchoolConfigResolver {
       user.tenantId,
     );
   }
+
 }

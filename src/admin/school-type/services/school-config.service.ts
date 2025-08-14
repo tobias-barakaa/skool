@@ -304,17 +304,19 @@ export class SchoolConfigService {
     return this.tenantGradeLevelRepo
       .createQueryBuilder('tgl')
       .innerJoinAndSelect('tgl.gradeLevel', 'gradeLevel')
-      .leftJoinAndSelect('tgl.streams', 'streams') // Corrected this from your original post which had 'gradeLevel.streams'
-      .innerJoin('tgl.curriculum', 'curriculum')
+      .leftJoinAndSelect('tgl.streams', 'streams')
+      .innerJoinAndSelect('tgl.curriculum', 'curriculum') // ← FIX IS HERE
+      .innerJoinAndSelect('curriculum.schoolType', 'schoolType') // Also select the schoolType for the query
       .where('tgl.tenantId = :tenantId', { tenantId })
       .andWhere('tgl.isActive = true')
       .andWhere('curriculum.schoolTypeId = :schoolTypeId', {
         schoolTypeId: config.schoolType.id,
       })
-      .orderBy('tgl.sortOrder', 'ASC') // ← FIX IS HERE
+      .orderBy('tgl.sortOrder', 'ASC')
       .getMany();
   }
 }
+
 
 
 

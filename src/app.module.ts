@@ -6,7 +6,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GraphQLError } from 'graphql';
-import { join as pathJoin } from 'path';
+import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
@@ -59,7 +59,9 @@ const ENV = process.env.NODE_ENV;
 
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
+      // autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+
       path: '/graphql',
       playground: true,
       sortSchema: true,
@@ -126,9 +128,3 @@ const ENV = process.env.NODE_ENV;
   ],
 })
 export class AppModule {}
-function join(
-  arg0: string,
-  arg1: string,
-): import('@nestjs/graphql').AutoSchemaFileValue {
-  return pathJoin(arg0, arg1);
-}
