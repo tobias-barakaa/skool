@@ -55,29 +55,28 @@ export class StudentsService {
       membership.tenantId,
     );
 
+    const isValidGrade =
+      await this.schoolSetupGuardService.validateGradeLevelBelongsToTenant(
+        membership.tenantId,
+        createStudentInput.tenantGradeLevelId,
+      );
 
-          const isValidGrade =
-            await this.schoolSetupGuardService.validateGradeLevelBelongsToTenant(
-              membership.tenantId,
-              createStudentInput.tenantGradeLevelId
-            );
-
-          if (!isValidGrade) {
-            throw new BadRequestException(
-              `Grade level with ID ${createStudentInput.tenantGradeLevelId} is not part of the configured school for this tenant`,
-            );
-          }
+    if (!isValidGrade) {
+      throw new BadRequestException(
+        `Grade level with ID ${createStudentInput.tenantGradeLevelId} is not part of the configured school for this tenant`,
+      );
+    }
 
     return this.usersCreateStudentProvider.createStudent(
       createStudentInput,
-      currentUser
+      currentUser,
     );
   }
 
 
-  async getAllStudentsByTenant(tenantId: string): Promise<Student[]> {
-    return this.studentQueryProvider.findAllByTenant(tenantId);
-  }
+  // async getAllStudentsByTenant(tenantId: string): Promise<Student[]> {
+  //   return this.studentQueryProvider.findAllByTenant(tenantId);
+  // }
 
   async getGradeLevelsWithStreamsForTenant(tenantId: string): Promise<any[]> {
     const schoolConfig = await this.schoolConfigRepo
@@ -124,8 +123,6 @@ export class StudentsService {
     return Array.from(gradeMap.values());
   }
 
-
-
   async findStudentsByTenant(tenantId: string): Promise<Student[]> {
     return this.studentRepository.find({
       where: {
@@ -137,11 +134,31 @@ export class StudentsService {
       },
       relations: ['user'],
     });
-  };
+  }
 
 
+  async getAllStudentsByTenant(user: ActiveUserData): Promise<Student[]> {
+  return this.studentRepository.find({
+    where: {
+      tenant_id: user.tenantId,
+      isActive: true // Optional: only get active students
+    },
+    relations: ['user', 'grade'],
+    order: { createdAt: 'ASC' },
+  });
+}
 
-  async revokeStudent(studentId: string, currentUser: ActiveUserData): Promise<{ message: string }> {
+  async getStudentsByTenantGradeLevel(
+    tenantGradeLevelId: string,
+    user: ActiveUserData,
+  ): Promise<Student[]> {
+    return this.usersCreateStudentProvider.getStudentsByTenantGradeLevel(tenantGradeLevelId, user);
+  }
+
+  async revokeStudent(
+    studentId: string,
+    currentUser: ActiveUserData,
+  ): Promise<{ message: string }> {
     const membership = await this.membershipRepository.findOne({
       where: {
         userId: currentUser.sub,

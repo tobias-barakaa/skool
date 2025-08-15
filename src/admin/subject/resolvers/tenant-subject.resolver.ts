@@ -13,12 +13,8 @@ import { TenantRoleGuard } from 'src/iam/guards/tenant-role.guard';
 
 
 @Resolver(() => TenantSubject)
-@Roles(
-  MembershipRole.SUPER_ADMIN,
-  MembershipRole.SCHOOL_ADMIN,
-)
+@Roles(MembershipRole.SUPER_ADMIN, MembershipRole.SCHOOL_ADMIN)
 export class TenantSubjectResolver {
-
   constructor(
     private readonly createTenantSubjectService: CreateTenantSubjectService,
   ) {}
@@ -58,6 +54,23 @@ export class TenantSubjectResolver {
     return this.createTenantSubjectService.findAllByTenant(user);
   }
 
+  @Query(() => [TenantSubject])
+  async deactivatedTenantSubjects(
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<TenantSubject[]> {
+    return this.createTenantSubjectService.getDeactivatedSubjects(user);
+  }
+
+  // Mutation: Activate subject
+  @Mutation(() => Boolean)
+  async activateTenantSubject(
+    @Args('tenantSubjectId') id: string,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<boolean> {
+    return this.createTenantSubjectService.activate(id, user);
+  }
+
+
   @Mutation(() => Boolean)
   async deactivateTenantSubject(
     @Args('tenantSubjectId') id: string,
@@ -77,3 +90,4 @@ export class TenantSubjectResolver {
     );
   }
 }
+

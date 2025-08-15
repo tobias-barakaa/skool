@@ -1,6 +1,6 @@
 // src/students/students.resolver.ts
 import { Logger, UseFilters } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { Auth } from '../auth/decorator/auth.decorator';
@@ -13,13 +13,11 @@ import { StudentWithTenant } from './dtos/student-with-tenant.dto';
 import { StudentsService } from './providers/student.service';
 import { Roles } from 'src/iam/decorators/roles.decorator';
 import { MembershipRole } from '../user-tenant-membership/entities/user-tenant-membership.entity';
+import { Student } from './entities/student.entity';
 
 @Resolver()
 @UseFilters(GraphQLExceptionsFilter)
-@Roles(MembershipRole
-  .SCHOOL_ADMIN, MembershipRole
-  .SUPER_ADMIN
-) // Assuming these roles are defined in your system
+@Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.SUPER_ADMIN) // Assuming these roles are defined in your system
 export class StudentsResolver {
   private readonly logger = new Logger(StudentsResolver.name);
 
@@ -31,8 +29,6 @@ export class StudentsResolver {
     @Args('createStudentInput') createStudentInput: CreateStudentInput,
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<CreateStudentResponse> {
-
-
     console.log('ActiveUserdfdffddddddddddd:', currentUser);
 
     return await this.studentsService.createStudent(
@@ -41,32 +37,55 @@ export class StudentsResolver {
     );
   }
 
-  @Query(() => [StudentWithTenant], { name: 'students' })
-  @Auth(AuthType.Bearer)
-  async getStudents(
-    @ActiveUser() currentUser: ActiveUserData,
-  ): Promise<StudentWithTenant[]> {
-    const students = await this.studentsService.getAllStudentsByTenant(
-      currentUser.tenantId,
+  @Query(() => [Student], { name: 'studentsByGradeLevel' })
+  @Auth(AuthType.Bearer) // or @UseGuards(JwtAuthGuard)
+  @Roles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
+  async studentsByGradeLevel(
+    @Args('tenantGradeLevelId', { type: () => ID }) tenantGradeLevelId: string,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<Student[]> {
+    return this.studentsService.getStudentsByTenantGradeLevel(
+      tenantGradeLevelId,
+      user,
     );
-
-    return students.map((student) => ({
-      id: student.id,
-      admission_number: student.admission_number,
-      phone: student.phone,
-      gender: student.gender,
-      grade: student.grade.toString(),
-      user: student.user,
-      user_id: student.user_id,
-      feesOwed: student.feesOwed,
-      totalFeesPaid: student.totalFeesPaid,
-      createdAt: student.createdAt,
-      isActive: student.isActive,
-      updatedAt: student.updatedAt,
-      streamName: student.stream?.name ?? [],
-      tenantId: currentUser.tenantId,
-    }));
   }
+
+
+@Query(() => [Student], { name: 'allStudents' })
+@Auth(AuthType.Bearer)
+@Roles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
+async allStudents(
+  @ActiveUser() user: ActiveUserData,
+): Promise<Student[]> {
+  return this.studentsService.getAllStudentsByTenant(user);
+}
+
+  // @Query(() => [StudentWithTenant], { name: 'students' })
+  // @Auth(AuthType.Bearer)
+  // async getStudents(
+  //   @ActiveUser() currentUser: ActiveUserData,
+  // ): Promise<StudentWithTenant[]> {
+  //   const students = await this.studentsService.getAllStudentsByTenant(
+  //     currentUser.tenantId,
+  //   );
+
+  //   return students.map((student) => ({
+  //     id: student.id,
+  //     admission_number: student.admission_number,
+  //     phone: student.phone,
+  //     gender: student.gender,
+  //     grade: student.grade.toString(),
+  //     user: student.user,
+  //     user_id: student.user_id,
+  //     feesOwed: student.feesOwed,
+  //     totalFeesPaid: student.totalFeesPaid,
+  //     createdAt: student.createdAt,
+  //     isActive: student.isActive,
+  //     updatedAt: student.updatedAt,
+  //     streamName: student.stream?.name ?? [],
+  //     tenantId: currentUser.tenantId,
+  //   }));
+  // }
 
   @Query(() => [GradeLevelWithStreamsOutput])
   async gradeLevelsWithStreams(
@@ -76,7 +95,6 @@ export class StudentsResolver {
       user.tenantId,
     );
   }
-
 
   @Mutation(() => String, { name: 'revokeStudent' })
   @Auth(AuthType.Bearer)

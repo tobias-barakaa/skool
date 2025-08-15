@@ -177,6 +177,28 @@ export class CreateTenantSubjectService {
     return true;
   }
 
+  async getDeactivatedSubjects(user: ActiveUserData): Promise<TenantSubject[]> {
+    return this.tenantSubjectRepo.find({
+      where: { tenant: { id: user.tenantId }, isActive: false },
+      relations: ['customSubject', 'curriculum'],
+    });
+  }
+
+  async activate(
+    tenantSubjectId: string,
+    user: ActiveUserData,
+  ): Promise<boolean> {
+    const ts = await this.tenantSubjectRepo.findOne({
+      where: { id: tenantSubjectId, tenant: { id: user.tenantId } },
+    });
+
+    if (!ts) throw new NotFoundException('Subject not found');
+    ts.isActive = true;
+    await this.tenantSubjectRepo.save(ts);
+    await this.invalidateCache(user.tenantId);
+    return true;
+  }
+
   async delete(
     tenantSubjectId: string,
     user: ActiveUserData,

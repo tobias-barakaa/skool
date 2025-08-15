@@ -516,6 +516,7 @@ type Mutation {
   acceptParentInvitation(acceptInvitationInput: AcceptInvitationInput!): AcceptParentInvitationResponse!
   acceptStaffInvitation(acceptInvitationInput: AcceptStaffInvitationInput!): AcceptStaffInvitationResponse!
   acceptTeacherInvitation(acceptInvitationInput: AcceptInvitationInput!): AcceptInvitationResponse!
+  activateTenantSubject(tenantSubjectId: String!): Boolean!
   addStudentsToParent(parentId: String!, studentIds: [String!]!, tenantId: String!): String!
   changePassword(changePasswordInput: ChangePasswordInput!): PasswordResetResponse!
   configureSchoolLevelsByNames(levelNames: [String!]!): SchoolConfigurationResponse!
@@ -627,7 +628,9 @@ type PendingInvitation {
 
 type Query {
   activeStreams: [StreamType!]!
+  allStudents: [Student!]!
   allUsersOfTenant(tenantId: String!): [TenantUserSummary!]!
+  deactivatedTenantSubjects: [TenantSubject!]!
   getActiveStaffByTenant(tenantId: String!): [StaffDto!]!
   getAttendanceByDate(date: String!, gradeId: String!): [Attendance!]!
   getChatMessages(chatRoomId: String!, limit: Float = 50, offset: Float = 0): [ChatMessage!]!
@@ -658,7 +661,7 @@ type Query {
   stream(id: ID!): StreamType!
   streams: [StreamType!]!
   streamsByGradeLevel(gradeLevelId: ID!): [StreamType!]!
-  students: [StudentWithTenant!]!
+  studentsByGradeLevel(tenantGradeLevelId: ID!): [Student!]!
   teacherGetParentById(parentId: String!): Parent
   teacherGetParents: [Parent!]!
   teacherGetParentsByStudentId(studentId: String!): [Parent!]!
@@ -923,23 +926,6 @@ type StudentWithParentsType {
   admissionNumber: String!
   parents: [ParentInfo!]!
   studentId: ID!
-}
-
-type StudentWithTenant {
-  admission_number: String!
-  createdAt: DateTime!
-  feesOwed: Float!
-  gender: String!
-  grade: String!
-  id: String!
-  isActive: Boolean!
-  phone: String!
-  streamId: String
-  tenantId: String!
-  totalFeesPaid: Float!
-  updatedAt: DateTime!
-  user: User!
-  user_id: String!
 }
 
 type Subject {

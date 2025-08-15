@@ -25,6 +25,9 @@ export class UsersCreateStudentProvider {
 
     @InjectRepository(UserTenantMembership)
     private membershipRepository: Repository<UserTenantMembership>,
+
+    @InjectRepository(Student)
+    private studentRepository: Repository<Student>,
   ) {}
 
   async createStudent(
@@ -45,8 +48,6 @@ export class UsersCreateStudentProvider {
 
     const tenantId = membership.tenantId;
 
-    // 2. ✅ Use the GLOBAL guard to enforce school setup
-    // This single line replaces the previous logic. It will throw if not configured.
     await this.schoolSetupGuardService.validateSchoolIsConfigured(tenantId);
 
     await this.schoolSetupGuardService.validateGradeLevelBelongsToTenant(
@@ -68,7 +69,10 @@ export class UsersCreateStudentProvider {
       }
 
       const existingStudent = await queryRunner.manager.findOne(Student, {
-        where: { admission_number: createStudentInput.admission_number },
+        where: {
+          tenant_id: tenantId,
+          admission_number: createStudentInput.admission_number,
+        },
       });
 
       if (existingStudent) {
@@ -158,5 +162,65 @@ export class UsersCreateStudentProvider {
     } finally {
       await queryRunner.release();
     }
+  }
+
+  async getStudentsByTenantGradeLevel(
+    tenantGradeLevelId: string,
+    user: ActiveUserData,
+  ): Promise<Student[]> {
+    // 1. First, get the TenantGradeLevel and its associated GradeLevel
+    const tenantGradeLevel = await this.dataSource
+      .getRepository(TenantGradeLevel)
+      .findOne({
+        where: {
+          id: tenantGradeLevelId,
+          tenant: { id: user.tenantId }, // Ensure it belongs to the tenant
+        },
+        relations: ['gradeLevel', 'tenant'],
+      });
+
+    if (!tenantGradeLevel) {
+      throw new BadRequestException(
+        `Grade level ${tenantGradeLevelId} is not configured for tenant ${user.tenantId}`,
+      );
+    }
+
+    // 2. Now fetch students using the actual GradeLevel ID
+    return this.studentRepository.find({
+      where: {
+        tenant_id: user.tenantId,
+        grade: { id: tenantGradeLevel.gradeLevel.id }, // Use the actual GradeLevel ID
+      },
+      relations: ['user', 'grade'],
+      order: { createdAt: 'ASC' },
+    });
+  }
+
+  async getStudentsGroupedByGradeLevel(user: ActiveUserData): Promise<any[]> {
+    return this.studentRepository
+      .createQueryBuilder('student')
+      .leftJoinAndSelect('student.user', 'user')
+      .leftJoinAndSelect('student.grade', 'grade')
+      .where('student.tenant_id = :tenantId', { tenantId: user.tenantId })
+      .andWhere('student.isActive = :isActive', { isActive: true })
+      .orderBy('grade.name', 'ASC')
+      .addOrderBy('student.createdAt', 'ASC')
+      .getMany();
+  }
+
+  // Get student counts by grade level
+  async getStudentCountsByGradeLevel(user: ActiveUserData): Promise<any[]> {
+    return this.studentRepository
+      .createQueryBuilder('student')
+      .leftJoin('student.grade', 'grade')
+      .select('grade.id', 'gradeLevelId')
+      .addSelect('grade.name', 'gradeLevelName')
+      .addSelect('COUNT(student.id)', 'studentCount')
+      .where('student.tenant_id = :tenantId', { tenantId: user.tenantId })
+      .andWhere('student.isActive = :isActive', { isActive: true })
+      .groupBy('grade.id')
+      .addGroupBy('grade.name')
+      .orderBy('grade.name', 'ASC')
+      .getRawMany();
   }
 }
