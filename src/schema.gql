@@ -254,9 +254,9 @@ input CreateStudentInput {
   admission_number: String!
   email: String!
   gender: String!
-  grade: String!
   name: String!
   phone: String!
+  tenantGradeLevelId: String!
 }
 
 type CreateStudentResponse {
@@ -521,7 +521,6 @@ type Mutation {
   configureSchoolLevelsByNames(levelNames: [String!]!): SchoolConfigurationResponse!
   createAssessment(input: CreateAssessmentInput!): AssessmentOutput!
   createCustomSubject(input: CreateCustomSubjectInput!): TenantSubject!
-  createMultipleStudents(studentsData: [CreateStudentInput!]!): [CreateStudentResponse!]!
   createStream(input: CreateStreamInput!): StreamType!
   createStudent(createStudentInput: CreateStudentInput!): CreateStudentResponse!
   createTenantStreamFromScratch(input: CreateTenantStreamInput!): TenantStream!

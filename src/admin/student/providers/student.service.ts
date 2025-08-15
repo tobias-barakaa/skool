@@ -12,6 +12,7 @@ import { SchoolConfig } from 'src/admin/school-type/entities/school-config.entit
 import { MembershipRole, UserTenantMembership } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
 import { SchoolSetupGuardService } from 'src/admin/config/school-config.guard';
 
+
 @Injectable()
 export class StudentsService {
   private readonly logger = new Logger(StudentsService.name);
@@ -58,21 +59,21 @@ export class StudentsService {
           const isValidGrade =
             await this.schoolSetupGuardService.validateGradeLevelBelongsToTenant(
               membership.tenantId,
-              createStudentInput.grade,
+              createStudentInput.tenantGradeLevelId
             );
 
           if (!isValidGrade) {
             throw new BadRequestException(
-              `Grade level with ID ${createStudentInput.grade} is not part of the configured school for this tenant`,
+              `Grade level with ID ${createStudentInput.tenantGradeLevelId} is not part of the configured school for this tenant`,
             );
           }
 
     return this.usersCreateStudentProvider.createStudent(
       createStudentInput,
-      membership.tenantId,
-      currentUser.subdomain,
+      currentUser
     );
   }
+
 
   async getAllStudentsByTenant(tenantId: string): Promise<Student[]> {
     return this.studentQueryProvider.findAllByTenant(tenantId);
@@ -123,29 +124,7 @@ export class StudentsService {
     return Array.from(gradeMap.values());
   }
 
-  async createMultipleStudents(
-    studentsData: CreateStudentInput[],
-    currentUser: ActiveUserData,
-  ): Promise<CreateStudentResponse[]> {
-    // Verify that current user is a school admin
-    const membership = await this.membershipRepository.findOne({
-      where: {
-        userId: currentUser.sub,
-        role: MembershipRole.SCHOOL_ADMIN,
-      },
-      relations: ['tenant'],
-    });
 
-    if (!membership) {
-      throw new ForbiddenException('Only school admins can create students');
-    }
-
-    return this.usersCreateStudentProvider.createMultipleStudents(
-      studentsData,
-      membership.tenantId,
-      currentUser.subdomain,
-    );
-  }
 
   async findStudentsByTenant(tenantId: string): Promise<Student[]> {
     return this.studentRepository.find({

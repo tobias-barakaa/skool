@@ -11,9 +11,15 @@ import { GradeLevelWithStreamsOutput } from './dtos/grade-level-with-streams.out
 import { CreateStudentResponse } from './dtos/student-response.dto';
 import { StudentWithTenant } from './dtos/student-with-tenant.dto';
 import { StudentsService } from './providers/student.service';
+import { Roles } from 'src/iam/decorators/roles.decorator';
+import { MembershipRole } from '../user-tenant-membership/entities/user-tenant-membership.entity';
 
 @Resolver()
 @UseFilters(GraphQLExceptionsFilter)
+@Roles(MembershipRole
+  .SCHOOL_ADMIN, MembershipRole
+  .SUPER_ADMIN
+) // Assuming these roles are defined in your system
 export class StudentsResolver {
   private readonly logger = new Logger(StudentsResolver.name);
 
@@ -25,10 +31,7 @@ export class StudentsResolver {
     @Args('createStudentInput') createStudentInput: CreateStudentInput,
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<CreateStudentResponse> {
-    // console.log(currentUser, 'this is the currentUser..:')
-    // this.logger.log(
-    //   `Admin ${currentUser.email} creating student: ${createStudentInput.email}`,
-    // );
+
 
     console.log('ActiveUserdfdffddddddddddd:', currentUser);
 
@@ -74,22 +77,6 @@ export class StudentsResolver {
     );
   }
 
-  @Mutation(() => [CreateStudentResponse], { name: 'createMultipleStudents' })
-  @Auth(AuthType.Bearer)
-  async createMultipleStudents(
-    @Args('studentsData', { type: () => [CreateStudentInput] })
-    studentsData: CreateStudentInput[],
-    @ActiveUser() currentUser: ActiveUserData,
-  ): Promise<CreateStudentResponse[]> {
-    this.logger.log(
-      `Admin ${currentUser.email} creating ${studentsData.length} students`,
-    );
-
-    return await this.studentsService.createMultipleStudents(
-      studentsData,
-      currentUser,
-    );
-  }
 
   @Mutation(() => String, { name: 'revokeStudent' })
   @Auth(AuthType.Bearer)
