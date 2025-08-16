@@ -57,7 +57,6 @@ export class AssessmentCreateProvider {
     });
   }
 
-  /* ---------- helpers ---------- */
 
   private async createCA(
     input: CreateAssessmentInput,
