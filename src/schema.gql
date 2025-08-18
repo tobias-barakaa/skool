@@ -55,7 +55,6 @@ enum AssessType {
 type AssessmentOutput {
   createdAt: DateTime!
   cutoff: Float
-  date: DateTime
   description: String
   id: ID!
   maxScore: Float
@@ -149,7 +148,6 @@ type ChatRoom {
 
 input CreateAssessmentInput {
   cutoff: Float
-  date: DateTime
   description: String
   maxScore: Float
   status: AssesStatus
@@ -267,7 +265,7 @@ type CreateStudentResponse {
 
 input CreateTeacherInvitationDto {
   address: String
-  classTeacherStreamId: ID
+  classTeacherTenantStreamId: ID
   dateOfBirth: DateTime
   department: String!
   email: String!
@@ -275,14 +273,14 @@ input CreateTeacherInvitationDto {
   firstName: String!
   fullName: String!
   gender: String!
-  gradeLevelIds: [ID!]
   isClassTeacher: Boolean
   lastName: String!
   phoneNumber: String!
   qualifications: String
   role: String!
-  streamIds: [ID!]
-  subjectIds: [ID!]
+  tenantGradeLevelIds: [ID!]
+  tenantStreamIds: [ID!]
+  tenantSubjectIds: [ID!]
 }
 
 input CreateTenantStreamInput {
@@ -295,13 +293,14 @@ input CreateTenantStreamInput {
 input CreateTestInput {
   date: String!
   duration: Int!
-  gradeLevelIds: [String!]!
+  endTime: String
   instructions: String
   questions: [CreateQuestionInput!]
   referenceMaterials: [CreateReferenceMaterialInput!]
   resourceUrl: String
   startTime: String!
-  subject: String!
+  tenantGradeLevelIds: [ID!]!
+  tenantSubjectId: ID!
   title: String!
   totalMarks: Int!
 }
@@ -1098,7 +1097,7 @@ type Test {
   date: DateTime!
   duration: Float!
   endTime: String
-  gradeLevels: [GradeLevel!]!
+  gradeLevels: [TenantGradeLevel!]!
   id: ID!
   instructions: String
   questions: [Question!]!
@@ -1106,7 +1105,7 @@ type Test {
   resourceUrl: String
   startTime: String!
   status: String!
-  subject: String!
+  subject: TenantSubject!
   teacher: User!
   title: String!
   totalMarks: Float!
@@ -1184,14 +1183,15 @@ input UpdateTenantSubjectInput {
 input UpdateTestInput {
   date: String
   duration: Int
-  gradeLevelIds: [String!]
+  endTime: String
   id: ID!
   instructions: String
   questions: [CreateQuestionInput!]
   referenceMaterials: [CreateReferenceMaterialInput!]
   resourceUrl: String
   startTime: String
-  subject: String
+  tenantGradeLevelIds: [ID!]
+  tenantSubjectId: ID
   title: String
   totalMarks: Int
 }

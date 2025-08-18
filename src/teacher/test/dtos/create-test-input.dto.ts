@@ -1,19 +1,19 @@
-import { InputType, Field, Int } from '@nestjs/graphql';
+// src/tests/dto/create-test.input.ts
+import { Field, ID, InputType, Int } from '@nestjs/graphql';
 import {
-  IsNotEmpty,
-  IsOptional,
+  IsArray,
   IsDateString,
+  IsNotEmpty,
   IsNumber,
-  ValidateNested,
+  IsOptional,
   IsString,
-  ValidateIf
+  IsUUID,
+  ValidateNested,
+  ArrayMinSize,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CreateQuestionInput } from './create-question-input.dto';
 import { CreateReferenceMaterialInput } from './referrence-input.dto';
-import { ArrayMinSize } from 'class-validator';
-
-
 
 @InputType()
 export class CreateTestInput {
@@ -22,10 +22,10 @@ export class CreateTestInput {
   @IsString()
   title: string;
 
-  @Field()
-  @IsNotEmpty()
-  @IsString()
-  subject: string;
+  /* tenant-level subject id (UUID) */
+  @Field(() => ID)
+  @IsUUID()
+  tenantSubjectId: string;
 
   @Field()
   @IsDateString()
@@ -35,6 +35,11 @@ export class CreateTestInput {
   @IsNotEmpty()
   @IsString()
   startTime: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  endTime?: string;
 
   @Field(() => Int)
   @IsNumber()
@@ -54,29 +59,70 @@ export class CreateTestInput {
   @IsString()
   instructions?: string;
 
+  /* tenant-level grade level ids */
+  @Field(() => [ID])
+  @IsArray()
+  @ArrayMinSize(1)
+  @IsUUID('4', { each: true })
+  tenantGradeLevelIds: string[];
 
-  // Option 2: If you want to enforce non-empty when provided, use this instead:
+  /* optional nested questions */
   @Field(() => [CreateQuestionInput], { nullable: true })
   @IsOptional()
-  @ValidateIf((o) => o.questions && o.questions.length > 0)
-  @ArrayMinSize(1, {
-    message: 'Questions array must not be empty when provided',
-  })
-  // @ValidateNested({ each: true })
+  @ValidateNested({ each: true })
   @Type(() => CreateQuestionInput)
   questions?: CreateQuestionInput[];
 
+  /* optional nested reference materials */
   @Field(() => [CreateReferenceMaterialInput], { nullable: true })
   @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => CreateReferenceMaterialInput)
   referenceMaterials?: CreateReferenceMaterialInput[];
-
-  @Field(() => [String])
-  @IsNotEmpty({ each: true })
-  gradeLevelIds: string[];
 }
 
+// // src/tests/dto/create-test.input.ts
+// @InputType()
+// export class CreateTestInput {
+//     @Field()
+//     @IsNotEmpty()
+//     @IsString()
+//     title: string;
+
+//   @Field(() => ID)
+//   tenantSubjectId: string;
+
+//   @Field(() => [ID])
+//   tenantGradeLevelIds: string[];
+
+//   @Field()
+//   date: Date;
+
+//   @Field()
+//   startTime: string;
+
+//   @Field({ nullable: true })
+//   endTime?: string;
+
+//   @Field()
+//   duration: number;
+
+//   @Field()
+//   totalMarks: number;
+
+//   @Field({ nullable: true })
+//   resourceUrl?: string;
+
+//   @Field({ nullable: true })
+//   instructions?: string;
+
+//   /* optional nested questions & reference materials */
+//   @Field(() => [QuestionInput], { nullable: true })
+//   questions?: QuestionInput[];
+
+//   @Field(() => [ReferenceMaterialInput], { nullable: true })
+//   referenceMaterials?: ReferenceMaterialInput[];
+// }
 
 // @InputType()
 // export class CreateTestInput {
@@ -141,7 +187,6 @@ export class CreateTestInput {
 //   @Type(() => CreateReferenceMaterialInput)
 //   referenceMaterials?: CreateReferenceMaterialInput[];
 // }
-
 
 // import { Field, InputType, ObjectType, Int } from '@nestjs/graphql';
 // import {

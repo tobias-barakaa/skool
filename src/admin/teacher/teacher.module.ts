@@ -12,10 +12,18 @@ import { UserTenantMembershipModule } from '../user-tenant-membership/user-tenan
 import { SubjectModule } from '../subject/subject.module';
 import { LevelModule } from '../level/level.module';
 import { StreamsModule } from '../streams/streams.module';
+import { TenantGradeLevel } from '../school-type/entities/tenant-grade-level';
+import { TenantStream } from '../school-type/entities/tenant-stream';
+import { TenantSubject } from '../school-type/entities/tenant-specific-subject';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Teacher]),
+      TypeOrmModule.forFeature([
+        Teacher,
+        TenantGradeLevel,
+        TenantStream,
+        TenantSubject,
+    ]),
     EmailModule,
     UserModule,
     InvitationModule,

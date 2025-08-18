@@ -10,10 +10,12 @@ import {
   IsString,
   IsArray,
   IsBoolean,
+  IsUUID,
 } from 'class-validator';
 
 @InputType()
 export class CreateTeacherInvitationDto {
+  /* --- scalars --- */
   @Field()
   @IsNotEmpty()
   @IsEmail()
@@ -54,27 +56,27 @@ export class CreateTeacherInvitationDto {
   @Field(() => [ID], { nullable: true })
   @IsOptional()
   @IsArray()
-  subjectIds?: string[];
+  @IsUUID('4', { each: true })
+  tenantSubjectIds?: string[];
 
   @Field(() => [ID], { nullable: true })
   @IsOptional()
   @IsArray()
-  gradeLevelIds?: string[];
+  @IsUUID('4', { each: true })
+  tenantGradeLevelIds?: string[];
 
   @Field(() => [ID], { nullable: true })
   @IsOptional()
   @IsArray()
-  streamIds?: string[];
-
-  @Field(() => Boolean, { nullable: true })
-  @IsOptional()
-  @IsBoolean()
-  isClassTeacher?: boolean;
+  @IsUUID('4', { each: true })
+  tenantStreamIds?: string[];
 
   @Field(() => ID, { nullable: true })
   @IsOptional()
-  classTeacherStreamId?: string;
+  @IsUUID('4')
+  classTeacherTenantStreamId?: string;
 
+  /* remaining scalars */
   @Field({ nullable: true })
   @IsOptional()
   employeeId?: string;
@@ -86,4 +88,8 @@ export class CreateTeacherInvitationDto {
   @Field({ nullable: true })
   @IsOptional()
   qualifications?: string;
+
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  isClassTeacher?: boolean;
 }

@@ -2,7 +2,7 @@
 
 import { ConflictException } from '@nestjs/common';
 import { InvitationStatus, UserInvitation } from 'src/admin/invitation/entities/user-iInvitation.entity';
-import { Repository, MoreThan } from 'typeorm';
+import { Repository, MoreThan, LessThan } from 'typeorm';
 
 export async function handleInvitationThrottleAndExpiry(
   email: string,
@@ -13,44 +13,56 @@ export async function handleInvitationThrottleAndExpiry(
   const now = new Date();
   const throttleTime = new Date(now.getTime() - throttleMinutes * 60 * 1000);
 
-  // Check for recent invitations within throttle window
-  const recentInvitation = await invitationRepository.findOne({
-    where: {
-      email,
-      tenant: { id: tenantId },
-      status: InvitationStatus.PENDING,
-      createdAt: MoreThan(throttleTime), // Created within last 10 minutes
-    },
-    order: { createdAt: 'DESC' },
+  // Use a transaction to prevent race conditions
+  return await invitationRepository.manager.transaction(async (manager) => {
+    const invitationRepo = manager.getRepository(UserInvitation);
+
+    // 1. Find the most recent PENDING invitation for this email and tenant
+    const existingInvitation = await invitationRepo.findOne({
+      where: {
+        email,
+        tenant: { id: tenantId },
+        status: InvitationStatus.PENDING,
+      },
+      order: { createdAt: 'DESC' },
+      lock: { mode: 'pessimistic_write' }, // Lock the row to prevent concurrent access
+    });
+
+    if (existingInvitation) {
+      // 2. If within throttle window → block sending
+      if (existingInvitation.createdAt > throttleTime) {
+        const minutesSinceCreation = Math.floor(
+          (now.getTime() - existingInvitation.createdAt.getTime()) / 60000,
+        );
+        const timeLeft = throttleMinutes - minutesSinceCreation;
+
+        throw new ConflictException(
+          `An invitation was recently sent to ${email}. Please wait another ${timeLeft} minute(s) before sending a new one.`,
+        );
+      } else {
+        // 3. If outside throttle window → expire the old one
+        existingInvitation.status = InvitationStatus.EXPIRED;
+        await invitationRepo.save(existingInvitation);
+      }
+    }
+
+    // 4. Clean up any other expired invitations
+    await invitationRepo
+      .createQueryBuilder()
+      .update(UserInvitation)
+      .set({ status: InvitationStatus.EXPIRED })
+      .where(
+        'email = :email AND tenantId = :tenantId AND expiresAt < :now AND status = :status',
+        {
+          email,
+          tenantId,
+          now,
+          status: InvitationStatus.PENDING,
+        },
+      )
+      .execute();
   });
-
-  if (recentInvitation) {
-    const timeLeft = Math.ceil((recentInvitation.createdAt.getTime() + throttleMinutes * 60 * 1000 - now.getTime()) / 60000);
-    throw new ConflictException(
-      `An invitation was already sent to ${email}. Please wait ${timeLeft} minutes before sending another.`
-    );
-  }
-
-  // Clean up expired invitations for this email/tenant combo
-  await invitationRepository.delete({
-    email,
-    tenant: { id: tenantId },
-    status: InvitationStatus.PENDING,
-    expiresAt: MoreThan(now), // Remove expired ones
-  });
-
-  // Update existing pending invitations to expired if past expiry
-  await invitationRepository.update(
-    {
-      email,
-      tenant: { id: tenantId },
-      status: InvitationStatus.PENDING,
-      expiresAt: MoreThan(now),
-    },
-    { status: InvitationStatus.EXPIRED }
-  );
 }
-
 
 
 

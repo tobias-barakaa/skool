@@ -20,33 +20,7 @@ export class SchoolSetupGuardService {
     private readonly dataSource: DataSource,
   ) {}
 
-  /**
-   * Validates if the school setup is complete (i.e., at least one level and grade has been selected).
-   */
-  // async validateSchoolIsConfigured(tenantId: string) {
-  //   const config = await this.schoolConfigRepo.findOne({
-  //     where: { tenant: { id: tenantId } },
-  //   });
 
-  //   if (!config) {
-  //     throw new BadRequestException('School setup not found for tenant.');
-  //   }
-
-  //   const levels = await this.configLevelRepo.find({
-  //     where: { schoolConfig: { id: config.id } },
-  //     relations: ['gradeLevels'],
-  //   });
-
-  //   const hasAtLeastOneGrade = levels.some(
-  //     (level) => level.gradeLevels && level.gradeLevels.length > 0,
-  //   );
-
-  //   if (!hasAtLeastOneGrade) {
-  //     throw new BadRequestException(
-  //       'Please complete your school setup before performing this action.',
-  //     );
-  //   }
-  // }
 
   async validateGradeLevelBelongsToTenant(
     tenantId: string,

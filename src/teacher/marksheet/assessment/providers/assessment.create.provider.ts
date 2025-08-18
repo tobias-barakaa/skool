@@ -16,6 +16,7 @@ import { AssessmentCacheProvider } from './assessment-cache.provider';
 import { TenantValidationServiceProvider } from './tenant-validation-provider';
 import { AssessType } from '../enums/assesment-type.enum';
 import { Assessment } from '../entity/assessment.entity';
+import { SchoolSetupGuardService } from 'src/admin/config/school-config.guard';
 
 @Injectable()
 export class AssessmentCreateProvider {
@@ -25,6 +26,7 @@ export class AssessmentCreateProvider {
     private readonly cacheProvider: AssessmentCacheProvider,
     private readonly tenantValidator: TenantValidationServiceProvider,
     private readonly dataSource: DataSource,
+    private readonly schoolSetupGuardService: SchoolSetupGuardService,
   ) {}
 
   async createAssessment(
@@ -32,6 +34,9 @@ export class AssessmentCreateProvider {
     tenantId: string,
   ): Promise<Assessment> {
     if (!tenantId) throw new BadRequestException('Tenant ID is required');
+
+
+  await this.schoolSetupGuardService.validateSchoolIsConfigured(tenantId);
 
     await this.tenantValidator.validateGradeLevelOwnership(
       input.tenantGradeLevelId,
@@ -144,6 +149,7 @@ export class AssessmentCreateProvider {
     }
   }
 }
+
 // import {
 //   Injectable,
 //   ConflictException,

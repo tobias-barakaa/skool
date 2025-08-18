@@ -1,6 +1,6 @@
 // src/invitation/providers/generic-inviter.provider.ts
 
-import { Injectable } from '@nestjs/common';
+import {  ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as crypto from 'crypto';
@@ -37,62 +37,62 @@ export class GenericInviterProvider {
   ) {}
 
   async inviteUser<T extends { email: string; fullName: string; role: string }>(
-    inviter: ActiveUserData,
+  inviter: ActiveUserData,
+  tenantId: string,
+  dto: T,
+  type: InvitationType,
+  sendEmailFn: (
+    email: string,
+    fullName: string,
+    schoolName: string,
+    token: string,
+    invitedBy: string,
     tenantId: string,
-    dto: T,
-    type: InvitationType,
-    sendEmailFn: (
-      email: string,
-      fullName: string,
-      schoolName: string,
-      token: string,
-      invitedBy: string,
-      tenantId: string,
-    ) => Promise<void>,
-    createProfileFn: () => Promise<void>,
-  ) {
-    await validateMembershipAccess(
-      this.membershipRepository,
-      inviter.sub,
-      tenantId,
-      [MembershipRole.SCHOOL_ADMIN],
-    );
+  ) => Promise<void>,
+  createProfileFn: () => Promise<void>,
+) {
+  await validateMembershipAccess(
+    this.membershipRepository,
+    inviter.sub,
+    tenantId,
+    [MembershipRole.SCHOOL_ADMIN],
+  );
 
-    await checkIfUserAlreadyInTenant(
-      dto.email,
-      tenantId,
-      this.userRepository,
-      this.membershipRepository,
-    );
+  await checkIfUserAlreadyInTenant(
+    dto.email,
+    tenantId,
+    this.userRepository,
+    this.membershipRepository,
+  );
 
-    await handleInvitationThrottleAndExpiry(
-      dto.email,
-      tenantId,
-      this.invitationRepository,
-    );
+  await handleInvitationThrottleAndExpiry(
+    dto.email,
+    tenantId,
+    this.invitationRepository,
+  );
 
-    const tenant = await this.tenantRepository.findOneOrFail({
-      where: { id: tenantId },
-    });
+  const tenant = await this.tenantRepository.findOneOrFail({
+    where: { id: tenantId },
+  });
 
-    const { token, expiresAt } = this.createInvitationToken();
+  const { token, expiresAt } = this.createInvitationToken();
 
-    const invitation = this.invitationRepository.create({
-      email: dto.email,
-      name: dto.fullName,
-      role: dto.role,
-      userData: dto,
-      token,
-      type,
-      status: InvitationStatus.PENDING,
-      expiresAt,
-      invitedBy: inviter,
-      tenant: { id: tenantId },
-    });
+  const invitation = this.invitationRepository.create({
+    email: dto.email,
+    name: dto.fullName,
+    role: dto.role,
+    userData: dto as Record<string, any>,
+    token,
+    type,
+    status: InvitationStatus.PENDING,
+    expiresAt,
+    invitedBy: inviter,
+    tenant: { id: tenantId },
+  });
 
-
-
+  try {
     await this.invitationRepository.save(invitation);
+    console.log(invitation, 'Invitation created successfully');
 
     await createProfileFn();
 
@@ -111,7 +111,17 @@ export class GenericInviterProvider {
       status: invitation.status,
       createdAt: invitation.createdAt,
     };
+
+  } catch (error) {
+    // Handle unique constraint violation
+    if (error.code === '23505' || error.message?.includes('duplicate key')) {
+      throw new ConflictException(
+        'An invitation for this email is already pending. Please wait before sending another.'
+      );
+    }
+    throw error;
   }
+}
 
   private createInvitationToken(): { token: string; expiresAt: Date } {
     const token = crypto.randomBytes(32).toString('hex');

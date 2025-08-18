@@ -1,5 +1,5 @@
 import { ObjectType, Field, ID, registerEnumType } from '@nestjs/graphql';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
 import { Tenant } from 'src/admin/tenants/entities/tenant.entity';
 import { CreateTeacherInvitationDto } from 'src/admin/teacher/dtos/create-teacher-invitation.dto';
 import { User } from 'src/admin/users/entities/user.entity';
@@ -34,6 +34,10 @@ registerEnumType(InvitationStatus, { name: 'InvitationStatus' });
 
 @ObjectType()
 @Entity('user_invitations')
+@Index(['email', 'tenantId', 'status'], {
+  where: "status = 'PENDING'",
+  unique: true,
+})
 export class UserInvitation {
   @Field(() => ID)
   @PrimaryGeneratedColumn('uuid')

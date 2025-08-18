@@ -90,8 +90,6 @@ export class AssessmentOutput {
   @Field()
   term: number;
 
-  @Field({ nullable: true })
-  date?: Date;
 
   @Field(() => Number, { nullable: true })
   maxScore?: number;
@@ -122,7 +120,6 @@ export class AssessmentOutput {
     output.cutoff = entity.cutoff;
     output.status = entity.status;
     output.term = entity.term;
-    output.date = entity.date;
     output.maxScore = entity.maxScore;
     output.description = entity.description;
     output.tenantId = entity.tenantId;

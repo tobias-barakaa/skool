@@ -17,34 +17,17 @@ import { Roles } from 'src/iam/decorators/roles.decorator';
 import { SkipTenantValidation } from '../auth/decorator/skip-tenant-validation.decorator';
 
 @Resolver()
-@Roles(
-  MembershipRole.SUPER_ADMIN,
-  MembershipRole.SCHOOL_ADMIN,
-)
+@Roles(MembershipRole.SUPER_ADMIN, MembershipRole.SCHOOL_ADMIN)
 export class TeacherResolver {
   constructor(private teacherService: TeacherService) {}
 
   @Mutation(() => InviteTeacherResponse)
   async inviteTeacher(
-    @Args('createTeacherDto') createTeacherDto: CreateTeacherInvitationDto,
+    @Args('createTeacherDto') dto: CreateTeacherInvitationDto,
     @Args('tenantId') tenantId: string,
-    @ActiveUser() currentUser: ActiveUserData,
+    @ActiveUser() user: ActiveUserData,
   ) {
-
-
-
-    console.log(Object.keys(createTeacherDto), 'DTO keys');
-    console.log(tenantId, 'this is teh tenant id')
-    console.log(currentUser.tenantId, 'this is teh tenant id');
-
-    console.log(createTeacherDto, 'received createTeacherDto');
-
-
-    return await this.teacherService.inviteTeacher(
-      createTeacherDto,
-      currentUser,
-      tenantId,
-    );
+    return this.teacherService.inviteTeacher(dto, user, tenantId);
   }
 
   @Mutation(() => AcceptInvitationResponse)

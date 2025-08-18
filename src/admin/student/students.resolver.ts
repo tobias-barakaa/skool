@@ -57,6 +57,7 @@ export class StudentsResolver {
 async allStudents(
   @ActiveUser() user: ActiveUserData,
 ): Promise<Student[]> {
+  console.log(user, 'this is the user')
   return this.studentsService.getAllStudentsByTenant(user);
 }
 
