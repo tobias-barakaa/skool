@@ -3,12 +3,12 @@ import {
   IsNotEmpty,
   IsOptional,
   IsEnum,
-  IsDateString,
   IsNumber,
   IsString,
   IsArray,
   ValidateNested,
   Min,
+  IsBoolean,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CreateOptionInput } from './create-option-input.dto';
@@ -20,21 +20,34 @@ export enum QuestionType {
   TRUE_FALSE = 'true_false',
 }
 
-// ✅ 2. Register enum for GraphQL
+// ✅ 2. Register enum for GraphQL with proper mapping
 registerEnumType(QuestionType, {
   name: 'QuestionType',
+  description: 'The supported question types',
+  valuesMap: {
+    MULTIPLE_CHOICE: {
+      description: 'Multiple choice question with several options',
+    },
+    SHORT_ANSWER: {
+      description: 'Short answer question requiring text input',
+    },
+    TRUE_FALSE: {
+      description: 'True or false question',
+    },
+  },
 });
-
 
 @InputType()
 export class CreateQuestionInput {
   @Field()
   @IsNotEmpty({ message: 'Question text is required' })
+  @IsString({ message: 'Question text must be a string' })
   text: string;
 
   @Field(() => [String], { nullable: true })
   @IsOptional()
   @IsArray({ message: 'Image URLs must be an array' })
+  @IsString({ each: true, message: 'Each image URL must be a string' })
   imageUrls?: string[];
 
   @Field(() => Int)
@@ -53,13 +66,16 @@ export class CreateQuestionInput {
 
   @Field({ nullable: true })
   @IsOptional()
+  @IsString({ message: 'AI prompt must be a string' })
   aiPrompt?: string;
 
   @Field()
+  @IsBoolean({ message: 'isAIGenerated must be a boolean' })
   isAIGenerated: boolean;
 
   @Field(() => [CreateOptionInput], { nullable: true })
   @IsOptional()
+  @IsArray({ message: 'Options must be an array' })
   @ValidateNested({ each: true })
   @Type(() => CreateOptionInput)
   options?: CreateOptionInput[];

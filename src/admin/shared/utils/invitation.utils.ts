@@ -4,72 +4,52 @@ import { ConflictException } from '@nestjs/common';
 import { InvitationStatus, UserInvitation } from 'src/admin/invitation/entities/user-iInvitation.entity';
 import { Repository, MoreThan, LessThan } from 'typeorm';
 
-export async function handleInvitationThrottleAndExpiry(
+export async function handleInvitationResendLogic(
   email: string,
   tenantId: string,
   invitationRepository: Repository<UserInvitation>,
   throttleMinutes: number = 10,
-) {
+): Promise<UserInvitation | null> {
   const now = new Date();
   const throttleTime = new Date(now.getTime() - throttleMinutes * 60 * 1000);
 
-  // Use a transaction to prevent race conditions
-  return await invitationRepository.manager.transaction(async (manager) => {
-    const invitationRepo = manager.getRepository(UserInvitation);
-
-    // 1. Find the most recent PENDING invitation for this email and tenant
-    const existingInvitation = await invitationRepo.findOne({
-      where: {
-        email,
-        tenant: { id: tenantId },
-        status: InvitationStatus.PENDING,
-      },
-      order: { createdAt: 'DESC' },
-      lock: { mode: 'pessimistic_write' }, // Lock the row to prevent concurrent access
-    });
-
-    if (existingInvitation) {
-      // 2. If within throttle window → block sending
-      if (existingInvitation.createdAt > throttleTime) {
-        const minutesSinceCreation = Math.floor(
-          (now.getTime() - existingInvitation.createdAt.getTime()) / 60000,
-        );
-        const timeLeft = throttleMinutes - minutesSinceCreation;
-
-        throw new ConflictException(
-          `An invitation was recently sent to ${email}. Please wait another ${timeLeft} minute(s) before sending a new one.`,
-        );
-      } else {
-        // 3. If outside throttle window → expire the old one
-        existingInvitation.status = InvitationStatus.EXPIRED;
-        await invitationRepo.save(existingInvitation);
-      }
-    }
-
-    // 4. Clean up any other expired invitations
-    await invitationRepo
-      .createQueryBuilder()
-      .update(UserInvitation)
-      .set({ status: InvitationStatus.EXPIRED })
-      .where(
-        'email = :email AND tenantId = :tenantId AND expiresAt < :now AND status = :status',
-        {
-          email,
-          tenantId,
-          now,
-          status: InvitationStatus.PENDING,
-        },
-      )
-      .execute();
+  const existingInvitation = await invitationRepository.findOne({
+    where: {
+      email,
+      tenant: { id: tenantId },
+      status: InvitationStatus.PENDING,
+    },
+    order: { createdAt: 'DESC' }, // Still find the newest one
   });
+
+  if (!existingInvitation) {
+    return null;
+  }
+
+  // --- THE CRUCIAL FIX ---
+  // The throttle check MUST use the 'updatedAt' timestamp, because that's what changes on a resend.
+  const lastActionTime = new Date(existingInvitation.updatedAt);
+
+  // Is the last action (creation or update) more recent than our 10-minute cutoff?
+  const isTooRecent = lastActionTime > throttleTime;
+
+  // (Optional) You can add the debug logs back here if you want to verify
+  // console.log(`  - Last Action Time (C): ${lastActionTime.toISOString()}`);
+  // console.log(`  - RESULT: ${isTooRecent}`);
+
+  if (isTooRecent) {
+    const timeLeft = Math.ceil(
+      (lastActionTime.getTime() + throttleMinutes * 60 * 1000 - now.getTime()) /
+        60000,
+    );
+    throw new ConflictException(
+      `An invitation was already sent to ${email}. Please wait ${timeLeft || 1} more minutes before sending another.`,
+    );
+  }
+
+  // If we reach here, the last action was more than 10 minutes ago. It's safe to proceed.
+  return existingInvitation;
 }
-
-
-
-
-
-
-
 
 
 

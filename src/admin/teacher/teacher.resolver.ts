@@ -17,10 +17,10 @@ import { Roles } from 'src/iam/decorators/roles.decorator';
 import { SkipTenantValidation } from '../auth/decorator/skip-tenant-validation.decorator';
 
 @Resolver()
-@Roles(MembershipRole.SUPER_ADMIN, MembershipRole.SCHOOL_ADMIN)
 export class TeacherResolver {
   constructor(private teacherService: TeacherService) {}
 
+  @Roles(MembershipRole.SUPER_ADMIN, MembershipRole.SCHOOL_ADMIN)
   @Mutation(() => InviteTeacherResponse)
   async inviteTeacher(
     @Args('createTeacherDto') dto: CreateTeacherInvitationDto,

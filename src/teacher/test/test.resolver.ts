@@ -10,24 +10,13 @@ import { mapToGeneratedQuestionOutput } from './utils/map-create-to-output';
 import { ValidationPipe, UsePipes, BadRequestException } from '@nestjs/common';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
+import { validate } from 'class-validator';
 
 
 @Resolver(() => Test)
 export class TestResolver {
   constructor(private testService: TestService) {}
 
-  @Mutation(() => Test)
-  @UsePipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      exceptionFactory: (errors) => {
-        console.error('Validation errors:', JSON.stringify(errors, null, 2));
-        return errors;
-      },
-    }),
-  )
   @Mutation(() => Test)
   async createTest(
     @Args('createTestInput') createTestInput: CreateTestInput,
@@ -37,18 +26,78 @@ export class TestResolver {
       console.log('Received input:', JSON.stringify(createTestInput, null, 2));
       console.log('Current user:', currentUser);
 
-      // Optionally validate tenant access here
+      // Validate tenant access
       const tenantId = currentUser.tenantId;
       if (!tenantId) {
-        throw new Error('Unauthorized: tenantId missing in token');
+        throw new BadRequestException('Unauthorized: tenantId missing in token');
+      }
+
+      // Additional manual validation for better error reporting
+      const validationErrors = await validate(createTestInput);
+      if (validationErrors.length > 0) {
+        const errorMessages = this.formatValidationErrors(validationErrors);
+        console.error('Validation errors:', errorMessages);
+        throw new BadRequestException({
+          message: 'Input validation failed',
+          errors: errorMessages,
+        });
+      }
+
+      // Validate questions if present
+      if (createTestInput.questions?.length) {
+        for (let i = 0; i < createTestInput.questions.length; i++) {
+          const question = createTestInput.questions[i];
+          const questionErrors = await validate(question);
+
+          if (questionErrors.length > 0) {
+            const errorMessages = this.formatValidationErrors(questionErrors);
+            console.error(`Question ${i + 1} validation errors:`, errorMessages);
+            throw new BadRequestException({
+              message: `Question ${i + 1} validation failed`,
+              errors: errorMessages,
+            });
+          }
+
+          // Validate options for multiple choice questions
+          if (question.type === 'multiple_choice' && (!question.options || question.options.length === 0)) {
+            throw new BadRequestException(`Multiple choice question ${i + 1} must have options`);
+          }
+
+          // Validate that at least one option is correct for multiple choice
+          if (question.type === 'multiple_choice' && question.options) {
+            const hasCorrectOption = question.options.some(option => option.isCorrect);
+            if (!hasCorrectOption) {
+              throw new BadRequestException(`Multiple choice question ${i + 1} must have at least one correct option`);
+            }
+          }
+        }
       }
 
       return await this.testService.createTest(createTestInput, currentUser);
     } catch (error) {
       console.error('Error in createTest resolver:', error);
-      throw error;
+
+      // Re-throw validation and bad request errors as-is
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+
+      // Wrap other errors
+      throw new BadRequestException(
+        error.message || 'An error occurred while creating the test'
+      );
     }
   }
+
+  private formatValidationErrors(errors: any[]): any[] {
+    return errors.map(error => ({
+      field: error.property,
+      value: error.value,
+      constraints: error.constraints,
+      children: error.children?.length > 0 ? this.formatValidationErrors(error.children) : undefined,
+    }));
+  }
+
 
   @Mutation(() => [GeneratedQuestionOutput])
   async generateQuestions(

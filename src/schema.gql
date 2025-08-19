@@ -692,9 +692,15 @@ type Question {
   type: String!
 }
 
+"""The supported question types"""
 enum QuestionType {
+  """Multiple choice question with several options"""
   MULTIPLE_CHOICE
+
+  """Short answer question requiring text input"""
   SHORT_ANSWER
+
+  """True or false question"""
   TRUE_FALSE
 }
 
