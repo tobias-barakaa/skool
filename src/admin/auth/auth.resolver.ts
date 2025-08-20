@@ -23,7 +23,6 @@ import { MembershipRole } from '../user-tenant-membership/entities/user-tenant-m
 import { Roles } from 'src/iam/decorators/roles.decorator';
 
 @Resolver()
-@Roles(MembershipRole.SUPER_ADMIN, MembershipRole.SCHOOL_ADMIN)
 @UseFilters(GraphQLExceptionsFilter)
 export class AuthResolver {
   constructor(
@@ -35,9 +34,16 @@ export class AuthResolver {
   ) {}
 
   @Mutation(() => AuthResponse, { name: 'signIn' })
-      @Auth(AuthType.None)
-      @SkipTenantValidation()
-      @SetMetadata('isPublic', true)
+      // @Auth(AuthType.None)
+      // @SkipTenantValidation()
+      // @SetMetadata('isPublic', true)
+
+
+      //  @Mutation(() => AcceptInvitationResponse)
+        @Auth(AuthType.None)
+        @SkipTenantValidation()
+        @SetMetadata('isPublic', true)
+
   async signIn(
     @Args('signInInput') signInInput: SignInInput,
     @Context() context,

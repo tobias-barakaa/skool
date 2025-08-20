@@ -1,8 +1,7 @@
 // src/tests/dto/create-test.input.ts
-import { Field, ID, InputType, Int } from '@nestjs/graphql';
+import { Field, GraphQLISODateTime, ID, InputType, Int } from '@nestjs/graphql';
 import {
   IsArray,
-  IsDateString,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -10,6 +9,7 @@ import {
   IsUUID,
   ValidateNested,
   ArrayMinSize,
+  IsDate,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CreateQuestionInput } from './create-question-input.dto';
@@ -27,9 +27,9 @@ export class CreateTestInput {
   @IsUUID()
   tenantSubjectId: string;
 
-  @Field()
-  @IsDateString()
-  date: string;
+  @Field(() => GraphQLISODateTime)
+  @IsDate()
+  date: Date;
 
   @Field()
   @IsNotEmpty()

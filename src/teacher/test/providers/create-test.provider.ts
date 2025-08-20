@@ -116,7 +116,7 @@ export class CreateTestProvider {
         title: dto.title,
         subject: tenantSubject,
         gradeLevels: tenantGradeLevels,
-        date: dto.date,
+        date: new Date(dto.date),
         startTime: dto.startTime,
         endTime: dto.endTime,
         duration: dto.duration,

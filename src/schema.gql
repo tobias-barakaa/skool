@@ -291,7 +291,7 @@ input CreateTenantStreamInput {
 }
 
 input CreateTestInput {
-  date: String!
+  date: DateTime!
   duration: Int!
   endTime: String
   instructions: String
@@ -1187,7 +1187,7 @@ input UpdateTenantSubjectInput {
 }
 
 input UpdateTestInput {
-  date: String
+  date: DateTime
   duration: Int
   endTime: String
   id: ID!

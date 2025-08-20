@@ -16,6 +16,7 @@ import {
 } from 'typeorm';
 import { TenantSubject } from 'src/admin/school-type/entities/tenant-specific-subject';
 import { TenantGradeLevel } from 'src/admin/school-type/entities/tenant-grade-level';
+import { IsDate } from 'class-validator';
 
 @ObjectType()
 @Entity()
@@ -40,12 +41,15 @@ export class Test {
   @JoinTable({
     name: 'test_tenant_grade_levels',
     joinColumn: { name: 'test_id', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'tenant_grade_level_id', referencedColumnName: 'id' },
+    inverseJoinColumn: {
+      name: 'tenant_grade_level_id',
+      referencedColumnName: 'id',
+    },
   })
   gradeLevels: TenantGradeLevel[];
 
-  @Field()
-  @Column({ type: 'date' })
+  @Field(() => GraphQLISODateTime)
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   date: Date;
 
   @Field()
