@@ -31,6 +31,10 @@ import { Option } from 'src/teacher/test/entities/option.entity';
 import { ReferenceMaterial } from 'src/teacher/test/entities/reference-material.entity';
 import { Stream } from 'src/admin/streams/entities/streams.entity';
 import { ParentStudent } from 'src/admin/parent/entities/parent-student.entity';
+import { TenantSubject } from 'src/admin/school-type/entities/tenant-specific-subject';
+import { TenantGradeLevel } from 'src/admin/school-type/entities/tenant-grade-level';
+import { CustomSubject } from 'src/admin/subject/entities/cusotm-subject.entity';
+import { TenantStream } from 'src/admin/school-type/entities/tenant-stream';
 
 
 
@@ -60,7 +64,6 @@ const ENV = process.env.NODE_ENV;
       }),
     }),
 
-
     TypeOrmModule.forFeature([
       SchoolType,
       Curriculum,
@@ -87,7 +90,10 @@ const ENV = process.env.NODE_ENV;
       ReferenceMaterial,
       Stream,
       ParentStudent,
-      
+      TenantSubject,
+      TenantGradeLevel,
+      CustomSubject,
+      TenantStream
 
     ]),
   ],

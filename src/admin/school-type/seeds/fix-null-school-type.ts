@@ -14,6 +14,9 @@ import { User } from '../../users/entities/user.entity';
 import { Organization } from '../../organizations/entities/organizations-entity';
 import { Parent } from '../../parent/entities/parent.entity';
 import { SchoolLevelSetting } from '../../school-level-setting/entities/school-level-setting.entity';
+import { TenantSubject } from '../entities/tenant-specific-subject';
+import { TenantGradeLevel } from '../entities/tenant-grade-level';
+import { Tenant } from 'src/admin/tenants/entities/tenant.entity';
 
 
 const AppDataSource = new DataSource({
@@ -36,6 +39,8 @@ const AppDataSource = new DataSource({
     Organization,
     Parent,
     SchoolLevelSetting,
+    TenantGradeLevel
+
   ],
   synchronize: false, // ❗ safer — don't let this auto-sync in prod
   ssl: { rejectUnauthorized: false },

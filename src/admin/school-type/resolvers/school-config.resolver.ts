@@ -9,7 +9,7 @@ import { MembershipRole } from 'src/admin/user-tenant-membership/entities/user-t
 import { TenantGradeLevel } from '../entities/tenant-grade-level';
 
 @Resolver()
-@Roles(MembershipRole.SUPER_ADMIN, MembershipRole.SCHOOL_ADMIN)
+@Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.SUPER_ADMIN)
 export class SchoolConfigResolver {
   private readonly logger = new Logger(SchoolConfigResolver.name);
 
@@ -43,6 +43,7 @@ export class SchoolConfigResolver {
     return await this.schoolConfigService.getSchoolConfiguration(user);
   }
 
+  @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.SUPER_ADMIN)
   @Query(() => [TenantGradeLevel], { name: 'gradeLevelsForSchoolType' })
   async gradeLevelsForSchoolType(
     @ActiveUser() user: ActiveUserData,
@@ -51,5 +52,4 @@ export class SchoolConfigResolver {
       user.tenantId,
     );
   }
-
 }
