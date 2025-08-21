@@ -39,6 +39,7 @@ export class TeacherResolver {
   @SkipTenantValidation()
   @SetMetadata('isPublic', true)
   @Mutation(() => AcceptInvitationResponse)
+  @Mutation(() => AcceptInvitationResponse, { name: 'acceptTeacherInvitation' })
   @Auth(AuthType.None)
   async acceptTeacherInvitation(
     @Args('acceptInvitationInput') input: AcceptInvitationInput,
