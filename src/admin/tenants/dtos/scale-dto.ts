@@ -16,7 +16,7 @@ interface ScaleConfig {
   processingDelay: number;
 }
 
-const DEFAULT_SCALE_CONFIGS: Record<ScaleTier, ScaleConfig> = {
+export const DEFAULT_SCALE_CONFIGS: Record<ScaleTier, ScaleConfig> = {
   [ScaleTier.SMALL]: {
     rateLimitCapacity: 15,
     rateLimitRefillPerSec: 3,

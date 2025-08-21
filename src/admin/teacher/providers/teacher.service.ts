@@ -17,6 +17,7 @@ import { Stream } from 'src/admin/streams/entities/streams.entity';
 import { TenantGradeLevel } from 'src/admin/school-type/entities/tenant-grade-level';
 import { TenantStream } from 'src/admin/school-type/entities/tenant-stream';
 import { TenantSubject } from 'src/admin/school-type/entities/tenant-specific-subject';
+import { TeacherDto } from '../dtos/teacher-query.dto';
 
 @Injectable()
 export class TeacherService {
@@ -76,68 +77,68 @@ export class TeacherService {
 
         // Subjects
         const [
-    tenantGradeLevels,
-    tenantStreams,
-    tenantSubjects,
-    classTeacherStream,
-  ] = await Promise.all([
-    dto.tenantGradeLevelIds?.length
-      ? this.tenantGradeLevelRepo.findBy({
-          id: In(dto.tenantGradeLevelIds),
-          tenant: { id: tenantId },
-        })
-      : Promise.resolve([]),
+          tenantGradeLevels,
+          tenantStreams,
+          tenantSubjects,
+          classTeacherStream,
+        ] = await Promise.all([
+          dto.tenantGradeLevelIds?.length
+            ? this.tenantGradeLevelRepo.findBy({
+                id: In(dto.tenantGradeLevelIds),
+                tenant: { id: tenantId },
+              })
+            : Promise.resolve([]),
 
-    dto.tenantStreamIds?.length
-      ? this.tenantStreamRepo.findBy({
-          id: In(dto.tenantStreamIds),
-          tenant: { id: tenantId },
-        })
-      : Promise.resolve([]),
+          dto.tenantStreamIds?.length
+            ? this.tenantStreamRepo.findBy({
+                id: In(dto.tenantStreamIds),
+                tenant: { id: tenantId },
+              })
+            : Promise.resolve([]),
 
-    dto.tenantSubjectIds?.length
-      ? this.tenantSubjectRepo.findBy({
-          id: In(dto.tenantSubjectIds),
-          tenant: { id: tenantId },
-        })
-      : Promise.resolve([]),
+          dto.tenantSubjectIds?.length
+            ? this.tenantSubjectRepo.findBy({
+                id: In(dto.tenantSubjectIds),
+                tenant: { id: tenantId },
+              })
+            : Promise.resolve([]),
 
-    dto.classTeacherTenantStreamId
-      ? this.tenantStreamRepo.findOne({
-          where: {
-            id: dto.classTeacherTenantStreamId,
-            tenant: { id: tenantId },
-          },
-        })
-      : Promise.resolve(undefined),
-  ]);
+          dto.classTeacherTenantStreamId
+            ? this.tenantStreamRepo.findOne({
+                where: {
+                  id: dto.classTeacherTenantStreamId,
+                  tenant: { id: tenantId },
+                },
+              })
+            : Promise.resolve(undefined),
+        ]);
 
-  // 3. Ensure all requested ids were found
-  if (
-    dto.tenantGradeLevelIds &&
-    dto.tenantGradeLevelIds.length !== tenantGradeLevels.length
-  )
-    throw new BadRequestException('One or more grade levels not found');
+        // 3. Ensure all requested ids were found
+        if (
+          dto.tenantGradeLevelIds &&
+          dto.tenantGradeLevelIds.length !== tenantGradeLevels.length
+        )
+          throw new BadRequestException('One or more grade levels not found');
 
-  if (dto.tenantStreamIds && dto.tenantStreamIds.length !== tenantStreams.length)
-    throw new BadRequestException('One or more streams not found');
+        if (
+          dto.tenantStreamIds &&
+          dto.tenantStreamIds.length !== tenantStreams.length
+        )
+          throw new BadRequestException('One or more streams not found');
 
-  if (
-    dto.tenantSubjectIds &&
-    dto.tenantSubjectIds.length !== tenantSubjects.length
-  )
-    throw new BadRequestException('One or more subjects not found');
+        if (
+          dto.tenantSubjectIds &&
+          dto.tenantSubjectIds.length !== tenantSubjects.length
+        )
+          throw new BadRequestException('One or more subjects not found');
 
-  if (dto.classTeacherTenantStreamId && !classTeacherStream)
-    throw new BadRequestException('Invalid class-teacher stream');
+        if (dto.classTeacherTenantStreamId && !classTeacherStream)
+          throw new BadRequestException('Invalid class-teacher stream');
 
         // Class teacher stream (only if applicable)
-        if (
-          dto.isClassTeacher &&
-          dto.classTeacherTenantStreamId
-        ) {
+        if (dto.isClassTeacher && dto.classTeacherTenantStreamId) {
           // Fetch the stream and ensure it belongs to the current tenant
-          const classStream = await this.streamRepository.findOne({
+          const classStream = await this.tenantStreamRepo.findOne({
             where: {
               id: dto.classTeacherTenantStreamId,
               tenant: { id: tenantId },
@@ -169,7 +170,6 @@ export class TeacherService {
       },
     );
   }
-
 
   async acceptInvitation(
     token: string,
@@ -286,6 +286,31 @@ export class TeacherService {
   //     },
   //   );
   // }
+
+  async getTeachersByTenant(tenantId: string): Promise<TeacherDto[]> {
+    const teachers = await this.teacherRepository.find({
+      where: { tenant: { id: tenantId } }, // assumes Teacher has `tenant` relation
+      relations: ['tenant'], // load tenant relation
+    });
+
+    // If entity ≠ dto fields, map manually
+    return teachers.map((teacher) => ({
+      id: teacher.id,
+      fullName: `${teacher.firstName} ${teacher.lastName}`,
+      firstName: teacher.firstName,
+      lastName: teacher.lastName,
+      email: teacher.email,
+      phoneNumber: teacher.phoneNumber,
+      gender: teacher.gender,
+      department: teacher.department,
+      address: teacher.address,
+      employeeId: teacher.employeeId,
+      dateOfBirth: teacher.dateOfBirth ? new Date(teacher.dateOfBirth) : undefined,
+      isActive: teacher.isActive,
+      hasCompletedProfile: teacher.hasCompletedProfile,
+      userId: teacher.userId,
+    }));
+  }
 
   async deleteTeacher(
     teacherId: string,

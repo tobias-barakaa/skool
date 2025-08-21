@@ -15,6 +15,7 @@ import { setAuthCookies } from '../auth/utils/set-auth-cookies';
 import { MembershipRole } from '../user-tenant-membership/entities/user-tenant-membership.entity';
 import { Roles } from 'src/iam/decorators/roles.decorator';
 import { SkipTenantValidation } from '../auth/decorator/skip-tenant-validation.decorator';
+import { TeacherDto } from './dtos/teacher-query.dto';
 
 @Resolver()
 export class TeacherResolver {
@@ -53,10 +54,10 @@ export class TeacherResolver {
     };
   }
 
-  // @Query(() => [TeacherDto])
-  // async getTeachersByTenant(@Args('tenantId') tenantId: string) {
-  //   return this.teacherService.getTeachersByTenant(tenantId);
-  // }
+  @Query(() => [TeacherDto])
+  async getTeachersByTenant(@Args('tenantId') tenantId: string) {
+    return this.teacherService.getTeachersByTenant(tenantId);
+  }
 
   // 60660adb-416d-4d52-9efa-e3a8fc7c95c3
 

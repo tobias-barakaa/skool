@@ -646,6 +646,7 @@ type Query {
   getStaffCount(tenantId: String!): Float!
   getStudentsByGrade(gradeId: String!): [Student!]!
   getStudentsForParent(parentId: String!, tenantId: String!): [StudentSearchResponse!]!
+  getTeachersByTenant(tenantId: String!): [TeacherDto!]!
   getTenantStreams(tenantGradeLevelId: String): [TenantStream!]!
   getTenantSubjects(curriculumId: String): [TenantSubject!]!
   getUnreadMessageCount: Float!
@@ -992,6 +993,24 @@ enum SubjectTypeEnum {
 
 type Subscription {
   messageAdded: ChatMessage!
+}
+
+type TeacherDto {
+  address: String
+  dateOfBirth: DateTime
+  department: String!
+  email: String!
+  employeeId: String
+  firstName: String!
+  fullName: String!
+  gender: String!
+  hasCompletedProfile: Boolean!
+  id: ID!
+  isActive: Boolean!
+  lastName: String!
+  phoneNumber: String!
+  subject: String
+  userId: String
 }
 
 type TeacherOutput {

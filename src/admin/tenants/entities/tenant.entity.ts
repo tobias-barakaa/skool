@@ -29,11 +29,11 @@ export class Tenant {
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
-  @Column('text', { name: 'scale_tier', default: ScaleTier.SMALL })
-  scaleTier!: ScaleTier;
+  // @Column('text', { name: 'scale_tier', default: ScaleTier.SMALL })
+  // scaleTier!: ScaleTier;
 
-  @Column('jsonb', { name: 'scale_config', default: {} })
-  scaleConfig!: Partial<ScaleConfig>;
+  // @Column('jsonb', { name: 'scale_config', default: {} })
+  // scaleConfig!: json;
 
   @OneToMany(() => UserTenantMembership, (membership) => membership.tenant)
   @Field(() => [UserTenantMembership])
