@@ -4,6 +4,7 @@ import { School } from 'src/admin/school/entities/school.entity';
 import { Stream } from 'src/admin/streams/entities/streams.entity';
 import { UserTenantMembership } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { ScaleTier } from '../dtos/scale-dto';
 
 @ObjectType()
 @Entity('tenants')
@@ -20,7 +21,6 @@ export class Tenant {
   @Column({ unique: true })
   subdomain: string;
 
-
   @Field({ nullable: true })
   @Column({ type: 'text', nullable: true })
   description?: string;
@@ -29,13 +29,17 @@ export class Tenant {
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
+  @Column('text', { name: 'scale_tier', default: ScaleTier.SMALL })
+  scaleTier!: ScaleTier;
 
+  @Column('jsonb', { name: 'scale_config', default: {} })
+  scaleConfig!: Partial<ScaleConfig>;
 
-  @OneToMany(() => UserTenantMembership, membership => membership.tenant)
+  @OneToMany(() => UserTenantMembership, (membership) => membership.tenant)
   @Field(() => [UserTenantMembership])
   memberships: UserTenantMembership[];
 
-  @OneToMany(() => UserInvitation, invitation => invitation.tenant)
+  @OneToMany(() => UserInvitation, (invitation) => invitation.tenant)
   invitations: UserInvitation[];
 
   @Field()
@@ -46,10 +50,9 @@ export class Tenant {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => School, school => school.tenant)
+  @OneToMany(() => School, (school) => school.tenant)
   schools: School[];
 
-  @OneToMany(() => Stream, stream => stream.tenant)
-streams: Stream[];
-
+  @OneToMany(() => Stream, (stream) => stream.tenant)
+  streams: Stream[];
 }

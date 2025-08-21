@@ -28,6 +28,7 @@ import { StorageModule } from './modules/storage/storage.module';
 import { TeacherModule } from './teacher/teacher.module';
 import { TenantRoleGuard } from './iam/guards/tenant-role.guard';
 import { IamModule } from './iam/iam.module';
+import { SuperAdminModule } from './super_admin/super_admin.module';
 
 const ENV = process.env.NODE_ENV;
 
@@ -112,6 +113,8 @@ const ENV = process.env.NODE_ENV;
     }),
 
     CommonModule,
+
+    SuperAdminModule,
   ],
   controllers: [AppController],
   providers: [
