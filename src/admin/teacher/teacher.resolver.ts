@@ -31,10 +31,15 @@ export class TeacherResolver {
     return this.teacherService.inviteTeacher(dto, user, tenantId);
   }
 
-  @Mutation(() => AcceptInvitationResponse)
-  @Auth(AuthType.None)
+  // @Mutation(() => AcceptInvitationResponse)
+  // @Auth(AuthType.None)
+  // @SkipTenantValidation()
+  // @SetMetadata('isPublic', true)
+
   @SkipTenantValidation()
   @SetMetadata('isPublic', true)
+  @Mutation(() => AcceptInvitationResponse)
+  @Auth(AuthType.None)
   async acceptTeacherInvitation(
     @Args('acceptInvitationInput') input: AcceptInvitationInput,
     @Context() context: GraphQLExecutionContext,

@@ -82,7 +82,7 @@ export class StaffResolver {
     return this.staffService.getStaffById(id, tenantId);
   }
 
-  
+
   @Mutation(() => StaffDto)
   async updateStaff(
     @Args('updateStaffInput') updateStaffInput: UpdateStaffInput,
@@ -173,3 +173,6 @@ export class StaffResolver {
     return this.staffService.searchStaff(searchTerm, tenantId);
   }
 }
+
+
+
