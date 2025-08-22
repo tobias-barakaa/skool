@@ -23,7 +23,6 @@ export class Assessment {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  /* --- tenant ownership --------------------------------------------- */
   @Field(() => Tenant)
   @ManyToOne(() => Tenant, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'tenantId' })
