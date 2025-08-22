@@ -40,12 +40,10 @@ export class TenantGradeLevel {
   @Column({ default: true })
   isActive: boolean;
 
-  // FIX IS HERE: Add { nullable: true }
   @Field({ nullable: true })
   @Column({ length: 20, nullable: true })
   shortName?: string;
 
-  // FIX IS HERE: Add { nullable: true }
   @Field({ nullable: true })
   @Column({ type: 'int', nullable: true, default: 0 })
   sortOrder?: number;
@@ -62,4 +60,3 @@ export class TenantGradeLevel {
   @UpdateDateColumn()
   updatedAt: Date;
 }
-

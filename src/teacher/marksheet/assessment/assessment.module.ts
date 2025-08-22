@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AssessmentProviders } from './providers/assessment-providers';
 import { AssessmentResolver } from './assessment.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Assessment } from './entity/assessment.entity';
@@ -34,8 +33,12 @@ import { SchoolConfig } from 'src/admin/school-type/entities/school-config.entit
       CurriculumSubject,
       SchoolConfig,
     ]),
+
     UserTenantMembershipModule,
-    SchoolTypeModule
+    SchoolTypeModule,
+  ],
+  exports: [
+    TypeOrmModule,
   ],
 })
 export class AssessmentModule {}

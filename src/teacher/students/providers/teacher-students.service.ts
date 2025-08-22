@@ -33,8 +33,8 @@ export class TeacherStudentsService {
       grade: student.grade
         ? ({
             id: student.grade.id,
-            name: student.grade.name,
-            code: student.grade.code,
+            name: student.grade.gradeLevel.name,
+            code: student.grade.gradeLevel.code,
           } as TeacherStudentGradeDto)
         : null,
       stream: student.stream

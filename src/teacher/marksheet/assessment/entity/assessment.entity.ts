@@ -1,8 +1,6 @@
-import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
-import { GradeLevel } from 'src/admin/level/entities/grade-level.entity';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { TenantGradeLevel } from 'src/admin/school-type/entities/tenant-grade-level';
 import { TenantSubject } from 'src/admin/school-type/entities/tenant-specific-subject';
-import { Subject } from 'src/admin/subject/entities/subject.entity';
 import { Tenant } from 'src/admin/tenants/entities/tenant.entity';
 import {
   Entity,
@@ -31,7 +29,6 @@ export class Assessment {
   @Column()
   tenantId: string;
 
-  /* --- tenant grade level ------------------------------------------- */
   @Field(() => TenantGradeLevel)
   @ManyToOne(() => TenantGradeLevel, { eager: true })
   @JoinColumn({ name: 'tenantGradeLevelId' })
@@ -40,7 +37,6 @@ export class Assessment {
   @Column()
   tenantGradeLevelId: string;
 
-  /* --- tenant subject ----------------------------------------------- */
   @Field(() => TenantSubject)
   @ManyToOne(() => TenantSubject, { eager: true })
   @JoinColumn({ name: 'tenantSubjectId' })
@@ -50,12 +46,10 @@ export class Assessment {
   @Column()
   tenantSubjectId: string;
 
-  // FIXED: Changed from 'number' to 'decimal' or 'float' for PostgreSQL
   @Field({ nullable: true })
   @Column({ type: 'decimal', precision: 5, scale: 2, nullable: true })
   cutoff?: number;
 
-  /* everything else stays the same … */
   @Field()
   @Column()
   title: string;

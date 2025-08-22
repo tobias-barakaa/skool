@@ -182,7 +182,7 @@ export class ParentService {
       }
 
       // Check grade match
-      if (studentGrade && student.grade !== (studentGrade as unknown as GradeLevel)) {
+      if (studentGrade && String(student.grade) !== studentGrade) {
         matches = false;
       }
 

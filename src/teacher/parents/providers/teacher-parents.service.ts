@@ -79,38 +79,37 @@ export class TeacherParentsService {
   // }
 
   async getStudentsWithParents(tenantId: string): Promise<any[]> {
-  const relationships = await this.getStudentParentRelationships(tenantId);
+    const relationships = await this.getStudentParentRelationships(tenantId);
 
-  const studentMap: Record<string, any> = {};
+    const studentMap: Record<string, any> = {};
 
-  for (const rel of relationships) {
-    if (!rel.student || !rel.parent) continue;
+    for (const rel of relationships) {
+      if (!rel.student || !rel.parent) continue;
 
-    const studentId = rel.student.id;
+      const studentId = rel.student.id;
 
-    if (!studentMap[studentId]) {
-      studentMap[studentId] = {
-        studentId,
-        admissionNumber: rel.student.admission_number,
-        gender: rel.student.gender,
-        phone: rel.student.phone,
-        grade: rel.student.grade?.name ?? null,
-        stream: rel.student.stream?.name ?? null,
-        parents: [],
-      };
+      if (!studentMap[studentId]) {
+        studentMap[studentId] = {
+          studentId,
+          admissionNumber: rel.student.admission_number,
+          gender: rel.student.gender,
+          phone: rel.student.phone,
+          grade: rel.student.grade?.gradeLevel.name ?? null,
+          stream: rel.student.stream?.name ?? null,
+          parents: [],
+        };
+      }
+
+      studentMap[studentId].parents.push({
+        parentId: rel.parent.id,
+        name: rel.parent.name,
+        email: rel.parent.email,
+        phone: rel.parent.phone,
+        relationship: rel.relationship,
+        isPrimary: rel.isPrimary,
+      });
     }
 
-    studentMap[studentId].parents.push({
-      parentId: rel.parent.id,
-      name: rel.parent.name,
-      email: rel.parent.email,
-      phone: rel.parent.phone,
-      relationship: rel.relationship,
-      isPrimary: rel.isPrimary,
-    });
+    return Object.values(studentMap);
   }
-
-  return Object.values(studentMap);
-}
-
 }

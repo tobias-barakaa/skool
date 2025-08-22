@@ -1,6 +1,7 @@
 // src/students/entities/student.entity.ts
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { GradeLevel } from 'src/admin/level/entities/grade-level.entity';
+import { TenantGradeLevel } from 'src/admin/school-type/entities/tenant-grade-level';
 import { Stream } from 'src/admin/streams/entities/streams.entity';
 import { Tenant } from 'src/admin/tenants/entities/tenant.entity';
 import { User } from 'src/admin/users/entities/user.entity';
@@ -47,14 +48,14 @@ export class Student {
   @Field()
   gender: string;
 
-  @ManyToOne(() => GradeLevel, {
+  @ManyToOne(() => TenantGradeLevel, {
     eager: true,
     nullable: false,
     onDelete: 'SET NULL',
   })
   @JoinColumn({ name: 'grade_level_id' })
-  @Field(() => GradeLevel)
-  grade: GradeLevel;
+  @Field(() => TenantGradeLevel)
+  grade: TenantGradeLevel;
 
   @Field()
   @Column({ default: 0 })
