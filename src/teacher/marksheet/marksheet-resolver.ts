@@ -1,8 +1,7 @@
 import { Args, Context, Query, Resolver, Mutation } from "@nestjs/graphql";
 import { MarkService } from "./providers/marksheet-service";
-import { MarksheetResponse } from "./dtos/marksheet-dto";
 import { Mark } from "./entities/marksheet-entity";
-import { MarkInput } from "./dtos/mark-input";
+import { MarkInput, MarksheetResponse } from "./dtos/mark-input";
 
 @Resolver()
 export class MarkResolver {

@@ -52,6 +52,29 @@ enum AssessType {
   EXAM
 }
 
+type Assessment {
+  createdAt: DateTime!
+  cutoff: Float
+  date: DateTime
+  description: String
+  id: ID!
+  maxScore: Float
+  status: AssesStatus!
+  tenant: Tenant!
+  tenantGradeLevel: TenantGradeLevel!
+  tenantSubject: TenantSubject!
+  tenantSubjectId: String!
+  term: Float!
+  title: String!
+  type: AssessType!
+  updatedAt: DateTime!
+}
+
+type AssessmentGroups {
+  cas: [Assessment!]!
+  exams: [Assessment!]!
+}
+
 type AssessmentOutput {
   createdAt: DateTime!
   cutoff: Float
@@ -484,6 +507,11 @@ type InviteTeacherResponse {
   status: String!
 }
 
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
 type Level {
   description: String
   gradeLevels: [GradeLevel!]
@@ -491,6 +519,44 @@ type Level {
   id: ID!
   name: String!
   schoolType: SchoolTypeConfig!
+}
+
+type Mark {
+  assessmentId: ID!
+  createdAt: DateTime!
+  id: ID!
+  score: Float!
+  studentId: ID!
+  tenantId: ID!
+  updatedAt: DateTime!
+}
+
+input MarkInput {
+  assessmentId: ID!
+  score: Float!
+  studentId: ID!
+}
+
+type MarksheetEntry {
+  caTotal: Float!
+  examTotal: Float!
+  finalTotal: Float!
+  marks: JSON!
+  student: Student!
+}
+
+type MarksheetResponse {
+  assessments: AssessmentGroups!
+  entries: [MarksheetEntry!]!
+  stats: MarksheetStats!
+}
+
+type MarksheetStats {
+  entered: Int!
+  highest: Float!
+  lowest: Float!
+  mean: Float!
+  total: Int!
 }
 
 enum MembershipRole {
@@ -516,6 +582,7 @@ type Mutation {
   acceptStaffInvitation(acceptInvitationInput: AcceptStaffInvitationInput!): AcceptStaffInvitationResponse!
   acceptTeacherInvitation(acceptInvitationInput: AcceptInvitationInput!): AcceptInvitationResponse!
   activateTenantSubject(tenantSubjectId: String!): Boolean!
+  addMarks(marks: [MarkInput!]!): [Mark!]!
   addStudentsToParent(parentId: String!, studentIds: [String!]!, tenantId: String!): String!
   changePassword(changePasswordInput: ChangePasswordInput!): PasswordResetResponse!
   configureSchoolLevelsByNames(levelNames: [String!]!): SchoolConfigurationResponse!
@@ -652,6 +719,7 @@ type Query {
   getUnreadMessageCount: Float!
   gradeLevelsForSchoolType: [TenantGradeLevel!]!
   gradeLevelsWithStreams: [GradeLevelWithStreamsOutput!]!
+  marksheet(gradeId: String!, subjectId: String!, term: Float!): MarksheetResponse!
   myAssignMents: [Test!]!
   searchAvailableStudentsForParent(parentId: String!, searchTerm: String, tenantId: String!): [StudentSearchResponse!]!
   searchStaff(searchTerm: String!, tenantId: String!): [StaffDto!]!
@@ -900,7 +968,7 @@ type Student {
   createdAt: DateTime!
   feesOwed: Float!
   gender: String!
-  grade: GradeLevel!
+  grade: TenantGradeLevel!
   id: ID!
   isActive: Boolean!
   phone: String!

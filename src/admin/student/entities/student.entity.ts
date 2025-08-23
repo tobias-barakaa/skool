@@ -51,7 +51,7 @@ export class Student {
   @ManyToOne(() => TenantGradeLevel, {
     eager: true,
     nullable: false,
-    onDelete: 'SET NULL',
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'grade_level_id' })
   @Field(() => TenantGradeLevel)
