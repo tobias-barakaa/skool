@@ -730,6 +730,7 @@ type Query {
   streams: [StreamType!]!
   streamsByGradeLevel(gradeLevelId: ID!): [StreamType!]!
   studentsByGradeLevel(tenantGradeLevelId: ID!): [Student!]!
+  studentsForTenant: [StudentLoginInfo!]!
   teacherGetParentById(parentId: String!): Parent
   teacherGetParents: [Parent!]!
   teacherGetParentsByStudentId(studentId: String!): [Parent!]!
@@ -978,6 +979,14 @@ type Student {
   updatedAt: DateTime!
   user: User!
   user_id: ID!
+}
+
+type StudentLoginInfo {
+  admission_number: String!
+  email: String!
+  grade: String!
+  id: ID!
+  name: String!
 }
 
 type StudentSearchResponse {

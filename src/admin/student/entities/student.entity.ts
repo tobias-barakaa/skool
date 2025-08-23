@@ -23,10 +23,6 @@ export class Student {
   @Field(() => ID)
   id: string;
 
-  // @Column({ unique: true })
-  // @Field()
-  // admission_number: string;
-
   @Column()
   @Field()
   admission_number: string;

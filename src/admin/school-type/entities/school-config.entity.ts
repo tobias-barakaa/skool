@@ -42,7 +42,7 @@ export class SchoolConfig {
   configLevels: SchoolConfigLevel[];
 
   @OneToMany(() => SchoolConfigCurriculum, (scc) => scc.schoolConfig)
-configCurricula: SchoolConfigCurriculum[];
+  configCurricula: SchoolConfigCurriculum[];
 
   @Field(() => Date)
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

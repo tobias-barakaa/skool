@@ -34,7 +34,6 @@ export class UsersCreateStudentProvider {
     createStudentInput: CreateStudentInput,
     currentUser: ActiveUserData,
   ): Promise<CreateStudentResponse> {
-    // 1. Verify user's role and get tenant information
     const membership = await this.membershipRepository.findOne({
       where: {
         userId: currentUser.sub,
@@ -124,14 +123,14 @@ export class UsersCreateStudentProvider {
 
       const savedUser = await queryRunner.manager.save(user);
 
-      const student = queryRunner.manager.create(Student, {
-        user_id: savedUser.id,
-        admission_number: createStudentInput.admission_number,
-        phone: createStudentInput.phone,
-        gender: createStudentInput.gender,
-        grade: tenantGradeLevel.gradeLevel,
-        tenant_id: tenantId,
-      });
+     const student = queryRunner.manager.create(Student, {
+       user: savedUser,
+       admission_number: createStudentInput.admission_number,
+       phone: createStudentInput.phone,
+       gender: createStudentInput.gender,
+       grade: tenantGradeLevel,
+       tenant: { id: tenantId },
+     });
 
       const savedStudent = await queryRunner.manager.save(student);
 
@@ -164,17 +163,46 @@ export class UsersCreateStudentProvider {
     }
   }
 
+
+   async getTenantLoginInfo(tenantId: string) {
+    return this.studentRepository
+      .createQueryBuilder('student')
+      .innerJoinAndSelect('student.user', 'user')
+      .innerJoinAndSelect('student.grade', 'tg')
+      .innerJoinAndSelect('tg.gradeLevel', 'grade')
+      .where('student.tenant_id = :tenantId', { tenantId })
+      .select([
+        'student.id',
+        'student.admission_number',
+        'user.email',
+        'user.name',
+        'grade.id',
+        'grade.name',
+      ])
+      .getMany()
+      .then((rows) =>
+        rows.map((r) => ({
+          id: r.id,
+          email: r.user.email,
+          admissionNumber: r.admission_number,
+          name: r.user.name,
+          grade: {
+            id: r.grade.gradeLevel.id,
+            name: r.grade.gradeLevel.name,
+          },
+        })),
+      );
+  }
   async getStudentsByTenantGradeLevel(
     tenantGradeLevelId: string,
     user: ActiveUserData,
   ): Promise<Student[]> {
-    // 1. First, get the TenantGradeLevel and its associated GradeLevel
     const tenantGradeLevel = await this.dataSource
       .getRepository(TenantGradeLevel)
       .findOne({
         where: {
           id: tenantGradeLevelId,
-          tenant: { id: user.tenantId }, // Ensure it belongs to the tenant
+          tenant: { id: user.tenantId },
         },
         relations: ['gradeLevel', 'tenant'],
       });
@@ -185,11 +213,10 @@ export class UsersCreateStudentProvider {
       );
     }
 
-    // 2. Now fetch students using the actual GradeLevel ID
     return this.studentRepository.find({
       where: {
         tenant_id: user.tenantId,
-        grade: { id: tenantGradeLevel.gradeLevel.id }, // Use the actual GradeLevel ID
+        grade: { id: tenantGradeLevel.gradeLevel.id },
       },
       relations: ['user', 'grade'],
       order: { createdAt: 'ASC' },
@@ -208,7 +235,6 @@ export class UsersCreateStudentProvider {
       .getMany();
   }
 
-  // Get student counts by grade level
   async getStudentCountsByGradeLevel(user: ActiveUserData): Promise<any[]> {
     return this.studentRepository
       .createQueryBuilder('student')

@@ -33,7 +33,7 @@ export class TenantGradeLevel {
 
   @Field(() => GradeLevel)
   @ManyToOne(() => GradeLevel, { eager: true })
-  @JoinColumn()
+  @JoinColumn({ name: 'grade_level_id' })
   gradeLevel: GradeLevel;
 
   @Field(() => Boolean)

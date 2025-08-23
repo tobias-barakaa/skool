@@ -11,6 +11,7 @@ import { UsersCreateStudentProvider } from './student.create.provider';
 import { SchoolConfig } from 'src/admin/school-type/entities/school-config.entity';
 import { MembershipRole, UserTenantMembership } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
 import { SchoolSetupGuardService } from 'src/admin/config/school-config.guard';
+import { StudentLoginInfo } from '../dtos/student-login-info.output';
 
 
 @Injectable()
@@ -73,6 +74,36 @@ export class StudentsService {
     );
   }
 
+  async getStudentsForTenant(currentUser: ActiveUserData): Promise<StudentLoginInfo[]> {
+
+     const membership = await this.membershipRepository.findOne({
+          where: {
+            userId: currentUser.sub,
+            role: MembershipRole.SCHOOL_ADMIN,
+          },
+        });
+
+        if (!membership) {
+          throw new ForbiddenException('Only school admins can create students');
+        }
+
+        const tenantId = membership.tenantId;
+
+        await this.schoolSetupGuardService.validateSchoolIsConfigured(tenantId);
+
+    const students = await this.studentRepository.find({
+      where: { tenant_id: tenantId, isActive: true },
+      relations: ['user', 'grade', 'grade.gradeLevel'],
+    });
+
+    return students.map((student) => ({
+      id: student.id,
+      email: student.user.email,
+      name: student.user.name,
+      admission_number: student.admission_number,
+      grade: student.grade.gradeLevel.name,
+    }));
+  }
 
   // async getAllStudentsByTenant(tenantId: string): Promise<Student[]> {
   //   return this.studentQueryProvider.findAllByTenant(tenantId);
@@ -136,23 +167,25 @@ export class StudentsService {
     });
   }
 
-
   async getAllStudentsByTenant(user: ActiveUserData): Promise<Student[]> {
-  return this.studentRepository.find({
-    where: {
-      tenant_id: user.tenantId,
-      isActive: true // Optional: only get active students
-    },
-    relations: ['user', 'grade'],
-    order: { createdAt: 'ASC' },
-  });
-}
+    return this.studentRepository.find({
+      where: {
+        tenant_id: user.tenantId,
+        isActive: true, // Optional: only get active students
+      },
+      relations: ['user', 'grade'],
+      order: { createdAt: 'ASC' },
+    });
+  }
 
   async getStudentsByTenantGradeLevel(
     tenantGradeLevelId: string,
     user: ActiveUserData,
   ): Promise<Student[]> {
-    return this.usersCreateStudentProvider.getStudentsByTenantGradeLevel(tenantGradeLevelId, user);
+    return this.usersCreateStudentProvider.getStudentsByTenantGradeLevel(
+      tenantGradeLevelId,
+      user,
+    );
   }
 
   async revokeStudent(
@@ -186,3 +219,4 @@ export class StudentsService {
     return { message: 'Student revoked successfully' };
   }
 }
+

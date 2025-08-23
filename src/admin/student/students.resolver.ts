@@ -14,6 +14,7 @@ import { StudentsService } from './providers/student.service';
 import { Roles } from 'src/iam/decorators/roles.decorator';
 import { MembershipRole } from '../user-tenant-membership/entities/user-tenant-membership.entity';
 import { Student } from './entities/student.entity';
+import { StudentLoginInfo } from './dtos/student-login-info.output';
 
 @Resolver()
 @UseFilters(GraphQLExceptionsFilter)
@@ -50,16 +51,21 @@ export class StudentsResolver {
     );
   }
 
+  @Query(() => [StudentLoginInfo], { name: 'studentsForTenant' })
+  @Auth(AuthType.Bearer)
+  async getStudentsForTenant(
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise<StudentLoginInfo[]> {
+    return this.studentsService.getStudentsForTenant(currentUser);
+  }
 
-@Query(() => [Student], { name: 'allStudents' })
-@Auth(AuthType.Bearer)
-@Roles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
-async allStudents(
-  @ActiveUser() user: ActiveUserData,
-): Promise<Student[]> {
-  console.log(user, 'this is the user')
-  return this.studentsService.getAllStudentsByTenant(user);
-}
+  @Query(() => [Student], { name: 'allStudents' })
+  @Auth(AuthType.Bearer)
+  @Roles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
+  async allStudents(@ActiveUser() user: ActiveUserData): Promise<Student[]> {
+    console.log(user, 'this is the user');
+    return this.studentsService.getAllStudentsByTenant(user);
+  }
 
   // @Query(() => [StudentWithTenant], { name: 'students' })
   // @Auth(AuthType.Bearer)
