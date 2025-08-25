@@ -47,6 +47,16 @@ export class AssessmentCacheProvider {
     return count;
   }
 
+  async getNextExamNumber(
+    tenantId: string,
+    subjectId: string,
+    gradeId: string,
+    term: string,
+  ): Promise<number> {
+    const key = `exam-seq:${tenantId}:${subjectId}:${gradeId}:${term}`;
+    return this.redis.incr(key); // returns 1,2,3… on every call
+  }
+
   async acquireExamLock(
     tenantId: string,
     subjectId: string,

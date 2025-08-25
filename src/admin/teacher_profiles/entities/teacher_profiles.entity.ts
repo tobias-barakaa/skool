@@ -10,7 +10,7 @@ export class TeacherProfile {
   id: string;
 
   @Column()
-  membershipId: string; // Links to UserTenantMembership
+  membershipId: string;
 
   @ManyToOne(() => UserTenantMembership, { onDelete: 'CASCADE' })
   membership: UserTenantMembership;

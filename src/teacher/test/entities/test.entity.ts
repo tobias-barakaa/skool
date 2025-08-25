@@ -21,7 +21,6 @@ import { IsDate } from 'class-validator';
 @ObjectType()
 @Entity()
 export class Test {
-  /* ---------- scalars ---------- */
   @Field(() => ID)
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -30,12 +29,10 @@ export class Test {
   @Column()
   title: string;
 
-  /*  tenant-level subject  */
   @Field(() => TenantSubject)
   @ManyToOne(() => TenantSubject, { eager: true })
   subject: TenantSubject;
 
-  /*  tenant-level grade levels  */
   @Field(() => [TenantGradeLevel])
   @ManyToMany(() => TenantGradeLevel, { eager: true })
   @JoinTable({
@@ -80,12 +77,10 @@ export class Test {
   @Column({ default: 'draft' })
   status: 'draft' | 'active' | 'archived';
 
-  /* teacher who created the test */
   @Field(() => User)
   @ManyToOne(() => User, (user) => user.tests)
   teacher: User;
 
-  /* questions & materials */
   @Field(() => [Question])
   @OneToMany(() => Question, (q) => q.test)
   questions: Question[];
@@ -94,7 +89,6 @@ export class Test {
   @OneToMany(() => ReferenceMaterial, (rm) => rm.test, { cascade: true })
   referenceMaterials: ReferenceMaterial[];
 
-  /* auditing */
   @CreateDateColumn()
   @Field(() => Date)
   createdAt: Date;

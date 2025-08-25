@@ -70,9 +70,25 @@ type Assessment {
   updatedAt: DateTime!
 }
 
+input AssessmentFilterInput {
+  tenantGradeLevelId: String
+  tenantSubjectId: String
+  term: Float
+  type: AssessType
+}
+
 type AssessmentGroups {
   cas: [Assessment!]!
   exams: [Assessment!]!
+}
+
+type AssessmentMark {
+  assessment: Assessment!
+  createdAt: DateTime!
+  id: ID!
+  score: Float!
+  student: Student!
+  updatedAt: DateTime!
 }
 
 type AssessmentOutput {
@@ -383,6 +399,11 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+input EnterStudentMarksInput {
+  marks: [StudentMarkInput!]!
+  studentId: ID!
+}
+
 input ForgotPasswordInput {
   email: String!
 }
@@ -521,22 +542,6 @@ type Level {
   schoolType: SchoolTypeConfig!
 }
 
-type Mark {
-  assessmentId: ID!
-  createdAt: DateTime!
-  id: ID!
-  score: Float!
-  studentId: ID!
-  tenantId: ID!
-  updatedAt: DateTime!
-}
-
-input MarkInput {
-  assessmentId: ID!
-  score: Float!
-  studentId: ID!
-}
-
 type MarksheetEntry {
   caTotal: Float!
   examTotal: Float!
@@ -582,7 +587,6 @@ type Mutation {
   acceptStaffInvitation(acceptInvitationInput: AcceptStaffInvitationInput!): AcceptStaffInvitationResponse!
   acceptTeacherInvitation(acceptInvitationInput: AcceptInvitationInput!): AcceptInvitationResponse!
   activateTenantSubject(tenantSubjectId: String!): Boolean!
-  addMarks(marks: [MarkInput!]!): [Mark!]!
   addStudentsToParent(parentId: String!, studentIds: [String!]!, tenantId: String!): String!
   changePassword(changePasswordInput: ChangePasswordInput!): PasswordResetResponse!
   configureSchoolLevelsByNames(levelNames: [String!]!): SchoolConfigurationResponse!
@@ -595,11 +599,15 @@ type Mutation {
   createUser(signupInput: SignupInput!): CreateUserResponse!
   deactivateTenantSubject(tenantSubjectId: String!): Boolean!
   deleteAssignment(id: String!): Boolean!
+  deleteCA(id: String!): Boolean!
   deleteCustomSubject(tenantSubjectId: String!): Boolean!
+  deleteExam(id: String!): Boolean!
   deleteStaff(id: String!, tenantId: String!): String!
   deleteStream(id: ID!): Boolean!
   deleteTeacher(id: String!, tenantId: String!): String!
   deleteTenantStream(tenantStreamId: String!): Boolean!
+  enterMultipleStudentMarks(inputs: [EnterStudentMarksInput!]!): [AssessmentMark!]!
+  enterStudentMarks(input: EnterStudentMarksInput!): [AssessmentMark!]!
   forgotPassword(forgotPasswordInput: ForgotPasswordInput!): PasswordResetResponse!
   generateQuestions(generateQuestionsInput: GenerateQuestionsInput!): [GeneratedQuestionOutput!]!
   inviteParent(createParentDto: CreateParentInvitationDto!, studentIds: [String!]!, tenantId: String!): InviteParentResponse!
@@ -696,6 +704,7 @@ type Query {
   activeStreams: [StreamType!]!
   allStudents: [Student!]!
   allUsersOfTenant(tenantId: String!): [TenantUserSummary!]!
+  assessments(filter: AssessmentFilterInput): [AssessmentOutput!]!
   deactivatedTenantSubjects: [TenantSubject!]!
   getActiveStaffByTenant(tenantId: String!): [StaffDto!]!
   getAttendanceByDate(date: String!, gradeId: String!): [Attendance!]!
@@ -987,6 +996,11 @@ type StudentLoginInfo {
   grade: String!
   id: ID!
   name: String!
+}
+
+input StudentMarkInput {
+  assessmentId: ID!
+  score: Float!
 }
 
 type StudentSearchResponse {

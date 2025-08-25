@@ -33,11 +33,11 @@ export class FindTestsProvider {
         'questions.options',
         'referenceMaterials',
         'teacher',
-        'gradeLevels', // Add this - it's missing but in your query
+        'gradeLevels',
       ],
       order: {
-        questions: { order: 'ASC' }, // Order questions by the order field
-        // 'questions.options': { order: 'ASC' }, // Nested ordering is not supported by TypeORM
+        questions: { order: 'ASC' },
+
       },
     });
 
@@ -47,7 +47,6 @@ export class FindTestsProvider {
       );
     }
 
-    // Sort questions and their options programmatically
     if (test.questions) {
       test.questions = test.questions.map((question) => {
         if (question.options) {

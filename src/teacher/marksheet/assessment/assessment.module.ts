@@ -13,6 +13,7 @@ import { SchoolTypeModule } from 'src/admin/school-type/school-type.module';
 import { GradeLevel } from 'src/admin/level/entities/grade-level.entity';
 import { CurriculumSubject } from 'src/admin/curriculum/entities/curriculum_subjects.entity';
 import { SchoolConfig } from 'src/admin/school-type/entities/school-config.entity';
+import { AssessmentReadProvider } from './providers/assessment-read.provider';
 
 @Module({
   providers: [
@@ -25,6 +26,7 @@ import { SchoolConfig } from 'src/admin/school-type/entities/school-config.entit
     CurriculumModule,
     SchoolTypeModule,
     AssessmentCacheProvider,
+    AssessmentReadProvider,
   ],
   imports: [
     TypeOrmModule.forFeature([
@@ -37,8 +39,6 @@ import { SchoolConfig } from 'src/admin/school-type/entities/school-config.entit
     UserTenantMembershipModule,
     SchoolTypeModule,
   ],
-  exports: [
-    TypeOrmModule,
-  ],
+  exports: [TypeOrmModule],
 })
 export class AssessmentModule {}

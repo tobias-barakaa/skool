@@ -1,8 +1,4 @@
 // src/assessment/providers/assessment-create.provider.ts
-
-
-
-
 import {
   Injectable,
   ConflictException,
@@ -35,8 +31,7 @@ export class AssessmentCreateProvider {
   ): Promise<Assessment> {
     if (!tenantId) throw new BadRequestException('Tenant ID is required');
 
-
-  await this.schoolSetupGuardService.validateSchoolIsConfigured(tenantId);
+    await this.schoolSetupGuardService.validateSchoolIsConfigured(tenantId);
 
     await this.tenantValidator.validateGradeLevelOwnership(
       input.tenantGradeLevelId,
@@ -62,7 +57,6 @@ export class AssessmentCreateProvider {
     });
   }
 
-
   private async createCA(
     input: CreateAssessmentInput,
     tenantId: string,
@@ -72,7 +66,7 @@ export class AssessmentCreateProvider {
       tenantId,
       input.tenantSubjectId,
       input.tenantGradeLevelId,
-      input.term.toString(), // Convert to string for cache key
+      input.term.toString(),
     );
 
     const existingCAs = await repo.find({
@@ -81,7 +75,7 @@ export class AssessmentCreateProvider {
         tenantSubjectId: input.tenantSubjectId,
         tenantGradeLevelId: input.tenantGradeLevelId,
         type: AssessType.CA,
-        term: input.term, // Keep as number for database query
+        term: input.term,
       },
       order: { title: 'ASC' },
     });
@@ -99,7 +93,6 @@ export class AssessmentCreateProvider {
       ...input,
       title: `CA ${finalNumber}`,
       tenantId,
-      // term is already a number from input, so no conversion needed
     });
 
     const saved = await repo.save(assessment);
@@ -122,7 +115,14 @@ export class AssessmentCreateProvider {
     }
 
     try {
-      const existing = await repo.findOne({
+      const nextNumber = await this.cacheProvider.getNextExamNumber(
+        tenantId,
+        input.tenantSubjectId,
+        input.tenantGradeLevelId,
+        input.term.toString(),
+      );
+
+      const existingExams = await repo.find({
         where: {
           tenantId,
           tenantSubjectId: input.tenantSubjectId,
@@ -130,15 +130,24 @@ export class AssessmentCreateProvider {
           type: AssessType.EXAM,
           term: input.term,
         },
+        order: { title: 'ASC' },
       });
 
-      if (existing) return existing;
+      const examNumbers = existingExams
+        .map((a) => a.title)
+        .filter((t) => t.startsWith('Exam'))
+        .map((t) => parseInt(t.replace('Exam ', ''), 10))
+        .filter((n) => !isNaN(n));
+
+      const dbNextNumber = examNumbers.length
+        ? Math.max(...examNumbers) + 1
+        : 1;
+      const finalNumber = Math.max(nextNumber, dbNextNumber);
 
       const assessment = repo.create({
         ...input,
-        title: input.title || 'Examination',
+        title: `Exam ${finalNumber}`,
         tenantId,
-
       });
 
       const saved = await repo.save(assessment);
@@ -148,6 +157,6 @@ export class AssessmentCreateProvider {
       await this.cacheProvider.releaseLock(lockKey, '1');
     }
   }
+
+
 }
-
-

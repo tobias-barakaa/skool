@@ -10,9 +10,11 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { AssessType } from '../enums/assesment-type.enum';
 import { AssesStatus } from '../enums/assesment-status.enum';
+import { AssessmentMark } from '../../entities/assessment_marks-entity';
 
 @ObjectType()
 @Entity()
@@ -81,6 +83,9 @@ export class Assessment {
   @Field({ nullable: true })
   @Column({ type: 'text', nullable: true })
   description?: string;
+
+  @OneToMany(() => AssessmentMark, (mark) => mark.assessment)
+  marks: AssessmentMark[];
 
   @Field(() => Date)
   @CreateDateColumn()

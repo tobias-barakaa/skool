@@ -5,12 +5,14 @@ import { TenantGradeLevel } from 'src/admin/school-type/entities/tenant-grade-le
 import { Stream } from 'src/admin/streams/entities/streams.entity';
 import { Tenant } from 'src/admin/tenants/entities/tenant.entity';
 import { User } from 'src/admin/users/entities/user.entity';
+import { AssessmentMark } from 'src/teacher/marksheet/entities/assessment_marks-entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -78,6 +80,9 @@ export class Student {
     onDelete: 'SET NULL',
   })
   stream: Stream;
+
+  @OneToMany(() => AssessmentMark, (mark) => mark.student)
+  marks: AssessmentMark[];
 
   @ManyToOne(() => Tenant, { nullable: false, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'tenant_id' })

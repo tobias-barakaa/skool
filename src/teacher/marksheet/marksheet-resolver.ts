@@ -1,7 +1,10 @@
 import { Args, Context, Query, Resolver, Mutation } from "@nestjs/graphql";
 import { MarkService } from "./providers/marksheet-service";
-import { Mark } from "./entities/marksheet-entity";
-import { MarkInput, MarksheetResponse } from "./dtos/mark-input";
+import { MarksheetResponse } from "./dtos/mark-input";
+import { AssessmentMark } from "./entities/assessment_marks-entity";
+import { ActiveUserData } from "src/admin/auth/interface/active-user.interface";
+import { ActiveUser } from "src/admin/auth/decorator/active-user.decorator";
+import { EnterStudentMarksInput } from "./dtos/enter-mark.input";
 
 @Resolver()
 export class MarkResolver {
@@ -17,11 +20,26 @@ export class MarkResolver {
     return this.markService.getMarksheet(tenantId, gradeId, subjectId, term);
   }
 
-  @Mutation(() => [Mark])
-  async addMarks(
-    @Context('tenantId') tenantId: string,
-    @Args('marks', { type: () => [MarkInput] }) marks: MarkInput[],
-  ) {
-    return this.markService.addMarks(tenantId, marks);
+
+  @Mutation(() => [AssessmentMark])
+  async enterStudentMarks(
+    @Args('input') input: EnterStudentMarksInput,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<AssessmentMark[]> {
+    return this.markService.enterStudentMarks(input, user);
+  }
+
+
+  @Mutation(() => [AssessmentMark])
+  async enterMultipleStudentMarks(
+    @Args('inputs', { type: () => [EnterStudentMarksInput] }) inputs: EnterStudentMarksInput[],
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<AssessmentMark[]> {
+    const results: AssessmentMark[] = [];
+    for (const input of inputs) {
+      const marks = await this.markService.enterStudentMarks(input, user);
+      results.push(...marks);
+    }
+    return results;
   }
 }
