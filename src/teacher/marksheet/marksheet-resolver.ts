@@ -20,24 +20,23 @@ export class MarkResolver {
     return this.markService.getMarksheet(tenantId, gradeId, subjectId, term);
   }
 
-
-  @Mutation(() => [AssessmentMark])
-  async enterStudentMarks(
-    @Args('input') input: EnterStudentMarksInput,
-    @ActiveUser() user: ActiveUserData,
-  ): Promise<AssessmentMark[]> {
-    return this.markService.enterStudentMarks(input, user);
-  }
-
+  // @Mutation(() => [AssessmentMark])
+  // async enterStudentMarks(
+  //   @Args('input') input: EnterStudentMarksInput,
+  //   @ActiveUser() user: ActiveUserData,
+  // ): Promise<AssessmentMark[]> {
+  //   return this.markService.enterStudentMarks(input, user);
+  // }
 
   @Mutation(() => [AssessmentMark])
   async enterMultipleStudentMarks(
-    @Args('inputs', { type: () => [EnterStudentMarksInput] }) inputs: EnterStudentMarksInput[],
+    @Args('inputs', { type: () => [EnterStudentMarksInput] })
+    inputs: EnterStudentMarksInput[],
     @ActiveUser() user: ActiveUserData,
   ): Promise<AssessmentMark[]> {
     const results: AssessmentMark[] = [];
     for (const input of inputs) {
-      const marks = await this.markService.enterStudentMarks(input, user);
+      const marks = await this.markService.enterStudentMarks(input, user); // ⛔ mismatch
       results.push(...marks);
     }
     return results;

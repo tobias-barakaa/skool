@@ -48,33 +48,14 @@ export class MarkService {
     return this.markProvider.getMarksheet(tenantId, gradeId, subjectId, term);
   }
 
-
-
-
   async enterStudentMarks(
     input: EnterStudentMarksInput,
     user: ActiveUserData,
   ): Promise<AssessmentMark[]> {
     const { studentId, marks } = input;
-
-    // Validate student in tenant
-    const student = await this.studentRepo.findOne({
-      where: { id: studentId, tenant_id: user.tenantId },
-    });
-    if (!student)
-      throw new NotFoundException('Student not found in your tenant');
-
     const results: AssessmentMark[] = [];
 
     for (const m of marks) {
-      const assessment = await this.assessmentRepo.findOne({
-        where: { id: m.assessmentId },
-      });
-      if (!assessment)
-        throw new NotFoundException(`Assessment ${m.assessmentId} not found`);
-      if (assessment.tenantId !== user.tenantId)
-        throw new ForbiddenException('Assessment not in your tenant');
-
       let mark = await this.markRepo.findOne({
         where: { assessmentId: m.assessmentId, studentId },
       });
@@ -89,7 +70,14 @@ export class MarkService {
         mark.score = m.score;
       }
 
-      results.push(await this.markRepo.save(mark));
+      const saved = await this.markRepo.save(mark);
+
+      const withRelations = await this.markRepo.findOne({
+        where: { id: saved.id },
+        relations: ['student', 'assessment'],
+      });
+
+      if (withRelations) results.push(withRelations);
     }
 
     return results;

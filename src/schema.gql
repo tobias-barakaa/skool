@@ -607,7 +607,6 @@ type Mutation {
   deleteTeacher(id: String!, tenantId: String!): String!
   deleteTenantStream(tenantStreamId: String!): Boolean!
   enterMultipleStudentMarks(inputs: [EnterStudentMarksInput!]!): [AssessmentMark!]!
-  enterStudentMarks(input: EnterStudentMarksInput!): [AssessmentMark!]!
   forgotPassword(forgotPasswordInput: ForgotPasswordInput!): PasswordResetResponse!
   generateQuestions(generateQuestionsInput: GenerateQuestionsInput!): [GeneratedQuestionOutput!]!
   inviteParent(createParentDto: CreateParentInvitationDto!, studentIds: [String!]!, tenantId: String!): InviteParentResponse!
