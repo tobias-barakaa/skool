@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Assessment } from '../assessment/entity/assessment.entity';
 import { Repository } from 'typeorm';
@@ -53,31 +53,77 @@ export class MarkService {
     user: ActiveUserData,
   ): Promise<AssessmentMark[]> {
     const { studentId, marks } = input;
+
+    // ---------- 1. Validate student belongs to tenant ----------
+    const student = await this.studentRepo.findOne({
+      where: { id: studentId, tenant_id: user.tenantId },
+    });
+
+    if (!student) {
+      throw new NotFoundException('Student not found in your tenant');
+    }
+
     const results: AssessmentMark[] = [];
 
+    // ---------- 2. Process every mark ----------
     for (const m of marks) {
-      let mark = await this.markRepo.findOne({
-        where: { assessmentId: m.assessmentId, studentId },
+      // 2a. Validate assessment exists and belongs to tenant
+      const assessment = await this.assessmentRepo.findOne({
+        where: { id: m.assessmentId, tenantId: user.tenantId },
       });
 
-      if (!mark) {
+      if (!assessment) {
+        throw new NotFoundException(`Assessment ${m.assessmentId} not found`);
+      }
+
+      // 2b. Validate score is within bounds
+      if (!assessment.maxScore || m.score < 0 || m.score > assessment.maxScore) {
+        throw new BadRequestException(
+          `Score ${m.score} is invalid. Must be between 0 and ${assessment.maxScore ?? 'unknown'}`,
+        );
+      }
+
+      // 2c. Locate existing mark or create a new one
+      let mark = await this.markRepo.findOne({
+        where: {
+          assessmentId: m.assessmentId,
+          studentId,
+          // Add tenant validation for extra security
+          assessment: { tenantId: user.tenantId },
+        },
+        relations: ['assessment'],
+      });
+
+      if (mark) {
+        // Update existing mark
+        mark.score = m.score;
+      } else {
+        // Create new mark
         mark = this.markRepo.create({
           assessmentId: m.assessmentId,
           studentId,
           score: m.score,
         });
-      } else {
-        mark.score = m.score;
       }
 
-      const saved = await this.markRepo.save(mark);
+      // 2d. Save & reload with all relations
+      const savedMark = await this.markRepo.save(mark);
 
-      const withRelations = await this.markRepo.findOne({
-        where: { id: saved.id },
-        relations: ['student', 'assessment'],
+      // Load the complete mark with all relations
+      const loadedMark = await this.markRepo.findOne({
+        where: { id: savedMark.id },
+        relations: [
+          'student',
+          'student.user',
+          'assessment',
+          'assessment.tenantGradeLevel',
+          'assessment.tenantSubject',
+        ],
       });
 
-      if (withRelations) results.push(withRelations);
+      if (loadedMark) {
+        results.push(loadedMark);
+      }
     }
 
     return results;
