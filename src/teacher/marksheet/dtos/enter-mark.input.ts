@@ -1,4 +1,4 @@
-import { InputType, Field, Float, ID } from '@nestjs/graphql';
+import { InputType, Field, Float, ID, ObjectType } from '@nestjs/graphql';
 
 @InputType()
 export class StudentMarkInput {
@@ -16,4 +16,19 @@ export class EnterStudentMarksInput {
 
   @Field(() => [StudentMarkInput])
   marks: StudentMarkInput[];
+}
+
+
+@ObjectType()
+export class MarksStatsDto {
+  @Field()
+  mean: string;
+  @Field()
+  highest: number;
+  @Field()
+  lowest: number;
+  @Field()
+  entered: number;
+  @Field()
+  total: number;
 }

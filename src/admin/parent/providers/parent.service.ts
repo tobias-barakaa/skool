@@ -9,7 +9,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, MoreThan, LessThan } from 'typeorm';
 import * as crypto from 'crypto';
-import * as bcrypt from 'bcrypt';
 import { User } from 'src/admin/users/entities/user.entity';
 import { Tenant } from 'src/admin/tenants/entities/tenant.entity';
 import {
@@ -26,16 +25,12 @@ import {
   UserInvitation,
 } from 'src/admin/invitation/entities/user-iInvitation.entity';
 import { EmailService } from 'src/admin/email/providers/email.service';
-import { GenerateTokenProvider } from 'src/admin/auth/providers/generate-token.provider';
 import { StudentSearchResponse } from '../dtos/student-search-response.dto';
 import { InviteParentResponse } from '../dtos/invite-parent-response.dto';
 import { CreateParentInvitationDto } from '../dtos/accept-parent-invitation.dto';
-import { HashingProvider } from 'src/admin/auth/providers/hashing.provider';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { AcceptParentInvitationResponse } from '../dtos/accept-parent-invitation.response.dto';
 import { InvitationService } from 'src/admin/invitation/providers/invitation.service';
-import { ParentOutput } from '../dtos/parent-output';
-import { GradeLevel } from 'src/admin/level/entities/grade-level.entity';
 import { SchoolSetupGuardService } from 'src/admin/config/school-config.guard';
 
 @Injectable()
@@ -212,12 +207,10 @@ export class ParentService {
   tenantId: string,
   studentIds: string[],
 ): Promise<InviteParentResponse> {
-  // SECURITY: Double-check tenant validation in service layer
   if (tenantId !== currentUser.tenantId) {
     throw new ForbiddenException('Tenant ID mismatch');
   }
 
-  // Verify that current user is SCHOOL_ADMIN for this tenant
   const membership = await this.membershipRepository.findOne({
     where: {
       user: { id: currentUser.sub },
@@ -231,13 +224,10 @@ export class ParentService {
     throw new ForbiddenException('Only SCHOOL_ADMIN can invite parents');
   }
 
-  // ✅ Enforce school setup is completed
   await this.schoolSetupGuardService.validateSchoolIsConfigured(
     membership.tenantId,
   );
 
-  // Rest of your existing code...
-  // Replace all instances of 'tenantId' with 'currentUser.tenantId' for consistency
 
   const validatedStudents: {
     student: Student;
@@ -256,7 +246,7 @@ export class ParentService {
     const studentMembership = await this.membershipRepository.findOne({
       where: {
         user: { id: student.user_id },
-        tenant: { id: currentUser.tenantId }, // Use currentUser.tenantId
+        tenant: { id: currentUser.tenantId },
         role: MembershipRole.STUDENT,
         status: MembershipStatus.ACTIVE,
       },

@@ -77,11 +77,6 @@ input AssessmentFilterInput {
   type: AssessType
 }
 
-type AssessmentGroups {
-  cas: [Assessment!]!
-  exams: [Assessment!]!
-}
-
 type AssessmentMark {
   assessment: Assessment!
   createdAt: DateTime!
@@ -528,11 +523,6 @@ type InviteTeacherResponse {
   status: String!
 }
 
-"""
-The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
-scalar JSON
-
 type Level {
   description: String
   gradeLevels: [GradeLevel!]
@@ -542,26 +532,12 @@ type Level {
   schoolType: SchoolTypeConfig!
 }
 
-type MarksheetEntry {
-  caTotal: Float!
-  examTotal: Float!
-  finalTotal: Float!
-  marks: JSON!
-  student: Student!
-}
-
-type MarksheetResponse {
-  assessments: AssessmentGroups!
-  entries: [MarksheetEntry!]!
-  stats: MarksheetStats!
-}
-
-type MarksheetStats {
-  entered: Int!
+type MarksStatsDto {
+  entered: Float!
   highest: Float!
   lowest: Float!
-  mean: Float!
-  total: Int!
+  mean: String!
+  total: Float!
 }
 
 enum MembershipRole {
@@ -629,6 +605,7 @@ type Mutation {
   updateCustomSubject(input: UpdateTenantSubjectInput!, tenantSubjectId: String!): TenantSubject!
   updateStaff(tenantId: String!, updateStaffInput: UpdateStaffInput!): StaffDto!
   updateStream(input: UpdateStreamInput!): StreamType!
+  updateStudentMarks(inputs: [EnterStudentMarksInput!]!): [AssessmentMark!]!
   updateTenantStream(input: UpdateTenantStreamInput!, tenantStreamId: String!): TenantStream!
   updateTest(updateTestInput: UpdateTestInput!): Test!
 }
@@ -727,7 +704,7 @@ type Query {
   getUnreadMessageCount: Float!
   gradeLevelsForSchoolType: [TenantGradeLevel!]!
   gradeLevelsWithStreams: [GradeLevelWithStreamsOutput!]!
-  marksheet(gradeId: String!, subjectId: String!, term: Float!): MarksheetResponse!
+  marksStats(gradeLevelId: String!, subjectId: String!, term: Int!): MarksStatsDto!
   myAssignMents: [Test!]!
   searchAvailableStudentsForParent(parentId: String!, searchTerm: String, tenantId: String!): [StudentSearchResponse!]!
   searchStaff(searchTerm: String!, tenantId: String!): [StaffDto!]!
@@ -751,6 +728,7 @@ type Query {
   teacherGetStudentsWithParents: [StudentWithParentsType!]!
   tenantStreams: [TenantStream!]!
   tenantSubjects: [TenantSubject!]!
+  termAssessmentsWithStudents(gradeLevelId: String!, term: Int!): TermAssessmentWithStudentsDto!
   testById(id: String!): Test
   testSocket(scenario: String): String!
   users: [User!]!
@@ -1205,6 +1183,11 @@ type TenantUserSummary {
   name: String!
   role: MembershipRole!
   tenantId: String!
+}
+
+type TermAssessmentWithStudentsDto {
+  assessments: [Assessment!]!
+  students: [Student!]!
 }
 
 type Test {

@@ -18,7 +18,7 @@ import { StudentLoginInfo } from './dtos/student-login-info.output';
 
 @Resolver()
 @UseFilters(GraphQLExceptionsFilter)
-@Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.SUPER_ADMIN) // Assuming these roles are defined in your system
+@Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.SUPER_ADMIN)
 export class StudentsResolver {
   private readonly logger = new Logger(StudentsResolver.name);
 
@@ -39,7 +39,7 @@ export class StudentsResolver {
   }
 
   @Query(() => [Student], { name: 'studentsByGradeLevel' })
-  @Auth(AuthType.Bearer) // or @UseGuards(JwtAuthGuard)
+  @Auth(AuthType.Bearer)
   @Roles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
   async studentsByGradeLevel(
     @Args('tenantGradeLevelId', { type: () => ID }) tenantGradeLevelId: string,
