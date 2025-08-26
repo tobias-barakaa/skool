@@ -27,18 +27,20 @@ export class MarkResolver {
     return all;
   }
 
-  @Query(() => TermAssessmentWithStudentsDto)
-  async termAssessmentsWithStudents(
-    @Args('term', { type: () => Int }) term: number,
-    @Args('gradeLevelId') gradeLevelId: string,
-    @ActiveUser() user: ActiveUserData,
-  ) {
-    return this.markService.getTermAssessmentsWithStudents(
-      term,
-      gradeLevelId,
-      user.tenantId,
-    );
-  }
+ @Query(() => TermAssessmentWithStudentsDto)
+async termAssessmentsWithStudents(
+  @Args('term', { type: () => Int }) term: number,
+  @Args('gradeLevelId') gradeLevelId: string,
+ @Args('academicYear') academicYear: string, 
+  @ActiveUser() user: ActiveUserData,
+) {
+  return this.markService.getTermAssessmentsWithStudents(
+    term,
+    gradeLevelId,
+    academicYear,    
+    user.tenantId,
+  );
+}
 
   @Mutation(() => [AssessmentMark])
   async updateStudentMarks(
@@ -53,18 +55,20 @@ export class MarkResolver {
     return all;
   }
 
-  @Query(() => MarksStatsDto)
-  async marksStats(
-    @Args('term', { type: () => Int }) term: number,
-    @Args('gradeLevelId') gradeLevelId: string,
-    @Args('subjectId') subjectId: string,
-    @ActiveUser() user: ActiveUserData,
-  ) {
-    return this.markService.marksStats(
-      term,
-      gradeLevelId,
-      subjectId,
-      user.tenantId,
-    );
-  }
+ @Query(() => MarksStatsDto)
+async marksStats(
+  @Args('term', { type: () => Int }) term: number,
+  @Args('gradeLevelId') gradeLevelId: string,
+  @Args('subjectId') subjectId: string,
+ @Args('academicYear') academicYear: string, 
+  @ActiveUser() user: ActiveUserData,
+) {
+  return this.markService.marksStats(
+    term,
+    gradeLevelId,
+    subjectId,
+    academicYear,  
+    user.tenantId,
+  );
+}
 }

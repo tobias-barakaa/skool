@@ -72,6 +72,7 @@ type Assessment {
 }
 
 input AssessmentFilterInput {
+  academicYear: String
   tenantGradeLevelId: String
   tenantSubjectId: String
   term: Float
@@ -88,7 +89,7 @@ type AssessmentMark {
 }
 
 type AssessmentOutput {
-  academicYear: String!
+  academicYear: String
   createdAt: DateTime!
   cutoff: Float
   description: String
@@ -707,7 +708,7 @@ type Query {
   getUnreadMessageCount: Float!
   gradeLevelsForSchoolType: [TenantGradeLevel!]!
   gradeLevelsWithStreams: [GradeLevelWithStreamsOutput!]!
-  marksStats(gradeLevelId: String!, subjectId: String!, term: Int!): MarksStatsDto!
+  marksStats(academicYear: String!, gradeLevelId: String!, subjectId: String!, term: Int!): MarksStatsDto!
   myAssignMents: [Test!]!
   searchAvailableStudentsForParent(parentId: String!, searchTerm: String, tenantId: String!): [StudentSearchResponse!]!
   searchStaff(searchTerm: String!, tenantId: String!): [StaffDto!]!
@@ -731,7 +732,7 @@ type Query {
   teacherGetStudentsWithParents: [StudentWithParentsType!]!
   tenantStreams: [TenantStream!]!
   tenantSubjects: [TenantSubject!]!
-  termAssessmentsWithStudents(gradeLevelId: String!, term: Int!): TermAssessmentWithStudentsDto!
+  termAssessmentsWithStudents(academicYear: String!, gradeLevelId: String!, term: Int!): TermAssessmentWithStudentsDto!
   testById(id: String!): Test
   testSocket(scenario: String): String!
   users: [User!]!

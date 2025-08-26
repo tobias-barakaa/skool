@@ -22,4 +22,9 @@ export class AssessmentFilterInput {
   @Field(() => Number, { nullable: true })
   @IsOptional()
   term?: number;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  academicYear?: string;
 }

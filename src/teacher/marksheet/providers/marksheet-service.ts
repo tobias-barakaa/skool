@@ -100,34 +100,37 @@ export class MarkService {
   }
 
   async getTermAssessmentsWithStudents(
-    term: number,
-    tenantGradeLevelId: string,
-    tenantId: string,
-  ) {
-    await this.ensureSchoolConfigured(tenantId);
+  term: number,
+  tenantGradeLevelId: string,
+ academicYear: string,
+  tenantId: string,
+) {
+  await this.ensureSchoolConfigured(tenantId);
 
-    const assessments = await this.assessmentRepo.find({
-      where: {
-        term,
-        tenantGradeLevelId,
-        tenantId,
-        type: In([AssessType.CA, AssessType.EXAM]),
-      },
-      order: { createdAt: 'ASC' },
-    });
+  const assessments = await this.assessmentRepo.find({
+    where: {
+      term,
+      tenantGradeLevelId,
+     academicYear,
+      tenantId,
+      type: In([AssessType.CA, AssessType.EXAM]),
+    },
+    order: { createdAt: 'ASC' },
+  });
 
-    const students = await this.studentRepo.find({
-      where: {
-        grade: { id: tenantGradeLevelId },
-        tenant_id: tenantId,
-        isActive: true,
-      },
-      relations: ['user'],
-      order: { user: { name: 'ASC' } },
-    });
+  /* students query unchanged */
+  const students = await this.studentRepo.find({
+    where: {
+      grade: { id: tenantGradeLevelId },
+      tenant_id: tenantId,
+      isActive: true,
+    },
+    relations: ['user'],
+    order: { user: { name: 'ASC' } },
+  });
 
-    return { assessments, students };
-  }
+  return { assessments, students };
+}
 
   async updateStudentMarks(
     input: EnterStudentMarksInput,
@@ -188,47 +191,49 @@ export class MarkService {
   }
 
   async marksStats(
-    term: number,
-    tenantGradeLevelId: string,
-    tenantSubjectId: string,
-    tenantId: string,
-  ) {
+  term: number,
+  tenantGradeLevelId: string,
+  tenantSubjectId: string,
+  academicYear: string,
+  tenantId: string,
+) {
+  await this.ensureSchoolConfigured(tenantId);
 
-    await this.ensureSchoolConfigured(tenantId);
-    const qb = this.markRepo
-      .createQueryBuilder('mark')
-      .innerJoin('mark.assessment', 'assessment')
-      .where('assessment.term = :term', { term })
-      .andWhere('assessment.tenantGradeLevelId = :tenantGradeLevelId', {
-        tenantGradeLevelId,
-      })
-      .andWhere('assessment.tenantSubjectId = :tenantSubjectId', {
-        tenantSubjectId,
-      })
-      .andWhere('assessment.tenantId = :tenantId', { tenantId });
+  const qb = this.markRepo
+    .createQueryBuilder('mark')
+    .innerJoin('mark.assessment', 'assessment')
+    .where('assessment.term = :term', { term })
+    .andWhere('assessment.academicYear = :academicYear', { academicYear })
+    .andWhere('assessment.tenantGradeLevelId = :tenantGradeLevelId', {
+      tenantGradeLevelId,
+    })
+    .andWhere('assessment.tenantSubjectId = :tenantSubjectId', {
+      tenantSubjectId,
+    })
+    .andWhere('assessment.tenantId = :tenantId', { tenantId });
 
-    const [stats, totalStudents] = await Promise.all([
-      qb
-        .select('AVG(mark.score)', 'mean')
-        .addSelect('MAX(mark.score)', 'highest')
-        .addSelect('MIN(mark.score)', 'lowest')
-        .addSelect('COUNT(mark.id)', 'entered')
-        .getRawOne(),
-      this.studentRepo.count({
-        where: {
-          grade: { id: tenantGradeLevelId },
-          tenant_id: tenantId,
-          isActive: true,
-        },
-      }),
-    ]);
+  const [stats, totalStudents] = await Promise.all([
+    qb
+      .select('AVG(mark.score)', 'mean')
+      .addSelect('MAX(mark.score)', 'highest')
+      .addSelect('MIN(mark.score)', 'lowest')
+      .addSelect('COUNT(mark.id)', 'entered')
+      .getRawOne(),
+    this.studentRepo.count({
+      where: {
+        grade: { id: tenantGradeLevelId },
+        tenant_id: tenantId,
+        isActive: true,
+      },
+    }),
+  ]);
 
-    return {
-      mean: Number(stats.mean ?? 0).toFixed(2),
-      highest: Number(stats.highest ?? 0),
-      lowest: Number(stats.lowest ?? 0),
-      entered: Number(stats.entered),
-      total: totalStudents,
-    };
-  }
+  return {
+    mean: Number(stats.mean ?? 0).toFixed(2),
+    highest: Number(stats.highest ?? 0),
+    lowest: Number(stats.lowest ?? 0),
+    entered: Number(stats.entered),
+    total: totalStudents,
+  };
+}
 }

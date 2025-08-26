@@ -90,8 +90,8 @@ export class AssessmentOutput {
   @Field()
   term: number;
 
-  @Field()
-  academicYear: string;
+  @Field(() => String, { nullable: true })
+  academicYear?: string;
 
   @Field(() => Number, { nullable: true })
   maxScore?: number;
