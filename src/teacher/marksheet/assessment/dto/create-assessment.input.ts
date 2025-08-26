@@ -45,4 +45,8 @@ export class CreateAssessmentInput {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @Field()
+  @IsString()
+  academicYear: string;
 }

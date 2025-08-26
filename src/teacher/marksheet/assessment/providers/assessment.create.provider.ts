@@ -1,7 +1,6 @@
 // src/assessment/providers/assessment-create.provider.ts
 import {
   Injectable,
-  ConflictException,
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -66,7 +65,7 @@ export class AssessmentCreateProvider {
       tenantId,
       input.tenantSubjectId,
       input.tenantGradeLevelId,
-      input.term.toString(),
+      `${input.academicYear}-${input.term}`,
     );
 
     const existingCAs = await repo.find({
@@ -76,6 +75,7 @@ export class AssessmentCreateProvider {
         tenantGradeLevelId: input.tenantGradeLevelId,
         type: AssessType.CA,
         term: input.term,
+        academicYear: input.academicYear,
       },
       order: { title: 'ASC' },
     });
@@ -105,21 +105,14 @@ export class AssessmentCreateProvider {
     tenantId: string,
     repo: Repository<Assessment>,
   ): Promise<Assessment> {
-    const lockKey = `exam-lock:${tenantId}:${input.tenantSubjectId}:${input.tenantGradeLevelId}:${input.term}`;
-    const lockAcquired = await this.cacheProvider.acquireLock(lockKey, '1', 30);
-
-    if (!lockAcquired) {
-      throw new ConflictException(
-        'Exam creation is in progress, please try again later',
-      );
-    }
+    const lockKey = `exam-lock:${tenantId}:${input.tenantSubjectId}:${input.tenantGradeLevelId}:${input.academicYear}-${input.term}`;
 
     try {
       const nextNumber = await this.cacheProvider.getNextExamNumber(
         tenantId,
         input.tenantSubjectId,
         input.tenantGradeLevelId,
-        input.term.toString(),
+        `${input.academicYear}-${input.term}`,
       );
 
       const existingExams = await repo.find({
@@ -129,6 +122,7 @@ export class AssessmentCreateProvider {
           tenantGradeLevelId: input.tenantGradeLevelId,
           type: AssessType.EXAM,
           term: input.term,
+          academicYear: input.academicYear,
         },
         order: { title: 'ASC' },
       });
@@ -157,6 +151,7 @@ export class AssessmentCreateProvider {
       await this.cacheProvider.releaseLock(lockKey, '1');
     }
   }
-
-
 }
+
+
+

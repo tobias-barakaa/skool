@@ -87,6 +87,10 @@ export class Assessment {
   @OneToMany(() => AssessmentMark, (mark) => mark.assessment)
   marks: AssessmentMark[];
 
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  academicYear?: string;
+
   @Field(() => Date)
   @CreateDateColumn()
   createdAt: Date;

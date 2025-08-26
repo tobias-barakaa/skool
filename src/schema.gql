@@ -53,6 +53,7 @@ enum AssessType {
 }
 
 type Assessment {
+  academicYear: String
   createdAt: DateTime!
   cutoff: Float
   date: DateTime
@@ -87,6 +88,7 @@ type AssessmentMark {
 }
 
 type AssessmentOutput {
+  academicYear: String!
   createdAt: DateTime!
   cutoff: Float
   description: String
@@ -181,6 +183,7 @@ type ChatRoom {
 }
 
 input CreateAssessmentInput {
+  academicYear: String!
   cutoff: Float
   description: String
   maxScore: Float

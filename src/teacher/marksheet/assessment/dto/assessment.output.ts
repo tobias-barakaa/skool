@@ -90,6 +90,8 @@ export class AssessmentOutput {
   @Field()
   term: number;
 
+  @Field()
+  academicYear: string;
 
   @Field(() => Number, { nullable: true })
   maxScore?: number;
@@ -119,6 +121,7 @@ export class AssessmentOutput {
     output.title = entity.title;
     output.cutoff = entity.cutoff;
     output.status = entity.status;
+    output.academicYear = entity.academicYear;
     output.term = entity.term;
     output.maxScore = entity.maxScore;
     output.description = entity.description;
