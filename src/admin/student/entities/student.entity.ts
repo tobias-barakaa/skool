@@ -1,6 +1,5 @@
 // src/students/entities/student.entity.ts
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { GradeLevel } from 'src/admin/level/entities/grade-level.entity';
 import { TenantGradeLevel } from 'src/admin/school-type/entities/tenant-grade-level';
 import { Stream } from 'src/admin/streams/entities/streams.entity';
 import { Tenant } from 'src/admin/tenants/entities/tenant.entity';
@@ -79,7 +78,8 @@ export class Student {
     nullable: true,
     onDelete: 'SET NULL',
   })
-  stream: Stream;
+  @Field(() => Stream, { nullable: true })
+  stream?: Stream;
 
   @OneToMany(() => AssessmentMark, (mark) => mark.student)
   marks: AssessmentMark[];
@@ -93,3 +93,5 @@ export class Student {
   @Field(() => ID)
   tenant_id: string;
 }
+
+

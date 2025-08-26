@@ -21,7 +21,6 @@ import { TenantStream } from 'src/admin/school-type/entities/tenant-stream';
 @ObjectType()
 @Entity()
 export class Teacher {
-  /* --- scalars stay the same --- */
   @PrimaryGeneratedColumn('uuid')
   @Field(() => ID)
   id: string;
@@ -62,7 +61,6 @@ export class Teacher {
   @Column({ nullable: true })
   address?: string;
 
-  /* ---------------- NEW tenant-safe relations ---------------- */
   @Field(() => [TenantSubject], { nullable: true })
   @ManyToMany(() => TenantSubject, { cascade: true })
   @JoinTable({ name: 'teacher_tenant_subjects' })
@@ -78,14 +76,11 @@ export class Teacher {
   @JoinTable({ name: 'teacher_tenant_streams' })
   tenantStreams?: TenantStream[];
 
-  /* class-teacher stream (tenant-level) */
   @Field(() => TenantStream, { nullable: true })
   @ManyToOne(() => TenantStream, { nullable: true })
   @JoinColumn({ name: 'class_teacher_tenant_stream_id' })
   classTeacherOf?: TenantStream;
-  /* ---------------------------------------------------------- */
 
-  /* remaining fields unchanged … */
   @Field(() => Boolean)
   @Column({ default: false })
   isClassTeacher: boolean;

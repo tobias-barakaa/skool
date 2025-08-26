@@ -183,6 +183,12 @@ type ChatRoom {
   updatedAt: DateTime!
 }
 
+type CombinedSearchResult {
+  students: [Student!]!
+  teachers: [Teacher!]!
+  totalCount: Float!
+}
+
 input CreateAssessmentInput {
   academicYear: String!
   cutoff: Float
@@ -403,6 +409,18 @@ input EnterStudentMarksInput {
   studentId: ID!
 }
 
+input FilterInput {
+  streamIds: [ID!]
+  tenantGradeLevelIds: [ID!]
+  tenantSubjectIds: [ID!]
+}
+
+type FilteredResult {
+  students: [Student!]
+  teachers: [Teacher!]
+  totalCount: Float!
+}
+
 input ForgotPasswordInput {
   email: String!
 }
@@ -594,12 +612,23 @@ type Mutation {
   inviteTeacher(createTeacherDto: CreateTeacherInvitationDto!, tenantId: String!): InviteTeacherResponse!
   markAttendance(markAttendanceInput: CreateAttendanceInput!): [Attendance!]!
   markChatAsRead(chatRoomId: String!): Boolean!
+
+  """
+  Refresh search cache for current user tenant (placeholder for future caching)
+  """
+  refreshSearchCache: Boolean!
   resetPassword(resetPasswordInput: ResetPasswordInput!): PasswordResetResponse!
   revokeInvitation(invitationId: String!): RevokeInvitationResponse!
   revokeParentInvitation(invitationId: String!): RevokeInvitationResponse!
   revokeStaffInvitation(invitationId: String!): String!
   revokeStudent(studentId: String!): String!
   runFullSocketTest: String!
+
+  """Search students and cache results for performance"""
+  searchAndCacheStudents(input: SearchStudentInput!): SearchStudentResult!
+
+  """Search teachers and cache results for performance"""
+  searchAndCacheTeachers(input: SearchStudentInput!): SearchTeacherResult!
   sendMessageToAllParents(input: BroadcastMessageInput!): [ChatMessage!]!
   sendMessageToAllStudents(input: BroadcastMessageInput!): [ChatMessage!]!
   sendMessageToParent(input: SendMessageInput!): ChatMessage!
@@ -686,8 +715,14 @@ type Query {
   allUsersOfTenant(tenantId: String!): [TenantUserSummary!]!
   assessments(filter: AssessmentFilterInput): [AssessmentOutput!]!
   deactivatedTenantSubjects: [TenantSubject!]!
+
+  """Filter students and teachers by grade levels, subjects, and streams"""
+  filterByGradeLevelAndSubjects(input: FilterInput!): FilteredResult!
   getActiveStaffByTenant(tenantId: String!): [StaffDto!]!
   getAttendanceByDate(date: String!, gradeId: String!): [Attendance!]!
+
+  """Get all students and teachers for current user tenant"""
+  getBothStudentsAndTeachersByTenant: CombinedSearchResult!
   getChatMessages(chatRoomId: String!, limit: Float = 50, offset: Float = 0): [ChatMessage!]!
   getMyChats: [ChatRoom!]!
   getParentsByTenant(tenantId: String!): [Parent!]!
@@ -700,9 +735,22 @@ type Query {
   getStaffById(id: String!, tenantId: String!): StaffDto!
   getStaffByTenant(tenantId: String!): [StaffDto!]!
   getStaffCount(tenantId: String!): Float!
+
+  """Get all streams for current user tenant"""
+  getStreamsByTenant: [Stream!]!
   getStudentsByGrade(gradeId: String!): [Student!]!
+
+  """Get all students for current user tenant"""
+  getStudentsByTenant: SearchStudentResult!
   getStudentsForParent(parentId: String!, tenantId: String!): [StudentSearchResponse!]!
-  getTeachersByTenant(tenantId: String!): [TeacherDto!]!
+
+  """Get all teachers for current user tenant"""
+  getTeachersByTenant: SearchTeacherResult!
+
+  """
+  Get statistics for current user tenant (student count, teacher count, etc.)
+  """
+  getTenantStatistics: String!
   getTenantStreams(tenantGradeLevelId: String): [TenantStream!]!
   getTenantSubjects(curriculumId: String): [TenantSubject!]!
   getUnreadMessageCount: Float!
@@ -714,7 +762,12 @@ type Query {
   searchStaff(searchTerm: String!, tenantId: String!): [StaffDto!]!
   searchStudentByAdmission(admissionNumber: String!, tenantId: String!): StudentSearchResponse
   searchStudentsByManualInput(studentFullName: String, studentGrade: String, studentPhone: String, tenantId: String!): [StudentSearchResponse!]!
-  searchStudentsByName(name: String!, tenantId: String!): [StudentSearchResponse!]!
+
+  """Search for students by name within current user tenant"""
+  searchStudentsByName(input: SearchStudentInput!): SearchStudentResult!
+
+  """Search for teachers by name within current user tenant"""
+  searchTeachersByName(input: SearchStudentInput!): SearchTeacherResult!
   stream(id: ID!): StreamType!
   streams: [StreamType!]!
   streamsByGradeLevel(gradeLevelId: ID!): [StreamType!]!
@@ -848,6 +901,20 @@ type SchoolTypeLevel {
   name: String!
 }
 
+input SearchStudentInput {
+  name: String!
+}
+
+type SearchStudentResult {
+  count: Float!
+  students: [Student!]!
+}
+
+type SearchTeacherResult {
+  count: Float!
+  teachers: [Teacher!]!
+}
+
 type SelectedLevel {
   description: String
   gradeLevels: [GradeLevelInfo!]!
@@ -963,6 +1030,7 @@ type Student {
   id: ID!
   isActive: Boolean!
   phone: String!
+  stream: Stream
   tenant: Tenant!
   tenant_id: ID!
   totalFeesPaid: Float!
@@ -1065,6 +1133,34 @@ enum SubjectTypeEnum {
 
 type Subscription {
   messageAdded: ChatMessage!
+}
+
+type Teacher {
+  address: String
+  classTeacherOf: TenantStream
+  createdAt: DateTime!
+  dateOfBirth: DateTime
+  department: String!
+  email: String!
+  employeeId: String
+  firstName: String!
+  fullName: String!
+  gender: String!
+  hasCompletedProfile: Boolean
+  id: ID!
+  isActive: Boolean
+  isClassTeacher: Boolean!
+  lastName: String!
+  phoneNumber: String!
+  qualifications: String
+  role: String!
+  school: School
+  tenant: Tenant!
+  tenantGradeLevels: [TenantGradeLevel!]
+  tenantStreams: [TenantStream!]
+  tenantSubjects: [TenantSubject!]
+  updatedAt: DateTime!
+  user: User
 }
 
 type TeacherDto {

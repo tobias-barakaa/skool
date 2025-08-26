@@ -18,7 +18,7 @@ export class TenantSubject {
   @JoinColumn()
   tenant: Tenant;
 
-  @Field(() => Curriculum) // <-- add this
+  @Field(() => Curriculum)
   @ManyToOne(() => Curriculum, { eager: true })
   @JoinColumn()
   curriculum: Curriculum;
@@ -27,7 +27,7 @@ export class TenantSubject {
   @Column({ default: 'core' })
   subjectType: 'core' | 'elective';
 
-  @Field(() => Subject, { nullable: true }) // 👈 allow null
+  @Field(() => Subject, { nullable: true })
   @ManyToOne(() => Subject, { eager: true, nullable: true })
   @JoinColumn()
   subject?: Subject | null;
@@ -35,7 +35,7 @@ export class TenantSubject {
   @Field(() => CustomSubject, { nullable: true })
   @ManyToOne(() => CustomSubject, { eager: true, nullable: true })
   @JoinColumn()
-  customSubject?: CustomSubject; // Tenant's own subject// Tenant's own subject
+  customSubject?: CustomSubject; 
 
   @Field(() => Boolean)
   @Column({ default: true })
@@ -65,4 +65,3 @@ export class TenantSubject {
   @UpdateDateColumn()
   updatedAt: Date;
 }
-
