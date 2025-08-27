@@ -74,8 +74,8 @@ export class Test {
   instructions?: string;
 
   @Field()
-  @Column({ default: 'draft' })
-  status: 'draft' | 'active' | 'archived';
+  @Column({ default: 'pending' })
+  status: 'pending' | 'active' | 'completed';
 
   @Field(() => User)
   @ManyToOne(() => User, (user) => user.tests)
