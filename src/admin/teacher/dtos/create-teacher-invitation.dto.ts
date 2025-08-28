@@ -1,7 +1,4 @@
-// 1. First, let's create the DTO for adding a teacher
-// src/teacher/dto/create-teacher-invitation.dto.ts
 import { Field, ID, InputType } from '@nestjs/graphql';
-// import { IsEmail, IsNotEmpty, IsOptional, IsEnum, IsString } from 'class-validator';
 
 import {
   IsEmail,
@@ -15,7 +12,6 @@ import {
 
 @InputType()
 export class CreateTeacherInvitationDto {
-  /* --- scalars --- */
   @Field()
   @IsNotEmpty()
   @IsEmail()
@@ -76,7 +72,6 @@ export class CreateTeacherInvitationDto {
   @IsUUID('4')
   classTeacherTenantStreamId?: string;
 
-  /* remaining scalars */
   @Field({ nullable: true })
   @IsOptional()
   employeeId?: string;

@@ -17,12 +17,12 @@ export class AttendanceResolver {
     @Args('markAttendanceInput') markAttendanceInput: CreateAttendanceInput,
     @ActiveUser() currentUser: ActiveUserData,
   ) {
-    const teacherId = currentUser.sub;
+    const userId = currentUser.sub; // This is the User ID, not Teacher ID
     const tenantId = currentUser.tenantId;
 
     return this.attendanceService.markAttendance(
       markAttendanceInput,
-      teacherId,
+      userId, // Pass User ID
       tenantId,
     );
   }

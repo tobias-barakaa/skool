@@ -166,6 +166,15 @@ export class TeacherService {
           // teacher.classTeacherOf = classStream;
         }
 
+        teacher.tenantGradeLevels = tenantGradeLevels;
+        teacher.tenantStreams = tenantStreams;
+        teacher.tenantSubjects = tenantSubjects;
+
+        // optional class-teacher link
+        if (dto.isClassTeacher && classTeacherStream) {
+          teacher.classTeacherOf = classTeacherStream;
+        }
+
         await this.teacherRepository.save(teacher);
       },
     );

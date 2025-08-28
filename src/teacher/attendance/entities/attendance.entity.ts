@@ -53,7 +53,6 @@ export class Attendance {
   @Field()
   createdAt: Date;
 
-  // Relations to Student and User (teacher)
   @ManyToOne(() => Student)
   @JoinColumn({ name: 'studentId' })
   @Field(() => Student)

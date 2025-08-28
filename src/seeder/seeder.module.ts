@@ -35,6 +35,9 @@ import { TenantSubject } from 'src/admin/school-type/entities/tenant-specific-su
 import { TenantGradeLevel } from 'src/admin/school-type/entities/tenant-grade-level';
 import { CustomSubject } from 'src/admin/subject/entities/cusotm-subject.entity';
 import { TenantStream } from 'src/admin/school-type/entities/tenant-stream';
+import { AssessmentMark } from 'src/teacher/marksheet/entities/assessment_marks-entity';
+import { Mark } from 'src/teacher/marksheet/entities/marksheet-entity';
+import { Assessment } from 'src/teacher/marksheet/assessment/entity/assessment.entity';
 
 
 
@@ -93,8 +96,11 @@ const ENV = process.env.NODE_ENV;
       TenantSubject,
       TenantGradeLevel,
       CustomSubject,
-      TenantStream
+      TenantStream,
+      Mark,
 
+      AssessmentMark,
+      Assessment
     ]),
   ],
   providers: [SeedingService],
