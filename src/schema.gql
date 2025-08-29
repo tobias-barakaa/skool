@@ -545,6 +545,11 @@ type InviteTeacherResponse {
   status: String!
 }
 
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
 type Level {
   description: String
   gradeLevels: [GradeLevel!]
@@ -619,7 +624,7 @@ type Mutation {
   Refresh search cache for current user tenant (placeholder for future caching)
   """
   refreshSearchCache: Boolean!
-  resendTeacherInvitation(invitationId: String!, tenantId: String!): InviteTeacherResponse!
+  resendTeacherInvitation(invitationId: String!): InviteTeacherResponse!
   resetPassword(resetPasswordInput: ResetPasswordInput!): PasswordResetResponse!
   revokeInvitation(invitationId: String!): RevokeInvitationResponse!
   revokeParentInvitation(invitationId: String!): RevokeInvitationResponse!
@@ -712,6 +717,15 @@ type PendingInvitation {
   status: InvitationStatus!
 }
 
+type PendingInvitationResponse {
+  email: String!
+  id: String!
+  lastSentAt: DateTime
+  name: String
+  status: InvitationStatus!
+  userData: JSON
+}
+
 type Query {
   activeStreams: [StreamType!]!
   allStudents: [Student!]!
@@ -732,7 +746,8 @@ type Query {
   getPendingInvitations(tenantId: String!): [PendingInvitation!]!
   getPendingParentInvitations(tenantId: String!): [PendingInvitation!]!
   getPendingStaffInvitations(tenantId: String!): String!
-  getPendingTeacherInvitation(email: String!, tenantId: String!): UserInvitation
+  getPendingTeacherInvitation(email: String!): PendingInvitationResponse
+  getPendingTeacherInvitations: [PendingInvitationResponse!]
   getSchoolConfiguration: SchoolConfigurationResponse!
   getSocketClients: [String!]!
   getStaffByDepartment(department: String!, tenantId: String!): [StaffDto!]!

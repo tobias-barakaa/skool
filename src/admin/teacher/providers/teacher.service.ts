@@ -20,6 +20,7 @@ import { TenantSubject } from 'src/admin/school-type/entities/tenant-specific-su
 import { TeacherDto } from '../dtos/teacher-query.dto';
 import { async } from 'rxjs';
 import { handleInvitationResendLogic } from 'src/admin/shared/utils/invitation.utils';
+import { PendingInvitationResponse } from '../dtos/pending-response';
 
 @Injectable()
 export class TeacherService {
@@ -513,13 +514,7 @@ export class TeacherService {
     );
   }
 
-
-
-
-
-
-
-async getPendingInvitation(email: string, tenantId: string): Promise<UserInvitation | null> {
+  async getPendingInvitation(email: string, tenantId: string) {
     return await this.invitationRepository.findOne({
       where: {
         email,
@@ -530,17 +525,33 @@ async getPendingInvitation(email: string, tenantId: string): Promise<UserInvitat
     });
   }
 
-  async findInvitationById(invitationId: string, tenantId: string): Promise<UserInvitation | null> {
+  async getPendingInvitations(tenantId: string) {
+    return await this.invitationRepository.find({
+      where: {
+        tenant: { id: tenantId },
+        status: InvitationStatus.PENDING,
+      },
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  async findInvitationById(
+    invitationId: string,
+    tenantId: string,
+  ): Promise<UserInvitation | null> {
     return await this.invitationRepository.findOne({
       where: {
         id: invitationId,
         tenant: { id: tenantId },
-        status: InvitationStatus.PENDING
+        status: InvitationStatus.PENDING,
       },
     });
   }
 
-  async validateResendThrottling(email: string, tenantId: string): Promise<void> {
+  async validateResendThrottling(
+    email: string,
+    tenantId: string,
+  ): Promise<void> {
     await handleInvitationResendLogic(
       email,
       tenantId,
@@ -548,79 +559,70 @@ async getPendingInvitation(email: string, tenantId: string): Promise<UserInvitat
     );
   }
 
+  // TeacherService handles its own resend logic
+  async resendTeacherInvitation(
+    invitationId: string,
+    currentUser: ActiveUserData,
+    tenantId: string,
+  ) {
+    this.logger.log(`Resending teacher invitation with ID: ${invitationId}`);
 
+    try {
+      // Get the invitation
+      const invitation = await this.findInvitationById(invitationId, tenantId);
 
+      if (!invitation) {
+        throw new BadRequestException(
+          'Invitation not found or already processed',
+        );
+      }
 
+      if (invitation.type !== InvitationType.TEACHER) {
+        throw new BadRequestException(
+          'Invalid invitation type for teacher resend',
+        );
+      }
 
+      // Validate throttling
+      await this.validateResendThrottling(invitation.email, tenantId);
 
+      // Get inviter info
+      const inviter = await this.userRepository.findOne({
+        where: { id: currentUser.sub },
+        select: ['id', 'name', 'email'],
+      });
 
-// TeacherService handles its own resend logic
-async  resendTeacherInvitation(
-  invitationId: string,
-  currentUser: ActiveUserData,
-  tenantId: string,
-) {
-  this.logger.log(`Resending teacher invitation with ID: ${invitationId}`);
+      if (!inviter) {
+        throw new BadRequestException('Inviter not found');
+      }
 
-  try {
-    // Get the invitation
-    const invitation = await this.findInvitationById(invitationId, tenantId);
+      // Use existing invitation data (no need to recreate profile)
+      const dto = invitation.userData as CreateTeacherInvitationDto;
 
-    if (!invitation) {
-      throw new BadRequestException('Invitation not found or already processed');
+      return await this.invitationService.inviteUser(
+        currentUser,
+        tenantId,
+        dto,
+        InvitationType.TEACHER,
+        (email, fullName, schoolName, token, _inviterId, tenantId) =>
+          this.emailService.sendTeacherInvitation(
+            email,
+            fullName,
+            schoolName,
+            token,
+            inviter.name || inviter.email,
+            tenantId,
+          ),
+        () => Promise.resolve(), // Don't create profile again on resend
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to resend teacher invitation ${invitationId}:`,
+        error,
+      );
+      throw error;
     }
-
-    if (invitation.type !== InvitationType.TEACHER) {
-      throw new BadRequestException('Invalid invitation type for teacher resend');
-    }
-
-    // Validate throttling
-    await this.validateResendThrottling(invitation.email, tenantId);
-
-    // Get inviter info
-    const inviter = await this.userRepository.findOne({
-      where: { id: currentUser.sub },
-      select: ['id', 'name', 'email'],
-    });
-
-    if (!inviter) {
-      throw new BadRequestException('Inviter not found');
-    }
-
-    // Use existing invitation data (no need to recreate profile)
-    const dto = invitation.userData as CreateTeacherInvitationDto;
-
-    return await this.invitationService.inviteUser(
-      currentUser,
-      tenantId,
-      dto,
-      InvitationType.TEACHER,
-      (email, fullName, schoolName, token, _inviterId, tenantId) =>
-        this.emailService.sendTeacherInvitation(
-          email,
-          fullName,
-          schoolName,
-          token,
-          inviter.name || inviter.email,
-          tenantId,
-        ),
-      () => Promise.resolve(), // Don't create profile again on resend
-    );
-  } catch (error) {
-    this.logger.error(`Failed to resend teacher invitation ${invitationId}:`, error);
-    throw error;
   }
-
-
-
-
-
-
-
-
-
-}
-
 }
 
 

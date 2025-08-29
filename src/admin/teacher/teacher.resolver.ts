@@ -17,6 +17,7 @@ import { Roles } from 'src/iam/decorators/roles.decorator';
 import { SkipTenantValidation } from '../auth/decorator/skip-tenant-validation.decorator';
 import { TeacherDto } from './dtos/teacher-query.dto';
 import { UserInvitation } from '../invitation/entities/user-iInvitation.entity';
+import { PendingInvitationResponse } from './dtos/pending-response';
 
 @Resolver()
 export class TeacherResolver {
@@ -37,29 +38,43 @@ export class TeacherResolver {
   // @SkipTenantValidation()
   // @SetMetadata('isPublic', true)
 
+  // @Roles(MembershipRole.SUPER_ADMIN, MembershipRole.SCHOOL_ADMIN)
+  // @Query(() => UserInvitation, { nullable: true })
+  // async getPendingTeacherInvitation(
+  //   @Args('email') email: string,
+  //   @Args('tenantId') tenantId: string,
+  // ) {
+  //   return this.teacherService.getPendingInvitation(email, tenantId);
+  // }
+
   @Roles(MembershipRole.SUPER_ADMIN, MembershipRole.SCHOOL_ADMIN)
-  @Query(() => UserInvitation, { nullable: true })
+  @Query(() => PendingInvitationResponse, { nullable: true })
   async getPendingTeacherInvitation(
     @Args('email') email: string,
-    @Args('tenantId') tenantId: string,
+    @ActiveUser() user: ActiveUserData,
   ) {
-    return this.teacherService.getPendingInvitation(email, tenantId);
+    return this.teacherService.getPendingInvitation(email, user.tenantId);
   }
+
+  @Roles(MembershipRole.SUPER_ADMIN, MembershipRole.SCHOOL_ADMIN)
+  @Query(() => [PendingInvitationResponse], { nullable: true })
+  async getPendingTeacherInvitations(@ActiveUser() user: ActiveUserData) {
+    return this.teacherService.getPendingInvitations(user.tenantId);
+  }
+
 
   @Roles(MembershipRole.SUPER_ADMIN, MembershipRole.SCHOOL_ADMIN)
   @Mutation(() => InviteTeacherResponse)
   async resendTeacherInvitation(
     @Args('invitationId') invitationId: string,
-    @Args('tenantId') tenantId: string,
     @ActiveUser() user: ActiveUserData,
   ) {
     return this.teacherService.resendTeacherInvitation(
       invitationId,
       user,
-      tenantId,
+      user.tenantId
     );
   }
-
 
   @SkipTenantValidation()
   @SetMetadata('isPublic', true)
