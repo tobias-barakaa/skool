@@ -3,6 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDa
 import { ObjectType, Field, ID, registerEnumType } from '@nestjs/graphql';
 import { User } from 'src/admin/users/entities/user.entity';
 import { Student } from 'src/admin/student/entities/student.entity';
+import { Teacher } from 'src/admin/teacher/entities/teacher.entity';
 
 export enum AttendanceStatus {
   PRESENT = 'present',
@@ -58,8 +59,13 @@ export class Attendance {
   @Field(() => Student)
   student: Student;
 
-  @ManyToOne(() => User)
-  @JoinColumn({ name: 'teacherId' })
-  @Field(() => User)
-  teacher: User;
+  // @ManyToOne(() => User)
+  // @JoinColumn({ name: 'teacherId' })
+  // @Field(() => User)
+  // teacher: User;
+
+  @ManyToOne(() => Teacher)
+@JoinColumn({ name: 'teacherId' })
+@Field(() => Teacher)
+teacher: Teacher;
 }

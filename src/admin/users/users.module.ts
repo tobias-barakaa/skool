@@ -15,12 +15,12 @@ import { UserTenantMembershipModule } from '../user-tenant-membership/user-tenan
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
-    SchoolsModule,
-    ConfigModule.forFeature(profileConfig),
-    forwardRef(() => AuthModule),
     forwardRef(() => InvitationModule),
+    SchoolsModule,
     TenantsModule,
     UserTenantMembershipModule,
+    ConfigModule.forFeature(profileConfig),
+    forwardRef(() => AuthModule),
   ],
   providers: [UsersService, UsersCreateProvider, UsersResolver],
   exports: [TypeOrmModule, UsersService],

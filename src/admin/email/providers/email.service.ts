@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Resend } from 'resend';
@@ -52,6 +52,7 @@ interface EmailTemplate {
 @Injectable()
 export class EmailService {
   private resend: Resend;
+  private readonly logger = new Logger(EmailService.name);
 
   constructor(
     @Inject(resendConfig.KEY)
@@ -251,12 +252,12 @@ export class EmailService {
     const subdomain = await this.getTenantSubdomain(data.tenantId);
     const invitationUrl = `https://${subdomain}.squl.co.ke/signup?token=${data.invitationToken}`;
 
-   const formattedRole = data.staffRole
-     ? data.staffRole
-         .replace(/_/g, ' ')
-         .toLowerCase()
-         .replace(/\b\w/g, (l) => l.toUpperCase())
-     : 'Staff Member';
+    const formattedRole = data.staffRole
+      ? data.staffRole
+          .replace(/_/g, ' ')
+          .toLowerCase()
+          .replace(/\b\w/g, (l) => l.toUpperCase())
+      : 'Staff Member';
 
     const steps = [
       'Click the invitation link below to accept',
@@ -334,8 +335,6 @@ export class EmailService {
     };
   }
 
-
-
   // Generic email sender
   private async sendEmail(to: string, template: EmailTemplate): Promise<any> {
     const { data, error } = await this.resend.emails.send({
@@ -359,19 +358,28 @@ export class EmailService {
     teacherName: string,
     schoolName: string,
     invitationToken: string,
-    inviterName: string,
+    inviterName: string, // Now receives name instead of ID
     tenantId: string,
-  ) {
-    const template = await this.buildTeacherInvitationTemplate({
-      email,
-      recipientName: teacherName,
-      schoolName,
-      invitationToken,
-      inviterName,
-      tenantId,
-    });
+  ): Promise<void> {
+    try {
+      const template = await this.buildTeacherInvitationTemplate({
+        email,
+        recipientName: teacherName,
+        schoolName,
+        invitationToken,
+        inviterName,
+        tenantId,
+      });
 
-    return this.sendEmail(email, template);
+      await this.sendEmail(email, template);
+      this.logger.log(`Teacher invitation sent to ${email}`);
+    } catch (error) {
+      this.logger.error(
+        `Failed to send teacher invitation to ${email}:`,
+        error,
+      );
+      throw error;
+    }
   }
 
   async sendParentInvitation(

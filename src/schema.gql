@@ -121,7 +121,7 @@ type Attendance {
   status: AttendanceStatus!
   student: Student!
   studentId: String!
-  teacher: User!
+  teacher: Teacher!
   teacherId: String!
   tenantId: String!
 }
@@ -610,6 +610,8 @@ type Mutation {
   inviteParent(createParentDto: CreateParentInvitationDto!, studentIds: [String!]!, tenantId: String!): InviteParentResponse!
   inviteStaff(createStaffDto: CreateStaffInvitationDto!, tenantId: String!): InviteStaffResponse!
   inviteTeacher(createTeacherDto: CreateTeacherInvitationDto!, tenantId: String!): InviteTeacherResponse!
+
+  """Mark attendance for students in a specific grade"""
   markAttendance(markAttendanceInput: CreateAttendanceInput!): [Attendance!]!
   markChatAsRead(chatRoomId: String!): Boolean!
 
@@ -617,6 +619,7 @@ type Mutation {
   Refresh search cache for current user tenant (placeholder for future caching)
   """
   refreshSearchCache: Boolean!
+  resendTeacherInvitation(invitationId: String!, tenantId: String!): InviteTeacherResponse!
   resetPassword(resetPasswordInput: ResetPasswordInput!): PasswordResetResponse!
   revokeInvitation(invitationId: String!): RevokeInvitationResponse!
   revokeParentInvitation(invitationId: String!): RevokeInvitationResponse!
@@ -729,6 +732,7 @@ type Query {
   getPendingInvitations(tenantId: String!): [PendingInvitation!]!
   getPendingParentInvitations(tenantId: String!): [PendingInvitation!]!
   getPendingStaffInvitations(tenantId: String!): String!
+  getPendingTeacherInvitation(email: String!, tenantId: String!): UserInvitation
   getSchoolConfiguration: SchoolConfigurationResponse!
   getSocketClients: [String!]!
   getStaffByDepartment(department: String!, tenantId: String!): [StaffDto!]!
@@ -762,9 +766,7 @@ type Query {
   searchStaff(searchTerm: String!, tenantId: String!): [StaffDto!]!
   searchStudentByAdmission(admissionNumber: String!, tenantId: String!): StudentSearchResponse
   searchStudentsByManualInput(studentFullName: String, studentGrade: String, studentPhone: String, tenantId: String!): [StudentSearchResponse!]!
-
-  """Search for students by name within current user tenant"""
-  searchStudentsByName(input: SearchStudentInput!): SearchStudentResult!
+  searchStudentsByName(name: String!, tenantId: String!): [StudentSearchResponse!]!
 
   """Search for teachers by name within current user tenant"""
   searchTeachersByName(input: SearchStudentInput!): SearchTeacherResult!

@@ -1,6 +1,5 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from 'src/admin/auth/auth.module';
 import { EmailModule } from 'src/admin/email/email.module';
 import { TenantsModule } from 'src/admin/tenants/tenants.module';
 import { Teacher } from './entities/teacher.entity';
@@ -15,25 +14,24 @@ import { StreamsModule } from '../streams/streams.module';
 import { TenantGradeLevel } from '../school-type/entities/tenant-grade-level';
 import { TenantStream } from '../school-type/entities/tenant-stream';
 import { TenantSubject } from '../school-type/entities/tenant-specific-subject';
-
+import { AuthModule } from '../auth/auth.module';
 @Module({
   imports: [
-      TypeOrmModule.forFeature([
-        Teacher,
-        TenantGradeLevel,
-        TenantStream,
-        TenantSubject,
+    TypeOrmModule.forFeature([
+      Teacher,
+      TenantGradeLevel,
+      TenantStream,
+      TenantSubject,
     ]),
-    EmailModule,
-    UserModule,
-    InvitationModule,
-    AuthModule,
-    TenantsModule,
-    UserTenantMembershipModule,
-    InvitationModule,
+    forwardRef(() => InvitationModule),
     SubjectModule,
     LevelModule,
     StreamsModule,
+    forwardRef(() => AuthModule),
+    TenantsModule,
+    UserTenantMembershipModule,
+    EmailModule,
+    forwardRef(() => UserModule),
   ],
   providers: [TeacherService, TeacherResolver],
   exports: [TypeOrmModule],

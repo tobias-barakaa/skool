@@ -30,7 +30,6 @@ export class InvitationService {
     private readonly acceptInvitationProvider: AcceptInvitationProvider,
     private readonly genericDeleteProvider: GenericDeleteProvider,
     private readonly invitationService: GenericDeleteProvider,
-
   ) {}
 
   async inviteUser<T extends { email: string; fullName: string; role: string }>(
@@ -231,4 +230,10 @@ export class InvitationService {
       options,
     );
   }
+
+
+
+  
+
+
 }

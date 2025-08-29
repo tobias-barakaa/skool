@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TestService } from './providers/test.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Question } from './entities/question.entity';
@@ -17,9 +17,9 @@ import { UserModule } from 'src/admin/users/users.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Question, Option, Test, ReferenceMaterial]),
-    TeacherModule,
+    forwardRef(() => TeacherModule),
     LevelModule,
-    UserModule
+    forwardRef(() => UserModule),
   ],
   providers: [
     TestService,

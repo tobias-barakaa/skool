@@ -4,6 +4,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -11,6 +12,7 @@ import { User } from 'src/admin/users/entities/user.entity';
 import {
   UserInvitation,
   InvitationStatus,
+  InvitationType,
 } from '../entities/user-iInvitation.entity';
 import {
   UserTenantMembership,
@@ -19,6 +21,7 @@ import {
 } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
 import { GenerateTokenProvider } from 'src/admin/auth/providers/generate-token.provider';
 import { HashingProvider } from 'src/admin/auth/providers/hashing.provider';
+import { Teacher } from 'src/admin/teacher/entities/teacher.entity';
 
 export interface AcceptInvitationResult {
   message: string;
@@ -35,9 +38,10 @@ export interface AcceptInvitationResult {
   membership: UserTenantMembership;
   role: MembershipRole;
 }
-
 @Injectable()
 export class AcceptInvitationProvider {
+  private readonly logger = new Logger(AcceptInvitationProvider.name);
+
   constructor(
     @InjectRepository(UserInvitation)
     private invitationRepository: Repository<UserInvitation>,
@@ -47,35 +51,22 @@ export class AcceptInvitationProvider {
     private membershipRepository: Repository<UserTenantMembership>,
     private readonly generateTokensProvider: GenerateTokenProvider,
     private readonly hashPassword: HashingProvider,
+    @InjectRepository(Teacher)
+    private teacherRepository: Repository<Teacher>,
   ) {}
 
   async acceptInvitation(
     token: string,
     password: string,
-    postAcceptCallback?: (
+    customTeacherLinkFn?: (
       user: User,
       invitation: UserInvitation,
     ) => Promise<void>,
   ): Promise<AcceptInvitationResult> {
-    const invitation = await this.invitationRepository.findOne({
-      where: {
-        token,
-        status: InvitationStatus.PENDING,
-      },
-      relations: ['tenant', 'invitedBy'],
-    });
+    // Find and validate invitation
+    const invitation = await this.findAndValidateInvitation(token);
 
-    if (!invitation) {
-      throw new NotFoundException('Invalid or expired invitation');
-    }
-
-    if (invitation.expiresAt < new Date()) {
-      await this.invitationRepository.update(invitation.id, {
-        status: InvitationStatus.EXPIRED,
-      });
-      throw new BadRequestException('Invitation has expired');
-    }
-
+    // Get or create user
     let user = await this.userRepository.findOne({
       where: { email: invitation.email },
     });
@@ -84,15 +75,24 @@ export class AcceptInvitationProvider {
       user = await this.createUserFromInvitation(invitation, password);
     }
 
+    // Create membership
     const membership = await this.createMembership(user, invitation);
-    if (postAcceptCallback) {
-      await postAcceptCallback(user, invitation);
+
+    // Handle teacher-specific logic
+    if (invitation.type === InvitationType.TEACHER) {
+      if (customTeacherLinkFn) {
+        await customTeacherLinkFn(user, invitation);
+      } else {
+        await this.linkTeacherToUser(user.id, invitation);
+      }
     }
 
+    // Mark invitation as accepted
     await this.invitationRepository.update(invitation.id, {
       status: InvitationStatus.ACCEPTED,
     });
 
+    // Generate tokens
     const tokens = await this.generateTokensProvider.generateTokens(
       user,
       membership,
@@ -116,54 +116,136 @@ export class AcceptInvitationProvider {
     };
   }
 
+  private async findAndValidateInvitation(
+    token: string,
+  ): Promise<UserInvitation> {
+    const invitation = await this.invitationRepository.findOne({
+      where: {
+        token,
+        status: InvitationStatus.PENDING,
+      },
+      relations: ['tenant', 'invitedBy'],
+    });
+
+    if (!invitation) {
+      throw new NotFoundException('Invalid or expired invitation');
+    }
+
+    if (invitation.expiresAt < new Date()) {
+      await this.invitationRepository.update(invitation.id, {
+        status: InvitationStatus.EXPIRED,
+      });
+      throw new BadRequestException('Invitation has expired');
+    }
+
+    return invitation;
+  }
+
+  // This method is in AcceptInvitationProvider
+
+  private async linkTeacherToUser(
+    userId: string,
+    invitation: UserInvitation,
+  ): Promise<void> {
+    try {
+      const teacher = await this.teacherRepository.findOne({
+        where: {
+          email: invitation.email,
+          tenantId: invitation.tenantId,
+        },
+      });
+
+      if (!teacher) {
+        this.logger.error(
+          `Teacher profile not found for email: ${invitation.email}, tenant: ${invitation.tenantId}`,
+        );
+        throw new BadRequestException('Teacher profile not found');
+      }
+
+      teacher.user = { id: userId } as User;
+
+      teacher.isActive = true;
+      teacher.hasCompletedProfile = true;
+
+
+      this.logger.log(`Linking teacher ${teacher.id} to user ${userId}`);
+
+      await this.teacherRepository.save(teacher);
+
+      this.logger.log(
+        `Successfully linked teacher profile ${teacher.id} to user ${userId}`,
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to link teacher to user ${userId}:`,
+        error.message,
+      );
+      throw error;
+    }
+  }
+
   private async createUserFromInvitation(
     invitation: UserInvitation,
     password: string,
   ): Promise<User> {
-    const userData = invitation.userData as any; // Type this properly based on your DTO
+    try {
+      const userData = invitation.userData as any;
 
-    // Validate that we have the required name field
-    if (!userData || !userData.fullName) {
-      throw new BadRequestException(
-        'Invitation data is incomplete - missing name',
+      // Validate required data
+      if (!userData?.fullName) {
+        throw new BadRequestException(
+          'Invitation data is incomplete - missing name',
+        );
+      }
+
+      const hashedPassword = await this.hashPassword.hashPassword(password);
+
+      const user = this.userRepository.create({
+        email: invitation.email,
+        password: hashedPassword,
+        name: userData.fullName,
+        schoolUrl: invitation.tenant.subdomain,
+      });
+
+      const savedUser = await this.userRepository.save(user);
+
+      this.logger.log(
+        `Created user from invitation: ${savedUser.id} (${savedUser.email})`,
       );
+
+      return savedUser;
+    } catch (error) {
+      this.logger.error(
+        `Failed to create user from invitation:`,
+        error.message,
+      );
+      throw error;
     }
-
-    const hashedPassword = await this.hashPassword.hashPassword(password);
-    // const userData = invitation.userData as any;
-
-    const user = this.userRepository.create({
-      email: invitation.email,
-      password: hashedPassword,
-      name: userData.fullName,
-      schoolUrl: invitation.tenant.subdomain,
-    });
-
-
-    const savedUser = await this.userRepository.save(user);
-
-console.log('Created user:', {
-  id: savedUser.id,
-  email: savedUser.email,
-  name: savedUser.name,
-  invitationUserData: userData,
-});
-
-    return savedUser;
-
   }
 
   private async createMembership(
     user: User,
     invitation: UserInvitation,
   ): Promise<UserTenantMembership> {
-    const membership = this.membershipRepository.create({
-      user,
-      tenant: invitation.tenant,
-      role: invitation.role as MembershipRole,
-      status: MembershipStatus.ACTIVE,
-    });
+    try {
+      const membership = this.membershipRepository.create({
+        user,
+        tenant: invitation.tenant,
+        role: invitation.role as MembershipRole,
+        status: MembershipStatus.ACTIVE,
+        joinedAt: new Date(),
+      });
 
-    return await this.membershipRepository.save(membership);
+      const savedMembership = await this.membershipRepository.save(membership);
+
+      this.logger.log(
+        `Created membership for user ${user.id} in tenant ${invitation.tenant.id} with role ${invitation.role}`,
+      );
+
+      return savedMembership;
+    } catch (error) {
+      this.logger.error(`Failed to create membership:`, error.message);
+      throw error;
+    }
   }
 }

@@ -7,23 +7,24 @@ import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { CreateAttendanceInput } from './dtos/attendance.input';
 import { Student } from 'src/admin/student/entities/student.entity';
+import { Roles } from 'src/iam/decorators/roles.decorator';
+import { MembershipRole } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
 
 @Resolver(() => Attendance)
 export class AttendanceResolver {
   constructor(private attendanceService: AttendanceService) {}
 
-  @Mutation(() => [Attendance])
+  @Roles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
+  @Mutation(() => [Attendance], {
+    description: 'Mark attendance for students in a specific grade',
+  })
   async markAttendance(
     @Args('markAttendanceInput') markAttendanceInput: CreateAttendanceInput,
     @ActiveUser() currentUser: ActiveUserData,
-  ) {
-    const userId = currentUser.sub; // This is the User ID, not Teacher ID
-    const tenantId = currentUser.tenantId;
-
+  ): Promise<Attendance[]> {
     return this.attendanceService.markAttendance(
       markAttendanceInput,
-      userId, // Pass User ID
-      tenantId,
+      currentUser,
     );
   }
 

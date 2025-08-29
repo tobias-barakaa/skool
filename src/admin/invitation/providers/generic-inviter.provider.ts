@@ -1,8 +1,6 @@
-// src/invitation/providers/generic-inviter.provider.ts
-
-import {  ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import {  BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MoreThan, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import * as crypto from 'crypto';
 import { User } from 'src/admin/users/entities/user.entity';
 import { Tenant } from 'src/admin/tenants/entities/tenant.entity';
@@ -51,7 +49,6 @@ export class GenericInviterProvider {
     ) => Promise<void>,
     createProfileFn: () => Promise<void>,
   ) {
-    // Basic validation
     await validateMembershipAccess(
       this.membershipRepository,
       inviter.sub,
@@ -81,19 +78,16 @@ export class GenericInviterProvider {
     const isResend = !!existingInvitation;
 
     if (isResend) {
-      // 3A. RESEND LOGIC: Update the existing invitation
       console.log(`Resending invitation to ${dto.email}`);
 
       existingInvitation.token = token;
       existingInvitation.expiresAt = expiresAt;
-      existingInvitation.status = InvitationStatus.PENDING; // Ensure status is reset
-      existingInvitation.userData = dto; // Update data in case it changed
-      existingInvitation.updatedAt = new Date();
-      // Note: We don't change invitedBy or createdAt
+      existingInvitation.status = InvitationStatus.PENDING;
+      existingInvitation.userData = dto;
+      existingInvitation.lastSentAt = new Date(); // Set this BEFORE saving
 
       invitationToSave = existingInvitation;
     } else {
-      // 3B. NEW INVITATION LOGIC: Create a completely new invitation
       console.log(`Sending a new invitation to ${dto.email}`);
 
       invitationToSave = this.invitationRepository.create({
@@ -105,19 +99,18 @@ export class GenericInviterProvider {
         type,
         status: InvitationStatus.PENDING,
         expiresAt,
-        invitedBy: { id: inviter.sub } as User, 
+        lastSentAt: new Date(), // Set this for new invitations too
+        invitedBy: { id: inviter.sub } as User,
         tenant: { id: tenantId },
       });
 
-      // IMPORTANT: The profile is only created ONCE, for the first invitation.
       await createProfileFn();
     }
 
-    // 4. Save the new or updated invitation to the database
-    const savedInvitation =
-      await this.invitationRepository.save(invitationToSave);
+    // Save the invitation BEFORE sending email to prevent race conditions
+    const savedInvitation = await this.invitationRepository.save(invitationToSave);
 
-    // 5. Send the email with the new token
+    // Send email after saving
     await sendEmailFn(
       dto.email,
       dto.fullName,
@@ -127,12 +120,11 @@ export class GenericInviterProvider {
       tenantId,
     );
 
-    // 6. Return the result
     return {
       email: savedInvitation.email,
       fullName: dto.fullName,
       status: savedInvitation.status,
-      createdAt: savedInvitation.createdAt, // This will be the original creation date on a resend
+      createdAt: savedInvitation.createdAt,
       isResend,
     };
   }
@@ -143,4 +135,18 @@ export class GenericInviterProvider {
     expiresAt.setDate(expiresAt.getDate() + 7);
     return { token, expiresAt };
   }
+
+
+
+
+
+
 }
+
+//   private createInvitationToken(): { token: string; expiresAt: Date } {
+//     const token = crypto.randomBytes(32).toString('hex');
+//     const expiresAt = new Date();
+//     expiresAt.setDate(expiresAt.getDate() + 7);
+//     return { token, expiresAt };
+//   }
+// }

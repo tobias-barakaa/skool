@@ -16,6 +16,7 @@ import { MembershipRole } from '../user-tenant-membership/entities/user-tenant-m
 import { Roles } from 'src/iam/decorators/roles.decorator';
 import { SkipTenantValidation } from '../auth/decorator/skip-tenant-validation.decorator';
 import { TeacherDto } from './dtos/teacher-query.dto';
+import { UserInvitation } from '../invitation/entities/user-iInvitation.entity';
 
 @Resolver()
 export class TeacherResolver {
@@ -35,6 +36,30 @@ export class TeacherResolver {
   // @Auth(AuthType.None)
   // @SkipTenantValidation()
   // @SetMetadata('isPublic', true)
+
+  @Roles(MembershipRole.SUPER_ADMIN, MembershipRole.SCHOOL_ADMIN)
+  @Query(() => UserInvitation, { nullable: true })
+  async getPendingTeacherInvitation(
+    @Args('email') email: string,
+    @Args('tenantId') tenantId: string,
+  ) {
+    return this.teacherService.getPendingInvitation(email, tenantId);
+  }
+
+  @Roles(MembershipRole.SUPER_ADMIN, MembershipRole.SCHOOL_ADMIN)
+  @Mutation(() => InviteTeacherResponse)
+  async resendTeacherInvitation(
+    @Args('invitationId') invitationId: string,
+    @Args('tenantId') tenantId: string,
+    @ActiveUser() user: ActiveUserData,
+  ) {
+    return this.teacherService.resendTeacherInvitation(
+      invitationId,
+      user,
+      tenantId,
+    );
+  }
+
 
   @SkipTenantValidation()
   @SetMetadata('isPublic', true)

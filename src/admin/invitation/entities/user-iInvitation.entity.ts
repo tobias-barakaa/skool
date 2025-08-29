@@ -76,7 +76,6 @@ export class UserInvitation {
   type: string;
 
   @Column({ type: 'json', nullable: true })
-  // userData: Partial<CreateTeacherInvitationDto>;
   userData: Record<string, any>;
 
   @Column({ nullable: true })
@@ -99,4 +98,7 @@ export class UserInvitation {
   @Field()
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  lastSentAt: Date;
 }

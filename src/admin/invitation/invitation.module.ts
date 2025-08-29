@@ -9,7 +9,9 @@ import { TenantsModule } from '../tenants/tenants.module';
 import { AcceptInvitationProvider } from './providers/accept-invitation.provider';
 import { GenericDeleteProvider } from './providers/generic-delete.provider';
 import { GenericPendingProvider } from './providers/generic-pending.provider';
+import { TeacherModule } from 'src/teacher/teacher.module';
 import { AuthModule } from '../auth/auth.module';
+import { Teacher } from '../teacher/entities/teacher.entity';
 
 @Module({
   providers: [
@@ -21,8 +23,9 @@ import { AuthModule } from '../auth/auth.module';
     GenericPendingProvider,
   ],
   imports: [
-    TypeOrmModule.forFeature([UserInvitation]),
+    TypeOrmModule.forFeature([UserInvitation, Teacher]),
     UserTenantMembershipModule,
+    forwardRef(() => TeacherModule),
     forwardRef(() => UserModule),
     TenantsModule,
     AuthModule,

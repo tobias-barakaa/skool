@@ -1,5 +1,5 @@
 // attendance.service.ts
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, In, Repository } from 'typeorm';
 import { Attendance } from '../entities/attendance.entity';
@@ -9,9 +9,12 @@ import { MembershipRole, UserTenantMembership } from 'src/admin/user-tenant-memb
 import { TenantGradeLevel } from 'src/admin/school-type/entities/tenant-grade-level';
 import { SchoolSetupGuardService } from 'src/admin/config/school-config.guard';
 import { Teacher } from 'src/admin/teacher/entities/teacher.entity';
+import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 
 @Injectable()
 export class AttendanceService {
+  private readonly logger = new Logger(AttendanceService.name);
+
   constructor(
     @InjectRepository(Attendance)
     private attendanceRepository: Repository<Attendance>,
@@ -26,147 +29,206 @@ export class AttendanceService {
 
 
  async markAttendance(
-  markAttendanceInput: CreateAttendanceInput,
-  userId: string, // This is the User ID from currentUser.sub
-  tenantId: string,
-) {
+    markAttendanceInput: CreateAttendanceInput,
+    currentUser: ActiveUserData,
+  ): Promise<Attendance[]> {
+    const { date, gradeId, attendanceRecords } = markAttendanceInput;
+    const userId = currentUser.sub;
+    const tenantId = currentUser.tenantId;
 
-  await this.debugTeacherGradeAssignments(userId, tenantId);
+    this.logger.log(`Marking attendance for grade ${gradeId} on ${date} by user ${userId}`);
 
-  await this.schoolSetupGuardService.validateSchoolIsConfigured(tenantId);
+    try {
+      // Validate input
+      this.validateAttendanceInput(markAttendanceInput);
 
-  const { date, gradeId, attendanceRecords } = markAttendanceInput;
+      // Use transaction for data consistency
+      return await this.dataSource.transaction(async (manager) => {
+        const attendanceRepo = manager.getRepository(Attendance);
+        const teacherRepo = manager.getRepository(Teacher);
+        const studentRepo = manager.getRepository(Student);
+        const gradeRepo = manager.getRepository(TenantGradeLevel);
+        const membershipRepo = manager.getRepository(UserTenantMembership);
 
-  if (!this.isValidDate(date)) {
-    throw new BadRequestException('Invalid date format');
-  }
+        // Validate permissions and relationships
+        const [teacher, grade, students] = await Promise.all([
+          this.validateTeacherPermissions(userId, tenantId, gradeId, teacherRepo, membershipRepo),
+          this.validateGrade(gradeId, tenantId, gradeRepo),
+          this.validateStudents(attendanceRecords.map(r => r.studentId), gradeId, tenantId, studentRepo, membershipRepo),
+        ]);
 
-  const gradeRepo = this.dataSource.getRepository(TenantGradeLevel);
-  const gradeExists = await gradeRepo.findOne({
-    where: {
-      id: gradeId,
-      tenant: { id: tenantId },
-    },
-    relations: ['tenant', 'gradeLevel'],
-  });
+        // Delete existing attendance for this date and grade
+        await attendanceRepo.delete({ date, gradeId, tenantId });
 
-  if (!gradeExists) {
-    throw new BadRequestException(
-      `Grade level does not exist for tenant ${tenantId}`,
-    );
-  }
+        // Create new attendance records
+        const attendanceEntities = attendanceRecords.map((record) =>
+          attendanceRepo.create({
+            studentId: record.studentId,
+            teacherId: teacher.id,
+            tenantId,
+            gradeId,
+            date,
+            status: record.status,
+          }),
+        );
 
-  // Check user membership
-  const teacherMembership = await this.userTenantMembershipRepository.findOne({
-    where: {
-      userId: userId, // This is correct - using User ID
-      tenantId: tenantId,
-      role: MembershipRole.TEACHER,
-    },
-  });
+        const savedAttendance = await attendanceRepo.save(attendanceEntities);
 
-  if (!teacherMembership) {
-    throw new BadRequestException('Teacher not authorized for this tenant');
-  }
-
-  // Fixed teacher query - find teacher by userId and check grade assignment
-  const teacherRepo = this.dataSource.getRepository(Teacher);
-
-  // First, let's find the teacher by userId
-  const teacher = await teacherRepo.findOne({
-    where: {
-      userId: userId, // Use userId (from currentUser.sub)
-      tenantId: tenantId,
-    },
-    relations: ['tenantGradeLevels'], // Load the grade levels
-  });
-
-  if (!teacher) {
-    throw new BadRequestException(
-      'Teacher profile not found for this user in this tenant',
-    );
-  }
-
-  // Check if teacher is assigned to this grade
-  const isAssignedToGrade = teacher.tenantGradeLevels?.some(
-    (grade) => grade.id === gradeId,
-  );
-
-  if (!isAssignedToGrade) {
-    // Debug logging
-    console.log('Teacher ID:', teacher.id);
-    console.log('Teacher User ID:', teacher.userId);
-    console.log('Assigned Grade IDs:', teacher.tenantGradeLevels?.map(g => g.id));
-    console.log('Requested Grade ID:', gradeId);
-
-    throw new BadRequestException(
-      `Teacher is not assigned to grade ${gradeId} in this tenant`,
-    );
-  }
-
-  // Validate students
-  const validStudents = await this.studentRepository
-    .createQueryBuilder('student')
-    .innerJoin('student.user', 'user')
-    .innerJoin('user.memberships', 'membership')
-    .where('student.grade = :gradeId', { gradeId })
-    .andWhere('membership.tenantId = :tenantId', { tenantId })
-    .andWhere('membership.role = :role', { role: MembershipRole.STUDENT })
-    .select(['student.id', 'student.grade', 'user.id', 'user.name'])
-    .getMany();
-
-  const validStudentIds = validStudents.map((s) => s.id);
-
-  const invalidStudents = attendanceRecords.filter(
-    (record) => !validStudentIds.includes(record.studentId),
-  );
-
-  if (invalidStudents.length > 0) {
-    throw new BadRequestException(
-      `Invalid student IDs: ${invalidStudents.map((s) => s.studentId).join(', ')}. Students must belong to grade ${gradeId} and tenant ${tenantId}`,
-    );
-  }
-
-  for (const record of attendanceRecords) {
-    const studentValidation = await this.validateStudentAccess(
-      record.studentId,
-      gradeId,
-      tenantId,
-    );
-
-    if (!studentValidation) {
-      throw new BadRequestException(
-        `Student ID ${record.studentId} is not authorized for this grade and tenant`,
-      );
+        return attendanceRepo.find({
+          where: { id: In(savedAttendance.map(a => a.id)) },
+          relations: ['student'],
+        });
+      });
+    } catch (error) {
+      this.logger.error(`Failed to mark attendance:`, error);
+      throw error;
     }
   }
 
-  // Delete existing attendance for this date/grade
-  await this.attendanceRepository.delete({
-    date,
-    gradeId,
-    tenantId,
-  });
+  private validateAttendanceInput(input: CreateAttendanceInput): void {
+    if (!input.date || !this.isValidDate(input.date)) {
+      throw new BadRequestException('Invalid date format. Use YYYY-MM-DD');
+    }
 
-  // Create new attendance records - use teacher.id (not userId)
-  const attendanceEntities = attendanceRecords.map((record) =>
-    this.attendanceRepository.create({
-      studentId: record.studentId,
-      teacherId: teacher.id, // Use teacher.id, not userId
-      tenantId,
-      gradeId,
-      date,
-      status: record.status,
-    }),
-  );
+    if (!input.gradeId) {
+      throw new BadRequestException('Grade ID is required');
+    }
 
-  const saved = await this.attendanceRepository.save(attendanceEntities);
+    if (!input.attendanceRecords || input.attendanceRecords.length === 0) {
+      throw new BadRequestException('At least one attendance record is required');
+    }
 
-  return this.attendanceRepository.find({
-    where: { id: In(saved.map((a) => a.id)) },
-    relations: ['student'],
-  });
-}
+    // Check for duplicate student IDs
+    const studentIds = input.attendanceRecords.map(r => r.studentId);
+    const uniqueStudentIds = [...new Set(studentIds)];
+    if (studentIds.length !== uniqueStudentIds.length) {
+      throw new BadRequestException('Duplicate student IDs found in attendance records');
+    }
+  }
+
+  private async validateTeacherPermissions(
+    userId: string,
+    tenantId: string,
+    gradeId: string,
+    teacherRepo: Repository<Teacher>,
+    membershipRepo: Repository<UserTenantMembership>,
+  ): Promise<Teacher> {
+    // Check user membership
+    const membership = await membershipRepo.findOne({
+      where: { userId, tenantId, role: MembershipRole.TEACHER },
+    });
+
+    if (!membership) {
+      throw new BadRequestException('User is not authorized as a teacher in this tenant');
+    }
+
+    console.log('Membership found:', membership);
+    console.log('Membership found:', membership);
+    console.log(userId,'userrdkjfijd...')
+    this.logger.log(`Membership found for user ${userId} in tenant ${tenantId}`);
+
+    // Find teacher profile
+    const teacher = await teacherRepo.findOne({
+      where: { user: { id: userId }, tenantId },
+      relations: ['tenantGradeLevels', 'user'],
+    });
+
+    if (!teacher) {
+      throw new BadRequestException('Teacher profile not found for this user');
+    }
+
+    if (!teacher.isActive) {
+      throw new BadRequestException('Teacher profile is not active');
+    }
+
+    // Check grade assignment
+    const isAssignedToGrade = teacher.tenantGradeLevels?.some(
+      (grade) => grade.id === gradeId,
+    );
+
+    if (!isAssignedToGrade) {
+      this.logger.warn(
+        `Teacher ${teacher.id} (user: ${userId}) not assigned to grade ${gradeId}. ` +
+        `Assigned grades: ${teacher.tenantGradeLevels?.map(g => g.id).join(', ')}`
+      );
+      throw new BadRequestException(
+        `Teacher is not assigned to grade ${gradeId} in this tenant`,
+      );
+    }
+
+    return teacher;
+  }
+
+  private async validateGrade(
+    gradeId: string,
+    tenantId: string,
+    gradeRepo: Repository<TenantGradeLevel>,
+  ): Promise<TenantGradeLevel> {
+    const grade = await gradeRepo.findOne({
+      where: { id: gradeId, tenant: { id: tenantId } },
+      relations: ['tenant'],
+    });
+
+    if (!grade) {
+      throw new BadRequestException(
+        `Grade level ${gradeId} does not exist in tenant ${tenantId}`,
+      );
+    }
+
+    return grade;
+  }
+
+  private async validateStudents(
+    studentIds: string[],
+    gradeId: string,
+    tenantId: string,
+    studentRepo: Repository<Student>,
+    membershipRepo: Repository<UserTenantMembership>,
+  ): Promise<Student[]> {
+    const students = await studentRepo
+      .createQueryBuilder('student')
+      .innerJoin('student.user', 'user')
+      .innerJoin('user.memberships', 'membership')
+      .where('student.id IN (:...studentIds)', { studentIds })
+      .andWhere('student.grade = :gradeId', { gradeId })
+      .andWhere('membership.tenantId = :tenantId', { tenantId })
+      .andWhere('membership.role = :role', { role: MembershipRole.STUDENT })
+      .select(['student.id', 'student.grade', 'user.id', 'user.name'])
+      .getMany();
+
+    const foundStudentIds = students.map(s => s.id);
+    const missingStudentIds = studentIds.filter(id => !foundStudentIds.includes(id));
+
+    if (missingStudentIds.length > 0) {
+      throw new BadRequestException(
+        `Invalid student IDs: ${missingStudentIds.join(', ')}. ` +
+        `Students must belong to grade ${gradeId} and tenant ${tenantId}`,
+      );
+    }
+
+    return students;
+  }
+
+  private isValidDate(dateString: string): boolean {
+    const regex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!regex.test(dateString)) return false;
+
+    const date = new Date(dateString);
+    return date instanceof Date && !isNaN(date.getTime());
+  }
+
+  async getAttendanceByGradeAndDate(
+    gradeId: string,
+    date: string,
+    tenantId: string,
+  ): Promise<Attendance[]> {
+    return this.attendanceRepository.find({
+      where: { gradeId, date, tenantId },
+      relations: ['student', 'teacher'],
+      order: { createdAt: 'DESC' },
+    });
+  }
+
 
   private async validateStudentAccess(
     studentId: string,
@@ -211,20 +273,15 @@ export class AttendanceService {
       .getMany();
   }
 
-  private isValidDate(dateString: string): boolean {
-    const date = new Date(dateString);
-    return date instanceof Date && !isNaN(date.getTime());
-  }
-
 
   async debugTeacherGradeAssignments(userId: string, tenantId: string) {
   const teacherRepo = this.dataSource.getRepository(Teacher);
 
   const teacher = await teacherRepo.findOne({
     where: {
-      userId: userId,
-      tenantId: tenantId,
-    },
+        user: { id: userId },
+        tenantId: tenantId,
+      },
     relations: ['tenantGradeLevels', 'user'],
   });
 
@@ -235,7 +292,7 @@ export class AttendanceService {
 
   if (teacher) {
     console.log('Teacher ID:', teacher.id);
-    console.log('Teacher User ID:', teacher.userId);
+    console.log('Teacher User ID:', teacher.user?.id);
     console.log('Teacher Email:', teacher.email);
     console.log('Teacher Active:', teacher.isActive);
     console.log('Grade Level Assignments:');
