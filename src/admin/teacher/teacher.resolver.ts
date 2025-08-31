@@ -17,11 +17,9 @@ import { Roles } from 'src/iam/decorators/roles.decorator';
 import { SkipTenantValidation } from '../auth/decorator/skip-tenant-validation.decorator';
 import { TeacherDto } from './dtos/teacher-query.dto';
 import { PendingInvitationResponse } from './dtos/pending-response';
-import { AssignClassTeacherInput, UnassignClassTeacherInput } from './dtos/assign-class-teacher.dto';
 import { ClassTeacherAssignment } from './entities/class_teacher_assignments.entity';
-import { Repository } from 'typeorm';
 import { Teacher } from './entities/teacher.entity';
-import { TeacherType } from './dtos/teacher-type.response.dto';
+import { AssignClassTeacherInput, UnassignClassTeacherInput } from './dtos/assign/assign-classTeacher.dto';
 
 @Resolver()
 export class TeacherResolver {
@@ -143,26 +141,81 @@ export class TeacherResolver {
     return JSON.stringify(result);
   }
 
+
+
+
   @Mutation(() => ClassTeacherAssignment)
   async assignClassTeacher(
     @Args('input') input: AssignClassTeacherInput,
+    @ActiveUser() currentUser: ActiveUserData,
   ): Promise<ClassTeacherAssignment> {
-    return this.teacherService.assign(input);
+    return this.teacherService.assignTeacherAsClassTeacher(input, currentUser);
   }
-
+  
+  
   @Mutation(() => Boolean)
   async unassignClassTeacher(
     @Args('input') input: UnassignClassTeacherInput,
+    @ActiveUser() currentUser: ActiveUserData,
   ): Promise<boolean> {
-    await this.teacherService.unassign(input);
+    await this.teacherService.unassignTeacherAsClassTeacher(input, currentUser);
     return true;
   }
-
+  
+  // Queries for super admin to manage any teacher
   @Query(() => Teacher)
-  async getTeacher(
+async getTeacher(
+  @ActiveUser() currentUser: ActiveUserData,
+): Promise<Teacher> {
+  return this.teacherService.getTeacherForCurrentUser(currentUser);
+}
+  
+  @Query(() => [Teacher])
+  async getAllTeachers(
     @ActiveUser() currentUser: ActiveUserData,
-  ): Promise<Teacher> {
-    const userId = currentUser.sub; // this is the userId from JWT
-    return this.teacherService.getTeacherByUserId(userId);
+  ): Promise<Teacher[]> {
+    return this.teacherService.getAllTeachersInTenant(currentUser);
   }
+  
+  @Query(() => [ClassTeacherAssignment])
+  async getAllClassTeacherAssignments(
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise<ClassTeacherAssignment[]> {
+    return this.teacherService.getAllClassTeacherAssignmentsInTenant(currentUser);
+  }
+  
+  @Query(() => ClassTeacherAssignment, { nullable: true })
+  async getStreamClassTeacher(
+    @Args('streamId') streamId: string,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise<ClassTeacherAssignment | null> {
+    return this.teacherService.getStreamClassTeacher(streamId, currentUser);
+  }
+  
+  @Query(() => ClassTeacherAssignment, { nullable: true })
+  async getGradeLevelClassTeacher(
+    @Args('gradeLevelId') gradeLevelId: string,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise<ClassTeacherAssignment | null> {
+    return this.teacherService.getGradeLevelClassTeacher(gradeLevelId, currentUser);
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+  // @Query(() => Teacher)
+  // async getTeacher(
+  //   @ActiveUser() currentUser: ActiveUserData,
+  // ): Promise<Teacher> {
+  //   const userId = currentUser.sub;
+  //   return this.teacherService.getTeacherByUserId(userId);
+  // }
 }

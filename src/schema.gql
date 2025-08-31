@@ -116,8 +116,6 @@ enum AssessmentType {
 input AssignClassTeacherInput {
   gradeLevelId: ID
   streamId: ID
-  teacherId: ID!
-  tenantId: ID!
 }
 
 type Attendance {
@@ -777,11 +775,14 @@ type Query {
   """Filter students and teachers by grade levels, subjects, and streams"""
   filterByGradeLevelAndSubjects(input: FilterInput!): FilteredResult!
   getActiveStaffByTenant(tenantId: String!): [StaffDto!]!
+  getAllClassTeacherAssignments: [ClassTeacherAssignment!]!
+  getAllTeachers: [Teacher!]!
   getAttendanceByDate(date: String!, gradeId: String!): [Attendance!]!
 
   """Get all students and teachers for current user tenant"""
   getBothStudentsAndTeachersByTenant: CombinedSearchResult!
   getChatMessages(chatRoomId: String!, limit: Float = 50, offset: Float = 0): [ChatMessage!]!
+  getGradeLevelClassTeacher(gradeLevelId: String!): ClassTeacherAssignment
   getMyChats: [ChatRoom!]!
   getParentsByTenant(tenantId: String!): [Parent!]!
   getPendingInvitations(tenantId: String!): [PendingInvitation!]!
@@ -795,6 +796,7 @@ type Query {
   getStaffById(id: String!, tenantId: String!): StaffDto!
   getStaffByTenant(tenantId: String!): [StaffDto!]!
   getStaffCount(tenantId: String!): Float!
+  getStreamClassTeacher(streamId: String!): ClassTeacherAssignment
 
   """Get all streams for current user tenant"""
   getStreamsByTenant: [Stream!]!
@@ -1387,7 +1389,6 @@ type TokensOutput {
 
 input UnassignClassTeacherInput {
   teacherId: ID!
-  tenantId: ID!
 }
 
 input UpdateHostelInput {
