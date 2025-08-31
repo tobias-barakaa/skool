@@ -38,6 +38,8 @@ import { TenantStream } from 'src/admin/school-type/entities/tenant-stream';
 import { AssessmentMark } from 'src/teacher/marksheet/entities/assessment_marks-entity';
 import { Mark } from 'src/teacher/marksheet/entities/marksheet-entity';
 import { Assessment } from 'src/teacher/marksheet/assessment/entity/assessment.entity';
+import { ClassTeacherAssignment } from 'src/admin/teacher/entities/class_teacher_assignments.entity';
+import { Hostel } from 'src/admin/hostels/entities/hostel.entity';
 
 
 
@@ -100,7 +102,10 @@ const ENV = process.env.NODE_ENV;
       Mark,
 
       AssessmentMark,
-      Assessment
+      Assessment,
+      ClassTeacherAssignment,
+      Hostel,
+      
     ]),
   ],
   providers: [SeedingService],

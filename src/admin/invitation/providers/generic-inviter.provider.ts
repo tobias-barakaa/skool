@@ -84,7 +84,7 @@ export class GenericInviterProvider {
       existingInvitation.expiresAt = expiresAt;
       existingInvitation.status = InvitationStatus.PENDING;
       existingInvitation.userData = dto;
-      existingInvitation.lastSentAt = new Date(); // Set this BEFORE saving
+      existingInvitation.lastSentAt = new Date(); 
 
       invitationToSave = existingInvitation;
     } else {
@@ -99,7 +99,7 @@ export class GenericInviterProvider {
         type,
         status: InvitationStatus.PENDING,
         expiresAt,
-        lastSentAt: new Date(), // Set this for new invitations too
+        lastSentAt: new Date(),
         invitedBy: { id: inviter.sub } as User,
         tenant: { id: tenantId },
       });
@@ -107,10 +107,8 @@ export class GenericInviterProvider {
       await createProfileFn();
     }
 
-    // Save the invitation BEFORE sending email to prevent race conditions
     const savedInvitation = await this.invitationRepository.save(invitationToSave);
 
-    // Send email after saving
     await sendEmailFn(
       dto.email,
       dto.fullName,

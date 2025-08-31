@@ -78,19 +78,6 @@ export class Teacher {
   @JoinTable({ name: 'teacher_tenant_streams' })
   tenantStreams?: TenantStream[];
 
-  // REMOVE THESE - replaced by ClassTeacherAssignment entity
-  // @Field(() => TenantStream, { nullable: true })
-  // @ManyToOne(() => TenantStream, { nullable: true })
-  // @JoinColumn({ name: 'class_teacher_tenant_stream_id' })
-  // classTeacherOf?: TenantStream;
-
-  // @Field(() => Boolean)
-  // @Column({ default: false })
-  // isClassTeacher: boolean;
-
-  // classTeacherOfGradeLevel?: TenantGradeLevel;
-
-  // ADD: Relationship to class teacher assignments
   @Field(() => [ClassTeacherAssignment], { nullable: true })
   @OneToMany(() => ClassTeacherAssignment, (assignment) => assignment.teacher)
   classTeacherAssignments?: ClassTeacherAssignment[];

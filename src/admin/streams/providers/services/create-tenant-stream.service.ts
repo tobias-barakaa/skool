@@ -22,7 +22,7 @@ export class CreateTenantStreamService {
     private readonly cacheProvider: CacheProvider,
 
     @InjectRepository(TenantStream)
-    private readonly tenantStreamRepo: Repository<TenantStream>, // Updated to use Repository<TenantStream>
+    private readonly tenantStreamRepo: Repository<TenantStream>, 
   ) {}
 
   private async invalidateCache(tenantId: string): Promise<void> {
@@ -38,7 +38,6 @@ export class CreateTenantStreamService {
     await qr.startTransaction();
 
     try {
-      // 1. Tenant must exist
       const tenant = await qr.manager.findOne(Tenant, {
         where: { id: user.tenantId },
       });
@@ -46,7 +45,6 @@ export class CreateTenantStreamService {
         throw new BadRequestException('Tenant not found');
       }
 
-      // 2. TenantGradeLevel must exist and belong to this tenant
       const tenantGradeLevel = await qr.manager.findOne(TenantGradeLevel, {
         where: { id: dto.tenantGradeLevelId, tenant: { id: user.tenantId } },
         relations: ['gradeLevel'],
@@ -54,6 +52,21 @@ export class CreateTenantStreamService {
       if (!tenantGradeLevel) {
         throw new BadRequestException(
           'Tenant grade level not found or does not belong to this tenant',
+        );
+      }
+
+      const existing = await qr.manager.findOne(TenantStream, {
+        where: {
+          tenant: { id: user.tenantId },
+          tenantGradeLevel: { id: tenantGradeLevel.id },
+          stream: { name: dto.name },
+        },
+        relations: ['stream'],
+      });
+
+      if (existing) {
+        throw new BadRequestException(
+          `Stream with name "${dto.name}" already exists for this grade level.`,
         );
       }
 
@@ -66,7 +79,6 @@ export class CreateTenantStreamService {
       });
       const createdStream = await qr.manager.save(Stream, stream);
 
-      // 4. Create TenantStream that links Tenant ↔ TenantGradeLevel ↔ Stream
       const tenantStream = qr.manager.create(TenantStream, {
         tenant,
         tenantGradeLevel,

@@ -35,7 +35,7 @@ export class TenantSubject {
   @Field(() => CustomSubject, { nullable: true })
   @ManyToOne(() => CustomSubject, { eager: true, nullable: true })
   @JoinColumn()
-  customSubject?: CustomSubject; 
+  customSubject?: CustomSubject;
 
   @Field(() => Boolean)
   @Column({ default: true })

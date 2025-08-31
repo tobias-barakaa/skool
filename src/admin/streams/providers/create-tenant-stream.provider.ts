@@ -39,7 +39,7 @@ export class CreateTenantStreamProvider {
         throw new BadRequestException('Tenant not found');
       }
 
-      // Validate tenant grade level exists and belongs to tenant
+     
       const tenantGradeLevel = await queryRunner.manager.findOne(
         TenantGradeLevel,
         {

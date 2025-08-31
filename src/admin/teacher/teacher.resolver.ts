@@ -1,4 +1,4 @@
-import { Args, Context, GraphQLExecutionContext, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, GraphQLExecutionContext, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { Auth } from 'src/admin/auth/decorator/auth.decorator';
 import { AuthType } from 'src/admin/auth/enums/auth-type.enum';
@@ -16,10 +16,12 @@ import { MembershipRole } from '../user-tenant-membership/entities/user-tenant-m
 import { Roles } from 'src/iam/decorators/roles.decorator';
 import { SkipTenantValidation } from '../auth/decorator/skip-tenant-validation.decorator';
 import { TeacherDto } from './dtos/teacher-query.dto';
-import { UserInvitation } from '../invitation/entities/user-iInvitation.entity';
 import { PendingInvitationResponse } from './dtos/pending-response';
 import { AssignClassTeacherInput, UnassignClassTeacherInput } from './dtos/assign-class-teacher.dto';
 import { ClassTeacherAssignment } from './entities/class_teacher_assignments.entity';
+import { Repository } from 'typeorm';
+import { Teacher } from './entities/teacher.entity';
+import { TeacherType } from './dtos/teacher-type.response.dto';
 
 @Resolver()
 export class TeacherResolver {
@@ -154,5 +156,13 @@ export class TeacherResolver {
   ): Promise<boolean> {
     await this.teacherService.unassign(input);
     return true;
+  }
+
+  @Query(() => Teacher)
+  async getTeacher(
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise<Teacher> {
+    const userId = currentUser.sub; // this is the userId from JWT
+    return this.teacherService.getTeacherByUserId(userId);
   }
 }

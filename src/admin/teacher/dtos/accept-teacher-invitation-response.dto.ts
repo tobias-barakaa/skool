@@ -19,11 +19,9 @@ export class AcceptInvitationResponse {
   @Field(() => TeacherOutput, { nullable: true })
   teacher?: TeacherOutput | null;
 
-  // ✅ Add this line:
   @Field(() => UserInvitation)
   invitation: UserInvitation;
 
-  // ✅ New: role field
   @Field(() => String)
   role: MembershipRole;
 }

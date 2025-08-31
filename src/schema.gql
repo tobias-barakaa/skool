@@ -803,6 +803,7 @@ type Query {
   """Get all students for current user tenant"""
   getStudentsByTenant: SearchStudentResult!
   getStudentsForParent(parentId: String!, tenantId: String!): [StudentSearchResponse!]!
+  getTeacher: Teacher!
 
   """Get all teachers for current user tenant"""
   getTeachersByTenant: SearchTeacherResult!
