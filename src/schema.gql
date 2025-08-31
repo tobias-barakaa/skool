@@ -113,6 +113,13 @@ enum AssessmentType {
   TEST
 }
 
+input AssignClassTeacherInput {
+  gradeLevelId: ID
+  streamId: ID
+  teacherId: ID!
+  tenantId: ID!
+}
+
 type Attendance {
   createdAt: DateTime!
   date: String!
@@ -183,6 +190,19 @@ type ChatRoom {
   updatedAt: DateTime!
 }
 
+type ClassTeacherAssignment {
+  active: Boolean!
+  createdAt: DateTime!
+  endDate: DateTime
+  gradeLevel: TenantGradeLevel
+  id: ID!
+  startDate: DateTime!
+  stream: TenantStream
+  teacher: Teacher!
+  tenant: Tenant!
+  updatedAt: DateTime!
+}
+
 type CombinedSearchResult {
   students: [Student!]!
   teachers: [Teacher!]!
@@ -220,6 +240,12 @@ input CreateCustomSubjectInput {
   shortName: String
   subjectType: String! = "core"
   totalMarks: Float
+}
+
+input CreateHostelInput {
+  capacity: Int!
+  feeAmount: Float!
+  name: String!
 }
 
 input CreateOptionInput {
@@ -309,15 +335,15 @@ type CreateStudentResponse {
 
 input CreateTeacherInvitationDto {
   address: String
+  classTeacherTenantGradeLevelId: ID
   classTeacherTenantStreamId: ID
-  dateOfBirth: DateTime
+  dateOfBirth: String
   department: String!
   email: String!
   employeeId: String
   firstName: String!
   fullName: String!
   gender: String!
-  isClassTeacher: Boolean
   lastName: String!
   phoneNumber: String!
   qualifications: String
@@ -500,6 +526,16 @@ type GradeLevelWithStreamsOutput {
   streams: [StreamOutput!]!
 }
 
+type Hostel {
+  capacity: Int!
+  createdAt: DateTime!
+  feeAmount: Float!
+  id: ID!
+  name: String!
+  tenantId: String!
+  updatedAt: DateTime!
+}
+
 type InvitationInfo {
   email: String!
   role: MembershipRole!
@@ -591,10 +627,12 @@ type Mutation {
   acceptTeacherInvitation(acceptInvitationInput: AcceptInvitationInput!): AcceptInvitationResponse!
   activateTenantSubject(tenantSubjectId: String!): Boolean!
   addStudentsToParent(parentId: String!, studentIds: [String!]!, tenantId: String!): String!
+  assignClassTeacher(input: AssignClassTeacherInput!): ClassTeacherAssignment!
   changePassword(changePasswordInput: ChangePasswordInput!): PasswordResetResponse!
   configureSchoolLevelsByNames(levelNames: [String!]!): SchoolConfigurationResponse!
   createAssessment(input: CreateAssessmentInput!): AssessmentOutput!
   createCustomSubject(input: CreateCustomSubjectInput!): TenantSubject!
+  createHostel(input: CreateHostelInput!): Hostel!
   createStream(input: CreateStreamInput!): StreamType!
   createStudent(createStudentInput: CreateStudentInput!): CreateStudentResponse!
   createTenantStreamFromScratch(input: CreateTenantStreamInput!): TenantStream!
@@ -614,7 +652,7 @@ type Mutation {
   generateQuestions(generateQuestionsInput: GenerateQuestionsInput!): [GeneratedQuestionOutput!]!
   inviteParent(createParentDto: CreateParentInvitationDto!, studentIds: [String!]!, tenantId: String!): InviteParentResponse!
   inviteStaff(createStaffDto: CreateStaffInvitationDto!, tenantId: String!): InviteStaffResponse!
-  inviteTeacher(createTeacherDto: CreateTeacherInvitationDto!, tenantId: String!): InviteTeacherResponse!
+  inviteTeacher(createTeacherDto: CreateTeacherInvitationDto!): InviteTeacherResponse!
 
   """Mark attendance for students in a specific grade"""
   markAttendance(markAttendanceInput: CreateAttendanceInput!): [Attendance!]!
@@ -624,6 +662,7 @@ type Mutation {
   Refresh search cache for current user tenant (placeholder for future caching)
   """
   refreshSearchCache: Boolean!
+  removeHostel(id: String!): Boolean!
   resendTeacherInvitation(invitationId: String!): InviteTeacherResponse!
   resetPassword(resetPasswordInput: ResetPasswordInput!): PasswordResetResponse!
   revokeInvitation(invitationId: String!): RevokeInvitationResponse!
@@ -643,7 +682,9 @@ type Mutation {
   sendMessageToStudent(input: SendMessageInput!): ChatMessage!
   signIn(signInInput: SignInInput!): AuthResponse!
   toggleTenantStream(activate: Boolean!, tenantStreamId: String!): Boolean!
+  unassignClassTeacher(input: UnassignClassTeacherInput!): Boolean!
   updateCustomSubject(input: UpdateTenantSubjectInput!, tenantSubjectId: String!): TenantSubject!
+  updateHostel(input: UpdateHostelInput!): Hostel!
   updateStaff(tenantId: String!, updateStaffInput: UpdateStaffInput!): StaffDto!
   updateStream(input: UpdateStreamInput!): StreamType!
   updateStudentMarks(inputs: [EnterStudentMarksInput!]!): [AssessmentMark!]!
@@ -775,6 +816,8 @@ type Query {
   getUnreadMessageCount: Float!
   gradeLevelsForSchoolType: [TenantGradeLevel!]!
   gradeLevelsWithStreams: [GradeLevelWithStreamsOutput!]!
+  hostel(id: String!): Hostel!
+  hostels(tenantId: String!): [Hostel!]!
   marksStats(academicYear: String!, gradeLevelId: String!, subjectId: String!, term: Int!): MarksStatsDto!
   myAssignMents: [Test!]!
   searchAvailableStudentsForParent(parentId: String!, searchTerm: String, tenantId: String!): [StudentSearchResponse!]!
@@ -1154,7 +1197,7 @@ type Subscription {
 
 type Teacher {
   address: String
-  classTeacherOf: TenantStream
+  classTeacherAssignments: [ClassTeacherAssignment!]
   createdAt: DateTime!
   dateOfBirth: DateTime
   department: String!
@@ -1166,7 +1209,6 @@ type Teacher {
   hasCompletedProfile: Boolean
   id: ID!
   isActive: Boolean
-  isClassTeacher: Boolean!
   lastName: String!
   phoneNumber: String!
   qualifications: String
@@ -1340,6 +1382,18 @@ type TokenResponse {
 type TokensOutput {
   accessToken: String!
   refreshToken: String!
+}
+
+input UnassignClassTeacherInput {
+  teacherId: ID!
+  tenantId: ID!
+}
+
+input UpdateHostelInput {
+  capacity: Int
+  feeAmount: Float
+  id: String!
+  name: String
 }
 
 input UpdateStaffInput {

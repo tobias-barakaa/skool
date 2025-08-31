@@ -21,6 +21,9 @@ import { TeacherDto } from '../dtos/teacher-query.dto';
 import { async } from 'rxjs';
 import { handleInvitationResendLogic } from 'src/admin/shared/utils/invitation.utils';
 import { PendingInvitationResponse } from '../dtos/pending-response';
+import { ClassTeacherProvider } from './class-teacher-assign.provider';
+import { AssignClassTeacherInput, UnassignClassTeacherInput } from '../dtos/assign-class-teacher.dto';
+import { ClassTeacherAssignment } from '../entities/class_teacher_assignments.entity';
 
 @Injectable()
 export class TeacherService {
@@ -54,6 +57,8 @@ export class TeacherService {
 
     @InjectRepository(TenantSubject)
     private readonly tenantSubjectRepo: Repository<TenantSubject>,
+
+    private readonly classTeacherProvider: ClassTeacherProvider,
   ) {}
 
   async inviteTeacher(
@@ -64,22 +69,23 @@ export class TeacherService {
     this.logger.log(`Inviting teacher: ${dto.email} to tenant: ${tenantId}`);
 
     try {
-      // Get inviter's name for email
       const inviter = await this.userRepository.findOne({
         where: { id: currentUser.sub },
         select: ['id', 'name', 'email'],
       });
+      console.log('Inviter details:', inviter);
 
       if (!inviter) {
         throw new BadRequestException('Inviter not found');
       }
+
+      console.log(`Inviting teacher: ${dto.email} to tenant: ${tenantId}`);
 
       return await this.invitationService.inviteUser(
         currentUser,
         tenantId,
         dto,
         InvitationType.TEACHER,
-        // Pass inviter's name instead of ID
         (email, fullName, schoolName, token, _inviterId, tenantId) =>
           this.emailService.sendTeacherInvitation(
             email,
@@ -117,46 +123,61 @@ export class TeacherService {
       const tenantGradeLevelRepo = manager.getRepository(TenantGradeLevel);
       const tenantStreamRepo = manager.getRepository(TenantStream);
       const tenantSubjectRepo = manager.getRepository(TenantSubject);
+      const classTeacherAssignmentRepo = manager.getRepository(
+        ClassTeacherAssignment,
+      );
 
-      // Fetch and validate all related entities in parallel
-      const [
-        tenantGradeLevels,
-        tenantStreams,
-        tenantSubjects,
-        classTeacherStream,
-      ] = await Promise.all([
-        this.fetchTenantGradeLevels(
-          dto.tenantGradeLevelIds,
-          tenantId,
-          tenantGradeLevelRepo,
-        ),
-        this.fetchTenantStreams(
-          dto.tenantStreamIds,
-          tenantId,
-          tenantStreamRepo,
-        ),
-        this.fetchTenantSubjects(
-          dto.tenantSubjectIds,
-          tenantId,
-          tenantSubjectRepo,
-        ),
-        this.fetchClassTeacherStream(
+      // Fetch basic relationships
+      const [tenantGradeLevels, tenantStreams, tenantSubjects] =
+        await Promise.all([
+          this.fetchTenantGradeLevels(
+            dto.tenantGradeLevelIds,
+            tenantId,
+            tenantGradeLevelRepo,
+          ),
+          this.fetchTenantStreams(
+            dto.tenantStreamIds,
+            tenantId,
+            tenantStreamRepo,
+          ),
+          this.fetchTenantSubjects(
+            dto.tenantSubjectIds,
+            tenantId,
+            tenantSubjectRepo,
+          ),
+        ]);
+
+      // Validate class teacher assignments if provided
+      let classTeacherStream: TenantStream | undefined = undefined;
+      let classTeacherGradeLevel: TenantGradeLevel | undefined = undefined;
+
+      if (dto.classTeacherTenantStreamId) {
+        classTeacherStream = await this.fetchClassTeacherStream(
           dto.classTeacherTenantStreamId,
           tenantId,
           tenantStreamRepo,
-        ),
-      ]);
+        );
+      }
 
-      // Validate relationships
-      this.validateTeacherRelationships(
+      if (dto.classTeacherTenantGradeLevelId) {
+        classTeacherGradeLevel = await this.fetchClassTeacherGradeLevel(
+          dto.classTeacherTenantGradeLevelId,
+          tenantId,
+          tenantGradeLevelRepo,
+        );
+      }
+
+      // Validate teacher data
+      this.validateTeacherData(
         dto,
         tenantGradeLevels,
         tenantStreams,
         tenantSubjects,
         classTeacherStream,
+        classTeacherGradeLevel,
       );
 
-      // Create teacher entity
+      // Create teacher entity (removed class teacher fields)
       const teacher = teacherRepo.create({
         fullName: dto.fullName,
         firstName: dto.firstName,
@@ -168,9 +189,8 @@ export class TeacherService {
         role: dto.role,
         address: dto.address,
         employeeId: dto.employeeId,
-        dateOfBirth: dto.dateOfBirth,
+        dateOfBirth: dto.dateOfBirth ? new Date(dto.dateOfBirth) : undefined,
         qualifications: dto.qualifications,
-        isClassTeacher: dto.isClassTeacher || false,
         isActive: false,
         hasCompletedProfile: false,
         tenantId,
@@ -182,13 +202,122 @@ export class TeacherService {
       teacher.tenantStreams = tenantStreams;
       teacher.tenantSubjects = tenantSubjects;
 
-      if (dto.isClassTeacher && classTeacherStream) {
-        teacher.classTeacherOf = classTeacherStream;
+      // Save teacher first to get the ID
+      const savedTeacher = await teacherRepo.save(teacher);
+
+      // Handle class teacher assignments using the ClassTeacherProvider
+      if (classTeacherStream) {
+        // End any existing stream class teacher assignments for this stream
+        await classTeacherAssignmentRepo.update(
+          { stream: { id: classTeacherStream.id }, active: true },
+          { active: false, endDate: new Date() },
+        );
+
+        // Create new stream class teacher assignment
+        const streamAssignment = classTeacherAssignmentRepo.create({
+          tenant: { id: tenantId },
+          teacher: { id: savedTeacher.id },
+          stream: { id: classTeacherStream.id },
+          active: true,
+          startDate: new Date(),
+        });
+
+        await classTeacherAssignmentRepo.save(streamAssignment);
       }
 
-      await teacherRepo.save(teacher);
+      if (classTeacherGradeLevel) {
+        // End any existing grade level class teacher assignments for this grade level
+        await classTeacherAssignmentRepo.update(
+          { gradeLevel: { id: classTeacherGradeLevel.id }, active: true },
+          { active: false, endDate: new Date() },
+        );
+
+        // Create new grade level class teacher assignment
+        const gradeLevelAssignment = classTeacherAssignmentRepo.create({
+          tenant: { id: tenantId },
+          teacher: { id: savedTeacher.id },
+          gradeLevel: { id: classTeacherGradeLevel.id },
+          active: true,
+          startDate: new Date(),
+        });
+
+        await classTeacherAssignmentRepo.save(gradeLevelAssignment);
+      }
+
       this.logger.log(`Teacher profile created for ${dto.email}`);
     });
+  }
+
+  private validateTeacherData(
+    dto: CreateTeacherInvitationDto,
+    tenantGradeLevels: TenantGradeLevel[],
+    tenantStreams: TenantStream[],
+    tenantSubjects: TenantSubject[],
+    classTeacherStream?: TenantStream,
+    classTeacherGradeLevel?: TenantGradeLevel,
+  ): void {
+    // Can't be class teacher of both stream and grade level
+    if (classTeacherStream && classTeacherGradeLevel) {
+      throw new BadRequestException(
+        'Teacher cannot be class teacher of both a stream and grade level',
+      );
+    }
+
+    // Basic relationship validations
+    if (dto.tenantSubjectIds?.length && tenantSubjects.length === 0) {
+      throw new BadRequestException('No valid subjects found');
+    }
+
+    if (dto.tenantStreamIds?.length && tenantStreams.length === 0) {
+      throw new BadRequestException('No valid streams found');
+    }
+
+    if (dto.tenantGradeLevelIds?.length && tenantGradeLevels.length === 0) {
+      throw new BadRequestException('No valid grade levels found');
+    }
+
+    // Validate class teacher assignments are within assigned relationships
+    if (classTeacherStream && (dto.tenantStreamIds ?? []).length > 0) {
+      const isStreamAssigned = tenantStreams.some(
+        (stream) => stream.id === classTeacherStream.id,
+      );
+      if (!isStreamAssigned) {
+        throw new BadRequestException(
+          'Class teacher stream must be included in assigned streams',
+        );
+      }
+    }
+
+    if (classTeacherGradeLevel && (dto.tenantGradeLevelIds ?? []).length > 0) {
+      const isGradeLevelAssigned = tenantGradeLevels.some(
+        (gradeLevel) => gradeLevel.id === classTeacherGradeLevel.id,
+      );
+      if (!isGradeLevelAssigned) {
+        throw new BadRequestException(
+          'Class teacher grade level must be included in assigned grade levels',
+        );
+      }
+    }
+  }
+
+  private async fetchClassTeacherGradeLevel(
+    gradeLevelId: string,
+    tenantId: string,
+    tenantGradeLevelRepo: Repository<TenantGradeLevel>,
+  ): Promise<TenantGradeLevel | undefined> {
+    if (!gradeLevelId) return undefined;
+
+    const gradeLevel = await tenantGradeLevelRepo.findOne({
+      where: { id: gradeLevelId, tenant: { id: tenantId } },
+    });
+
+    if (!gradeLevel) {
+      throw new BadRequestException(
+        `Class teacher grade level with ID ${gradeLevelId} not found`,
+      );
+    }
+
+    return gradeLevel;
   }
 
   private async fetchTenantGradeLevels(
@@ -244,70 +373,6 @@ export class TeacherService {
     return stream || undefined;
   }
 
-  private validateTeacherRelationships(
-    dto: CreateTeacherInvitationDto,
-    gradeLevels: TenantGradeLevel[],
-    streams: TenantStream[],
-    subjects: TenantSubject[],
-    classTeacherStream: TenantStream | undefined,
-  ): void {
-    // Validate grade levels
-    if (
-      dto.tenantGradeLevelIds &&
-      dto.tenantGradeLevelIds.length !== gradeLevels.length
-    ) {
-      const foundIds = gradeLevels.map((g) => g.id);
-      const missingIds = dto.tenantGradeLevelIds.filter(
-        (id) => !foundIds.includes(id),
-      );
-      throw new BadRequestException(
-        `Grade levels not found: ${missingIds.join(', ')}`,
-      );
-    }
-
-    // Validate streams
-    if (dto.tenantStreamIds && dto.tenantStreamIds.length !== streams.length) {
-      const foundIds = streams.map((s) => s.id);
-      const missingIds = dto.tenantStreamIds.filter(
-        (id) => !foundIds.includes(id),
-      );
-      throw new BadRequestException(
-        `Streams not found: ${missingIds.join(', ')}`,
-      );
-    }
-
-    // Validate subjects
-    if (
-      dto.tenantSubjectIds &&
-      dto.tenantSubjectIds.length !== subjects.length
-    ) {
-      const foundIds = subjects.map((s) => s.id);
-      const missingIds = dto.tenantSubjectIds.filter(
-        (id) => !foundIds.includes(id),
-      );
-      throw new BadRequestException(
-        `Subjects not found: ${missingIds.join(', ')}`,
-      );
-    }
-
-    // Validate class teacher stream
-    if (dto.classTeacherTenantStreamId && !classTeacherStream) {
-      throw new BadRequestException('Invalid class teacher stream ID');
-    }
-
-    // Validate class teacher stream is among selected streams
-    if (
-      dto.isClassTeacher &&
-      dto.classTeacherTenantStreamId &&
-      dto.tenantStreamIds?.length &&
-      !dto.tenantStreamIds.includes(dto.classTeacherTenantStreamId)
-    ) {
-      throw new BadRequestException(
-        'Class teacher stream must be among selected streams',
-      );
-    }
-  }
-
   async findTeacherByUserId(
     userId: string,
     tenantId: string,
@@ -324,28 +389,26 @@ export class TeacherService {
     });
   }
 
-  async debugTeacherAssignments(
-    userId: string,
-    tenantId: string,
-  ): Promise<any> {
-    const teacher = await this.findTeacherByUserId(userId, tenantId);
+  // async debugTeacherAssignments(
+  //   userId: string,
+  //   tenantId: string,
+  // ): Promise<any> {
+  //   const teacher = await this.findTeacherByUserId(userId, tenantId);
 
-    const debug = {
-      teacherFound: !!teacher,
-      teacherId: teacher?.id,
-      teacherEmail: teacher?.email,
-      isActive: teacher?.isActive,
-      gradeLevelIds: teacher?.tenantGradeLevels?.map((g) => g.id) || [],
-      streamIds: teacher?.tenantStreams?.map((s) => s.id) || [],
-      subjectIds: teacher?.tenantSubjects?.map((s) => s.id) || [],
-      classTeacherStreamId: teacher?.classTeacherOf?.id,
-    };
+  //   const debug = {
+  //     teacherFound: !!teacher,
+  //     teacherId: teacher?.id,
+  //     teacherEmail: teacher?.email,
+  //     isActive: teacher?.isActive,
+  //     gradeLevelIds: teacher?.tenantGradeLevels?.map((g) => g.id) || [],
+  //     streamIds: teacher?.tenantStreams?.map((s) => s.id) || [],
+  //     subjectIds: teacher?.tenantSubjects?.map((s) => s.id) || [],
+  //     classTeacherStreamId: teacher?.classTeacherOf?.id,
+  //   };
 
-    this.logger.debug('Teacher debug info:', debug);
-    return debug;
-  }
-
-  // Assuming this method is in a service that injects the TeacherRepository
+  //   this.logger.debug('Teacher debug info:', debug);
+  //   return debug;
+  // }
 
   async acceptInvitation(
     token: string,
@@ -360,16 +423,14 @@ export class TeacherService {
           {
             isActive: true,
             hasCompletedProfile: true,
-            user: { id: user.id }, // Correctly setting the 'user_id' foreign key via the relation
+            user: { id: user.id },
           },
         );
       },
     );
-
-    // Fetch the teacher again, ensuring the 'user' relation is loaded
     const teacher = await this.teacherRepository.findOne({
       where: { email: result.user.email },
-      relations: ['user'], // Essential to load the related User object
+      relations: ['user'],
     });
 
     return {
@@ -380,9 +441,6 @@ export class TeacherService {
         ? {
             id: teacher.id,
             name: teacher.fullName,
-            // --- CORRECTION: Removed 'userId' here as it no longer exists on the entity
-            //                and should ideally not be a direct property in the DTO if it's redundant.
-            //                If the DTO *still* requires it, see Option 2 below.
           }
         : null,
       invitation: result.invitation,
@@ -400,19 +458,6 @@ export class TeacherService {
       InvitationType.TEACHER,
     );
   }
-
-  // async resendTeacherInvitation(
-  //   invitationId: string,
-  //   currentUser: ActiveUserData,
-  //   tenantId: string,
-  // ) {
-  //   return this.invitationService.resendInvitation(
-  //     invitationId,
-  //     currentUser,
-  //     tenantId,
-  //     this.emailService.sendTeacherInvitation.bind(this.emailService),
-  //   );
-  // }
 
   async cancelTeacherInvitation(
     invitationId: string,
@@ -449,24 +494,6 @@ export class TeacherService {
 
     return { message: 'Invitation revoked successfully' };
   }
-
-  // async deleteTeacher(
-  //   teacherId: string,
-  //   currentUserId: string,
-  //   tenantId: string,
-  // ) {
-  //   return this.invitationService.deleteEntity(
-  //     this.teacherRepository,
-  //     teacherId,
-  //     currentUserId,
-  //     tenantId,
-  //     {
-  //       roles: [MembershipRole.SCHOOL_ADMIN],
-  //       userIdField: 'userId',
-  //       deleteUserIfOrphaned: true,
-  //     },
-  //   );
-  // }
 
   async getTeachersByTenant(tenantId: string): Promise<TeacherDto[]> {
     const teachers = await this.teacherRepository.find({
@@ -613,7 +640,7 @@ export class TeacherService {
             inviter.name || inviter.email,
             tenantId,
           ),
-        () => Promise.resolve(), // Don't create profile again on resend
+        () => Promise.resolve(),
       );
     } catch (error) {
       this.logger.error(
@@ -623,463 +650,12 @@ export class TeacherService {
       throw error;
     }
   }
+
+  async assign(input: AssignClassTeacherInput) {
+    return this.classTeacherProvider.assign(input);
+  }
+
+  async unassign(input: UnassignClassTeacherInput) {
+    return this.classTeacherProvider.unassign(input);
+  }
 }
-
-
-
-
- // async inviteTeacher(
-  //   createTeacherDto: CreateTeacherInvitationDto,
-  //   currentUser: ActiveUserData,
-  //   tenantId: string,
-  // ) {
-  //   return this.invitationService.inviteUser(
-  //     currentUser,
-  //     tenantId,
-  //     createTeacherDto,
-  //     InvitationType.TEACHER,
-  //     this.emailService.sendTeacherInvitation.bind(this.emailService),
-  //     async () => {
-  //       const teacherExists = await this.teacherRepository.findOne({
-  //         where: { email: createTeacherDto.email },
-  //       });
-
-  //       if (!teacherExists) {
-  //         const teacher = this.teacherRepository.create({
-  //           ...createTeacherDto,
-  //           isActive: false,
-  //           hasCompletedProfile: false,
-  //           tenant: { id: tenantId },
-  //         });
-
-  //         await this.teacherRepository.save(teacher);
-  //       }
-  //     },
-  //   );
-  // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import {  BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-// import { InjectRepository } from '@nestjs/typeorm';
-// import { In, Repository } from 'typeorm';
-// import { Teacher } from '../entities/teacher.entity';
-// import { User } from 'src/admin/users/entities/user.entity';
-// import { InvitationStatus, InvitationType, UserInvitation } from 'src/admin/invitation/entities/user-iInvitation.entity';
-// import { MembershipRole, UserTenantMembership } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
-// import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
-// import { AcceptInvitationResponse } from '../dtos/accept-teacher-invitation-response.dto';
-// import { CreateTeacherInvitationDto } from '../dtos/create-teacher-invitation.dto';
-// import { EmailService } from 'src/admin/email/providers/email.service';
-// import { InvitationService } from 'src/admin/invitation/providers/invitation.service';
-// import { validateMembershipAccess } from 'src/admin/shared/utils/access.utils';
-// import { Subject } from 'src/admin/subject/entities/subject.entity';
-// import { GradeLevel } from 'src/admin/level/entities/grade-level.entity';
-// import { Stream } from 'src/admin/streams/entities/streams.entity';
-// import { SchoolSetupGuardService } from 'src/admin/config/school-config.guard';
-// import { TenantGradeLevel } from 'src/admin/school-type/entities/tenant-grade-level';
-// import { TenantStream } from 'src/admin/school-type/entities/tenant-stream';
-// import { TenantSubject } from 'src/admin/school-type/entities/tenant-specific-subject';
-
-// @Injectable()
-// export class TeacherService {
-//   constructor(
-//     @InjectRepository(Teacher)
-//     private readonly teacherRepository: Repository<Teacher>,
-//     @InjectRepository(User)
-//     private readonly userRepository: Repository<User>,
-//     @InjectRepository(UserTenantMembership)
-//     private readonly membershipRepository: Repository<UserTenantMembership>,
-//     private readonly emailService: EmailService,
-//     private readonly invitationService: InvitationService,
-//     @InjectRepository(UserInvitation)
-//     private invitationRepository: Repository<UserInvitation>,
-
-//     @InjectRepository(Subject)
-//     private subjectRepository: Repository<Subject>,
-//     @InjectRepository(GradeLevel)
-//     private gradeLevelRepository: Repository<GradeLevel>,
-
-//     @InjectRepository(Stream)
-//     private streamRepository: Repository<Stream>,
-
-//     private readonly schoolSetupGuardService: SchoolSetupGuardService,
-
-//     @InjectRepository(TenantGradeLevel)
-//     private readonly tenantGradeLevelRepo: Repository<TenantGradeLevel>,
-
-//     @InjectRepository(TenantStream)
-//     private readonly tenantStreamRepo: Repository<TenantStream>,
-
-//     @InjectRepository(TenantSubject)
-//     private readonly tenantSubjectRepo: Repository<TenantSubject>,
-
-//   ) {}
-
-//   async inviteTeacher(
-//   dto: CreateTeacherInvitationDto,
-//   currentUser: ActiveUserData,
-//   tenantId: string,
-// ) {
-//   // 1. Re-use your tenant-role guard or manual check
-//   await this.schoolSetupGuardService.validateSchoolIsConfigured(tenantId);
-//   // await assertSchoolIsConfigured({ tenantId } as ActiveUserData); // global helper
-//  const membership = await this.membershipRepository.findOne({
-//    where: {
-//      userId: currentUser.sub,
-//      role: MembershipRole.SCHOOL_ADMIN,
-//    },
-//    relations: ['tenant'],
-//  });
-
-//     if (!membership) {
-//       throw new ForbiddenException('Only school admins can create students');
-//     }
-
-//     tenantId = membership.tenantId;
-
-//     await this.schoolSetupGuardService.validateSchoolIsConfigured(tenantId);
-//   // 2. Validate every id belongs to the tenant
-//   const [
-//     tenantGradeLevels,
-//     tenantStreams,
-//     tenantSubjects,
-//     classTeacherStream,
-//   ] = await Promise.all([
-//     dto.tenantGradeLevelIds?.length
-//       ? this.tenantGradeLevelRepo.findBy({
-//           id: In(dto.tenantGradeLevelIds),
-//           tenant: { id: tenantId },
-//         })
-//       : Promise.resolve([]),
-
-//     dto.tenantStreamIds?.length
-//       ? this.tenantStreamRepo.findBy({
-//           id: In(dto.tenantStreamIds),
-//           tenant: { id: tenantId },
-//         })
-//       : Promise.resolve([]),
-
-//     dto.tenantSubjectIds?.length
-//       ? this.tenantSubjectRepo.findBy({
-//           id: In(dto.tenantSubjectIds),
-//           tenant: { id: tenantId },
-//         })
-//       : Promise.resolve([]),
-
-//     dto.classTeacherTenantStreamId
-//       ? this.tenantStreamRepo.findOne({
-//           where: {
-//             id: dto.classTeacherTenantStreamId,
-//             tenant: { id: tenantId },
-//           },
-//         })
-//       : Promise.resolve(undefined),
-//   ]);
-
-//   // 3. Ensure all requested ids were found
-//   if (
-//     dto.tenantGradeLevelIds &&
-//     dto.tenantGradeLevelIds.length !== tenantGradeLevels.length
-//   )
-//     throw new BadRequestException('One or more grade levels not found');
-
-//   if (dto.tenantStreamIds && dto.tenantStreamIds.length !== tenantStreams.length)
-//     throw new BadRequestException('One or more streams not found');
-
-//   if (
-//     dto.tenantSubjectIds &&
-//     dto.tenantSubjectIds.length !== tenantSubjects.length
-//   )
-//     throw new BadRequestException('One or more subjects not found');
-
-//   if (dto.classTeacherTenantStreamId && !classTeacherStream)
-//     throw new BadRequestException('Invalid class-teacher stream');
-
-
-
-
-
-
-
-// // const token = crypto.randomBytes(32).toString('hex');
-// //   const expiresAt = new Date();
-// //   expiresAt.setDate(expiresAt.getDate() + 7);
-
-// //   // Prepare student data for invitation
-// //   const studentsData = validatedStudents.map(({ student, membership }) => ({
-// //     id: student.id,
-// //     name: membership.user.name,
-// //     admissionNumber: student.admission_number,
-// //     grade: String(student.grade),
-// //   }));
-
-// //   // Create invitation record with multiple students information
-// //   const invitation = this.invitationRepository.create({
-// //     email: createParentDto.email,
-// //     name: createParentDto.name,
-// //     role: MembershipRole.PARENT,
-// //     userData: {
-// //       ...createParentDto,
-// //       fullName: createParentDto.name,
-// //       students: studentsData,
-// //     },
-// //     token,
-// //     type: InvitationType.PARENT,
-// //     status: InvitationStatus.PENDING,
-// //     expiresAt,
-// //     invitedBy: currentUser,
-// //     tenant: { id: currentUser.tenantId },
-// //   });
-
-// //   await this.invitationRepository.save(invitation);
-
-
-
-
-
-
-
-//   // 4. Create the teacher record
-//   const teacher = this.teacherRepository.create({
-//     email: dto.email,
-//     fullName: dto.fullName,
-//     firstName: dto.firstName,
-//     lastName: dto.lastName,
-//     role: dto.role,
-//     gender: dto.gender,
-//     department: dto.department,
-//     phoneNumber: dto.phoneNumber,
-//     address: dto.address,
-//     employeeId: dto.employeeId,
-//     dateOfBirth: dto.dateOfBirth,
-//     qualifications: dto.qualifications,
-//     isActive: false,
-//     hasCompletedProfile: false,
-//     tenant: { id: tenantId },
-//   });
-
-//   (teacher.tenantGradeLevels = tenantGradeLevels);
-//   teacher.tenantStreams = tenantStreams;
-//   teacher.tenantSubjects = tenantSubjects;
-//   teacher.classTeacherOf = classTeacherStream || undefined;
-
-//   await this.teacherRepository.save(teacher);
-
-// // 6. Send invitation email
-// await this.emailService.sendTeacherInvitation(
-//   dto.email,
-//   teacher.fullName,
-//   membership.tenant.name,
-//   'invitationToken', // TODO: Generate or obtain invitationToken
-//   currentUser.email,
-//   tenantId
-// );
-
-// return {
-//     email: dto.email,
-//     fullName: dto.fullName,
-//     status: 'INVITED',
-//     createdAt: new Date(),
-//   };
-// }
-
-
-//   async acceptInvitation(
-//     token: string,
-//     password: string,
-//   ): Promise<AcceptInvitationResponse> {
-//     const result = await this.invitationService.acceptInvitation(
-//       token,
-//       password,
-//       async (user: User, invitation: UserInvitation) => {
-//         await this.teacherRepository.update(
-//           { email: invitation.email },
-//           {
-//             isActive: true,
-//             hasCompletedProfile: true,
-//             user: { id: user.id },
-//           },
-//         );
-//       },
-//     );
-
-//     const teacher = await this.teacherRepository.findOne({
-//       where: { email: result.user.email },
-//     });
-
-//     return {
-//       message: result.message,
-//       user: result.user,
-//       tokens: result.tokens,
-//       teacher: teacher
-//         ? {
-//             id: teacher.id,
-//             name: teacher.fullName,
-//           }
-//         : null,
-//       invitation: result.invitation,
-//       role: result.role,
-//     };
-//   }
-
-//   async getPendingTeacherInvitations(
-//     tenantId: string,
-//     currentUser: ActiveUserData,
-//   ) {
-//     return this.invitationService.getPendingInvitationsByType(
-//       tenantId,
-//       currentUser,
-//       InvitationType.TEACHER,
-//     );
-//   }
-
-//   async resendTeacherInvitation(
-//     invitationId: string,
-//     currentUser: ActiveUserData,
-//     tenantId: string,
-//   ) {
-//     return this.invitationService.resendInvitation(
-//       invitationId,
-//       currentUser,
-//       tenantId,
-//       this.emailService.sendTeacherInvitation.bind(this.emailService),
-//     );
-//   }
-
-//   async cancelTeacherInvitation(
-//     invitationId: string,
-//     currentUser: ActiveUserData,
-//     tenantId: string,
-//   ) {
-//     return this.invitationService.cancelInvitation(
-//       invitationId,
-//       currentUser,
-//       tenantId,
-//     );
-//   }
-
-//   async revokeInvitation(invitationId: string, currentUser: ActiveUserData) {
-//     const invitation = await this.invitationRepository.findOne({
-//       where: { id: invitationId },
-//       relations: ['tenant'],
-//     });
-
-//     if (!invitation) {
-//       throw new NotFoundException('Invitation not found');
-//     }
-
-//     await validateMembershipAccess(
-//       this.membershipRepository,
-//       currentUser.sub,
-//       invitation.tenant.id,
-//       [MembershipRole.SCHOOL_ADMIN],
-//     );
-
-//     await this.invitationRepository.update(invitationId, {
-//       status: InvitationStatus.REVOKED,
-//     });
-
-//     return { message: 'Invitation revoked successfully' };
-//   }
-
-
-
-
-//   // async deleteTeacher(
-//   //   teacherId: string,
-//   //   currentUserId: string,
-//   //   tenantId: string,
-//   // ) {
-//   //   return this.invitationService.deleteEntity(
-//   //     this.teacherRepository,
-//   //     teacherId,
-//   //     currentUserId,
-//   //     tenantId,
-//   //     {
-//   //       roles: [MembershipRole.SCHOOL_ADMIN],
-//   //       userIdField: 'userId',
-//   //       deleteUserIfOrphaned: true,
-//   //     },
-//   //   );
-//   // }
-
-//   async deleteTeacher(
-//     teacherId: string,
-//     currentUserId: string,
-//     tenantId: string,
-//   ) {
-//     return this.invitationService.deleteEntity(
-//       this.teacherRepository,
-//       teacherId,
-//       currentUserId,
-//       tenantId,
-//       {
-//         roles: [MembershipRole.SCHOOL_ADMIN],
-//         userIdField: 'userId',
-//         deleteUserIfOrphaned: true,
-//         // cleanupInvitations: true, // Removed as it is not a known property
-//         // invitationEmailField: 'email', // Removed as it is not a known property
-//       },
-//     );
-//   }
-// }
-
-
-
-
-
-
- // async inviteTeacher(
-  //   createTeacherDto: CreateTeacherInvitationDto,
-  //   currentUser: ActiveUserData,
-  //   tenantId: string,
-  // ) {
-  //   return this.invitationService.inviteUser(
-  //     currentUser,
-  //     tenantId,
-  //     createTeacherDto,
-  //     InvitationType.TEACHER,
-  //     this.emailService.sendTeacherInvitation.bind(this.emailService),
-  //     async () => {
-  //       const teacherExists = await this.teacherRepository.findOne({
-  //         where: { email: createTeacherDto.email },
-  //       });
-
-  //       if (!teacherExists) {
-  //         const teacher = this.teacherRepository.create({
-  //           ...createTeacherDto,
-  //           isActive: false,
-  //           hasCompletedProfile: false,
-  //           tenant: { id: tenantId },
-  //         });
-
-  //         await this.teacherRepository.save(teacher);
-  //       }
-  //     },
-  //   );
-  // }

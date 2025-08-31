@@ -15,6 +15,8 @@ import { TenantGradeLevel } from '../school-type/entities/tenant-grade-level';
 import { TenantStream } from '../school-type/entities/tenant-stream';
 import { TenantSubject } from '../school-type/entities/tenant-specific-subject';
 import { AuthModule } from '../auth/auth.module';
+import { ClassTeacherAssignment } from './entities/class_teacher_assignments.entity';
+import { ClassTeacherProvider } from './providers/class-teacher-assign.provider';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -22,6 +24,7 @@ import { AuthModule } from '../auth/auth.module';
       TenantGradeLevel,
       TenantStream,
       TenantSubject,
+      ClassTeacherAssignment,
     ]),
     forwardRef(() => InvitationModule),
     SubjectModule,
@@ -33,7 +36,7 @@ import { AuthModule } from '../auth/auth.module';
     EmailModule,
     forwardRef(() => UserModule),
   ],
-  providers: [TeacherService, TeacherResolver],
+  providers: [TeacherService, TeacherResolver, ClassTeacherProvider],
   exports: [TypeOrmModule],
 })
 export class TeacherModule {}

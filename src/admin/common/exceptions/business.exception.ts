@@ -59,9 +59,9 @@ export class UserNotInTenantException extends BusinessException {
 export class EmailSendFailedException extends BusinessException {
   constructor(email: string) {
     super(
-      `Failed to send invitation email to ${email}`,
+      `cannot send invitation in development mode: ${email}`,
       'EMAIL_SEND_FAILED',
-      500,
+      HttpStatus.INTERNAL_SERVER_ERROR,
       { email }
     );
     this.name = 'EmailSendFailedException';

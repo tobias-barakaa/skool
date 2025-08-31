@@ -20,6 +20,7 @@ import { TeacherProfilesModule } from './teacher_profiles/teacher_profiles.modul
 import { EmailModule } from './email/email.module';
 import { StaffModule } from './staff/staff.module';
 import { SchoolConfigModule } from './config/config.module';
+import { HostelModule } from './hostels/hostel.module';
 
 
 @Module({
@@ -47,6 +48,7 @@ import { SchoolConfigModule } from './config/config.module';
     TeacherModule,
     ParentModule,
     SchoolConfigModule,
+    HostelModule,
   ],
 })
 export class AdminModule {}

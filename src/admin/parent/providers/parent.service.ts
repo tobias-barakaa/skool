@@ -409,7 +409,7 @@ export class ParentService {
     );
   } catch (error) {
     console.error('[EmailService Error]', error);
-    throw new BadRequestException('Failed to send invitation email');
+    throw new BadRequestException('cannot send invitation in development mode');
   }
 
   return {

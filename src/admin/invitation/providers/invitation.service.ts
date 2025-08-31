@@ -190,26 +190,6 @@ export class InvitationService {
     return { token, expiresAt };
   }
 
-  // async deleteTeacher(
-  //   teacherId: string,
-  //   currentUserId: string,
-  //   tenantId: string,
-  // ) {
-  //   return this.invitationService.deleteEntity(
-  //     this.teacherRepository,
-  //     teacherId,
-  //     currentUserId,
-  //     tenantId,
-  //     {
-  //       roles: [MembershipRole.SCHOOL_ADMIN],
-  //       userIdField: 'userId',
-  //       deleteUserIfOrphaned: true,
-  //       cleanupInvitations: true,
-  //       invitationEmailField: 'email', // field in teacher entity that matches invitation email
-  //     },
-  //   );
-  // }
-
   async deleteEntity<T extends ObjectLiteral>(
     repository: Repository<T>,
     entityId: string,
@@ -233,7 +213,7 @@ export class InvitationService {
 
 
 
-  
+
 
 
 }

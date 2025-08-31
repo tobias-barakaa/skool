@@ -5,6 +5,7 @@ import { Stream } from 'src/admin/streams/entities/streams.entity';
 import { UserTenantMembership } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { ScaleTier } from '../dtos/scale-dto';
+import { Hostel } from 'src/admin/hostels/entities/hostel.entity';
 
 @ObjectType()
 @Entity('tenants')
@@ -29,11 +30,8 @@ export class Tenant {
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
-  // @Column('text', { name: 'scale_tier', default: ScaleTier.SMALL })
-  // scaleTier!: ScaleTier;
-
-  // @Column('jsonb', { name: 'scale_config', default: {} })
-  // scaleConfig!: json;
+  @OneToMany(() => Hostel, (hostel) => hostel.tenant)
+  hostels: Hostel[];
 
   @OneToMany(() => UserTenantMembership, (membership) => membership.tenant)
   @Field(() => [UserTenantMembership])

@@ -8,7 +8,6 @@ import { DataSource, Repository } from 'typeorm';
 import { AuthResponse, SignupInput } from '../dtos/signUp-input';
 import { User } from '../entities/user.entity';
 import { MembershipRole, UserTenantMembership } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
-import { InvitationService } from 'src/admin/invitation/providers/invitation.service';
 import { Tenant } from 'src/admin/tenants/entities/tenant.entity';
 import { SchoolAlreadyExistsException, UserAlreadyExistsException } from 'src/admin/common/exceptions/business.exception';
 

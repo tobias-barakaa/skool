@@ -18,6 +18,8 @@ import { SkipTenantValidation } from '../auth/decorator/skip-tenant-validation.d
 import { TeacherDto } from './dtos/teacher-query.dto';
 import { UserInvitation } from '../invitation/entities/user-iInvitation.entity';
 import { PendingInvitationResponse } from './dtos/pending-response';
+import { AssignClassTeacherInput, UnassignClassTeacherInput } from './dtos/assign-class-teacher.dto';
+import { ClassTeacherAssignment } from './entities/class_teacher_assignments.entity';
 
 @Resolver()
 export class TeacherResolver {
@@ -27,25 +29,11 @@ export class TeacherResolver {
   @Mutation(() => InviteTeacherResponse)
   async inviteTeacher(
     @Args('createTeacherDto') dto: CreateTeacherInvitationDto,
-    @Args('tenantId') tenantId: string,
     @ActiveUser() user: ActiveUserData,
   ) {
-    return this.teacherService.inviteTeacher(dto, user, tenantId);
+    console.log(user.tenantId, 'this is the tenant ids');
+    return this.teacherService.inviteTeacher(dto, user, user.tenantId);
   }
-
-  // @Mutation(() => AcceptInvitationResponse)
-  // @Auth(AuthType.None)
-  // @SkipTenantValidation()
-  // @SetMetadata('isPublic', true)
-
-  // @Roles(MembershipRole.SUPER_ADMIN, MembershipRole.SCHOOL_ADMIN)
-  // @Query(() => UserInvitation, { nullable: true })
-  // async getPendingTeacherInvitation(
-  //   @Args('email') email: string,
-  //   @Args('tenantId') tenantId: string,
-  // ) {
-  //   return this.teacherService.getPendingInvitation(email, tenantId);
-  // }
 
   @Roles(MembershipRole.SUPER_ADMIN, MembershipRole.SCHOOL_ADMIN)
   @Query(() => PendingInvitationResponse, { nullable: true })
@@ -62,7 +50,6 @@ export class TeacherResolver {
     return this.teacherService.getPendingInvitations(user.tenantId);
   }
 
-
   @Roles(MembershipRole.SUPER_ADMIN, MembershipRole.SCHOOL_ADMIN)
   @Mutation(() => InviteTeacherResponse)
   async resendTeacherInvitation(
@@ -72,7 +59,7 @@ export class TeacherResolver {
     return this.teacherService.resendTeacherInvitation(
       invitationId,
       user,
-      user.tenantId
+      user.tenantId,
     );
   }
 
@@ -120,7 +107,7 @@ export class TeacherResolver {
     }
 
     if (tenantId.trim() !== currentUser.tenantId.trim()) {
-      throw new ForbiddenException('Access denied: tenantId mismatch');
+      throw new ForbiddenException('123 Access denied: tenantId mismatch');
     }
 
     return this.teacherService.getPendingTeacherInvitations(
@@ -153,6 +140,19 @@ export class TeacherResolver {
     );
     return JSON.stringify(result);
   }
+
+  @Mutation(() => ClassTeacherAssignment)
+  async assignClassTeacher(
+    @Args('input') input: AssignClassTeacherInput,
+  ): Promise<ClassTeacherAssignment> {
+    return this.teacherService.assign(input);
+  }
+
+  @Mutation(() => Boolean)
+  async unassignClassTeacher(
+    @Args('input') input: UnassignClassTeacherInput,
+  ): Promise<boolean> {
+    await this.teacherService.unassign(input);
+    return true;
+  }
 }
-
-

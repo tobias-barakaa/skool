@@ -1,19 +1,17 @@
-import { Field, ID, InputType } from '@nestjs/graphql';
-
+import { InputType, Field, ID } from '@nestjs/graphql';
 import {
   IsEmail,
   IsNotEmpty,
   IsOptional,
-  IsString,
   IsArray,
-  IsBoolean,
   IsUUID,
+  IsDateString,
+  IsPhoneNumber,
 } from 'class-validator';
 
 @InputType()
 export class CreateTeacherInvitationDto {
   @Field()
-  @IsNotEmpty()
   @IsEmail()
   email: string;
 
@@ -30,11 +28,11 @@ export class CreateTeacherInvitationDto {
   lastName: string;
 
   @Field()
-  @IsString()
+  @IsNotEmpty()
   role: string;
 
   @Field()
-  @IsString()
+  @IsNotEmpty()
   gender: string;
 
   @Field()
@@ -42,35 +40,12 @@ export class CreateTeacherInvitationDto {
   department: string;
 
   @Field()
-  @IsNotEmpty()
+  @IsPhoneNumber()
   phoneNumber: string;
 
   @Field({ nullable: true })
   @IsOptional()
   address?: string;
-
-  @Field(() => [ID], { nullable: true })
-  @IsOptional()
-  @IsArray()
-  @IsUUID('4', { each: true })
-  tenantSubjectIds?: string[];
-
-  @Field(() => [ID], { nullable: true })
-  @IsOptional()
-  @IsArray()
-  @IsUUID('4', { each: true })
-  tenantGradeLevelIds?: string[];
-
-  @Field(() => [ID], { nullable: true })
-  @IsOptional()
-  @IsArray()
-  @IsUUID('4', { each: true })
-  tenantStreamIds?: string[];
-
-  @Field(() => ID, { nullable: true })
-  @IsOptional()
-  @IsUUID('4')
-  classTeacherTenantStreamId?: string;
 
   @Field({ nullable: true })
   @IsOptional()
@@ -78,13 +53,37 @@ export class CreateTeacherInvitationDto {
 
   @Field({ nullable: true })
   @IsOptional()
-  dateOfBirth?: Date;
+  dateOfBirth?: string;
 
   @Field({ nullable: true })
   @IsOptional()
   qualifications?: string;
 
-  @Field(() => Boolean, { nullable: true })
+  @Field(() => [ID], { nullable: true })
   @IsOptional()
-  isClassTeacher?: boolean;
+  @IsArray()
+  @IsUUID('all', { each: true })
+  tenantSubjectIds?: string[];
+
+  @Field(() => [ID], { nullable: true })
+  @IsOptional()
+  @IsArray()
+  @IsUUID('all', { each: true })
+  tenantGradeLevelIds?: string[];
+
+  @Field(() => [ID], { nullable: true })
+  @IsOptional()
+  @IsArray()
+  @IsUUID('all', { each: true })
+  tenantStreamIds?: string[];
+
+  @Field(() => ID, { nullable: true })
+  @IsOptional()
+  @IsUUID()
+  classTeacherTenantStreamId?: string;
+
+  @Field(() => ID, { nullable: true })
+  @IsOptional()
+  @IsUUID()
+  classTeacherTenantGradeLevelId?: string;
 }
