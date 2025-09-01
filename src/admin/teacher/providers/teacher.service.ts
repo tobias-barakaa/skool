@@ -774,92 +774,34 @@ export class TeacherService {
 
 
 
-
   async assignTeacherAsClassTeacher(
     input: AssignClassTeacherInput,
     currentUser: ActiveUserData,
   ): Promise<ClassTeacherAssignment> {
+    // Extract tenantId from current user (super admin)
     const tenantId = currentUser.tenantId;
-    const userId = currentUser.sub;
-  
+    
     if (!tenantId) {
       throw new BadRequestException('Tenant information not found for current user');
     }
   
-    // resolve teacherId from current user
-    const teacher = await this.teacherRepository.findOne({
-      where: { user: { id: userId }, tenantId },
-    });
-  
-    if (!teacher) {
-      throw new BadRequestException(
-        `No teacher found for user '${userId}' in tenant '${tenantId}'`,
-      );
-    }
-  
-    // Validate mutually exclusive input
+    // Validate that at least one assignment type is provided
     if (!input.streamId && !input.gradeLevelId) {
       throw new BadRequestException('Either streamId or gradeLevelId must be provided');
     }
+  
+    // Validate that both are not provided
     if (input.streamId && input.gradeLevelId) {
-      throw new BadRequestException('Cannot assign both stream and grade level at once');
+      throw new BadRequestException('Cannot assign as class teacher for both stream and grade level');
     }
   
-    // ✅ Validate stream if provided
-    if (input.streamId) {
-      const stream = await this.tenantStreamRepo.findOne({
-        where: { id: input.streamId, tenant: { id: tenantId } },
-      });
-  
-      if (!stream) {
-        throw new BadRequestException(
-          `Stream with ID '${input.streamId}' not found in tenant '${tenantId}'`,
-        );
-      }
-  
-      // End any existing stream class teacher assignments
-      await this.classTeacherAssignmentRepository.update(
-        { stream: { id: input.streamId }, active: true },
-        { active: false, endDate: new Date() },
-      );
-    }
-  
-    // ✅ Validate gradeLevel if provided
-    if (input.gradeLevelId) {
-      const gradeLevel = await this.tenantGradeLevelRepo.findOne({
-        where: { id: input.gradeLevelId, tenant: { id: tenantId } },
-      });
-  
-      if (!gradeLevel) {
-        throw new BadRequestException(
-          `Grade level with ID '${input.gradeLevelId}' not found in tenant '${tenantId}'`,
-        );
-      }
-  
-      // End any existing grade level assignments
-      await this.classTeacherAssignmentRepository.update(
-        { gradeLevel: { id: input.gradeLevelId }, active: true },
-        { active: false, endDate: new Date() },
-      );
-    }
-  
-    // End any existing assignments for this teacher
-    await this.classTeacherAssignmentRepository.update(
-      { teacher: { id: teacher.id }, active: true },
-      { active: false, endDate: new Date() },
-    );
-  
-    // Create new assignment
-    const assignment = this.classTeacherAssignmentRepository.create({
-      tenant: { id: tenantId },
-      teacher: { id: teacher.id },
-      stream: input.streamId ? { id: input.streamId } : undefined,
-      gradeLevel: input.gradeLevelId ? { id: input.gradeLevelId } : undefined,
-      active: true,
-      startDate: new Date(),
+    // Use the ClassTeacherProvider with teacherId from input and tenantId from context
+    return this.classTeacherProvider.assign({
+      teacherId: input.teacherId,
+      streamId: input.streamId,
+      gradeLevelId: input.gradeLevelId,
+      tenantId,
     });
-  
-    return this.classTeacherAssignmentRepository.save(assignment);
   }
   
   
@@ -867,36 +809,18 @@ export class TeacherService {
     input: UnassignClassTeacherInput,
     currentUser: ActiveUserData,
   ): Promise<void> {
+    // Extract tenantId from current user (super admin)
     const tenantId = currentUser.tenantId;
+    
     if (!tenantId) {
       throw new BadRequestException('Tenant information not found for current user');
     }
   
-    // Validate teacher exists and belongs to tenant
-    const teacher = await this.teacherRepository.findOne({
-      where: { id: input.teacherId, tenantId },
+    // Use the ClassTeacherProvider with teacherId from input and tenantId from context
+    return this.classTeacherProvider.unassign({
+      teacherId: input.teacherId,
+      tenantId,
     });
-  
-    if (!teacher) {
-      throw new BadRequestException(
-        `Teacher with ID '${input.teacherId}' not found in tenant '${tenantId}'`
-      );
-    }
-
-    const result = await this.classTeacherAssignmentRepository.update(
-      {
-        teacher: { id: input.teacherId },
-        tenant: { id: tenantId },
-        active: true,
-      },
-      { active: false, endDate: new Date() },
-    );
-  
-    if (result.affected === 0) {
-      throw new BadRequestException(
-        `No active class teacher assignment found for teacher '${input.teacherId}'`
-      );
-    }
   }
   
   async getTeacherForCurrentUser(currentUser: ActiveUserData): Promise<Teacher> {

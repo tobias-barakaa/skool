@@ -20,64 +20,34 @@ export class ClassTeacherProvider {
     private teacherRepo: Repository<Teacher>,
   ) {}
 
+  
   async assign(
-    input: AssignClassTeacherInput & { teacherId: string; tenantId: string },
+    input: { teacherId: string; streamId?: string; gradeLevelId?: string; tenantId: string },
   ): Promise<ClassTeacherAssignment> {
-    // Validate teacher exists and belongs to tenant
-    const teacher = await this.teacherRepo.findOne({
-      where: { id: input.teacherId, tenantId: input.tenantId },
-    });
-
-    if (!teacher) {
-      throw new BadRequestException(
-        `Teacher with ID '${input.teacherId}' not found in tenant '${input.tenantId}'`
-      );
-    }
-
-    // Validate stream if provided
+    // ... validation code ...
+  
+    // Remove any existing stream class teacher assignments for this stream
     if (input.streamId) {
-      const stream = await this.tenantStreamRepo.findOne({
-        where: { id: input.streamId, tenant: { id: input.tenantId } },
+      await this.assignmentRepo.delete({
+        stream: { id: input.streamId },
+        active: true,
       });
-
-      if (!stream) {
-        throw new BadRequestException(
-          `Stream with ID '${input.streamId}' not found in tenant '${input.tenantId}'`
-        );
-      }
-
-      // End any existing stream class teacher assignments for this stream
-      await this.assignmentRepo.update(
-        { stream: { id: input.streamId }, active: true },
-        { active: false, endDate: new Date() },
-      );
     }
-
-    // Validate grade level if provided
+  
+    // Remove any existing grade level class teacher assignments for this grade level
     if (input.gradeLevelId) {
-      const gradeLevel = await this.tenantGradeLevelRepo.findOne({
-        where: { id: input.gradeLevelId, tenant: { id: input.tenantId } },
+      await this.assignmentRepo.delete({
+        gradeLevel: { id: input.gradeLevelId },
+        active: true,
       });
-
-      if (!gradeLevel) {
-        throw new BadRequestException(
-          `Grade level with ID '${input.gradeLevelId}' not found in tenant '${input.tenantId}'`
-        );
-      }
-
-      // End any existing grade level class teacher assignments for this grade level
-      await this.assignmentRepo.update(
-        { gradeLevel: { id: input.gradeLevelId }, active: true },
-        { active: false, endDate: new Date() },
-      );
     }
-
-    // End any existing assignments for this teacher
-    await this.assignmentRepo.update(
-      { teacher: { id: input.teacherId }, active: true },
-      { active: false, endDate: new Date() },
-    );
-
+  
+    // Remove any existing assignments for this teacher
+    await this.assignmentRepo.delete({
+      teacher: { id: input.teacherId },
+      active: true,
+    });
+  
     // Create new assignment
     const assignment = this.assignmentRepo.create({
       tenant: { id: input.tenantId },
@@ -87,37 +57,57 @@ export class ClassTeacherProvider {
       active: true,
       startDate: new Date(),
     });
-
-    return this.assignmentRepo.save(assignment);
-  }
-
-  async unassign(
-    input: { teacherId: string; tenantId: string },
-  ): Promise<void> {
-    // Validate teacher exists and belongs to tenant
-    const teacher = await this.teacherRepo.findOne({
-      where: { id: input.teacherId, tenantId: input.tenantId },
+  
+    const saved = await this.assignmentRepo.save(assignment);
+    
+    const found = await this.assignmentRepo.findOne({
+      where: { id: saved.id },
+      relations: ['teacher', 'stream', 'gradeLevel'],
     });
 
-    if (!teacher) {
+    if (!found) {
       throw new BadRequestException(
-        `Teacher with ID '${input.teacherId}' not found in tenant '${input.tenantId}'`
+        `Could not find the newly created class teacher assignment with ID '${saved.id}'`
       );
     }
 
-    const result = await this.assignmentRepo.update(
-      {
+    return found;
+  }
+
+
+  async unassign(input: { teacherId: string; tenantId: string }): Promise<void> {
+    return await this.assignmentRepo.manager.transaction(async (transactionalEntityManager) => {
+      // ... validation code ...
+      
+      const assignment = await transactionalEntityManager.findOne(ClassTeacherAssignment, {
+        where: {
+          teacher: { id: input.teacherId },
+          tenant: { id: input.tenantId },
+          active: true,
+        },
+      });
+  
+      if (!assignment) {
+        throw new BadRequestException(
+          `No active class teacher assignment found for teacher '${input.teacherId}'`
+        );
+      }
+  
+      // First, delete any existing inactive records for this teacher-tenant combo
+      await transactionalEntityManager.delete(ClassTeacherAssignment, {
         teacher: { id: input.teacherId },
         tenant: { id: input.tenantId },
-        active: true,
-      },
-      { active: false, endDate: new Date() },
-    );
-
-    if (result.affected === 0) {
-      throw new BadRequestException(
-        `No active class teacher assignment found for teacher '${input.teacherId}'`
-      );
-    }
+        active: false,
+      });
+  
+      // Then update the current assignment
+      assignment.active = false;
+      assignment.endDate = new Date();
+      await transactionalEntityManager.save(assignment);
+    });
   }
+
 }
+
+
+

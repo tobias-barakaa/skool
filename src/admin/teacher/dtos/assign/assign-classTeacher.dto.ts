@@ -1,8 +1,14 @@
 import { InputType, Field, ID } from '@nestjs/graphql';
-import { IsUUID, IsOptional, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
 
 @InputType()
 export class AssignClassTeacherInput {
+  @Field(() => ID)
+  
+  @IsNotEmpty()
+  @IsUUID()
+  teacherId: string;
+
   @Field(() => ID, { nullable: true })
   @IsUUID()
   @IsOptional()
@@ -21,3 +27,9 @@ export class UnassignClassTeacherInput {
   @IsUUID()
   teacherId: string;
 }
+
+
+
+
+
+
