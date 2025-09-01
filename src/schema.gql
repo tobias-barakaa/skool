@@ -113,9 +113,13 @@ enum AssessmentType {
   TEST
 }
 
-input AssignClassTeacherInput {
-  gradeLevelId: ID
-  streamId: ID
+input AssignGradeLevelClassTeacherInput {
+  gradeLevelId: ID!
+  teacherId: ID!
+}
+
+input AssignStreamClassTeacherInput {
+  streamId: ID!
   teacherId: ID!
 }
 
@@ -626,7 +630,8 @@ type Mutation {
   acceptTeacherInvitation(acceptInvitationInput: AcceptInvitationInput!): AcceptInvitationResponse!
   activateTenantSubject(tenantSubjectId: String!): Boolean!
   addStudentsToParent(parentId: String!, studentIds: [String!]!, tenantId: String!): String!
-  assignClassTeacher(input: AssignClassTeacherInput!): ClassTeacherAssignment!
+  assignGradeLevelClassTeacher(input: AssignGradeLevelClassTeacherInput!): ClassTeacherAssignment!
+  assignStreamClassTeacher(input: AssignStreamClassTeacherInput!): ClassTeacherAssignment!
   changePassword(changePasswordInput: ChangePasswordInput!): PasswordResetResponse!
   configureSchoolLevelsByNames(levelNames: [String!]!): SchoolConfigurationResponse!
   createAssessment(input: CreateAssessmentInput!): AssessmentOutput!

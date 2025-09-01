@@ -19,7 +19,7 @@ import { TeacherDto } from './dtos/teacher-query.dto';
 import { PendingInvitationResponse } from './dtos/pending-response';
 import { ClassTeacherAssignment } from './entities/class_teacher_assignments.entity';
 import { Teacher } from './entities/teacher.entity';
-import { AssignClassTeacherInput, UnassignClassTeacherInput } from './dtos/assign/assign-classTeacher.dto';
+import { AssignGradeLevelClassTeacherInput, AssignStreamClassTeacherInput, UnassignClassTeacherInput } from './dtos/assign/assign-classTeacher.dto';
 
 @Resolver()
 export class TeacherResolver {
@@ -142,15 +142,32 @@ export class TeacherResolver {
   }
 
 
+ 
+//   @Mutation(() => ClassTeacherAssignment)
+// async assignStreamClassTeacher(
+//   @Args('input') input: AssignStreamClassTeacherInput,
+//   @ActiveUser() currentUser: ActiveUserData,
+// ): Promise<ClassTeacherAssignment> {
+//   return this.teacherService.assignStreamClassTeacher(input, currentUser);
+// }
 
 
-  @Mutation(() => ClassTeacherAssignment)
-  async assignClassTeacher(
-    @Args('input') input: AssignClassTeacherInput,
-    @ActiveUser() currentUser: ActiveUserData,
-  ): Promise<ClassTeacherAssignment> {
-    return this.teacherService.assignTeacherAsClassTeacher(input, currentUser);
-  }
+@Mutation(() => ClassTeacherAssignment, { name: 'assignStreamClassTeacher' })
+async assignStreamClassTeacher(
+  @Args('input') input: AssignStreamClassTeacherInput,
+  @ActiveUser() currentUser: ActiveUserData,
+): Promise<ClassTeacherAssignment> {
+  return this.teacherService.assignStreamClassTeacher(input, currentUser);
+}
+
+@Mutation(() => ClassTeacherAssignment)
+async assignGradeLevelClassTeacher(
+  @Args('input') input: AssignGradeLevelClassTeacherInput,
+  @ActiveUser() currentUser: ActiveUserData,
+): Promise<ClassTeacherAssignment> {
+  return this.teacherService.assignGradeLevelClassTeacher(input, currentUser);
+}
+
   
   
   @Mutation(() => Boolean)
@@ -162,7 +179,6 @@ export class TeacherResolver {
     return true;
   }
   
-  // Queries for super admin to manage any teacher
   @Query(() => Teacher)
 async getTeacher(
   @ActiveUser() currentUser: ActiveUserData,

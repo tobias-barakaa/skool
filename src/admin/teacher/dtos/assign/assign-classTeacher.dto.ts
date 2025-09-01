@@ -2,22 +2,29 @@ import { InputType, Field, ID } from '@nestjs/graphql';
 import { IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
 
 @InputType()
-export class AssignClassTeacherInput {
+export class AssignStreamClassTeacherInput {
   @Field(() => ID)
-  
   @IsNotEmpty()
   @IsUUID()
   teacherId: string;
 
-  @Field(() => ID, { nullable: true })
+  @Field(() => ID)
+  @IsNotEmpty()
   @IsUUID()
-  @IsOptional()
-  streamId?: string;
+  streamId: string;
+}
 
-  @Field(() => ID, { nullable: true })
+@InputType()
+export class AssignGradeLevelClassTeacherInput {
+  @Field(() => ID)
+  @IsNotEmpty()
   @IsUUID()
-  @IsOptional()
-  gradeLevelId?: string;
+  teacherId: string;
+
+  @Field(() => ID)
+  @IsNotEmpty()
+  @IsUUID()
+  gradeLevelId: string;
 }
 
 @InputType()

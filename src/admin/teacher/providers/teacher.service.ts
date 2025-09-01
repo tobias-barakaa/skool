@@ -21,7 +21,7 @@ import { TeacherDto } from '../dtos/teacher-query.dto';
 import { handleInvitationResendLogic } from 'src/admin/shared/utils/invitation.utils';
 import { ClassTeacherProvider } from './class-teacher-assign.provider';
 import { ClassTeacherAssignment } from '../entities/class_teacher_assignments.entity';
-import { AssignClassTeacherInput, UnassignClassTeacherInput } from '../dtos/assign/assign-classTeacher.dto';
+import { AssignGradeLevelClassTeacherInput, AssignStreamClassTeacherInput, UnassignClassTeacherInput } from '../dtos/assign/assign-classTeacher.dto';
 
 @Injectable()
 export class TeacherService {
@@ -774,49 +774,76 @@ export class TeacherService {
 
 
 
-  async assignTeacherAsClassTeacher(
-    input: AssignClassTeacherInput,
+  async assignStreamClassTeacher(
+    input: AssignStreamClassTeacherInput,
     currentUser: ActiveUserData,
   ): Promise<ClassTeacherAssignment> {
-    // Extract tenantId from current user (super admin)
     const tenantId = currentUser.tenantId;
-    
     if (!tenantId) {
       throw new BadRequestException('Tenant information not found for current user');
     }
   
-    // Validate that at least one assignment type is provided
-    if (!input.streamId && !input.gradeLevelId) {
-      throw new BadRequestException('Either streamId or gradeLevelId must be provided');
-    }
-  
-    // Validate that both are not provided
-    if (input.streamId && input.gradeLevelId) {
-      throw new BadRequestException('Cannot assign as class teacher for both stream and grade level');
-    }
-  
-    // Use the ClassTeacherProvider with teacherId from input and tenantId from context
     return this.classTeacherProvider.assign({
       teacherId: input.teacherId,
       streamId: input.streamId,
+      tenantId,
+    });
+  }
+
+
+  async assignGradeLevelClassTeacher(
+    input: AssignGradeLevelClassTeacherInput,
+    currentUser: ActiveUserData,
+  ): Promise<ClassTeacherAssignment> {
+    const tenantId = currentUser.tenantId;
+  
+    if (!tenantId) {
+      throw new BadRequestException('Tenant information not found for current user');
+    }
+  
+    return this.classTeacherProvider.assign({
+      teacherId: input.teacherId,
       gradeLevelId: input.gradeLevelId,
       tenantId,
     });
   }
   
+  async findExistingAssignment(input: {
+    teacherId: string;
+    streamId?: string;
+    gradeLevelId?: string;
+    tenantId: string;
+  }): Promise<ClassTeacherAssignment | null> {
+    const whereCondition: any = {
+      teacher: { id: input.teacherId },
+      tenant: { id: input.tenantId },
+      active: true,
+    };
+  
+    if (input.streamId) {
+      whereCondition.stream = { id: input.streamId };
+    }
+  
+    if (input.gradeLevelId) {
+      whereCondition.gradeLevel = { id: input.gradeLevelId };
+    }
+  
+    return await this.classTeacherAssignmentRepository.findOne({
+      where: whereCondition,
+      relations: ['teacher', 'stream', 'gradeLevel'],
+    });
+  }
   
   async unassignTeacherAsClassTeacher(
     input: UnassignClassTeacherInput,
     currentUser: ActiveUserData,
   ): Promise<void> {
-    // Extract tenantId from current user (super admin)
     const tenantId = currentUser.tenantId;
     
     if (!tenantId) {
       throw new BadRequestException('Tenant information not found for current user');
     }
   
-    // Use the ClassTeacherProvider with teacherId from input and tenantId from context
     return this.classTeacherProvider.unassign({
       teacherId: input.teacherId,
       tenantId,

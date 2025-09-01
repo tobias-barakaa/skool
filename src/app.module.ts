@@ -40,6 +40,8 @@ const ENV = process.env.NODE_ENV;
       load: [appConfig, databaseConfig, resendConfig, redisConfig],
       validationSchema: environmentValidation,
     }),
+    
+    
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
