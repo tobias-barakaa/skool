@@ -37,7 +37,6 @@ export class UsersResolver {
       throw new Error('Invalid input passed to resolver');
     }
 
-    // return await this.usersService.createUser(signupInput);
     const { user, tokens, subdomainUrl, tenant, membership } =
       await this.usersService.createUser(signupInput);
 

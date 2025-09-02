@@ -1,6 +1,6 @@
 // src/students/dtos/create-student.input.ts
 import { Field, InputType } from '@nestjs/graphql';
-import { IsEmail, IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 
 @InputType()
 export class CreateStudentInput {
@@ -31,4 +31,10 @@ export class CreateStudentInput {
   @IsNotEmpty()
   @IsString()
   phone: string;
+
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  schoolType?: string;
 }

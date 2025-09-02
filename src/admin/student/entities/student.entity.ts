@@ -92,6 +92,10 @@ export class Student {
   @Column('uuid')
   @Field(() => ID)
   tenant_id: string;
+
+  @Field({ nullable: true })
+  @Column({ type: 'varchar', nullable: true, default: 'day' })
+  schoolType?: string;
 }
 
 

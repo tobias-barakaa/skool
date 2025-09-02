@@ -130,6 +130,7 @@ export class UsersCreateStudentProvider {
        gender: createStudentInput.gender,
        grade: tenantGradeLevel,
        tenant: { id: tenantId },
+       schoolType: createStudentInput.schoolType ?? 'day'
      });
 
       const savedStudent = await queryRunner.manager.save(student);

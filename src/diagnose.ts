@@ -25,7 +25,6 @@ export class AuthDiagnosticGuard implements CanActivate {
 
     const contextInfo = this.getContextInfo(context);
 
-    // Log every request for debugging
     this.logger.debug('🔍 Auth Diagnostic:', {
       authTypes,
       isPublic,
@@ -45,7 +44,7 @@ export class AuthDiagnosticGuard implements CanActivate {
       this.logger.warn('   Consider changing to @Auth(AuthType.BEARER) // [0]');
     }
 
-    return true; // Always allow - this is just for diagnostics
+    return true;
   }
 
   private getContextInfo(context: ExecutionContext): any {

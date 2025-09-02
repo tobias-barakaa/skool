@@ -327,6 +327,7 @@ input CreateStudentInput {
   gender: String!
   name: String!
   phone: String!
+  schoolType: String
   tenantGradeLevelId: String!
 }
 
@@ -1099,6 +1100,7 @@ type Student {
   id: ID!
   isActive: Boolean!
   phone: String!
+  schoolType: String
   stream: Stream
   tenant: Tenant!
   tenant_id: ID!

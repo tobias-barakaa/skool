@@ -2,7 +2,7 @@ import { InputType, Field, Float, Int } from '@nestjs/graphql';
 
 @InputType()
 export class CreateHostelInput {
-    @Field()
+  @Field()
   name: string;
 
   @Field(() => Int)

@@ -38,7 +38,6 @@ export class StudentsService {
     createStudentInput: CreateStudentInput,
     currentUser: ActiveUserData,
   ): Promise<CreateStudentResponse> {
-    // Verify that current user is a school admin
     const membership = await this.membershipRepository.findOne({
       where: {
         userId: currentUser.sub,
@@ -51,7 +50,6 @@ export class StudentsService {
       throw new ForbiddenException('Only school admins can create students');
     }
 
-    // ✅ Enforce school setup is completed
     await this.schoolSetupGuardService.validateSchoolIsConfigured(
       membership.tenantId,
     );
