@@ -1,8 +1,13 @@
 // src/students/entities/student.entity.ts
 import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { HostelAssignment } from 'src/admin/hostels/entities/hostel.assignment';
+import { Scholarship } from 'src/admin/scholarships/entities/scholarship.entity';
+import { StudentScholarship } from 'src/admin/scholarships/entities/scholarship_assignments.entity';
 import { TenantGradeLevel } from 'src/admin/school-type/entities/tenant-grade-level';
 import { Stream } from 'src/admin/streams/entities/streams.entity';
 import { Tenant } from 'src/admin/tenants/entities/tenant.entity';
+import { TransportAssignment } from 'src/admin/transport/entities/transport_assignment.entity';
+import { TransportRoute } from 'src/admin/transport/entities/transport_routes.entity';
 import { User } from 'src/admin/users/entities/user.entity';
 import { AssessmentMark } from 'src/teacher/marksheet/entities/assessment_marks-entity';
 import {
@@ -96,6 +101,41 @@ export class Student {
   @Field({ nullable: true })
   @Column({ type: 'varchar', nullable: true, default: 'day' })
   schoolType?: string;
+
+  @OneToMany(() => HostelAssignment, (assignment) => assignment.student, { nullable: true })
+  @Field(() => [HostelAssignment], { nullable: true }) 
+  hostelAssignments?: HostelAssignment[];
+
+
+
+  @ManyToOne(() => TransportRoute, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'transport_route_id' })
+  @Field(() => TransportRoute, { nullable: true })
+  transportRoute?: TransportRoute;
+
+  @Column({ type: 'uuid', nullable: true })
+  transport_route_id?: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  pickupPoint?: string;
+
+  
+  @ManyToOne(() => Scholarship, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'scholarship_id' })
+  @Field(() => Scholarship, { nullable: true })
+  scholarships?: Scholarship;
+
+  @Column({ type: 'uuid', nullable: true })
+  scholarship_id?: string;
+
+  @OneToMany(() => StudentScholarship, (ss) => ss.scholarship)
+  @Field(() => [StudentScholarship], { nullable: true })
+  studentScholarships?: StudentScholarship[];
+
+  @OneToMany(() => TransportAssignment, (ta) => ta.student)
+  @Field(() => [TransportAssignment], { nullable: true })
+  transportAssignments?: TransportAssignment[];
 }
 
 

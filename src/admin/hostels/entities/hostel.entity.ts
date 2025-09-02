@@ -5,9 +5,12 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToOne,
-  CreateDateColumn,
+  OneToMany,
   UpdateDateColumn,
+  Index,
+  CreateDateColumn,
 } from 'typeorm';
+import { HostelAssignment } from './hostel.assignment';
 
 @ObjectType()
 @Entity('hostels')
@@ -17,29 +20,44 @@ export class Hostel {
   id: string;
 
   @Field()
-  @Column()
+  @Index()
+  @Column('uuid')
   tenantId: string;
 
-  @ManyToOne(() => Tenant, (tenant) => tenant.hostels, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Tenant, (t) => t.hostels, { onDelete: 'CASCADE' })
   tenant: Tenant;
 
   @Field()
-  @Column()
+  @Column({ type: 'varchar', length: 255 })
   name: string;
 
   @Field(() => Int)
-  @Column('int')
+  @Column('int', { default: 0 })
   capacity: number;
 
   @Field(() => Float)
-  @Column('decimal', { precision: 12, scale: 2 })
+  @Column('numeric', { precision: 12, scale: 2, default: 0 })
   feeAmount: number;
 
-  @Field()
-  @CreateDateColumn()
-  createdAt: Date;
+  @Field({ nullable: true })
+  @Column({ type: 'varchar', length: 20, nullable: true })
+  genderConstraint?: string;
 
   @Field()
-  @UpdateDateColumn()
+  @Column({ default: true })
+  isActive: boolean;
+
+
+  @Field(() => [HostelAssignment], { nullable: true })
+  @OneToMany(() => HostelAssignment, (a) => a.hostel, { nullable: true })
+  hostelAssignments?: HostelAssignment[];
+
+  @Field()
+  @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
+
+
+  @Field(() => Date) 
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt: Date;
 }

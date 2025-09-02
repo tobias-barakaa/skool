@@ -21,6 +21,8 @@ import { EmailModule } from './email/email.module';
 import { StaffModule } from './staff/staff.module';
 import { SchoolConfigModule } from './config/config.module';
 import { HostelModule } from './hostels/hostel.module';
+import { TransportModule } from './transport/transport.module';
+import { ScholarshipsModule } from './scholarships/scholarships.module';
 
 
 @Module({
@@ -49,6 +51,8 @@ import { HostelModule } from './hostels/hostel.module';
     ParentModule,
     SchoolConfigModule,
     HostelModule,
+    TransportModule,
+    ScholarshipsModule
   ],
 })
 export class AdminModule {}

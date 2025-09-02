@@ -245,6 +245,13 @@ input CreateCustomSubjectInput {
   totalMarks: Float
 }
 
+input CreateHostelAssignmentInput {
+  bedNumber: String
+  hostelId: ID!
+  roomNumber: String
+  studentId: ID!
+}
+
 input CreateHostelInput {
   capacity: Int!
   feeAmount: Float!
@@ -285,6 +292,12 @@ input CreateReferenceMaterialInput {
   fileSize: Float
   fileType: String!
   fileUrl: String!
+}
+
+input CreateScholarshipInput {
+  amount: Float
+  description: String
+  name: String!
 }
 
 input CreateStaffInvitationDto {
@@ -377,6 +390,20 @@ input CreateTestInput {
   tenantSubjectId: ID!
   title: String!
   totalMarks: Int!
+}
+
+input CreateTransportBusInput {
+  capacity: Int!
+  plateNumber: String!
+  routeId: ID!
+}
+
+input CreateTransportRouteInput {
+  endLocation: String!
+  fee: Float!
+  name: String!
+  startLocation: String!
+  tenantId: String!
 }
 
 type CreateUserResponse {
@@ -534,10 +561,26 @@ type Hostel {
   capacity: Int!
   createdAt: DateTime!
   feeAmount: Float!
+  genderConstraint: String
+  hostelAssignments: [HostelAssignment!]
   id: ID!
+  isActive: Boolean!
   name: String!
   tenantId: String!
   updatedAt: DateTime!
+}
+
+type HostelAssignment {
+  assignedAt: DateTime!
+  bedNumber: String
+  createdAt: DateTime!
+  hostel: Hostel!
+  id: ID!
+  roomNumber: String
+  status: String!
+  student: Student!
+  tenantId: String!
+  vacatedAt: DateTime
 }
 
 type InvitationInfo {
@@ -633,15 +676,19 @@ type Mutation {
   addStudentsToParent(parentId: String!, studentIds: [String!]!, tenantId: String!): String!
   assignGradeLevelClassTeacher(input: AssignGradeLevelClassTeacherInput!): ClassTeacherAssignment!
   assignStreamClassTeacher(input: AssignStreamClassTeacherInput!): ClassTeacherAssignment!
+  assignStudentToHostel(input: CreateHostelAssignmentInput!): HostelAssignment!
   changePassword(changePasswordInput: ChangePasswordInput!): PasswordResetResponse!
   configureSchoolLevelsByNames(levelNames: [String!]!): SchoolConfigurationResponse!
   createAssessment(input: CreateAssessmentInput!): AssessmentOutput!
   createCustomSubject(input: CreateCustomSubjectInput!): TenantSubject!
   createHostel(input: CreateHostelInput!): Hostel!
+  createScholarship(input: CreateScholarshipInput!): Scholarship!
   createStream(input: CreateStreamInput!): StreamType!
   createStudent(createStudentInput: CreateStudentInput!): CreateStudentResponse!
   createTenantStreamFromScratch(input: CreateTenantStreamInput!): TenantStream!
   createTest(createTestInput: CreateTestInput!): Test!
+  createTransportBus(input: CreateTransportBusInput!): TransportBus!
+  createTransportRoute(input: CreateTransportRouteInput!): TransportRoute!
   createUser(signupInput: SignupInput!): CreateUserResponse!
   deactivateTenantSubject(tenantSubjectId: String!): Boolean!
   deleteAssignment(id: String!): Boolean!
@@ -652,6 +699,8 @@ type Mutation {
   deleteStream(id: ID!): Boolean!
   deleteTeacher(id: String!, tenantId: String!): String!
   deleteTenantStream(tenantStreamId: String!): Boolean!
+  deleteTransportBus(id: ID!): Boolean!
+  deleteTransportRoute(id: ID!): Boolean!
   enterStudentMarks(inputs: [EnterStudentMarksInput!]!): [AssessmentMark!]!
   forgotPassword(forgotPasswordInput: ForgotPasswordInput!): PasswordResetResponse!
   generateQuestions(generateQuestionsInput: GenerateQuestionsInput!): [GeneratedQuestionOutput!]!
@@ -668,6 +717,8 @@ type Mutation {
   """
   refreshSearchCache: Boolean!
   removeHostel(id: String!): Boolean!
+  removeHostelAssignment(id: String!): Boolean!
+  removeScholarship(id: ID!): Boolean!
   resendTeacherInvitation(invitationId: String!): InviteTeacherResponse!
   resetPassword(resetPasswordInput: ResetPasswordInput!): PasswordResetResponse!
   revokeInvitation(invitationId: String!): RevokeInvitationResponse!
@@ -690,11 +741,15 @@ type Mutation {
   unassignClassTeacher(input: UnassignClassTeacherInput!): Boolean!
   updateCustomSubject(input: UpdateTenantSubjectInput!, tenantSubjectId: String!): TenantSubject!
   updateHostel(input: UpdateHostelInput!): Hostel!
+  updateHostelAssignment(input: UpdateHostelAssignmentInput!): HostelAssignment!
+  updateScholarship(input: UpdateScholarshipInput!): Scholarship!
   updateStaff(tenantId: String!, updateStaffInput: UpdateStaffInput!): StaffDto!
   updateStream(input: UpdateStreamInput!): StreamType!
   updateStudentMarks(inputs: [EnterStudentMarksInput!]!): [AssessmentMark!]!
   updateTenantStream(input: UpdateTenantStreamInput!, tenantStreamId: String!): TenantStream!
   updateTest(updateTestInput: UpdateTestInput!): Test!
+  updateTransportBus(input: UpdateTransportBusInput!): TransportBus!
+  updateTransportRoute(input: UpdateTransportRouteInput!): TransportRoute!
 }
 
 type Option {
@@ -781,6 +836,7 @@ type Query {
 
   """Filter students and teachers by grade levels, subjects, and streams"""
   filterByGradeLevelAndSubjects(input: FilterInput!): FilteredResult!
+  findAllHostels: [Hostel!]!
   getActiveStaffByTenant(tenantId: String!): [StaffDto!]!
   getAllClassTeacherAssignments: [ClassTeacherAssignment!]!
   getAllTeachers: [Teacher!]!
@@ -827,9 +883,11 @@ type Query {
   gradeLevelsForSchoolType: [TenantGradeLevel!]!
   gradeLevelsWithStreams: [GradeLevelWithStreamsOutput!]!
   hostel(id: String!): Hostel!
-  hostels(tenantId: String!): [Hostel!]!
+  hostelAssignments(hostelId: String!): [HostelAssignment!]!
   marksStats(academicYear: String!, gradeLevelId: String!, subjectId: String!, term: Int!): MarksStatsDto!
   myAssignMents: [Test!]!
+  scholarship(id: ID!): Scholarship!
+  scholarships: [Scholarship!]!
   searchAvailableStudentsForParent(parentId: String!, searchTerm: String, tenantId: String!): [StudentSearchResponse!]!
   searchStaff(searchTerm: String!, tenantId: String!): [StaffDto!]!
   searchStudentByAdmission(admissionNumber: String!, tenantId: String!): StudentSearchResponse
@@ -858,6 +916,8 @@ type Query {
   termAssessmentsWithStudents(academicYear: String!, gradeLevelId: String!, term: Int!): TermAssessmentWithStudentsDto!
   testById(id: String!): Test
   testSocket(scenario: String): String!
+  transportBuses(routeId: ID!): [TransportBus!]!
+  transportRoutes(tenantId: String!): [TransportRoute!]!
   users: [User!]!
   usersByTenant(role: String, tenantId: String!): [User!]!
 }
@@ -904,6 +964,17 @@ input ResetPasswordInput {
 
 type RevokeInvitationResponse {
   message: String!
+}
+
+type Scholarship {
+  amount: Float!
+  createdAt: DateTime!
+  description: String
+  id: ID!
+  name: String!
+  studentScholarships: [StudentScholarship!]
+  tenantId: String!
+  type: String!
 }
 
 type School {
@@ -1097,14 +1168,20 @@ type Student {
   feesOwed: Float!
   gender: String!
   grade: TenantGradeLevel!
+  hostelAssignments: [HostelAssignment!]
   id: ID!
   isActive: Boolean!
   phone: String!
+  pickupPoint: String
+  scholarships: Scholarship
   schoolType: String
   stream: Stream
+  studentScholarships: [StudentScholarship!]
   tenant: Tenant!
   tenant_id: ID!
   totalFeesPaid: Float!
+  transportAssignments: [TransportAssignment!]
+  transportRoute: TransportRoute
   updatedAt: DateTime!
   user: User!
   user_id: ID!
@@ -1121,6 +1198,15 @@ type StudentLoginInfo {
 input StudentMarkInput {
   assessmentId: ID!
   score: Float!
+}
+
+type StudentScholarship {
+  academicYear: String!
+  awardedAt: DateTime!
+  id: ID!
+  scholarship: Scholarship!
+  status: String!
+  student: Student!
 }
 
 type StudentSearchResponse {
@@ -1395,14 +1481,61 @@ type TokensOutput {
   refreshToken: String!
 }
 
+type TransportAssignment {
+  assignedAt: DateTime!
+  bus: TransportBus!
+  id: ID!
+  isActive: Boolean!
+  pickupPoint: String!
+  route: TransportRoute!
+  student: Student!
+  tenantId: String!
+}
+
+type TransportBus {
+  assignments: [TransportAssignment!]
+  capacity: Float!
+  createdAt: DateTime!
+  id: ID!
+  plateNumber: String!
+  route: TransportRoute!
+  updatedAt: DateTime!
+}
+
+type TransportRoute {
+  buses: [TransportBus!]
+  createdAt: DateTime!
+  endLocation: String!
+  fee: Float!
+  id: ID!
+  name: String!
+  startLocation: String!
+  tenantId: String!
+}
+
 input UnassignClassTeacherInput {
   teacherId: ID!
+}
+
+input UpdateHostelAssignmentInput {
+  bedNumber: String
+  id: String!
+  roomNumber: String
+  status: String
+  vacatedAt: DateTime
 }
 
 input UpdateHostelInput {
   capacity: Int
   feeAmount: Float
-  id: String!
+  id: ID!
+  name: String
+}
+
+input UpdateScholarshipInput {
+  amount: Float
+  description: String
+  id: ID!
   name: String
 }
 
@@ -1473,6 +1606,22 @@ input UpdateTestInput {
   tenantSubjectId: ID
   title: String
   totalMarks: Int
+}
+
+input UpdateTransportBusInput {
+  capacity: Int
+  id: ID!
+  plateNumber: String
+  routeId: ID
+}
+
+input UpdateTransportRouteInput {
+  endLocation: String
+  fee: Float
+  id: ID!
+  name: String
+  startLocation: String
+  tenantId: String
 }
 
 type User {
