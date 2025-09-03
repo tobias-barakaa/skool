@@ -6,8 +6,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService, ConfigType } from '@nestjs/config';
 import { 
-  S3Client, 
-  PutObjectCommand, 
+  S3Client,  
   HeadBucketCommand, 
   DeleteObjectCommand,
   ListObjectsV2Command,
@@ -87,7 +86,7 @@ export class BackblazeService {
             requestTimeout: 15000,
             connectionTimeout: 5000,
           },
-          maxAttempts: 1, // We handle retries manually
+          maxAttempts: 1, 
         }),
     );
   }
@@ -132,7 +131,7 @@ export class BackblazeService {
     filePath: string,
     attempt = 1,
   ): Promise<FileUploadResult> {
-    const MAX_BYTES = 10 * 1024 * 1024; // 10 MB
+    const MAX_BYTES = 10 * 1024 * 1024; 
     if (file.size > MAX_BYTES) {
       throw new BadRequestException(
         `File too large. Maximum allowed size is 10 MB.`,

@@ -9,10 +9,6 @@ import {
 import { Student } from '../../student/entities/student.entity';
 import { Teacher } from '../../teacher/entities/teacher.entity';
 import { Level } from '../../level/entities/level.entities';
-//   import { Student } from 'src/students/entities/student.entity';
-//   import { Subject } from 'src/subjects/entities/subject.entity';
-//   import { Class } from 'src/classes/entities/class.entity';
-//   import { Teacher } from 'src/teachers/entities/teacher.entity';
 
   export enum AssessmentType {
     CAT = 'CAT',

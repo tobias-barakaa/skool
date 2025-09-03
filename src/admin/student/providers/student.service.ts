@@ -169,9 +169,15 @@ export class StudentsService {
     return this.studentRepository.find({
       where: {
         tenant_id: user.tenantId,
-        isActive: true, // Optional: only get active students
+        isActive: true,
       },
-      relations: ['user', 'grade'],
+      relations: [
+        'user',
+        'grade',               
+        'grade.gradeLevel',    
+        'grade.curriculum',   
+        'stream',              
+      ],
       order: { createdAt: 'ASC' },
     });
   }

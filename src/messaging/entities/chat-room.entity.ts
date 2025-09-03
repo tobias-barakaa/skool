@@ -22,7 +22,7 @@ export class ChatRoom {
 
   @Field()
   @Column()
-  type: string; // 'STUDENT_TEACHER', 'PARENT_TEACHER', 'GROUP', etc.
+  type: string; 
 
   @Field(() => [String])
   @Column('simple-array', { nullable: true })
