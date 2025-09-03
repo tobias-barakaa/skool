@@ -1,8 +1,15 @@
-import { Field, ID, ObjectType } from "@nestjs/graphql";
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { TransportRoute } from "./transport_routes.entity";
-import { Student } from "src/admin/student/entities/student.entity";
-import { TransportBus } from "./transport_buses.entity";
+import { Field, ID, ObjectType } from '@nestjs/graphql';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  Index,
+} from 'typeorm';
+import { TransportRoute } from './transport_routes.entity';
+import { Student } from 'src/admin/student/entities/student.entity';
 
 @ObjectType()
 @Entity('transport_assignments')
@@ -11,35 +18,46 @@ export class TransportAssignment {
   @Field(() => ID)
   id: string;
 
-  @ManyToOne(() => TransportRoute, { eager: true, onDelete: 'CASCADE' })
+  @Index()
+  @Column('uuid')
+  @Field()
+  tenantId: string;
+
+  @ManyToOne(() => TransportRoute, (r) => r.assignments, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'route_id' })
   @Field(() => TransportRoute)
   route: TransportRoute;
 
-  @ManyToOne(() => Student, (s) => s.transportAssignments, { eager: true, onDelete: 'CASCADE' })
+  @Column('uuid')
+  @Field(() => ID)
+  routeId: string;
+
+  @ManyToOne(() => Student, (s) => s.transportAssignments, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'student_id' })
   @Field(() => Student)
   student: Student;
 
-  @ManyToOne(() => TransportBus, (bus) => bus.assignments, {
-    nullable: false,
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'bus_id' })
-  @Field(() => TransportBus)
-  bus: TransportBus;
+  @Column('uuid')
+  @Field(() => ID)
+  studentId: string;
 
-  @Field()
-  @Column({ nullable: true })
+  @Field({ nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   pickupPoint?: string;
 
   @Field()
-  @Column('uuid')
-  tenantId: string;
+  @Column({ type: 'timestamptz', default: () => 'now()' })
+  assignedAt: Date;
+
+  @Field({ nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
+  vacatedAt?: Date;
 
   @Field()
-  @Column({ default: true })
-  isActive: boolean;
+  @Column({ type: 'varchar', length: 20, default: 'ACTIVE' })
+  status: 'ACTIVE' | 'INACTIVE';
 
   @Field(() => Date)
-  @CreateDateColumn()
-  assignedAt: Date;
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt: Date;
 }

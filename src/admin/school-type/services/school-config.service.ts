@@ -123,6 +123,8 @@ export class SchoolConfigService {
           );
           await manager.save(tenantSubjects);
 
+          
+
           for (const savedGradeLevel of savedGradeLevels) {
             const streams = savedGradeLevel.gradeLevel.streams || [];
             const tenantStreams = streams.map((stream) =>

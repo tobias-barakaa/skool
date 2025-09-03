@@ -1,17 +1,37 @@
-import { InputType, Field, ID, Int } from '@nestjs/graphql';
-import { IsNotEmpty, IsUUID, IsInt } from 'class-validator';
+import { Field, ID, ObjectType, Float } from '@nestjs/graphql';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { TransportAssignment } from '../entities/transport_assignment.entity';
 
-@InputType()
-export class CreateTransportBusInput {
-  @Field()
-  @IsNotEmpty()
-  plateNumber: string;
-
-  @Field(() => Int)
-  @IsInt()
-  capacity: number;
-
+@ObjectType()
+@Entity('transport_routes')
+export class TransportRoute {
+  @PrimaryGeneratedColumn('uuid')
   @Field(() => ID)
-  @IsUUID()
-  routeId: string;
+  id: string;
+
+  @Field()
+  @Column()
+  name: string;
+
+  @Field(() => Float)
+  @Column('float')
+  fee: number;
+
+  @Field()
+  @Column('uuid')
+  tenantId: string;
+
+  @Field(() => Date)
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt: Date;
+
+  @OneToMany(() => TransportAssignment, (a) => a.route, { nullable: true })
+  @Field(() => [TransportAssignment], { nullable: true })
+  assignments?: TransportAssignment[];
 }

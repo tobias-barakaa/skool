@@ -27,9 +27,6 @@ import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 export class StorageController {
   constructor(private readonly backblazeService: BackblazeService) {}
 
-  /**
-   * Upload single file for assignment/question
-   */
   @Post('upload/single')
   @UseInterceptors(FileInterceptor('file'))
   async uploadSingleFile(
@@ -37,7 +34,7 @@ export class StorageController {
       new ParseFilePipe({
         validators: [
           new MaxFileSizeValidator({
-            maxSize: 10 * 1024 * 1024, // 10 MB
+            maxSize: 10 * 1024 * 1024, 
             message: 'File too large. Maximum allowed size is 10 MB.',
           }),
           new FileTypeValidator({
@@ -49,11 +46,10 @@ export class StorageController {
     file: Express.Multer.File,
 
     @Body() uploadDto: FileUploadDto,
-    @Req() req: Request, // <-- Get user from request
+    @Req() req: Request, 
   ): Promise<FileUploadResult> {
     const user = req.user as ActiveUserData;
 
-    // Fill in missing fields if they aren’t already set
     uploadDto.userId = uploadDto.userId || user.sub;
     uploadDto.tenantId = uploadDto.tenantId || user.tenantId;
 
@@ -64,9 +60,7 @@ export class StorageController {
     return this.backblazeService.uploadFile(file, uploadDto);
   }
 
-  /**
-   * Upload multiple files for assignment/question
-   */
+ 
   @Post('upload/multiple')
   @UseInterceptors(FilesInterceptor('files', 10))
   async uploadMultipleFiles(
@@ -86,9 +80,6 @@ export class StorageController {
     return this.backblazeService.uploadMultipleFiles(files, uploadDto);
   }
 
-  /**
-   * Get signed URL for file access
-   */
   @Get('file/:tenantId/:entityType/:entityId/signed-url')
   async getSignedUrl(
     @Param('tenantId') tenantId: string,
@@ -102,9 +93,7 @@ export class StorageController {
     return { url };
   }
 
-  /**
-   * List all files for an entity
-   */
+ 
   @Get('files/:tenantId/:entityType/:entityId')
   async listEntityFiles(
     @Param('tenantId') tenantId: string,
@@ -118,9 +107,7 @@ export class StorageController {
     );
   }
 
-  /**
-   * Delete file
-   */
+ 
   @Delete('file/:tenantId/:entityType/:entityId/:fileName')
   async deleteFile(
     @Param('tenantId') tenantId: string,

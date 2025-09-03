@@ -123,6 +123,12 @@ input AssignStreamClassTeacherInput {
   teacherId: ID!
 }
 
+input AssignTransportInput {
+  pickupPoint: String
+  routeId: String!
+  studentId: String!
+}
+
 type Attendance {
   createdAt: DateTime!
   date: String!
@@ -392,17 +398,9 @@ input CreateTestInput {
   totalMarks: Int!
 }
 
-input CreateTransportBusInput {
-  capacity: Int!
-  plateNumber: String!
-  routeId: ID!
-}
-
 input CreateTransportRouteInput {
-  endLocation: String!
   fee: Float!
   name: String!
-  startLocation: String!
   tenantId: String!
 }
 
@@ -677,6 +675,7 @@ type Mutation {
   assignGradeLevelClassTeacher(input: AssignGradeLevelClassTeacherInput!): ClassTeacherAssignment!
   assignStreamClassTeacher(input: AssignStreamClassTeacherInput!): ClassTeacherAssignment!
   assignStudentToHostel(input: CreateHostelAssignmentInput!): HostelAssignment!
+  assignTransport(input: AssignTransportInput!): TransportAssignment!
   changePassword(changePasswordInput: ChangePasswordInput!): PasswordResetResponse!
   configureSchoolLevelsByNames(levelNames: [String!]!): SchoolConfigurationResponse!
   createAssessment(input: CreateAssessmentInput!): AssessmentOutput!
@@ -687,7 +686,6 @@ type Mutation {
   createStudent(createStudentInput: CreateStudentInput!): CreateStudentResponse!
   createTenantStreamFromScratch(input: CreateTenantStreamInput!): TenantStream!
   createTest(createTestInput: CreateTestInput!): Test!
-  createTransportBus(input: CreateTransportBusInput!): TransportBus!
   createTransportRoute(input: CreateTransportRouteInput!): TransportRoute!
   createUser(signupInput: SignupInput!): CreateUserResponse!
   deactivateTenantSubject(tenantSubjectId: String!): Boolean!
@@ -699,7 +697,6 @@ type Mutation {
   deleteStream(id: ID!): Boolean!
   deleteTeacher(id: String!, tenantId: String!): String!
   deleteTenantStream(tenantStreamId: String!): Boolean!
-  deleteTransportBus(id: ID!): Boolean!
   deleteTransportRoute(id: ID!): Boolean!
   enterStudentMarks(inputs: [EnterStudentMarksInput!]!): [AssessmentMark!]!
   forgotPassword(forgotPasswordInput: ForgotPasswordInput!): PasswordResetResponse!
@@ -739,6 +736,7 @@ type Mutation {
   signIn(signInInput: SignInInput!): AuthResponse!
   toggleTenantStream(activate: Boolean!, tenantStreamId: String!): Boolean!
   unassignClassTeacher(input: UnassignClassTeacherInput!): Boolean!
+  unassignTransport(id: ID!): Boolean!
   updateCustomSubject(input: UpdateTenantSubjectInput!, tenantSubjectId: String!): TenantSubject!
   updateHostel(input: UpdateHostelInput!): Hostel!
   updateHostelAssignment(input: UpdateHostelAssignmentInput!): HostelAssignment!
@@ -748,7 +746,7 @@ type Mutation {
   updateStudentMarks(inputs: [EnterStudentMarksInput!]!): [AssessmentMark!]!
   updateTenantStream(input: UpdateTenantStreamInput!, tenantStreamId: String!): TenantStream!
   updateTest(updateTestInput: UpdateTestInput!): Test!
-  updateTransportBus(input: UpdateTransportBusInput!): TransportBus!
+  updateTransportAssignment(input: UpdateTransportAssignmentInput!): TransportAssignment!
   updateTransportRoute(input: UpdateTransportRouteInput!): TransportRoute!
 }
 
@@ -916,8 +914,9 @@ type Query {
   termAssessmentsWithStudents(academicYear: String!, gradeLevelId: String!, term: Int!): TermAssessmentWithStudentsDto!
   testById(id: String!): Test
   testSocket(scenario: String): String!
-  transportBuses(routeId: ID!): [TransportBus!]!
-  transportRoutes(tenantId: String!): [TransportRoute!]!
+  transportAssignmentsByRoute(routeId: ID!): [TransportAssignment!]!
+  transportAssignmentsByStudent(studentId: ID!): [TransportAssignment!]!
+  transportRoutes: [TransportRoute!]!
   users: [User!]!
   usersByTenant(role: String, tenantId: String!): [User!]!
 }
@@ -1483,33 +1482,24 @@ type TokensOutput {
 
 type TransportAssignment {
   assignedAt: DateTime!
-  bus: TransportBus!
-  id: ID!
-  isActive: Boolean!
-  pickupPoint: String!
-  route: TransportRoute!
-  student: Student!
-  tenantId: String!
-}
-
-type TransportBus {
-  assignments: [TransportAssignment!]
-  capacity: Float!
   createdAt: DateTime!
   id: ID!
-  plateNumber: String!
+  pickupPoint: String
   route: TransportRoute!
-  updatedAt: DateTime!
+  routeId: ID!
+  status: String!
+  student: Student!
+  studentId: ID!
+  tenantId: String!
+  vacatedAt: DateTime
 }
 
 type TransportRoute {
-  buses: [TransportBus!]
+  assignments: [TransportAssignment!]
   createdAt: DateTime!
-  endLocation: String!
   fee: Float!
   id: ID!
   name: String!
-  startLocation: String!
   tenantId: String!
 }
 
@@ -1608,19 +1598,16 @@ input UpdateTestInput {
   totalMarks: Int
 }
 
-input UpdateTransportBusInput {
-  capacity: Int
+input UpdateTransportAssignmentInput {
   id: ID!
-  plateNumber: String
-  routeId: ID
+  pickupPoint: String
+  status: String
 }
 
 input UpdateTransportRouteInput {
-  endLocation: String
   fee: Float
   id: ID!
   name: String
-  startLocation: String
   tenantId: String
 }
 

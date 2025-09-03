@@ -5,7 +5,16 @@ import {
   Inject,
 } from '@nestjs/common';
 import { ConfigService, ConfigType } from '@nestjs/config';
-import { S3 } from 'aws-sdk';
+import { 
+  S3Client, 
+  PutObjectCommand, 
+  HeadBucketCommand, 
+  DeleteObjectCommand,
+  ListObjectsV2Command,
+  GetObjectCommand
+} from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { Upload } from '@aws-sdk/lib-storage';
 import { v4 as uuidv4 } from 'uuid';
 import backblazeConfig from 'src/config/backblaze.config';
 
@@ -33,10 +42,10 @@ interface FileUploadResult {
 
 @Injectable()
 export class BackblazeService {
-  private readonly s3Clients: S3[];
+  private readonly s3Clients: S3Client[];
   private readonly bucketName: string;
   private readonly maxRetries = 3;
-  private readonly retryDelay = 1000; // 1 second base delay
+  private readonly retryDelay = 1000;
   private readonly endpoints = [
     'https://s3.us-east-005.backblazeb2.com',
     'https://s3.us-east-005.backblazeb2.com',
@@ -54,10 +63,9 @@ export class BackblazeService {
         throw new Error('Bucket name is not defined in the configuration');
       })();
 
-    // Create multiple S3 clients for different endpoints
     this.s3Clients = this.endpoints.map(
       (endpoint) =>
-        new S3({
+        new S3Client({
           endpoint,
           region: this.config.region,
           credentials: {
@@ -74,14 +82,12 @@ export class BackblazeService {
                 );
               })(),
           },
-          s3ForcePathStyle: true,
-          // More aggressive timeout settings
-          httpOptions: {
-            timeout: 15000, // Reduced to 15 seconds
-            connectTimeout: 5000, // Reduced to 5 seconds
-            agent: undefined, // Disable connection pooling to avoid stale connections
+          forcePathStyle: true,
+          requestHandler: {
+            requestTimeout: 15000,
+            connectionTimeout: 5000,
           },
-          maxRetries: 0, // Disable SDK retries, we'll handle them ourselves
+          maxAttempts: 1, // We handle retries manually
         }),
     );
   }
@@ -95,10 +101,8 @@ export class BackblazeService {
     }
 
     console.log(
-      `Uploading file: ${file.originalname} (${file.size} bytes)gggggggggggggggggggg`,
+      `Uploading file: ${file.originalname} (${file.size} bytes)`,
     );
-    console.log(dto, 'this is the dtoooss//////////////////////');
-    console.log(file, 'this is the file.....................:');
 
     const allowedMimeTypes = [
       'image/jpeg',
@@ -128,7 +132,6 @@ export class BackblazeService {
     filePath: string,
     attempt = 1,
   ): Promise<FileUploadResult> {
-    // Guard: reject oversized files immediately
     const MAX_BYTES = 10 * 1024 * 1024; // 10 MB
     if (file.size > MAX_BYTES) {
       throw new BadRequestException(
@@ -136,7 +139,6 @@ export class BackblazeService {
       );
     }
 
-    /*  ↓↓↓  everything else stays exactly the same  ↓↓↓  */
     for (
       let endpointIndex = 0;
       endpointIndex < this.s3Clients.length;
@@ -150,31 +152,39 @@ export class BackblazeService {
           `Upload attempt ${attempt}/${this.maxRetries + 1} for file: ${fileName} using endpoint: ${endpoint}`,
         );
 
-        const uploadParams = {
-          Bucket: this.bucketName,
-          Key: filePath,
-          Body: file.buffer,
-          ContentType: file.mimetype,
-          Metadata: {
-            tenantId: dto.tenantId || '',
-            entityType: dto.entityType,
-            entityId: dto.entityId,
-            userId: dto.userId || '',
-            originalName: file.originalname,
-            uploadedAt: new Date().toISOString(),
+        const upload = new Upload({
+          client: s3Client,
+          params: {
+            Bucket: this.bucketName,
+            Key: filePath,
+            Body: file.buffer,
+            ContentType: file.mimetype,
+            Metadata: {
+              tenantId: dto.tenantId || '',
+              entityType: dto.entityType,
+              entityId: dto.entityId,
+              userId: dto.userId || '',
+              originalName: file.originalname,
+              uploadedAt: new Date().toISOString(),
+            },
           },
-        };
-
-        // Use Promise.race to implement our own timeout
-        const uploadPromise = s3Client.upload(uploadParams).promise();
-        const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('Upload timeout')), 15000);
         });
 
-        const result = (await Promise.race([
-          uploadPromise,
-          timeoutPromise,
-        ])) as any;
+        upload.on('httpUploadProgress', (progress: any) => {
+          console.log(`Upload progress: ${JSON.stringify(progress)}`);
+        });
+
+        const abortController = new AbortController();
+        const timeoutId = setTimeout(() => {
+          abortController.abort();
+        }, 15000);
+
+        upload.on('httpUploadProgress', () => {
+          clearTimeout(timeoutId);
+        });
+
+        const result = await upload.done();
+        clearTimeout(timeoutId);
 
         console.log(
           `Successfully uploaded file: ${fileName} to ${result.Location} via ${endpoint}`,
@@ -186,7 +196,7 @@ export class BackblazeService {
           originalName: file.originalname,
           mimeType: file.mimetype,
           size: file.size,
-          url: result.Location,
+          url: result.Location || `${endpoint}/${this.bucketName}/${filePath}`,
           path: filePath,
           tenantId: dto.tenantId || '',
           entityType: dto.entityType,
@@ -199,13 +209,13 @@ export class BackblazeService {
           `S3 Upload Error (attempt ${attempt}, endpoint ${endpoint}):`,
           {
             error: err.message || 'Unknown error',
+            name: err.name,
             code: err.code,
-            statusCode: err.statusCode,
-            retryable: err.retryable,
+            statusCode: err.$metadata?.httpStatusCode,
+            retryable: err.$retryable,
           },
         );
 
-        // If this is the last endpoint and we still have retries left, try again
         if (
           endpointIndex === this.s3Clients.length - 1 &&
           attempt <= this.maxRetries
@@ -224,7 +234,6 @@ export class BackblazeService {
           );
         }
 
-        // If not the last endpoint, continue to next endpoint
         if (endpointIndex < this.s3Clients.length - 1) {
           console.log(`Trying next endpoint...`);
           continue;
@@ -232,17 +241,15 @@ export class BackblazeService {
       }
     }
 
-    // If we've exhausted all endpoints and retries
     throw new InternalServerErrorException(
       `Failed to upload after ${attempt} attempts across all endpoints`,
     );
   }
 
   private calculateRetryDelay(attempt: number): number {
-    // Exponential backoff with jitter
     const baseDelay = this.retryDelay * Math.pow(2, attempt - 1);
-    const jitter = Math.random() * 1000; // Add up to 1 second of jitter
-    return Math.min(baseDelay + jitter, 10000); // Cap at 10 seconds
+    const jitter = Math.random() * 1000;
+    return Math.min(baseDelay + jitter, 10000);
   }
 
   private sleep(ms: number): Promise<void> {
@@ -263,7 +270,6 @@ export class BackblazeService {
     return `${timestamp}-${uuid}-${name}.${ext}`;
   }
 
-  // Health check method to test connectivity across all endpoints
   async testConnection(): Promise<
     { endpoint: string; status: boolean; error?: string }[]
   > {
@@ -274,22 +280,28 @@ export class BackblazeService {
       const endpoint = this.endpoints[i];
 
       try {
+        const command = new HeadBucketCommand({ Bucket: this.bucketName });
+        
         await Promise.race([
-          s3Client.headBucket({ Bucket: this.bucketName }).promise(),
+          s3Client.send(command),
           new Promise((_, reject) =>
             setTimeout(() => reject(new Error('Timeout')), 5000),
           ),
         ]);
+        
         results.push({ endpoint, status: true });
       } catch (error) {
-        results.push({ endpoint, status: false, error: error.message });
+        results.push({ 
+          endpoint, 
+          status: false, 
+          error: error.message || error.name 
+        });
       }
     }
 
     return results;
   }
 
-  // Get the best available endpoint
   async getBestEndpoint(): Promise<string | null> {
     const results = await this.testConnection();
     const healthy = results.find((r) => r.status);
@@ -300,18 +312,28 @@ export class BackblazeService {
     files: Express.Multer.File[],
     dto: FileUploadDto,
   ): Promise<FileUploadResult[]> {
-    return Promise.all(files.map((file) => this.uploadFile(file, dto)));
+    const concurrencyLimit = 3;
+    const results: FileUploadResult[] = [];
+    
+    for (let i = 0; i < files.length; i += concurrencyLimit) {
+      const batch = files.slice(i, i + concurrencyLimit);
+      const batchResults = await Promise.all(
+        batch.map((file) => this.uploadFile(file, dto))
+      );
+      results.push(...batchResults);
+    }
+    
+    return results;
   }
 
   async deleteFile(filePath: string): Promise<void> {
+    const command = new DeleteObjectCommand({
+      Bucket: this.bucketName,
+      Key: filePath,
+    });
+
     try {
-      const s3Client = this.s3Clients[0]; // Use the first S3 client as default
-      await s3Client
-        .deleteObject({
-          Bucket: this.bucketName,
-          Key: filePath,
-        })
-        .promise();
+      await this.s3Clients[0].send(command);
     } catch (err) {
       throw new InternalServerErrorException(
         `Failed to delete file: ${err.message}`,
@@ -321,10 +343,13 @@ export class BackblazeService {
 
   async getSignedUrl(filePath: string, expiresIn = 3600): Promise<string> {
     try {
-      return this.s3Clients[0].getSignedUrl('getObject', {
+      const command = new GetObjectCommand({
         Bucket: this.bucketName,
         Key: filePath,
-        Expires: expiresIn,
+      });
+
+      return await getSignedUrl(this.s3Clients[0], command, {
+        expiresIn,
       });
     } catch (err) {
       throw new InternalServerErrorException(
@@ -340,14 +365,12 @@ export class BackblazeService {
   ): Promise<any[]> {
     try {
       const prefix = `tenants/${tenantId}/${entityType}/${entityId}/files/`;
+      const command = new ListObjectsV2Command({
+        Bucket: this.bucketName,
+        Prefix: prefix,
+      });
 
-      const result = await this.s3Clients[0]
-        .listObjectsV2({
-          Bucket: this.bucketName,
-          Prefix: prefix,
-        })
-        .promise();
-
+      const result = await this.s3Clients[0].send(command);
       return result.Contents || [];
     } catch (err) {
       throw new InternalServerErrorException(

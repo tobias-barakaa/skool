@@ -7,14 +7,6 @@ export class CreateTransportRouteInput {
   @IsNotEmpty()
   name: string;
 
-  @Field()
-  @IsNotEmpty()
-  startLocation: string;
-
-  @Field()
-  @IsNotEmpty()
-  endLocation: string;
-
   @Field(() => Float)
   @IsNumber()
   fee: number;
