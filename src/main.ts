@@ -9,11 +9,17 @@ import { CustomLogger } from './admin/common/custom-logger.service';
 import { EntityNotFoundFilter } from './admin/common/filter/entity-not-found.filter';
 import { GraphQLExceptionsFilter } from './admin/common/filter/graphQLException.filter';
 import { SeedingService } from './admin/school-type/seeds/school-type';
+import { randomUUID } from 'crypto';
+
 
 async function bootstrap() {
   const logger = new CustomLogger('Bootstrap');
 
   try {
+
+    if (!(global as any).crypto) {
+      (global as any).crypto = { randomUUID };
+    }
     const app = await NestFactory.create(AppModule, {
       logger,
     });
