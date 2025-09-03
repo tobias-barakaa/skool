@@ -13,7 +13,7 @@ export class AssignmentResolver {
   constructor(private readonly assignmentService: AssignmentService) {}
 
   @Query(() => AssignmentsResponse)
-  async getMyAssignments(
+  async getMyAssignmentss(
     @Args() args: GetAssignmentsArgs,
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<AssignmentsResponse> {

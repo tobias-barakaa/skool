@@ -3,6 +3,7 @@ import { DataSource } from 'typeorm';
 import { AssignmentStatus, GetAssignmentsArgs } from '../dtos/get-assignments.args';
 import { Assignment, AssignmentSubmission } from '../dtos/assignment-response.dto';
 import { CreateAssignmentSubmissionInput } from '../dtos/create-assignment-submission.input';
+import { Student } from 'src/admin/student/entities/student.entity';
 
 @Injectable()
 export class AssignmentProvider {
@@ -19,11 +20,11 @@ export class AssignmentProvider {
     try {
       // First, get the student's grade level
       const studentQuery = `
-        SELECT tgl.id as grade_level_id
-        FROM students s
-        JOIN tenant_grade_levels tgl ON s.tenant_grade_level_id = tgl.id
-        WHERE s.id = $1 AND s.tenant_id = $2
-      `;
+      SELECT tgl.id as grade_level_id
+      FROM students s
+      JOIN tenant_grade_level tgl ON s.grade_level_id = tgl.id
+      WHERE s.id = $1 AND s.tenant_id = $2
+    `;
       const studentResult = await qr.query(studentQuery, [studentId, tenantId]);
       
       if (!studentResult.length) {
@@ -45,16 +46,17 @@ export class AssignmentProvider {
 
       // Base query for assignments
       const baseQuery = `
-        FROM tests t
-        JOIN tenant_grade_levels tgl ON t.id = ANY(
-          SELECT tgl_test.test_id 
-          FROM test_grade_levels tgl_test 
-          WHERE tgl_test.grade_level_id = tgl.id
-        )
-        JOIN tenant_subjects ts ON t.tenant_subject_id = ts.id
-        JOIN users teacher ON t.teacher_id = teacher.id
-        LEFT JOIN test_submissions sub ON t.id = sub.test_id AND sub.student_id = $5
-        WHERE ${whereConditions.join(' AND ')}
+FROM test t
+JOIN tenant_grade_level tgl ON t.id = ANY(
+  SELECT ttgl.test_id
+  FROM test_tenant_grade_levels ttgl
+  WHERE ttgl.tenant_grade_level_id = tgl.id
+)
+JOIN tenant_subject ts ON t.tenant_subject_id = ts.id
+JOIN users teacher ON t.teacher_id = teacher.id
+-- check if you actually have test_submissions or need to link assessment_marks
+LEFT JOIN test_submissions sub ON t.id = sub.test_id AND sub.student_id = $5
+WHERE ${whereConditions.join(' AND ')}
       `;
 
       // Add student ID to params for the main query
@@ -340,22 +342,11 @@ export class AssignmentProvider {
     }
   }
 
-
-  async getStudentById(studentId: string, tenantId: string): Promise<any> {
-    const qr = this.dataSource.createQueryRunner();
-    await qr.connect();
-
-    try {
-      const query = `
-        SELECT s.*, u.first_name, u.last_name, u.email
-        FROM students s
-        JOIN users u ON s.user_id = u.id
-        WHERE s.id = $1 AND s.tenant_id = $2
-      `;
-      const result = await qr.query(query, [studentId, tenantId]);
-      return result[0] || null;
-    } finally {
-      await qr.release();
-    }
+  async getStudentByUserId(userId: string, tenantId: string): Promise<Student | null> {
+    return this.dataSource.getRepository(Student).findOne({
+      where: { user_id: userId, tenant_id: tenantId },
+      relations: ['user', 'grade', 'stream'],
+    });
   }
+  
 }

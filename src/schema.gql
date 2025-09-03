@@ -129,6 +129,59 @@ input AssignTransportInput {
   studentId: String!
 }
 
+type Assignment {
+  createdAt: DateTime!
+  description: String!
+  dueDate: DateTime!
+  id: ID!
+  resourceUrl: String
+  status: AssignmentStatus!
+  subject: AssignmentSubject!
+  submission: AssignmentSubmission
+  teacher: AssignmentTeacher!
+  title: String!
+  totalMarks: Int!
+  updatedAt: DateTime!
+}
+
+"""Status of the student assignment"""
+enum AssignmentStatus {
+  GRADED
+  OVERDUE
+  PENDING
+  SUBMITTED
+}
+
+type AssignmentSubject {
+  id: ID!
+  name: String!
+}
+
+type AssignmentSubmission {
+  comments: String
+  feedback: String
+  fileUrl: String
+  grade: Float
+  gradedAt: DateTime
+  id: ID!
+  submissionText: String
+  submittedAt: DateTime!
+}
+
+type AssignmentTeacher {
+  email: String!
+  firstName: String!
+  id: ID!
+  lastName: String!
+}
+
+type AssignmentsResponse {
+  assignments: [Assignment!]!
+  currentPage: Int!
+  total: Int!
+  totalPages: Int!
+}
+
 type Attendance {
   createdAt: DateTime!
   date: String!
@@ -229,6 +282,13 @@ input CreateAssessmentInput {
   term: Float!
   title: String
   type: AssessType!
+}
+
+input CreateAssignmentSubmissionInput {
+  assignmentId: ID!
+  comments: String
+  fileUrl: String
+  submissionText: String
 }
 
 input CreateAttendanceInput {
@@ -734,6 +794,7 @@ type Mutation {
   sendMessageToParent(input: SendMessageInput!): ChatMessage!
   sendMessageToStudent(input: SendMessageInput!): ChatMessage!
   signIn(signInInput: SignInInput!): AuthResponse!
+  submitAssignment(input: CreateAssignmentSubmissionInput!): AssignmentSubmission!
   toggleTenantStream(activate: Boolean!, tenantStreamId: String!): Boolean!
   unassignClassTeacher(input: UnassignClassTeacherInput!): Boolean!
   unassignTransport(id: ID!): Boolean!
@@ -838,12 +899,14 @@ type Query {
   getActiveStaffByTenant(tenantId: String!): [StaffDto!]!
   getAllClassTeacherAssignments: [ClassTeacherAssignment!]!
   getAllTeachers: [Teacher!]!
+  getAssignment(id: ID!): Assignment!
   getAttendanceByDate(date: String!, gradeId: String!): [Attendance!]!
 
   """Get all students and teachers for current user tenant"""
   getBothStudentsAndTeachersByTenant: CombinedSearchResult!
   getChatMessages(chatRoomId: String!, limit: Float = 50, offset: Float = 0): [ChatMessage!]!
   getGradeLevelClassTeacher(gradeLevelId: String!): ClassTeacherAssignment
+  getMyAssignmentss(limit: Float = 10, offset: Float = 0, status: AssignmentStatus, subjectId: ID): AssignmentsResponse!
   getMyChats: [ChatRoom!]!
   getParentsByTenant(tenantId: String!): [Parent!]!
   getPendingInvitations(tenantId: String!): [PendingInvitation!]!

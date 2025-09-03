@@ -122,7 +122,6 @@ export class ChatProvider {
           userType: p.user_type,
         }));
 
-        // Declare chatRoom here so it's available for lastMessage.chatRoom
         const chatRoom: ChatRoom = {
             id: row.id,
             name: row.name,
@@ -131,8 +130,7 @@ export class ChatProvider {
             updatedAt: new Date(row.updated_at),
             participants,
             unreadCount: parseInt(row.unread_count),
-            // lastMessage will be assigned correctly below
-            lastMessage: undefined // Initialize as undefined
+            lastMessage: undefined 
         };
 
         if (row.last_message_id) {
@@ -149,8 +147,8 @@ export class ChatProvider {
                     email: row.last_message_sender_email,
                     userType: row.last_message_sender_type,
                 },
-                chatRoom: chatRoom, // <--- Assign the current chatRoom object here!
-                isRead: false, // This would need additional logic to determine
+                chatRoom: chatRoom,
+                isRead: false, 
             };
         }
 

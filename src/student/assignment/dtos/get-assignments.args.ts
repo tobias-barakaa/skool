@@ -1,12 +1,18 @@
-import { ArgsType, Field, ID } from '@nestjs/graphql';
+import { ArgsType, Field, ID, registerEnumType } from '@nestjs/graphql';
 import { IsOptional, IsUUID, IsEnum } from 'class-validator';
 
 export enum AssignmentStatus {
   PENDING = 'PENDING',
   SUBMITTED = 'SUBMITTED',
   GRADED = 'GRADED',
-  OVERDUE = 'OVERDUE'
+  OVERDUE = 'OVERDUE',
 }
+
+// 👇 this is missing in your code
+registerEnumType(AssignmentStatus, {
+  name: 'AssignmentStatus',
+  description: 'Status of the student assignment',
+});
 
 @ArgsType()
 export class GetAssignmentsArgs {

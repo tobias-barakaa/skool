@@ -29,6 +29,7 @@ import { TeacherModule } from './teacher/teacher.module';
 import { TenantRoleGuard } from './iam/guards/tenant-role.guard';
 import { IamModule } from './iam/iam.module';
 import { SuperAdminModule } from './super_admin/super_admin.module';
+import { StudentPortalModule } from './student/student.module';
 
 const ENV = process.env.NODE_ENV;
 
@@ -108,6 +109,7 @@ const ENV = process.env.NODE_ENV;
     StorageModule,
     MessagingModule,
     IamModule,
+    StudentPortalModule,
 
     RedisModule.forRoot({
       type: 'single',

@@ -25,13 +25,11 @@ async function bootstrap() {
       logger,
     });
 
-    // Global filters
     app.useGlobalFilters(
       new EntityNotFoundFilter(),
       new GraphQLExceptionsFilter(),
     );
 
-    // CORS
     app.use(cookieParser());
 
     app.enableCors({
@@ -78,7 +76,6 @@ async function bootstrap() {
       express.static(join(__dirname, '..', 'public', 'favicon.ico')),
     );
 
-    // Swagger setup
     const swaggerConfig = new DocumentBuilder()
       .setTitle('NestJS API')
       .setDescription('The NestJS API description')

@@ -10,15 +10,15 @@ export class AssignmentService {
   constructor(private readonly assignmentProvider: AssignmentProvider) {}
 
   async getStudentAssignments(
-    student: ActiveUserData,
+    currentUser: ActiveUserData,
     args: GetAssignmentsArgs,
+
   ): Promise<AssignmentsResponse> {
     try {
-      // Get student record
-      const studentRecord = await this.assignmentProvider.getStudentById(
-        student.sub,
-        student.tenantId,
-      );
+        const studentRecord = await this.assignmentProvider.getStudentByUserId(
+            currentUser.sub,      
+            currentUser.tenantId, 
+          );
 
       if (!studentRecord) {
         throw new NotFoundException('Student not found');
@@ -26,7 +26,7 @@ export class AssignmentService {
 
       const { assignments, total } = await this.assignmentProvider.getStudentAssignments(
         studentRecord.id,
-        student.tenantId,
+        currentUser.tenantId,
         args,
       );
 
@@ -55,7 +55,7 @@ export class AssignmentService {
   ): Promise<Assignment> {
     try {
       // Get student record
-      const studentRecord = await this.assignmentProvider.getStudentById(
+      const studentRecord = await this.assignmentProvider.getStudentByUserId(
         student.sub,
         student.tenantId,
       );
@@ -90,7 +90,7 @@ export class AssignmentService {
   ): Promise<AssignmentSubmission> {
     try {
       // Get student record
-      const studentRecord = await this.assignmentProvider.getStudentById(
+      const studentRecord = await this.assignmentProvider.getStudentByUserId(
         student.sub,
         student.tenantId,
       );
