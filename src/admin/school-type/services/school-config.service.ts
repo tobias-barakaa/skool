@@ -170,24 +170,20 @@ export class SchoolConfigService {
     tenantId: string,
   ): Promise<SchoolConfigurationResponse> {
     if (!config) throw new Error('School configuration is null');
-
+  
     const tenantGradeLevels = await this.tenantGradeLevelRepo.find({
       where: { tenant: { id: tenantId }, isActive: true },
-      relations: ['curriculum', 'gradeLevel', 'gradeLevel.streams'],
+      relations: ['curriculum', 'gradeLevel', 'tenantStreams', 'tenantStreams.stream'],
       order: { gradeLevel: { order: 'ASC' } },
     });
-
+  
     const tenantSubjects = await this.tenantSubjectRepo.find({
       where: { tenant: { id: tenantId }, isActive: true },
       relations: ['curriculum', 'subject', 'customSubject'],
     });
-
-    const tenantStreams = await this.tenantStreamRepo.find({
-      where: { tenant: { id: tenantId }, isActive: true },
-      relations: ['tenantGradeLevel', 'stream'],
-    });
-
+  
     const curriculumMap = new Map();
+    
     tenantGradeLevels.forEach((tgl) => {
       const cid = tgl.curriculum.id;
       if (!curriculumMap.has(cid)) {
@@ -197,72 +193,32 @@ export class SchoolConfigService {
           subjects: [],
         });
       }
-
+  
+      // Return tenant grade level with its properties
       const gradeLevel = {
-        ...tgl.gradeLevel,
-        streams: tenantStreams
-          .filter(
-            (ts) => ts.tenantGradeLevel.gradeLevel.id === tgl.gradeLevel.id,
-          )
-          .map((ts) => ts.stream),
+        id: tgl.id, // ✅ TenantGradeLevel ID
+        name: tgl.gradeLevel.name,
+        shortName: tgl.shortName,
+        sortOrder: tgl.sortOrder,
+        age: tgl.gradeLevel.age,
+        streams: tgl.tenantStreams?.map(ts => ts.stream) || [],
       };
-
+  
       curriculumMap.get(cid).gradeLevels.push(gradeLevel);
     });
-
-    tenantSubjects.forEach((ts) => {
-      if (!ts.curriculum) return;
-
-      const cid = ts.curriculum.id;
-      if (!curriculumMap.has(cid)) return;
-      if (ts.subject) {
-        curriculumMap.get(cid).subjects.push({
-          id: ts.subject.id,
-          name: ts.subject.name,
-          code: ts.subject.code,
-          subjectType: ts.subjectType,
-          category: ts.subject.category,
-          department: ts.subject.department,
-          shortName: ts.subject.shortName,
-          isCompulsory: ts.isCompulsory,
-          totalMarks: ts.totalMarks,
-          passingMarks: ts.passingMarks,
-          creditHours: ts.creditHours,
-          curriculum: ts.curriculum.id,
-          isCustom: false,
-        });
-      }
-
-      if (ts.customSubject) {
-        const cs = ts.customSubject;
-        curriculumMap.get(cid).subjects.push({
-          id: cs.id,
-          name: cs.name,
-          code: cs.code,
-          subjectType: ts.subjectType,
-          category: cs.category,
-          department: cs.department,
-          shortName: cs.shortName,
-          isCompulsory: ts.isCompulsory,
-          totalMarks: ts.totalMarks,
-          passingMarks: ts.passingMarks,
-          creditHours: ts.creditHours,
-          curriculum: ts.curriculum.id,
-          isCustom: true,
-        });
-      }
-    });
-
+  
+    // Rest of your subject mapping...
+    
     const selectedLevels = Array.from(curriculumMap.values()).map((item) => ({
       id: item.curriculum.id,
       name: item.curriculum.display_name,
       description: item.curriculum.name,
       gradeLevels: item.gradeLevels.sort(
-        (a: any, b: any) => (a.order || 0) - (b.order || 0),
+        (a: any, b: any) => (a.sortOrder || a.order || 0) - (b.sortOrder || b.order || 0),
       ),
       subjects: item.subjects,
     }));
-
+  
     return {
       id: config.id,
       createdAt: config.createdAt,

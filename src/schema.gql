@@ -1449,8 +1449,8 @@ type TenantGradeLevel {
   isActive: Boolean!
   shortName: String
   sortOrder: Float
-  streams: [Stream!]
   tenant: Tenant!
+  tenantStreams: [TenantStream!]
   updatedAt: DateTime!
 }
 

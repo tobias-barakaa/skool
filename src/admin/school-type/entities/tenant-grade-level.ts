@@ -13,6 +13,7 @@ import { Tenant } from 'src/admin/tenants/entities/tenant.entity';
 import { GradeLevel } from 'src/admin/level/entities/grade-level.entity';
 import { Curriculum } from 'src/admin/curriculum/entities/curicula.entity';
 import { Stream } from 'src/admin/streams/entities/streams.entity';
+import { TenantStream } from './tenant-stream';
 
 @ObjectType()
 @Entity()
@@ -48,9 +49,9 @@ export class TenantGradeLevel {
   @Column({ type: 'int', nullable: true, default: 0 })
   sortOrder?: number;
 
-  @Field(() => [Stream], { nullable: true })
-  @OneToMany(() => Stream, (s) => s.gradeLevel)
-  streams?: Stream[];
+  @Field(() => [TenantStream], { nullable: true })
+  @OneToMany(() => TenantStream, (ts) => ts.tenantGradeLevel)
+  tenantStreams?: TenantStream[];
 
   @Field(() => Date)
   @CreateDateColumn()
