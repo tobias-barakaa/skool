@@ -839,6 +839,7 @@ export class TeacherService {
     currentUser: ActiveUserData,
   ): Promise<ClassTeacherAssignment[]> {
     const tenantId = currentUser.tenantId;
+    console.log(tenantId, 'this is the tenantId;:::::::::::::::::::::::::::::::::')
     
     if (!tenantId) {
       throw new BadRequestException('Tenant information not found for current user');
