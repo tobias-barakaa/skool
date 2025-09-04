@@ -282,25 +282,6 @@ export class TeacherService {
     }
   }
 
-  // private async fetchClassTeacherGradeLevel(
-  //   gradeLevelId: string,
-  //   tenantId: string,
-  //   tenantGradeLevelRepo: Repository<TenantGradeLevel>,
-  // ): Promise<TenantGradeLevel | undefined> {
-  //   if (!gradeLevelId) return undefined;
-
-  //   const gradeLevel = await tenantGradeLevelRepo.findOne({
-  //     where: { id: gradeLevelId, tenant: { id: tenantId } },
-  //   });
-
-  //   if (!gradeLevel) {
-  //     throw new BadRequestException(
-  //       `Class teacher grade level with ID ${gradeLevelId} not found`,
-  //     );
-  //   }
-
-  //   return gradeLevel;
-  // }
 
   private async fetchClassTeacherGradeLevel(
     gradeLevelId: string,
@@ -320,18 +301,6 @@ export class TeacherService {
     return gradeLevel;
   }
 
-  // private async fetchTenantGradeLevels(
-  //   gradeLevelIds: string[] | undefined,
-  //   tenantId: string,
-  //   repo: Repository<TenantGradeLevel>,
-  // ): Promise<TenantGradeLevel[]> {
-  //   if (!gradeLevelIds?.length) return [];
-
-  //   return repo.findBy({
-  //     id: In(gradeLevelIds),
-  //     tenant: { id: tenantId },
-  //   });
-  // }
 
   private async fetchTenantGradeLevels(
     gradeLevelIds: string[] | undefined,
@@ -361,18 +330,7 @@ export class TeacherService {
     return gradeLevels;
   }
 
-  // private async fetchTenantStreams(
-  //   streamIds: string[] | undefined,
-  //   tenantId: string,
-  //   repo: Repository<TenantStream>,
-  // ): Promise<TenantStream[]> {
-  //   if (!streamIds?.length) return [];
-
-  //   return repo.findBy({
-  //     id: In(streamIds),
-  //     tenant: { id: tenantId },
-  //   });
-  // }
+  
 
   private async fetchTenantStreams(
     streamIds: string[] | undefined,
@@ -403,19 +361,6 @@ export class TeacherService {
     return streams;
   }
 
-  // private async fetchTenantSubjects(
-  //   subjectIds: string[] | undefined,
-  //   tenantId: string,
-  //   repo: Repository<TenantSubject>,
-  // ): Promise<TenantSubject[]> {
-  //   if (!subjectIds?.length) return [];
-
-  //   return repo.findBy({
-  //     id: In(subjectIds),
-  //     tenant: { id: tenantId },
-  //   });
-  // }
-
 
   private async fetchTenantSubjects(
     subjectIds: string[] | undefined,
@@ -445,21 +390,7 @@ export class TeacherService {
     return subjects;
   }
 
-  // private async fetchClassTeacherStream(
-  //   streamId: string | undefined,
-  //   tenantId: string,
-  //   repo: Repository<TenantStream>,
-  // ): Promise<TenantStream | undefined> {
-  //   if (!streamId) return undefined;
-
-  //   const stream = await repo.findOne({
-  //     where: { id: streamId, tenant: { id: tenantId } },
-  //   });
-
-  //   return stream || undefined;
-  // }
-
-
+ 
   private async fetchClassTeacherStream(
     streamId: string,
     tenantId: string,
@@ -741,13 +672,7 @@ export class TeacherService {
     }
   }
 
-  // async assign(input: AssignClassTeacherInput) {
-  //   return this.classTeacherProvider.assign(input);
-  // }
-
-  // async unassign(input: UnassignClassTeacherInput) {
-  //   return this.classTeacherProvider.unassign(input);
-  // }
+ 
 
   async getTeacherByUserId(userId: string): Promise<Teacher> {
     const teacher = await this.teacherRepository.findOne({
@@ -852,7 +777,7 @@ export class TeacherService {
   
   async getTeacherForCurrentUser(currentUser: ActiveUserData): Promise<Teacher> {
     const tenantId = currentUser.tenantId;
-    const userId = currentUser.sub; // user ID from JWT
+    const userId = currentUser.sub;
   
     if (!tenantId) {
       throw new BadRequestException('Tenant information not found for current user');
@@ -908,7 +833,8 @@ export class TeacherService {
       },
     });
   }
-  
+
+
   async getAllClassTeacherAssignmentsInTenant(
     currentUser: ActiveUserData,
   ): Promise<ClassTeacherAssignment[]> {
@@ -928,7 +854,6 @@ export class TeacherService {
         'stream',
         'stream.stream',
         'gradeLevel',
-        'gradeLevel.gradeLevel',
       ],
       order: {
         createdAt: 'DESC',
@@ -986,23 +911,31 @@ export class TeacherService {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
 
 
+
+
+
+
+// {
+//   "data": {
+//     "acceptTeacherInvitation": {
+//       "message": "Invitation accepted successfully",
+//       "user": {
+//         "id": "8f174895-9834-4c12-8965-391d495723eb",
+//         "name": "Jane Smith",
+//         "email": "programmingenious@gmail.com"
+//       },
+//       "tokens": {
+//         "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4ZjE3NDg5NS05ODM0LTRjMTItODk2NS0zOTFkNDk1NzIzZWIiLCJlbWFpbCI6InByb2dyYW1taW5nZW5pb3VzQGdtYWlsLmNvbSIsInRlbmFudElkIjoiMGI3OGVjYzMtNWEwOS00YThlLWJiMzMtMWNkODc0YTM2OTUyIiwic3ViZG9tYWluIjoibXlmZGZkc2RkY2Rob2RvbCIsIm1lbWJlcnNoaXBJZCI6IjI1ZjUyMDkwLTBhNTUtNDI4MS1iOTEzLTk2NWQzMTNlZGM1OSIsImlhdCI6MTc1Njk4OTU5NiwiZXhwIjoxNzkyOTg5NTk2LCJhdWQiOiJzcXVsLmNvLmtlIiwiaXNzIjoic2tvb2wuemVsaXNsaW5lLmNvbSJ9.TKtA8m3PFKvcQ0Dkf2DZjS5zLQ7QS1WQCTzGmZEsLb4",
+//         "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4ZjE3NDg5NS05ODM0LTRjMTItODk2NS0zOTFkNDk1NzIzZWIiLCJlbWFpbCI6InByb2dyYW1taW5nZW5pb3VzQGdtYWlsLmNvbSIsInRlbmFudElkIjoiMGI3OGVjYzMtNWEwOS00YThlLWJiMzMtMWNkODc0YTM2OTUyIiwic3ViZG9tYWluIjoibXlmZGZkc2RkY2Rob2RvbCIsIm1lbWJlcnNoaXBJZCI6IjI1ZjUyMDkwLTBhNTUtNDI4MS1iOTEzLTk2NWQzMTNlZGM1OSIsImlhdCI6MTc1Njk4OTU5NiwiZXhwIjoxODQzMzg5NTk2LCJhdWQiOiJzcXVsLmNvLmtlIiwiaXNzIjoic2tvb2wuemVsaXNsaW5lLmNvbSJ9.UqymRjpPSQSu3oCOSyx-Jxxbis70ky2_1kRuELOdtcM"
+//       },
+//       "teacher": {
+//         "id": "1af61fc8-a6a7-4fea-923b-5d15b53281a9",
+//         "name": "Mike Johndson"
+//       },
+//       "role": "TEACHER"
+//     }
+//   }
+// }

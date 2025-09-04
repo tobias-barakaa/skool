@@ -8,12 +8,10 @@ export class CreateScholarshipInput {
   name: string;
 
   @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
   description?: string;
 
   @Field(() => Float, { nullable: true })
-  @IsOptional()
-  @IsNumber()
   amount?: number;
+
 }
+

@@ -290,18 +290,15 @@ WHERE ${whereConditions.join(' AND ')}
     await qr.startTransaction();
 
     try {
-      // Verify assignment exists and student can access it
       const assignment = await this.getAssignmentById(input.assignmentId, studentId, tenantId);
       if (!assignment) {
         throw new Error('Assignment not found or not accessible');
       }
 
-      // Check if already submitted
       if (assignment.submission) {
         throw new Error('Assignment already submitted');
       }
 
-      // Create submission
       const submissionId = require('uuid').v4();
       const insertQuery = `
         INSERT INTO test_submissions (
@@ -350,3 +347,4 @@ WHERE ${whereConditions.join(' AND ')}
   }
   
 }
+   

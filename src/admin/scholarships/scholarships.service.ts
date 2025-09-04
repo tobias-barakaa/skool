@@ -12,10 +12,13 @@ export class ScholarshipsService {
     private readonly scholarshipRepo: Repository<Scholarship>,
   ) {}
 
-  async create(input: CreateScholarshipInput): Promise<Scholarship> {
+  async create(input: CreateScholarshipInput, tenantId: string): Promise<Scholarship> {
+
     const scholarship = this.scholarshipRepo.create(input);
     return this.scholarshipRepo.save(scholarship);
   }
+  
+  
 
   async findAll(): Promise<Scholarship[]> {
     return this.scholarshipRepo.find();
@@ -38,3 +41,5 @@ export class ScholarshipsService {
     return true;
   }
 }
+
+
