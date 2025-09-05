@@ -305,8 +305,8 @@ export class SchoolConfigService {
       .createQueryBuilder('tgl')
       .innerJoinAndSelect('tgl.gradeLevel', 'gradeLevel')
       .leftJoinAndSelect('tgl.streams', 'streams')
-      .innerJoinAndSelect('tgl.curriculum', 'curriculum') // ← FIX IS HERE
-      .innerJoinAndSelect('curriculum.schoolType', 'schoolType') // Also select the schoolType for the query
+      .innerJoinAndSelect('tgl.curriculum', 'curriculum')
+      .innerJoinAndSelect('curriculum.schoolType', 'schoolType') 
       .where('tgl.tenantId = :tenantId', { tenantId })
       .andWhere('tgl.isActive = true')
       .andWhere('curriculum.schoolTypeId = :schoolTypeId', {

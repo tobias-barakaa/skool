@@ -933,6 +933,7 @@ type Query {
 
   """Get all teachers for current user tenant"""
   getTeachersByTenant: SearchTeacherResult!
+  getTeachersByTenants: [TeacherDto!]!
 
   """
   Get statistics for current user tenant (student count, teacher count, etc.)

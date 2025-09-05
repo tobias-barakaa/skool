@@ -523,12 +523,12 @@ export class TeacherService {
     return { message: 'Invitation revoked successfully' };
   }
 
-  async getTeachersByTenant(tenantId: string): Promise<TeacherDto[]> {
+  async getTeachersByTenants(tenantId: string): Promise<TeacherDto[]> {
     const teachers = await this.teacherRepository.find({
       where: { tenant: { id: tenantId } },
-      relations: ['tenant'], 
+      relations: ['tenant'],
     });
-
+  
     return teachers.map((teacher) => ({
       id: teacher.id,
       fullName: `${teacher.firstName} ${teacher.lastName}`,
@@ -540,9 +540,7 @@ export class TeacherService {
       department: teacher.department,
       address: teacher.address,
       employeeId: teacher.employeeId,
-      dateOfBirth: teacher.dateOfBirth
-        ? new Date(teacher.dateOfBirth)
-        : undefined,
+      dateOfBirth: teacher.dateOfBirth ? new Date(teacher.dateOfBirth) : undefined,
       isActive: teacher.isActive,
       hasCompletedProfile: teacher.hasCompletedProfile,
     }));

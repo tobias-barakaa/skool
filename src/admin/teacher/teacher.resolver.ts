@@ -88,9 +88,11 @@ export class TeacherResolver {
   }
 
   @Query(() => [TeacherDto])
-  async getTeachersByTenant(@Args('tenantId') tenantId: string) {
-    return this.teacherService.getTeachersByTenant(tenantId);
-  }
+async getTeachersByTenants(
+  @ActiveUser() currentUser: ActiveUserData,
+): Promise<TeacherDto[]> {
+  return this.teacherService.getTeachersByTenants(currentUser.tenantId);
+}
 
   // 60660adb-416d-4d52-9efa-e3a8fc7c95c3
 
