@@ -135,6 +135,7 @@ export class TeacherService {
           tenantId,
           tenantSubjectRepo,
         ),
+        
       ]);
   
       // Automatically fetch all streams for the assigned grade levels
@@ -158,6 +159,7 @@ export class TeacherService {
           dto.classTeacherTenantStreamId,
           tenantId,
           tenantStreamRepo,
+          tenantGradeLevels.map(gl => gl.id),
         );
       }
   
@@ -427,6 +429,7 @@ export class TeacherService {
     streamId: string,
     tenantId: string,
     tenantStreamRepo: Repository<TenantStream>,
+    assignedGradeLevelIds: string[],
   ): Promise<TenantStream> {
     const stream = await tenantStreamRepo.findOne({
       where: { id: streamId, tenant: { id: tenantId } },
@@ -437,6 +440,12 @@ export class TeacherService {
         `Class teacher stream with ID ${streamId} not found in tenant ${tenantId}`
       );
     }
+
+    // if (!assignedGradeLevelIds.includes(stream.tenantGradeLevel.id)) {
+    //   throw new BadRequestException(
+    //     'Stream does not belong to the assigned grade level'
+    //   );
+    // }
   
     return stream;
   }

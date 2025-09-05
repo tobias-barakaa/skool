@@ -2,6 +2,16 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type AcademicSummary {
+  averageScore: Float!
+  currentGrade: String
+  currentStream: String
+  feesOwed: Float!
+  schoolType: String
+  totalAssessments: Float!
+  totalFeesPaid: Float!
+}
+
 input AcceptInvitationInput {
   password: String!
   token: String!
@@ -640,6 +650,11 @@ type HostelAssignment {
   vacatedAt: DateTime
 }
 
+type HostelService {
+  assignments: [HostelAssignment!]
+  isAssigned: Boolean!
+}
+
 type InvitationInfo {
   email: String!
   role: MembershipRole!
@@ -946,7 +961,22 @@ type Query {
   hostel(id: String!): Hostel!
   hostelAssignments(hostelId: String!): [HostelAssignment!]!
   marksStats(academicYear: String!, gradeLevelId: String!, subjectId: String!, term: Int!): MarksStatsDto!
+
+  """
+  Get academic summary and profile for the currently authenticated student
+  """
+  myAcademicProfile: StudentAcademicProfile!
   myAssignMents: [Test!]!
+
+  """
+  Get the complete student profile for the currently authenticated student
+  """
+  myStudentProfile: Student!
+
+  """
+  Get all services (hostel, transport, scholarship) for the currently authenticated student
+  """
+  myStudentServices: StudentServicesProfile!
   scholarship(id: ID!): Scholarship!
   scholarships: [Scholarship!]!
   searchAvailableStudentsForParent(parentId: String!, searchTerm: String, tenantId: String!): [StudentSearchResponse!]!
@@ -960,6 +990,9 @@ type Query {
   stream(id: ID!): StreamType!
   streams: [StreamType!]!
   streamsByGradeLevel(gradeLevelId: ID!): [StreamType!]!
+
+  """Get student profile by ID (only accessible by the student themselves)"""
+  studentProfileById(studentId: ID!): Student!
   studentsByGradeLevel(tenantGradeLevelId: ID!): [Student!]!
   studentsForTenant: [StudentLoginInfo!]!
   teacherGetParentById(parentId: String!): Parent
@@ -1037,6 +1070,12 @@ type Scholarship {
   studentScholarships: [StudentScholarship!]
   tenantId: String!
   type: String!
+}
+
+type ScholarshipService {
+  currentScholarship: Scholarship
+  hasScholarship: Boolean!
+  scholarshipHistory: [Scholarship!]
 }
 
 type School {
@@ -1249,6 +1288,11 @@ type Student {
   user_id: ID!
 }
 
+type StudentAcademicProfile {
+  academicSummary: AcademicSummary!
+  student: Student!
+}
+
 type StudentLoginInfo {
   admission_number: String!
   email: String!
@@ -1278,6 +1322,17 @@ type StudentSearchResponse {
   name: String!
   phone: String
   streamId: String
+}
+
+type StudentServices {
+  hostel: HostelService!
+  scholarship: ScholarshipService!
+  transport: TransportService!
+}
+
+type StudentServicesProfile {
+  services: StudentServices!
+  student: Student!
 }
 
 type StudentSummaryDto {
@@ -1564,6 +1619,13 @@ type TransportRoute {
   id: ID!
   name: String!
   tenantId: String!
+}
+
+type TransportService {
+  assignments: [TransportAssignment!]
+  isAssigned: Boolean!
+  pickupPoint: String
+  route: TransportRoute
 }
 
 input UnassignClassTeacherInput {

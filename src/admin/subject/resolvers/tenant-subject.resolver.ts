@@ -55,7 +55,6 @@ export class TenantSubjectResolver {
     return this.createTenantSubjectService.getDeactivatedSubjects(user);
   }
 
-  // Mutation: Activate subject
   @Mutation(() => Boolean)
   async activateTenantSubject(
     @Args('tenantSubjectId') id: string,
