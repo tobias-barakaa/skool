@@ -36,13 +36,7 @@ export class TenantSubjectResolver {
     return this.createTenantSubjectService.update(id, user, input);
   }
 
-  @Mutation(() => Boolean)
-  async deleteCustomSubject(
-    @Args('tenantSubjectId') id: string,
-    @ActiveUser() user: ActiveUserData,
-  ): Promise<boolean> {
-    return this.createTenantSubjectService.delete(id, user);
-  }
+  @Mutation(() => Boolean) async deleteTenantSubject( @Args('tenantSubjectId') id: string, @ActiveUser() user: ActiveUserData, ): Promise<boolean> { return this.createTenantSubjectService.delete(id, user); }
 
   @Roles(
     MembershipRole.TEACHER,

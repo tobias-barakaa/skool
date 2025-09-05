@@ -750,12 +750,12 @@ type Mutation {
   deactivateTenantSubject(tenantSubjectId: String!): Boolean!
   deleteAssignment(id: String!): Boolean!
   deleteCA(id: String!): Boolean!
-  deleteCustomSubject(tenantSubjectId: String!): Boolean!
   deleteExam(id: String!): Boolean!
   deleteStaff(id: String!, tenantId: String!): String!
   deleteStream(id: ID!): Boolean!
   deleteTeacher(id: String!, tenantId: String!): String!
   deleteTenantStream(tenantStreamId: String!): Boolean!
+  deleteTenantSubject(tenantSubjectId: String!): Boolean!
   deleteTransportRoute(id: ID!): Boolean!
   enterStudentMarks(inputs: [EnterStudentMarksInput!]!): [AssessmentMark!]!
   forgotPassword(forgotPasswordInput: ForgotPasswordInput!): PasswordResetResponse!

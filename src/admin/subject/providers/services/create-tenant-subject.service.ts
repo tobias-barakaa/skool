@@ -179,23 +179,22 @@ export class CreateTenantSubjectService {
     const qr = this.dataSource.createQueryRunner();
     await qr.connect();
     await qr.startTransaction();
-
+  
     try {
       const ts = await qr.manager.findOne(TenantSubject, {
         where: { id: tenantSubjectId, tenant: { id: user.tenantId } },
-        relations: ['customSubject'],
       });
-      if (!ts) throw new NotFoundException('Subject not found');
-      if (!ts.customSubject)
-        throw new BadRequestException('Only custom subjects can be deleted');
-
-      // soft-delete: set inactive
-      ts.isActive = false;
-      await qr.manager.save(TenantSubject, ts);
-
+  
+      if (!ts) {
+        throw new NotFoundException('TenantSubject not found');
+      }
+  
+      await qr.manager.remove(TenantSubject, ts);
+  
       await qr.commitTransaction();
       await this.invalidateCache(user.tenantId);
-      this.logger.log(`Soft-deleted custom subject ${tenantSubjectId}`);
+      this.logger.log(`Hard-deleted tenant subject ${tenantSubjectId}`);
+  
       return true;
     } catch (err) {
       await qr.rollbackTransaction();
