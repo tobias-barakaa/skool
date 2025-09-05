@@ -193,9 +193,9 @@ export class SchoolConfigService {
         });
       }
   
-      // Return tenant grade level with its properties
+    
       const gradeLevel = {
-        id: tgl.id, // ✅ TenantGradeLevel ID
+        id: tgl.id, 
         name: tgl.gradeLevel.name,
         shortName: tgl.shortName,
         sortOrder: tgl.sortOrder,
@@ -206,7 +206,7 @@ export class SchoolConfigService {
       curriculumMap.get(cid).gradeLevels.push(gradeLevel);
     });
   
-    // ADD BACK THE SUBJECT MAPPING CODE:
+   
     tenantSubjects.forEach((ts) => {
       if (!ts.curriculum) return;
   
@@ -290,7 +290,7 @@ export class SchoolConfigService {
   async getWholeGradeLevelForSchoolType(
     tenantId: string,
   ): Promise<TenantGradeLevel[]> {
-    // 1. Grab the tenant's single active config
+   
     const config = await this.schoolConfigRepo.findOne({
       where: { tenant: { id: tenantId }, isActive: true },
       relations: ['schoolType'],
@@ -300,20 +300,21 @@ export class SchoolConfigService {
       throw new Error('Tenant has no active school configuration');
     }
 
-    // 2. Pull every tenant_grade_level whose curriculum's schoolType matches
-    return this.tenantGradeLevelRepo
-      .createQueryBuilder('tgl')
-      .innerJoinAndSelect('tgl.gradeLevel', 'gradeLevel')
-      .leftJoinAndSelect('tgl.streams', 'streams')
-      .innerJoinAndSelect('tgl.curriculum', 'curriculum')
-      .innerJoinAndSelect('curriculum.schoolType', 'schoolType') 
-      .where('tgl.tenantId = :tenantId', { tenantId })
-      .andWhere('tgl.isActive = true')
-      .andWhere('curriculum.schoolTypeId = :schoolTypeId', {
-        schoolTypeId: config.schoolType.id,
-      })
-      .orderBy('tgl.sortOrder', 'ASC')
-      .getMany();
+
+return this.tenantGradeLevelRepo
+  .createQueryBuilder('tgl')
+  .innerJoinAndSelect('tgl.gradeLevel', 'gradeLevel')
+  .leftJoinAndSelect('tgl.tenantStreams', 'tenantStreams') 
+  .leftJoinAndSelect('tenantStreams.stream', 'stream')    
+  .innerJoinAndSelect('tgl.curriculum', 'curriculum')
+  .innerJoinAndSelect('curriculum.schoolType', 'schoolType')
+  .where('tgl.tenantId = :tenantId', { tenantId })
+  .andWhere('tgl.isActive = true')
+  .andWhere('curriculum.schoolTypeId = :schoolTypeId', {
+    schoolTypeId: config.schoolType.id,
+  })
+  .orderBy('tgl.sortOrder', 'ASC')
+  .getMany();
   }
 }
 

@@ -22,7 +22,7 @@ export class TenantStream {
   @JoinColumn()
   tenantGradeLevel: TenantGradeLevel;
 
-  @Field(() => Stream) // ← add
+  @Field(() => Stream)
   @ManyToOne(() => Stream, { eager: true })
   @JoinColumn()
   stream: Stream;

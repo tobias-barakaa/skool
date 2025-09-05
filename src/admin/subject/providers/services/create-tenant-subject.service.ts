@@ -96,63 +96,36 @@ export class CreateTenantSubjectService {
     const qr = this.dataSource.createQueryRunner();
     await qr.connect();
     await qr.startTransaction();
-
+  
     try {
-      // Tenant must exist
+      // 1. Tenant must exist
       const schoolConfig = await qr.manager.findOne(SchoolConfig, {
         where: { tenant: { id: user.tenantId } },
       });
       if (!schoolConfig) {
         throw new BadRequestException('Tenant has no school configuration');
       }
-
-      //Load the TenantSubject row
+  
+      // 2. Load the TenantSubject row
       const tenantSubject = await qr.manager.findOne(TenantSubject, {
         where: { id: tenantSubjectId, tenant: { id: user.tenantId } },
-        relations: ['customSubject', 'curriculum'],
+        relations: ['curriculum'],
       });
-
+  
       if (!tenantSubject) {
-        throw new NotFoundException('Subject not found');
+        throw new NotFoundException('TenantSubject not found');
       }
-
-      console.log(
-        tenantSubject.customSubject,
-        'this is custom subject###########3',
-      );
-      console.log(
-        tenantSubject.curriculum,
-        'this is custom suject###########3',
-      );
-
-      if (!tenantSubject) {
-        throw new NotFoundException('Subject not found');
-      }
-      if (!tenantSubject.customSubject) {
-        throw new BadRequestException('Only custom subjects can be updated');
-      }
-
-      // 3. Update the CustomSubject
-      Object.assign(tenantSubject.customSubject, input);
-      await qr.manager.save(CustomSubject, tenantSubject.customSubject);
-
-      // 4. Update TenantSubject fields if provided
-      if (input.isCompulsory !== undefined)
-        tenantSubject.isCompulsory = input.isCompulsory;
-      if (input.subjectType) tenantSubject.subjectType = input.subjectType;
-      if (input.totalMarks !== undefined)
-        tenantSubject.totalMarks = input.totalMarks;
-      if (input.passingMarks !== undefined)
-        tenantSubject.passingMarks = input.passingMarks;
-      if (input.creditHours !== undefined)
-        tenantSubject.creditHours = input.creditHours;
-      if (input.isActive !== undefined) tenantSubject.isActive = input.isActive;
-
+  
+      // 3. Update TenantSubject fields freely
+      Object.assign(tenantSubject, input);
+  
       const updated = await qr.manager.save(TenantSubject, tenantSubject);
-
+  
+      // 4. Commit & clear cache
       await qr.commitTransaction();
       await this.invalidateCache(user.tenantId);
-      this.logger.log(`Updated custom subject ${updated.id}`);
+      this.logger.log(`Updated tenant subject ${updated.id}`);
+  
       return updated;
     } catch (err) {
       await qr.rollbackTransaction();

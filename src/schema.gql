@@ -432,7 +432,6 @@ input CreateTeacherInvitationDto {
   qualifications: String
   role: String!
   tenantGradeLevelIds: [ID!]
-  tenantStreamIds: [ID!]
   tenantSubjectIds: [ID!]
 }
 

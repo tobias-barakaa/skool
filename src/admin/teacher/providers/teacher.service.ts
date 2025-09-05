@@ -122,28 +122,34 @@ export class TeacherService {
       const tenantGradeLevelRepo = manager.getRepository(TenantGradeLevel);
       const tenantStreamRepo = manager.getRepository(TenantStream);
       const tenantSubjectRepo = manager.getRepository(TenantSubject);
-      
+      const classTeacherAssignmentRepo = manager.getRepository(ClassTeacherAssignment);
   
-      const [tenantGradeLevels, tenantStreams, tenantSubjects] =
-        await Promise.all([
-          this.fetchTenantGradeLevels(
-            dto.tenantGradeLevelIds,
-            tenantId,
-            tenantGradeLevelRepo,
-          ),
-          this.fetchTenantStreams(
-            dto.tenantStreamIds,
-            tenantId,
-            tenantStreamRepo,
-          ),
-          this.fetchTenantSubjects(
-            dto.tenantSubjectIds,
-            tenantId,
-            tenantSubjectRepo,
-          ),
-        ]);
+      const [tenantGradeLevels, tenantSubjects] = await Promise.all([
+        this.fetchTenantGradeLevels(
+          dto.tenantGradeLevelIds,
+          tenantId,
+          tenantGradeLevelRepo,
+        ),
+        this.fetchTenantSubjects(
+          dto.tenantSubjectIds,
+          tenantId,
+          tenantSubjectRepo,
+        ),
+      ]);
   
-     
+      // Automatically fetch all streams for the assigned grade levels
+      let tenantStreams: TenantStream[] = [];
+      if (tenantGradeLevels.length > 0) {
+        tenantStreams = await tenantStreamRepo.find({
+          where: {
+            tenantGradeLevel: { id: In(tenantGradeLevels.map(gl => gl.id)) },
+            tenant: { id: tenantId },
+            isActive: true,
+          },
+          relations: ['stream', 'tenantGradeLevel'],
+        });
+      }
+  
       let classTeacherStream: TenantStream | undefined = undefined;
       let classTeacherGradeLevel: TenantGradeLevel | undefined = undefined;
   
@@ -192,47 +198,70 @@ export class TeacherService {
       });
   
       teacher.tenantGradeLevels = tenantGradeLevels;
-      teacher.tenantStreams = tenantStreams;
+      teacher.tenantStreams = tenantStreams; // Automatically assigned based on grade levels
       teacher.tenantSubjects = tenantSubjects;
   
       const savedTeacher = await teacherRepo.save(teacher);
   
+      // Handle class teacher assignments with proper duplicate prevention
       if (classTeacherStream) {
-        await this.classTeacherAssignmentRepository.update(
-          { stream: { id: classTeacherStream.id }, active: true },
-          { active: false, endDate: new Date() },
-        );
+        // Check if there's already an active assignment for this stream
+        const existingStreamAssignment = await classTeacherAssignmentRepo.findOne({
+          where: { 
+            stream: { id: classTeacherStream.id }, 
+            active: true 
+          },
+        });
   
-        const streamAssignment = this.classTeacherAssignmentRepository.create({
+        if (existingStreamAssignment) {
+          // Deactivate existing assignment
+          await classTeacherAssignmentRepo.update(
+            { id: existingStreamAssignment.id },
+            { active: false, endDate: new Date() },
+          );
+        }
+  
+        const streamAssignment = classTeacherAssignmentRepo.create({
           tenant: { id: tenantId },
           teacher: { id: savedTeacher.id },
           stream: { id: classTeacherStream.id },
           active: true,
           startDate: new Date(),
         });
-        await this.classTeacherAssignmentRepository.save(streamAssignment);
+        await classTeacherAssignmentRepo.save(streamAssignment);
       }
   
       if (classTeacherGradeLevel) {
-        await this.classTeacherAssignmentRepository.update(
-          { gradeLevel: { id: classTeacherGradeLevel.id }, active: true },
-          { active: false, endDate: new Date() },
-        );
+        // Check if there's already an active assignment for this grade level
+        const existingGradeLevelAssignment = await classTeacherAssignmentRepo.findOne({
+          where: { 
+            gradeLevel: { id: classTeacherGradeLevel.id }, 
+            active: true 
+          },
+        });
   
-        const gradeLevelAssignment = this.classTeacherAssignmentRepository.create({
+        if (existingGradeLevelAssignment) {
+          // Deactivate existing assignment
+          await classTeacherAssignmentRepo.update(
+            { id: existingGradeLevelAssignment.id },
+            { active: false, endDate: new Date() },
+          );
+        }
+  
+        const gradeLevelAssignment = classTeacherAssignmentRepo.create({
           tenant: { id: tenantId },
           teacher: { id: savedTeacher.id },
           gradeLevel: { id: classTeacherGradeLevel.id },
           active: true,
           startDate: new Date(),
         });
-        await this.classTeacherAssignmentRepository.save(gradeLevelAssignment);
+        await classTeacherAssignmentRepo.save(gradeLevelAssignment);
       }
   
       this.logger.log(`Teacher profile created for ${dto.email}`);
     });
   }
-
+  
   private validateTeacherData(
     dto: CreateTeacherInvitationDto,
     tenantGradeLevels: TenantGradeLevel[],
@@ -246,31 +275,34 @@ export class TeacherService {
         'Teacher cannot be class teacher of both a stream and grade level',
       );
     }
-
+  
     if (dto.tenantSubjectIds?.length && tenantSubjects.length === 0) {
       throw new BadRequestException('No valid subjects found');
     }
-
-    if (dto.tenantStreamIds?.length && tenantStreams.length === 0) {
-      throw new BadRequestException('No valid streams found');
-    }
-
+  
     if (dto.tenantGradeLevelIds?.length && tenantGradeLevels.length === 0) {
       throw new BadRequestException('No valid grade levels found');
     }
-
-    if (classTeacherStream && (dto.tenantStreamIds ?? []).length > 0) {
-      const isStreamAssigned = tenantStreams.some(
-        (stream) => stream.id === classTeacherStream.id,
+  
+    // Validate class teacher stream belongs to assigned grade levels
+    if (classTeacherStream && tenantGradeLevels.length > 0) {
+      const streamGradeLevelIds = tenantStreams
+        .filter(ts => ts.id === classTeacherStream.id)
+        .map(ts => ts.tenantGradeLevel.id);
+      
+      const assignedGradeLevelIds = tenantGradeLevels.map(gl => gl.id);
+      const hasValidGradeLevel = streamGradeLevelIds.some(id => 
+        assignedGradeLevelIds.includes(id)
       );
-      if (!isStreamAssigned) {
+  
+      if (!hasValidGradeLevel) {
         throw new BadRequestException(
-          'Class teacher stream must be included in assigned streams',
+          'Class teacher stream must belong to one of the assigned grade levels',
         );
       }
     }
-
-    if (classTeacherGradeLevel && (dto.tenantGradeLevelIds ?? []).length > 0) {
+  
+    if (classTeacherGradeLevel && tenantGradeLevels.length > 0) {
       const isGradeLevelAssigned = tenantGradeLevels.some(
         (gradeLevel) => gradeLevel.id === classTeacherGradeLevel.id,
       );
