@@ -746,8 +746,8 @@ type Mutation {
   acceptTeacherInvitation(acceptInvitationInput: AcceptInvitationInput!): AcceptInvitationResponse!
   activateTenantSubject(tenantSubjectId: String!): Boolean!
   addStudentsToParent(parentId: String!, studentIds: [String!]!, tenantId: String!): String!
+  assignClassTeacher(input: AssignStreamClassTeacherInput!): ClassTeacherAssignment!
   assignGradeLevelClassTeacher(input: AssignGradeLevelClassTeacherInput!): ClassTeacherAssignment!
-  assignStreamClassTeacher(input: AssignStreamClassTeacherInput!): ClassTeacherAssignment!
   assignStudentToHostel(input: CreateHostelAssignmentInput!): HostelAssignment!
   assignTransport(input: AssignTransportInput!): TransportAssignment!
   changePassword(changePasswordInput: ChangePasswordInput!): PasswordResetResponse!

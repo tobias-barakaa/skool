@@ -154,8 +154,8 @@ async getTeachersByTenants(
 // }
 
 
-@Mutation(() => ClassTeacherAssignment, { name: 'assignStreamClassTeacher' })
-async assignStreamClassTeacher(
+@Mutation(() => ClassTeacherAssignment, { name: 'assignClassTeacher' })
+async assignClassTeacher(
   @Args('input') input: AssignStreamClassTeacherInput,
   @ActiveUser() currentUser: ActiveUserData,
 ): Promise<ClassTeacherAssignment> {

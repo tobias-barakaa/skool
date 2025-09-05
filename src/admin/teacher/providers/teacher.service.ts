@@ -200,14 +200,12 @@ export class TeacherService {
       });
   
       teacher.tenantGradeLevels = tenantGradeLevels;
-      teacher.tenantStreams = tenantStreams; // Automatically assigned based on grade levels
+      teacher.tenantStreams = tenantStreams;
       teacher.tenantSubjects = tenantSubjects;
   
       const savedTeacher = await teacherRepo.save(teacher);
   
-      // Handle class teacher assignments with proper duplicate prevention
       if (classTeacherStream) {
-        // Check if there's already an active assignment for this stream
         const existingStreamAssignment = await classTeacherAssignmentRepo.findOne({
           where: { 
             stream: { id: classTeacherStream.id }, 
@@ -216,7 +214,6 @@ export class TeacherService {
         });
   
         if (existingStreamAssignment) {
-          // Deactivate existing assignment
           await classTeacherAssignmentRepo.update(
             { id: existingStreamAssignment.id },
             { active: false, endDate: new Date() },
@@ -234,7 +231,6 @@ export class TeacherService {
       }
   
       if (classTeacherGradeLevel) {
-        // Check if there's already an active assignment for this grade level
         const existingGradeLevelAssignment = await classTeacherAssignmentRepo.findOne({
           where: { 
             gradeLevel: { id: classTeacherGradeLevel.id }, 
@@ -243,7 +239,6 @@ export class TeacherService {
         });
   
         if (existingGradeLevelAssignment) {
-          // Deactivate existing assignment
           await classTeacherAssignmentRepo.update(
             { id: existingGradeLevelAssignment.id },
             { active: false, endDate: new Date() },
@@ -286,7 +281,6 @@ export class TeacherService {
       throw new BadRequestException('No valid grade levels found');
     }
   
-    // Validate class teacher stream belongs to assigned grade levels
     if (classTeacherStream && tenantGradeLevels.length > 0) {
       const streamGradeLevelIds = tenantStreams
         .filter(ts => ts.id === classTeacherStream.id)

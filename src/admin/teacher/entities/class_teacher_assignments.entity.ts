@@ -7,6 +7,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Unique,
+  Index,
 } from 'typeorm';
 import { Tenant } from 'src/admin/tenants/entities/tenant.entity';
 import { Teacher } from './teacher.entity';
@@ -15,8 +16,11 @@ import { TenantGradeLevel } from 'src/admin/school-type/entities/tenant-grade-le
 
 @ObjectType()
 @Entity('class_teacher_assignments')
-@Unique(['stream', 'active'])
-@Unique(['gradeLevel', 'active'])
+// @Unique(['stream', 'active'])
+// @Unique(['gradeLevel', 'active'])
+@Index('uq_stream_active', ['stream'], { unique: true, where: '"active" = true' })
+@Index('uq_grade_level_active', ['gradeLevel'], { unique: true, where: '"active" = true' })
+
 export class ClassTeacherAssignment {
   @Field(() => ID)
   @PrimaryGeneratedColumn('uuid')
