@@ -1,5 +1,6 @@
+// create-scholarship.input.ts
 import { InputType, Field, Float } from '@nestjs/graphql';
-import { IsOptional, IsString, IsNumber } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsIn, Min } from 'class-validator';
 
 @InputType()
 export class CreateScholarshipInput {
@@ -8,10 +9,17 @@ export class CreateScholarshipInput {
   name: string;
 
   @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
   description?: string;
 
-  @Field(() => Float, { nullable: true })
-  amount?: number;
+  @Field(() => Float)
+  @IsNumber()
+  @Min(0)
+  amount: number;
 
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsIn(['FIXED', 'PERCENTAGE'])
+  type?: string; 
 }
-

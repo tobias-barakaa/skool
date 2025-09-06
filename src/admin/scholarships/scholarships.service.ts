@@ -4,8 +4,11 @@ import { Repository } from 'typeorm';
 import { Scholarship } from './entities/scholarship.entity';
 import { CreateScholarshipInput } from './dtos/create-scholarship.input';
 import { UpdateScholarshipInput } from './dtos/update-scholarship.input';
+import { Roles } from 'src/iam/decorators/roles.decorator';
+import { MembershipRole } from '../user-tenant-membership/entities/user-tenant-membership.entity';
 
 @Injectable()
+@Roles(MembershipRole.SCHOOL_ADMIN)
 export class ScholarshipsService {
   constructor(
     @InjectRepository(Scholarship)
@@ -14,7 +17,10 @@ export class ScholarshipsService {
 
   async create(input: CreateScholarshipInput, tenantId: string): Promise<Scholarship> {
 
-    const scholarship = this.scholarshipRepo.create(input);
+    const scholarship = this.scholarshipRepo.create({
+      ...input,
+      tenantId, 
+    })
     return this.scholarshipRepo.save(scholarship);
   }
   
@@ -31,15 +37,20 @@ export class ScholarshipsService {
   }
 
   async update(input: UpdateScholarshipInput): Promise<Scholarship> {
-    const scholarship = await this.findOne(input.id);
-    Object.assign(scholarship, input);
+    const scholarship = await this.scholarshipRepo.findOne({ where: { id: input.id } });
+    if (!scholarship) throw new NotFoundException('Scholarship not found');
+  
+    if (input.name !== undefined) scholarship.name = input.name;
+    if (input.description !== undefined) scholarship.description = input.description;
+    if (input.amount !== undefined) scholarship.amount = input.amount;
+    if (input.type !== undefined) scholarship.type = input.type; 
+  
     return this.scholarshipRepo.save(scholarship);
   }
+  
 
   async remove(id: string): Promise<boolean> {
     await this.scholarshipRepo.delete(id);
     return true;
   }
 }
-
-

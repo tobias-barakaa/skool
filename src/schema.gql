@@ -371,9 +371,10 @@ input CreateReferenceMaterialInput {
 }
 
 input CreateScholarshipInput {
-  amount: Float
+  amount: Float!
   description: String
   name: String!
+  type: String
 }
 
 input CreateStaffInvitationDto {
@@ -1652,6 +1653,7 @@ input UpdateScholarshipInput {
   description: String
   id: ID!
   name: String
+  type: String
 }
 
 input UpdateStaffInput {

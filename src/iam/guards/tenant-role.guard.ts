@@ -27,14 +27,14 @@ export class TenantRoleGuard implements CanActivate {
     );
 
     if (!requiredRoles || requiredRoles.length === 0) {
-      return true; // No roles required, access granted
+      return true; 
     }
 
     const gqlContext = GqlExecutionContext.create(context);
     const user: ActiveUserData = gqlContext.getContext().req.user;
 
     if (!user || !user.sub || !user.tenantId) {
-      return false; // No user or tenant information found
+      return false; 
     }
 
     const membership = await this.membershipRepo.findOne({
@@ -46,10 +46,9 @@ export class TenantRoleGuard implements CanActivate {
     });
 
     if (!membership) {
-      return false; // User is not an active member of this tenant
+      return false;
     }
 
-    // Check if the user's role is one of the required roles
     const hasRequiredRole = requiredRoles.some(
       (role) => membership.role === role,
     );
@@ -57,7 +56,6 @@ export class TenantRoleGuard implements CanActivate {
       return false;
     }
 
-    // Attach membership to the context for potential downstream use
     gqlContext.getContext().req.membership = membership;
 
     return true;

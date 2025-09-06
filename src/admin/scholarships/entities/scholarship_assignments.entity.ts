@@ -30,7 +30,7 @@ export class StudentScholarship {
 
   @Column({ default: 'ACTIVE' })
   @Field()
-  status: string; // ACTIVE / EXPIRED
+  status: string;
 
   @CreateDateColumn()
   @Field(() => Date)

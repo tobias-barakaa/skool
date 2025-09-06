@@ -47,10 +47,11 @@ export class SchoolSetupGuardService {
   }
 
 
-  async validateSchoolIsConfigured(tenantId: string): Promise<void> {
+
+  
+  async validateSchoolIsConfigured(tenantId: string) {
     this.logger.debug(`Validating school configuration for tenant: ${tenantId}`);
 
-    // Use DataSource to get the repository without direct injection
     const schoolConfigRepository = this.dataSource.getRepository(SchoolConfig);
 
     const config = await schoolConfigRepository.findOneBy({

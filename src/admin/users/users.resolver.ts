@@ -11,6 +11,7 @@ import { UsersService } from './providers/users.service';
 import { GraphQLExceptionsFilter } from '../common/filter/graphQLException.filter';
 import { MembershipRole } from '../user-tenant-membership/entities/user-tenant-membership.entity';
 import { TenantUserSummary } from './dtos/tenant-user-summary.output';
+import { SkipSchoolConfigCheck } from 'src/iam/guards/school-setup-guard-service';
 
 @Resolver(() => User)
 @UseFilters(GraphQLExceptionsFilter)
@@ -23,6 +24,7 @@ export class UsersResolver {
   @SetMetadata('isPublic', true)
   @Mutation(() => CreateUserResponse, { name: 'createUser' })
   @Auth(AuthType.None)
+  @SkipSchoolConfigCheck()
   async createUser(
     @Args('signupInput') signupInput: SignupInput,
     @Context() context,

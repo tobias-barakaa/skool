@@ -22,6 +22,7 @@ import { handleInvitationResendLogic } from 'src/admin/shared/utils/invitation.u
 import { ClassTeacherProvider } from './class-teacher-assign.provider';
 import { ClassTeacherAssignment } from '../entities/class_teacher_assignments.entity';
 import { AssignGradeLevelClassTeacherInput, AssignStreamClassTeacherInput, UnassignClassTeacherInput } from '../dtos/assign/assign-classTeacher.dto';
+import { SchoolSetupGuardService } from 'src/admin/config/school-config.guard';
 
 @Injectable()
 export class TeacherService {
@@ -60,6 +61,7 @@ export class TeacherService {
 
     @InjectRepository(ClassTeacherAssignment)
     private readonly classTeacherAssignmentRepository: Repository<ClassTeacherAssignment>,
+     private readonly schoolSetupGuardService: SchoolSetupGuardService,
   ) {}
 
   async inviteTeacher(
@@ -68,6 +70,9 @@ export class TeacherService {
     tenantId: string,
   ) {
     this.logger.log(`Inviting teacher: ${dto.email} to tenant: ${tenantId}`);
+
+    await this.schoolSetupGuardService.validateSchoolIsConfigured(tenantId);
+
 
     try {
       const inviter = await this.userRepository.findOne({

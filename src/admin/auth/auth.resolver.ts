@@ -21,6 +21,7 @@ import { GraphQLExceptionsFilter } from '../common/filter/graphQLException.filte
 import { User } from '../users/entities/user.entity';
 import { MembershipRole } from '../user-tenant-membership/entities/user-tenant-membership.entity';
 import { Roles } from 'src/iam/decorators/roles.decorator';
+import { SkipSchoolConfigCheck } from 'src/iam/guards/school-setup-guard-service';
 
 @Resolver()
 @UseFilters(GraphQLExceptionsFilter)
@@ -43,6 +44,8 @@ export class AuthResolver {
         @Auth(AuthType.None)
         @SkipTenantValidation()
         @SetMetadata('isPublic', true)
+        @SkipSchoolConfigCheck()
+        
 
   async signIn(
     @Args('signInInput') signInInput: SignInInput,
@@ -52,7 +55,6 @@ export class AuthResolver {
 
     const { tokens, tenant } = result;
 
-    // Set access token cookie
     context.res.cookie('access_token', tokens.accessToken, {
       httpOnly: true,
       sameSite: 'None',
@@ -61,7 +63,6 @@ export class AuthResolver {
       domain: '.squl.co.ke',
     });
 
-    // Set refresh token cookie
     context.res.cookie('refresh_token', tokens.refreshToken, {
       httpOnly: true,
       sameSite: 'None',
@@ -70,7 +71,6 @@ export class AuthResolver {
       domain: '.squl.co.ke',
     });
 
-    // ✅ Also set tenant_id cookie — just like in signup
     context.res.cookie('tenant_id', tenant.id, {
       httpOnly: true,
       sameSite: 'None',
@@ -104,7 +104,6 @@ export class AuthResolver {
   async resetPassword(
     @Args('resetPasswordInput') resetPasswordInput: ResetPasswordInput,
   ): Promise<PasswordResetResponse> {
-    // Validate password confirmation
     if (resetPasswordInput.newPassword !== resetPasswordInput.confirmPassword) {
       throw new Error('Passwords do not match');
     }
@@ -113,15 +112,15 @@ export class AuthResolver {
   }
 
   @Mutation(() => PasswordResetResponse, { name: 'changePassword' })
-  @Auth(AuthType.Bearer)
+  @Auth(AuthType.None)
+  @SkipTenantValidation()
+  @SetMetadata('isPublic', true)
+  @SkipSchoolConfigCheck()
   async changePassword(
     @Args('changePasswordInput') changePasswordInput: ChangePasswordInput,
     @ActiveUser() user: ActiveUserData,
   ): Promise<PasswordResetResponse> {
-    // Validate password confirmation
-    if (
-      changePasswordInput.newPassword !== changePasswordInput.confirmPassword
-    ) {
+    if (changePasswordInput.newPassword !== changePasswordInput.confirmPassword) {
       throw new Error('Passwords do not match');
     }
 

@@ -25,7 +25,7 @@ import { AssignGradeLevelClassTeacherInput, AssignStreamClassTeacherInput, Unass
 export class TeacherResolver {
   constructor(private teacherService: TeacherService) {}
 
-  @Roles(MembershipRole.SUPER_ADMIN, MembershipRole.SCHOOL_ADMIN)
+  @Roles(MembershipRole.SCHOOL_ADMIN)
   @Mutation(() => InviteTeacherResponse)
   async inviteTeacher(
     @Args('createTeacherDto') dto: CreateTeacherInvitationDto,
@@ -35,7 +35,7 @@ export class TeacherResolver {
     return this.teacherService.inviteTeacher(dto, user, user.tenantId);
   }
 
-  @Roles(MembershipRole.SUPER_ADMIN, MembershipRole.SCHOOL_ADMIN)
+  @Roles(MembershipRole.SCHOOL_ADMIN)
   @Query(() => PendingInvitationResponse, { nullable: true })
   async getPendingTeacherInvitation(
     @Args('email') email: string,
@@ -44,13 +44,13 @@ export class TeacherResolver {
     return this.teacherService.getPendingInvitation(email, user.tenantId);
   }
 
-  @Roles(MembershipRole.SUPER_ADMIN, MembershipRole.SCHOOL_ADMIN)
+  @Roles(MembershipRole.SCHOOL_ADMIN)
   @Query(() => [PendingInvitationResponse], { nullable: true })
   async getPendingTeacherInvitations(@ActiveUser() user: ActiveUserData) {
     return this.teacherService.getPendingInvitations(user.tenantId);
   }
 
-  @Roles(MembershipRole.SUPER_ADMIN, MembershipRole.SCHOOL_ADMIN)
+  @Roles(MembershipRole.SCHOOL_ADMIN)
   @Mutation(() => InviteTeacherResponse)
   async resendTeacherInvitation(
     @Args('invitationId') invitationId: string,
