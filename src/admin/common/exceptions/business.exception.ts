@@ -66,4 +66,6 @@ export class EmailSendFailedException extends BusinessException {
     );
     this.name = 'EmailSendFailedException';
   }
+
+ 
 }

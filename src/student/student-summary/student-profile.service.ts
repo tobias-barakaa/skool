@@ -123,14 +123,9 @@ export class StudentProfileService {
           assignments: student.hostelAssignments ?? [],
         },
         transport: {
-          isAssigned: !!student.transportRoute,
-          route: student.transportRoute,
-          pickupPoint: student.pickupPoint,
           assignments: student.transportAssignments ?? [],
         },
         scholarship: {
-          hasScholarship: !!student.scholarships || !!student.studentScholarships?.length,
-          currentScholarship: student.scholarships,
           scholarshipHistory: student.studentScholarships ?? [],
         },
       },

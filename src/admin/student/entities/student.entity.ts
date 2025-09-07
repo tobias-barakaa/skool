@@ -107,19 +107,6 @@ export class Student {
   hostelAssignments?: HostelAssignment[];
 
 
-
-  @ManyToOne(() => TransportRoute, { nullable: true, onDelete: 'SET NULL' })
-  @JoinColumn({ name: 'transport_route_id' })
-  @Field(() => TransportRoute, { nullable: true })
-  transportRoute?: TransportRoute;
-
-  @Column({ type: 'uuid', nullable: true })
-  transport_route_id?: string;
-
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  pickupPoint?: string;
-
   
   @ManyToOne(() => Scholarship, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'scholarship_id' })

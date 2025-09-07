@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import { Hostel } from './entities/hostel.entity';
@@ -27,6 +27,14 @@ export class HostelService {
   }
 
   async create(input: CreateHostelInput, tenantId: string): Promise<Hostel> {
+    const existing = await this.hostelRepository.findOne({
+      where: { name: input.name, tenantId },
+    });
+  
+    if (existing) {
+      throw new ConflictException(`Hostel with the name "${input.name}" already exists.`);
+    }
+  
     const hostel = this.hostelRepository.create({ ...input, tenantId });
     return this.hostelRepository.save(hostel);
   }
@@ -53,8 +61,6 @@ export class HostelService {
   }
 
 
-
-  // HOSTEL ASSIGNMENT METHODS BELOW
 
   async assignStudent(
     input: CreateHostelAssignmentInput,

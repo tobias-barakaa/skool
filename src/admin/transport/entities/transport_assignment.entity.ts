@@ -23,10 +23,11 @@ export class TransportAssignment {
   @Field()
   tenantId: string;
 
-  @ManyToOne(() => TransportRoute, (r) => r.assignments, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'route_id' })
-  @Field(() => TransportRoute)
-  route: TransportRoute;
+  @Field(() => TransportRoute, { nullable: true })
+@ManyToOne(() => TransportRoute, (r) => r.assignments, { onDelete: 'CASCADE' })
+@JoinColumn({ name: 'route_id' })
+route?: TransportRoute;
+
 
   @Column('uuid')
   @Field(() => ID)
@@ -34,8 +35,8 @@ export class TransportAssignment {
 
   @ManyToOne(() => Student, (s) => s.transportAssignments, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'student_id' })
-  @Field(() => Student)
-  student: Student;
+  @Field(() => Student, { nullable: true }) 
+  student?: Student; 
 
   @Column('uuid')
   @Field(() => ID)

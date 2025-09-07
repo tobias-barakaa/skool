@@ -1,5 +1,5 @@
 import { InputType, Field, Float } from '@nestjs/graphql';
-import { IsNotEmpty, IsUUID, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsIn, IsOptional, IsString } from 'class-validator';
 
 @InputType()
 export class CreateTransportRouteInput {
@@ -11,7 +11,8 @@ export class CreateTransportRouteInput {
   @IsNumber()
   fee: number;
 
-  @Field()
-  @IsUUID()
-  tenantId: string;
+  @Field({ nullable: true, description: "Custom label e.g. 'Per Semester' or 'Every 2 Weeks'" })
+  @IsOptional()
+  @IsString()
+  billingCycleLabel?: string;
 }

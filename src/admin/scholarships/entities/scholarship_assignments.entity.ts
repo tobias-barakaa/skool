@@ -24,6 +24,10 @@ export class StudentScholarship {
   @Field(() => Student)
   student: Student;
 
+  // @ManyToOne(() => Student, (student) => student.studentScholarships)
+  // @Field(() => Student)
+  // student: Student;
+
   @Column()
   @Field()
   academicYear: string;

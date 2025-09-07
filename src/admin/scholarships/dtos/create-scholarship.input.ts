@@ -1,4 +1,3 @@
-// create-scholarship.input.ts
 import { InputType, Field, Float } from '@nestjs/graphql';
 import { IsString, IsNumber, IsOptional, IsIn, Min } from 'class-validator';
 

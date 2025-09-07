@@ -1,4 +1,3 @@
-// assign-scholarship.input.ts
 import { InputType, Field } from '@nestjs/graphql';
 import { IsUUID, IsString } from 'class-validator';
 

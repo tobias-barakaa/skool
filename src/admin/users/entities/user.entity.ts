@@ -51,3 +51,4 @@ export class User {
   @Field(() => Date)
   updatedAt: Date;
 }
+

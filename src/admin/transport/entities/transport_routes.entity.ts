@@ -1,11 +1,5 @@
-import { Field, ID, ObjectType, Float } from '@nestjs/graphql';
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { TransportAssignment } from './transport_assignment.entity';
 
 @ObjectType()
@@ -19,20 +13,26 @@ export class TransportRoute {
   @Column()
   name: string;
 
-  @Field(() => Float)
-  @Column('float')
+  @Field()
+  @Column({ type: 'float' })
   fee: number;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  @Field({ nullable: true })
+  billingCycleLabel?: string;
 
   @Field()
   @Column('uuid')
   tenantId: string;
 
   @Field(() => Date)
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
-
+  
   @OneToMany(() => TransportAssignment, (assignment) => assignment.route)
   @Field(() => [TransportAssignment], { nullable: true })
   assignments?: TransportAssignment[];
 }
+
+

@@ -128,15 +128,26 @@ input AssignGradeLevelClassTeacherInput {
   teacherId: ID!
 }
 
+input AssignScholarshipInput {
+  academicYear: String!
+  scholarshipId: String!
+  studentId: String!
+}
+
 input AssignStreamClassTeacherInput {
   streamId: ID!
   teacherId: ID!
 }
 
 input AssignTransportInput {
+  """Pickup point location (optional)"""
   pickupPoint: String
-  routeId: String!
-  studentId: String!
+
+  """Transport route ID to assign student to"""
+  routeId: ID!
+
+  """Student ID to assign to transport route"""
+  studentId: ID!
 }
 
 type Assignment {
@@ -231,6 +242,19 @@ input BroadcastMessageInput {
   message: String!
   recipientType: String!
   subject: String
+}
+
+input BulkTransportAssignmentInput {
+  """Common pickup point for all students (optional)"""
+  pickupPoint: String
+
+  """Transport route ID to assign students to"""
+  routeId: ID!
+
+  """
+  Array of student IDs to assign. If empty, assigns all students in tenant
+  """
+  studentIds: [ID!]
 }
 
 input ChangePasswordInput {
@@ -469,9 +493,10 @@ input CreateTestInput {
 }
 
 input CreateTransportRouteInput {
+  """Custom label e.g. 'Per Semester' or 'Every 2 Weeks'"""
+  billingCycleLabel: String
   fee: Float!
   name: String!
-  tenantId: String!
 }
 
 type CreateUserResponse {
@@ -749,8 +774,11 @@ type Mutation {
   addStudentsToParent(parentId: String!, studentIds: [String!]!, tenantId: String!): String!
   assignClassTeacher(input: AssignStreamClassTeacherInput!): ClassTeacherAssignment!
   assignGradeLevelClassTeacher(input: AssignGradeLevelClassTeacherInput!): ClassTeacherAssignment!
+  assignScholarship(input: AssignScholarshipInput!): StudentScholarship!
   assignStudentToHostel(input: CreateHostelAssignmentInput!): HostelAssignment!
-  assignTransport(input: AssignTransportInput!): TransportAssignment!
+  assignStudentToRoute(input: AssignTransportInput!): TransportAssignment!
+  assignStudentsToRoute(input: BulkTransportAssignmentInput!): [TransportAssignment!]!
+  bulkAssignStudentsToRoute(input: BulkTransportAssignmentInput!): [TransportAssignment!]!
   changePassword(changePasswordInput: ChangePasswordInput!): PasswordResetResponse!
   configureSchoolLevelsByNames(levelNames: [String!]!): SchoolConfigurationResponse!
   createAssessment(input: CreateAssessmentInput!): AssessmentOutput!
@@ -791,6 +819,8 @@ type Mutation {
   removeHostel(id: String!): Boolean!
   removeHostelAssignment(id: String!): Boolean!
   removeScholarship(id: ID!): Boolean!
+  removeStudentScholarship(id: String!): Boolean!
+  removeTransportRoute(id: String!): Boolean!
   resendTeacherInvitation(invitationId: String!): InviteTeacherResponse!
   resetPassword(resetPasswordInput: ResetPasswordInput!): PasswordResetResponse!
   revokeInvitation(invitationId: String!): RevokeInvitationResponse!
@@ -812,7 +842,6 @@ type Mutation {
   submitAssignment(input: CreateAssignmentSubmissionInput!): AssignmentSubmission!
   toggleTenantStream(activate: Boolean!, tenantStreamId: String!): Boolean!
   unassignClassTeacher(input: UnassignClassTeacherInput!): Boolean!
-  unassignTransport(id: ID!): Boolean!
   updateCustomSubject(input: UpdateTenantSubjectInput!, tenantSubjectId: String!): TenantSubject!
   updateHostel(input: UpdateHostelInput!): Hostel!
   updateHostelAssignment(input: UpdateHostelAssignmentInput!): HostelAssignment!
@@ -820,6 +849,7 @@ type Mutation {
   updateStaff(tenantId: String!, updateStaffInput: UpdateStaffInput!): StaffDto!
   updateStream(input: UpdateStreamInput!): StreamType!
   updateStudentMarks(inputs: [EnterStudentMarksInput!]!): [AssessmentMark!]!
+  updateStudentScholarship(input: UpdateStudentScholarshipInput!): StudentScholarship!
   updateTenantStream(input: UpdateTenantStreamInput!, tenantStreamId: String!): TenantStream!
   updateTest(updateTestInput: UpdateTestInput!): Test!
   updateTransportAssignment(input: UpdateTransportAssignmentInput!): TransportAssignment!
@@ -903,6 +933,7 @@ type PendingInvitationResponse {
 
 type Query {
   activeStreams: [StreamType!]!
+  allStudentScholarships: [StudentScholarship!]!
   allStudents: [Student!]!
   allUsersOfTenant(tenantId: String!): [TenantUserSummary!]!
   assessments(filter: AssessmentFilterInput): [AssessmentOutput!]!
@@ -915,6 +946,7 @@ type Query {
   getAllClassTeacherAssignments: [ClassTeacherAssignment!]!
   getAllTeachers: [Teacher!]!
   getAssignment(id: ID!): Assignment!
+  getAssignmentsByRoute(routeId: String!): [TransportAssignment!]!
   getAttendanceByDate(date: String!, gradeId: String!): [Attendance!]!
 
   """Get all students and teachers for current user tenant"""
@@ -994,6 +1026,7 @@ type Query {
 
   """Get student profile by ID (only accessible by the student themselves)"""
   studentProfileById(studentId: ID!): Student!
+  studentScholarships(studentId: String!): [StudentScholarship!]!
   studentsByGradeLevel(tenantGradeLevelId: ID!): [Student!]!
   studentsForTenant: [StudentLoginInfo!]!
   teacherGetParentById(parentId: String!): Parent
@@ -1011,8 +1044,6 @@ type Query {
   termAssessmentsWithStudents(academicYear: String!, gradeLevelId: String!, term: Int!): TermAssessmentWithStudentsDto!
   testById(id: String!): Test
   testSocket(scenario: String): String!
-  transportAssignmentsByRoute(routeId: ID!): [TransportAssignment!]!
-  transportAssignmentsByStudent(studentId: ID!): [TransportAssignment!]!
   transportRoutes: [TransportRoute!]!
   users: [User!]!
   usersByTenant(role: String, tenantId: String!): [User!]!
@@ -1274,7 +1305,6 @@ type Student {
   id: ID!
   isActive: Boolean!
   phone: String!
-  pickupPoint: String
   scholarships: Scholarship
   schoolType: String
   stream: Stream
@@ -1283,7 +1313,6 @@ type Student {
   tenant_id: ID!
   totalFeesPaid: Float!
   transportAssignments: [TransportAssignment!]
-  transportRoute: TransportRoute
   updatedAt: DateTime!
   user: User!
   user_id: ID!
@@ -1604,10 +1633,10 @@ type TransportAssignment {
   createdAt: DateTime!
   id: ID!
   pickupPoint: String
-  route: TransportRoute!
+  route: TransportRoute
   routeId: ID!
   status: String!
-  student: Student!
+  student: Student
   studentId: ID!
   tenantId: String!
   vacatedAt: DateTime
@@ -1615,6 +1644,7 @@ type TransportAssignment {
 
 type TransportRoute {
   assignments: [TransportAssignment!]
+  billingCycleLabel: String
   createdAt: DateTime!
   fee: Float!
   id: ID!
@@ -1691,6 +1721,12 @@ input UpdateStreamInput {
   name: String
 }
 
+input UpdateStudentScholarshipInput {
+  academicYear: String
+  id: String!
+  status: String
+}
+
 input UpdateTenantStreamInput {
   isActive: Boolean
 }
@@ -1726,16 +1762,21 @@ input UpdateTestInput {
 }
 
 input UpdateTransportAssignmentInput {
-  id: ID!
+  """Transport assignment ID to update"""
+  assignmentId: ID!
+
+  """New transport route ID (optional - for changing routes)"""
+  newRouteId: ID
+
+  """Updated pickup point (optional)"""
   pickupPoint: String
-  status: String
 }
 
 input UpdateTransportRouteInput {
+  billingCycleLabel: String
   fee: Float
   id: ID!
   name: String
-  tenantId: String
 }
 
 type User {
