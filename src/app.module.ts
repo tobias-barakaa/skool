@@ -124,6 +124,9 @@ const ENV = process.env.NODE_ENV;
   controllers: [AppController],
   providers: [
     AppService,
+
+    { provide: APP_GUARD, useClass: SchoolConfiguredGuard },
+
     {
       provide: APP_GUARD,
       useClass: AuthenticationGuard,
@@ -134,12 +137,6 @@ const ENV = process.env.NODE_ENV;
       useClass: DataResponseInterceptor,
     },
     AccessTokenGuard,
-
-    {
-      provide: APP_GUARD,
-      useClass: SchoolConfiguredGuard,
-
-    },
   ],
 })
 export class AppModule {}
