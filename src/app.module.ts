@@ -125,12 +125,13 @@ const ENV = process.env.NODE_ENV;
   providers: [
     AppService,
 
-    { provide: APP_GUARD, useClass: SchoolConfiguredGuard },
 
     {
       provide: APP_GUARD,
       useClass: AuthenticationGuard,
     },
+    { provide: APP_GUARD, useClass: SchoolConfiguredGuard },
+
     { provide: APP_GUARD, useClass: TenantRoleGuard },
     {
       provide: APP_INTERCEPTOR,
