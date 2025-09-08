@@ -30,6 +30,7 @@ import { TenantRoleGuard } from './iam/guards/tenant-role.guard';
 import { IamModule } from './iam/iam.module';
 import { SuperAdminModule } from './super_admin/super_admin.module';
 import { StudentPortalModule } from './student/student.module';
+import { SchoolConfiguredGuard } from './iam/guards/school-config.guard';
 
 const ENV = process.env.NODE_ENV;
 
@@ -133,6 +134,12 @@ const ENV = process.env.NODE_ENV;
       useClass: DataResponseInterceptor,
     },
     AccessTokenGuard,
+
+    {
+      provide: APP_GUARD,
+      useClass: SchoolConfiguredGuard,
+
+    },
   ],
 })
 export class AppModule {}
