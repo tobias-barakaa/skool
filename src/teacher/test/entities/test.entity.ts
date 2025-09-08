@@ -16,7 +16,6 @@ import {
 } from 'typeorm';
 import { TenantSubject } from 'src/admin/school-type/entities/tenant-specific-subject';
 import { TenantGradeLevel } from 'src/admin/school-type/entities/tenant-grade-level';
-import { IsDate } from 'class-validator';
 
 @ObjectType()
 @Entity()

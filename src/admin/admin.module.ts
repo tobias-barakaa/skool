@@ -24,6 +24,7 @@ import { HostelModule } from './hostels/hostel.module';
 import { TransportModule } from './transport/transport.module';
 import { ScholarshipsModule } from './scholarships/scholarships.module';
 import { AcademicModule } from './academic_years/academic.module';
+import { FeeManagementModule } from './finance/fee-management.module';
 
 
 @Module({
@@ -54,7 +55,8 @@ import { AcademicModule } from './academic_years/academic.module';
     HostelModule,
     TransportModule,
     ScholarshipsModule,
-    AcademicModule
+    AcademicModule,
+    FeeManagementModule
   ],
 })
 export class AdminModule {}

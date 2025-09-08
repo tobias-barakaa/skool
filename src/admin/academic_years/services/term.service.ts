@@ -27,7 +27,7 @@ export class TermService {
     });
 
     if (!academicYear) {
-      throw new NotFoundException('Academic year not found');
+      throw new NotFoundException(`Academic year with ID "${input.academicYearId}" not found for this tenant`);
     }
 
     const academicStartDate = new Date(academicYear.startDate);
@@ -35,7 +35,7 @@ export class TermService {
 
     if (startDate < academicStartDate || endDate > academicEndDate) {
       throw new BadRequestException(
-        `Term dates must be within academic year period (${academicYear.startDate} to ${academicYear.endDate})`
+        `Term dates must be within academic year period (${academicStartDate.toISOString().split('T')[0]} to ${academicEndDate.toISOString().split('T')[0]})`
       );
     }
 
@@ -60,7 +60,7 @@ export class TermService {
       .andWhere('term.isActive = true')
       .andWhere('(term.startDate <= :endDate AND term.endDate >= :startDate)', {
         startDate: input.startDate,
-        endDate: input.endDate
+        endDate: input.endDate     
       })
       .getOne();
 
@@ -72,6 +72,8 @@ export class TermService {
 
     const term = this.termRepo.create({ 
       ...input, 
+      startDate, 
+      endDate,   
       tenantId,
       academicYearId: input.academicYearId
     });
@@ -89,6 +91,30 @@ export class TermService {
       
       return savedTerm;
   }
+
+ 
+  async findAllByAcademicYear(academicYearId: string, tenantId: string): Promise<Term[]> {
+    return this.termRepo.find({
+      where: { academicYearId, tenantId },
+      relations: ['academicYear'],
+      order: { startDate: 'ASC' },
+    });
+  }
+
+  
+  async findOne(id: string, tenantId: string): Promise<Term> {
+    const term = await this.termRepo.findOne({
+      where: { id, tenantId },
+      relations: ['academicYear'],
+    });
+
+    if (!term) {
+      throw new NotFoundException(`Term with ID "${id}" not found for this tenant`);
+    }
+    return term;
+
+}
+  
 
   async findAll(tenantId: string): Promise<Term[]> {
     return this.termRepo.find({

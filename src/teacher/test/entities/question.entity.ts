@@ -46,7 +46,6 @@ export class Question {
   isAIGenerated: boolean;
 
   @Field(() => Test)
-  @Index()
   @ManyToOne(() => Test, (test) => test.questions)
   test: Test;
 

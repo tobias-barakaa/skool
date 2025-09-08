@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from "@nestjs/graphql";
+import { Field, GraphQLISODateTime, ID, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Index, Unique } from "typeorm";
 import { Term } from "./terms.entity";
 
@@ -19,23 +19,23 @@ export class AcademicYear {
   @Column()
   name: string; 
 
-  @Field(() => Date)
-  @Column({ type: 'date' })
+  @Field(() => GraphQLISODateTime)  
+  @Column({ type: 'timestamp' }) 
   startDate: Date;
 
-  @Field(() => Date)
-  @Column({ type: 'date' })
+  @Field(() => GraphQLISODateTime)  
+  @Column({ type: 'timestamp' }) 
   endDate: Date;
 
   @Field()
   @Column({ default: true })
   isActive: boolean;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
-  @Field(() => Date)
+  @Field(() => GraphQLISODateTime)
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 

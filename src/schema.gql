@@ -256,6 +256,15 @@ input BroadcastMessageInput {
   subject: String
 }
 
+"""Input type for bulk fee assignments"""
+input BulkFeeAssignmentInput {
+  """The ID of the fee structure to assign"""
+  feeStructureId: ID!
+
+  """The IDs of the students"""
+  studentIds: [ID!]!
+}
+
 input BulkTransportAssignmentInput {
   """Common pickup point for all students (optional)"""
   pickupPoint: String
@@ -361,6 +370,54 @@ input CreateCustomSubjectInput {
   shortName: String
   subjectType: String! = "core"
   totalMarks: Float
+}
+
+"""Input type for creating a new fee assignment"""
+input CreateFeeAssignmentInput {
+  """The IDs of the fee structure items to assign"""
+  feeStructureItemIds: [ID!]!
+
+  """The ID of the student"""
+  studentId: ID!
+}
+
+"""Input type for creating a new fee bucket"""
+input CreateFeeBucketInput {
+  """Description of the fee bucket"""
+  description: String
+
+  """The name of the fee bucket"""
+  name: String!
+}
+
+"""Input type for creating a new fee structure"""
+input CreateFeeStructureInput {
+  """The ID of the academic year"""
+  academicYearId: ID!
+
+  """The ID of the grade level"""
+  gradeLevelId: ID!
+
+  """The fee items for this structure"""
+  items: [CreateFeeStructureItemInput!]!
+
+  """The name of the fee structure"""
+  name: String!
+
+  """The ID of the term"""
+  termId: ID!
+}
+
+"""Input type for creating fee structure items"""
+input CreateFeeStructureItemInput {
+  """The amount for this fee item"""
+  amount: Float!
+
+  """The ID of the fee bucket"""
+  feeBucketId: ID!
+
+  """Whether this fee item is mandatory"""
+  isMandatory: Boolean!
 }
 
 input CreateHostelAssignmentInput {
@@ -495,10 +552,18 @@ input CreateTenantStreamInput {
   tenantGradeLevelId: String!
 }
 
+"""Input data for creating a new term"""
 input CreateTermInput {
+  """The ID of the academic year to which this term belongs"""
   academicYearId: ID!
+
+  """The end date of the term (YYYY-MM-DD). Must be after start date."""
   endDate: String!
+
+  """The name of the term"""
   name: String!
+
+  """The start date of the term (YYYY-MM-DD)"""
   startDate: String!
 }
 
@@ -582,6 +647,128 @@ scalar DateTime
 input EnterStudentMarksInput {
   marks: [StudentMarkInput!]!
   studentId: ID!
+}
+
+"""Represents assignment of fee structure items to specific students"""
+type FeeAssignment {
+  """The date and time when the fee assignment was created"""
+  createdAt: DateTime!
+
+  """The fee structure item assigned to the student"""
+  feeStructureItem: FeeStructureItem!
+
+  """The ID of the fee structure item"""
+  feeStructureItemId: ID!
+
+  """The unique identifier of the fee assignment"""
+  id: ID!
+
+  """Indicates if the fee assignment is currently active"""
+  isActive: Boolean!
+
+  """The student this fee is assigned to"""
+  student: Student!
+
+  """The ID of the student"""
+  studentId: ID!
+
+  """The ID of the tenant this fee assignment belongs to"""
+  tenantId: String!
+
+  """The date and time when the fee assignment was last updated"""
+  updatedAt: DateTime!
+}
+
+"""Represents a fee category/bucket like Tuition, Transport, etc."""
+type FeeBucket {
+  """The date and time when the fee bucket was created"""
+  createdAt: DateTime!
+
+  """Description of the fee bucket"""
+  description: String
+
+  """The unique identifier of the fee bucket"""
+  id: ID!
+
+  """Indicates if the fee bucket is currently active"""
+  isActive: Boolean!
+
+  """The name of the fee bucket"""
+  name: String!
+
+  """The ID of the tenant this fee bucket belongs to"""
+  tenantId: String!
+
+  """The date and time when the fee bucket was last updated"""
+  updatedAt: DateTime!
+}
+
+"""
+Represents a fee structure for a specific grade, term and academic year
+"""
+type FeeStructure {
+  """The academic year this fee structure belongs to"""
+  academicYear: AcademicYear!
+
+  """The ID of the academic year"""
+  academicYearId: ID!
+
+  """The date and time when the fee structure was created"""
+  createdAt: DateTime!
+
+  """The grade level this fee structure applies to"""
+  gradeLevel: TenantGradeLevel!
+
+  """The ID of the grade level"""
+  gradeLevelId: ID!
+
+  """The unique identifier of the fee structure"""
+  id: ID!
+
+  """Indicates if the fee structure is currently active"""
+  isActive: Boolean!
+
+  """The fee items in this structure"""
+  items: [FeeStructureItem!]!
+
+  """The name of the fee structure"""
+  name: String!
+
+  """The ID of the tenant this fee structure belongs to"""
+  tenantId: String!
+
+  """The term this fee structure belongs to"""
+  term: Term!
+
+  """The ID of the term"""
+  termId: ID!
+
+  """The date and time when the fee structure was last updated"""
+  updatedAt: DateTime!
+}
+
+"""Represents individual fee items within a fee structure"""
+type FeeStructureItem {
+  """The amount for this fee item"""
+  amount: Float!
+
+  """The fee bucket this item belongs to"""
+  feeBucket: FeeBucket!
+
+  """The ID of the fee bucket"""
+  feeBucketId: ID!
+
+  """The ID of the fee structure"""
+  feeStructureId: ID!
+
+  """The unique identifier of the fee structure item"""
+  id: ID!
+
+  """Indicates if this fee item is mandatory"""
+  isMandatory: Boolean!
+
+  """The ID of the tenant this fee structure item belongs to"""
+  tenantId: String!
 }
 
 input FilterInput {
@@ -804,6 +991,9 @@ type Mutation {
   assignStudentToRoute(input: AssignTransportInput!): TransportAssignment!
   assignStudentsToRoute(input: BulkTransportAssignmentInput!): [TransportAssignment!]!
   bulkAssignStudentsToRoute(input: BulkTransportAssignmentInput!): [TransportAssignment!]!
+
+  """Bulk assign fees to multiple students"""
+  bulkFeeAssignment(input: BulkFeeAssignmentInput!): [FeeAssignment!]!
   changePassword(changePasswordInput: ChangePasswordInput!): PasswordResetResponse!
   configureSchoolLevelsByNames(levelNames: [String!]!): SchoolConfigurationResponse!
 
@@ -814,6 +1004,15 @@ type Mutation {
   ): AcademicYear!
   createAssessment(input: CreateAssessmentInput!): AssessmentOutput!
   createCustomSubject(input: CreateCustomSubjectInput!): TenantSubject!
+
+  """Create fee assignments for a student"""
+  createFeeAssignment(input: CreateFeeAssignmentInput!): [FeeAssignment!]!
+
+  """Create a new fee bucket"""
+  createFeeBucket(input: CreateFeeBucketInput!): FeeBucket!
+
+  """Create a new fee structure with items"""
+  createFeeStructure(input: CreateFeeStructureInput!): FeeStructure!
   createHostel(input: CreateHostelInput!): Hostel!
   createScholarship(input: CreateScholarshipInput!): Scholarship!
   createStream(input: CreateStreamInput!): StreamType!
@@ -832,6 +1031,9 @@ type Mutation {
   deleteAssignment(id: String!): Boolean!
   deleteCA(id: String!): Boolean!
   deleteExam(id: String!): Boolean!
+
+  """Delete a fee bucket"""
+  deleteFeeBucket(id: ID!): Boolean!
   deleteStaff(id: String!, tenantId: String!): String!
   deleteStream(id: ID!): Boolean!
   deleteTeacher(id: String!, tenantId: String!): String!
@@ -853,6 +1055,9 @@ type Mutation {
   Refresh search cache for current user tenant (placeholder for future caching)
   """
   refreshSearchCache: Boolean!
+
+  """Remove a fee assignment"""
+  removeFeeAssignment(id: ID!): Boolean!
   removeHostel(id: String!): Boolean!
   removeHostelAssignment(id: String!): Boolean!
   removeScholarship(id: ID!): Boolean!
@@ -881,6 +1086,9 @@ type Mutation {
   toggleTenantStream(activate: Boolean!, tenantStreamId: String!): Boolean!
   unassignClassTeacher(input: UnassignClassTeacherInput!): Boolean!
   updateCustomSubject(input: UpdateTenantSubjectInput!, tenantSubjectId: String!): TenantSubject!
+
+  """Update an existing fee bucket"""
+  updateFeeBucket(id: ID!, input: UpdateFeeBucketInput!): FeeBucket!
   updateHostel(input: UpdateHostelInput!): Hostel!
   updateHostelAssignment(input: UpdateHostelAssignmentInput!): HostelAssignment!
   updateScholarship(input: UpdateScholarshipInput!): Scholarship!
@@ -981,6 +1189,27 @@ type Query {
   allUsersOfTenant(tenantId: String!): [TenantUserSummary!]!
   assessments(filter: AssessmentFilterInput): [AssessmentOutput!]!
   deactivatedTenantSubjects: [TenantSubject!]!
+
+  """Get all fee assignments for the current tenant"""
+  feeAssignments: [FeeAssignment!]!
+
+  """Get fee assignments for a specific student"""
+  feeAssignmentsByStudent(studentId: ID!): [FeeAssignment!]!
+
+  """Get a single fee bucket by ID"""
+  feeBucket(id: ID!): FeeBucket!
+
+  """Get all fee buckets for the current tenant"""
+  feeBuckets: [FeeBucket!]!
+
+  """Get a single fee structure by ID"""
+  feeStructure(id: ID!): FeeStructure!
+
+  """Get fee structure by grade level, term, and academic year"""
+  feeStructureByGradeAndTerm(academicYearId: ID!, gradeLevelId: ID!, termId: ID!): FeeStructure
+
+  """Get all fee structures for the current tenant"""
+  feeStructures: [FeeStructure!]!
 
   """Filter students and teachers by grade levels, subjects, and streams"""
   filterByGradeLevelAndSubjects(input: FilterInput!): FilteredResult!
@@ -1084,10 +1313,13 @@ type Query {
   teacherGetStudentsWithParents: [StudentWithParentsType!]!
   tenantStreams: [TenantStream!]!
   tenantSubjects: [TenantSubject!]!
-  termAssessmentsWithStudents(academicYear: String!, gradeLevelId: String!, term: Int!): TermAssessmentWithStudentsDto!
 
-  """Get all terms for the current tenant"""
-  terms: [Term!]!
+  """Retrieves a single term by its ID"""
+  term(
+    """The ID of the term"""
+    id: ID!
+  ): Term!
+  termAssessmentsWithStudents(academicYear: String!, gradeLevelId: String!, term: Int!): TermAssessmentWithStudentsDto!
 
   """Get all terms for a specific academic year"""
   termsByAcademicYear(academicYearId: ID!): [Term!]!
@@ -1645,16 +1877,36 @@ type TenantUserSummary {
   tenantId: String!
 }
 
+"""Represents an academic term"""
 type Term {
+  """The academic year to which this term belongs"""
   academicYear: AcademicYear!
+
+  """The ID of the academic year this term belongs to"""
   academicYearId: ID!
+
+  """The date and time when the term was created"""
   createdAt: DateTime!
+
+  """The end date of the term"""
   endDate: DateTime!
+
+  """The unique identifier of the term"""
   id: ID!
+
+  """Indicates if the term is currently active"""
   isActive: Boolean!
+
+  """The name of the term"""
   name: String!
+
+  """The start date of the term"""
   startDate: DateTime!
+
+  """The ID of the tenant this term belongs to"""
   tenantId: String!
+
+  """The date and time when the term was last updated"""
   updatedAt: DateTime!
 }
 
@@ -1731,6 +1983,18 @@ type TransportService {
 
 input UnassignClassTeacherInput {
   teacherId: ID!
+}
+
+"""Input type for updating a fee bucket"""
+input UpdateFeeBucketInput {
+  """Description of the fee bucket"""
+  description: String
+
+  """Whether the fee bucket is active"""
+  isActive: Boolean
+
+  """The name of the fee bucket"""
+  name: String
 }
 
 input UpdateHostelAssignmentInput {

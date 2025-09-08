@@ -33,7 +33,7 @@ export class AcademicYearService {
       .andWhere('year.isActive = true')
       .andWhere('(year.startDate <= :endDate AND year.endDate >= :startDate)', {
         startDate: input.startDate,
-        endDate: input.endDate
+        endDate: input.endDate    
       })
       .getOne();
 
@@ -43,7 +43,7 @@ export class AcademicYearService {
       );
     }
 
-    const year = this.repo.create({ ...input, tenantId });
+    const year = this.repo.create({ ...input, startDate, endDate, tenantId });
     return await this.repo.save(year);
   }
 

@@ -12,18 +12,19 @@ export class AcademicYearResolver {
   @Mutation(() => AcademicYear, {
     description: 'Create a new academic year for the tenant'
   })
+  @Mutation(() => AcademicYear, { description: 'Creates a new academic year' })
   async createAcademicYear(
     @Args('input', { 
       type: () => CreateAcademicYearInput,
       description: 'Academic year creation input data'
     }) input: CreateAcademicYearInput,
-    @ActiveUser() user: ActiveUserData,
+    @ActiveUser() user: ActiveUserData, 
   ): Promise<AcademicYear> {
     const academicYear = await this.service.create(input, user.tenantId);
     
     return {
       ...academicYear,
-      terms: academicYear.terms ?? [],
+      terms: academicYear.terms ?? [], 
     };
   }
 
@@ -46,3 +47,4 @@ export class AcademicYearResolver {
     return this.service.findById(id, user.tenantId);
   }
 }
+

@@ -32,7 +32,6 @@ export class Option {
   order: number;
 
   @Field(() => Question)
-  @Index()
   @ManyToOne(() => Question, (question) => question.options)
   question: Question;
 }

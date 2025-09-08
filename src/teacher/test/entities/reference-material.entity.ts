@@ -5,7 +5,6 @@ import {
   Column,
   CreateDateColumn,
   ManyToOne,
-  Index,
 } from 'typeorm';
 import { Test } from './test.entity';
 
@@ -29,7 +28,6 @@ export class ReferenceMaterial {
   fileSize: number;
 
   @Field(() => Test)
-  @Index()
   @ManyToOne(() => Test, (test) => test.referenceMaterials)
   test: Test;
 

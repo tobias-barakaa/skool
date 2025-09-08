@@ -1,4 +1,3 @@
-// src/students/entities/student.entity.ts
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { HostelAssignment } from 'src/admin/hostels/entities/hostel.assignment';
 import { Scholarship } from 'src/admin/scholarships/entities/scholarship.entity';

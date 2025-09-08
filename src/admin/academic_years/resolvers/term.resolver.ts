@@ -12,6 +12,9 @@ export class TermResolver {
   @Mutation(() => Term, {
     description: 'Create a new term within an academic year'
   })
+  @Mutation(() => Term, {
+    description: 'Create a new term within an academic year'
+  })
   async createTerm(
     @Args('input', {
       type: () => CreateTermInput,
@@ -22,13 +25,20 @@ export class TermResolver {
     return this.service.create(input, user.tenantId);
   }
 
-  @Query(() => [Term], {
-    description: 'Get all terms for the current tenant'
-  })
-  async terms(
-    @ActiveUser() user: ActiveUserData
+  @Query(() => [Term], { name: 'termsByAcademicYear', description: 'Retrieves all terms for a given academic year' })
+  async getTermsByAcademicYear(
+    @Args('academicYearId', { type: () => ID, description: 'The ID of the academic year to fetch terms for' }) academicYearId: string,
+    @ActiveUser() user: ActiveUserData,
   ): Promise<Term[]> {
-    return this.service.findAll(user.tenantId);
+    return this.service.findAllByAcademicYear(academicYearId, user.tenantId);
+  }
+
+  @Query(() => Term, { name: 'term', description: 'Retrieves a single term by its ID' })
+  async getTerm(
+    @Args('id', { type: () => ID, description: 'The ID of the term' }) id: string,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<Term> {
+    return this.service.findOne(id, user.tenantId);
   }
 
   @Query(() => [Term], {
@@ -41,3 +51,4 @@ export class TermResolver {
     return this.service.findByAcademicYear(academicYearId, user.tenantId);
   }
 }
+

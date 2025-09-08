@@ -17,5 +17,5 @@ export class CreateAcademicYearInput {
   @Field()
   @IsDateString({}, { message: 'End date must be a valid date string (YYYY-MM-DD)' })
   @Validate(IsAfter, ['startDate'], { message: 'End date must be after start date' })
-  endDate: string;
+  endDate: string; 
 }

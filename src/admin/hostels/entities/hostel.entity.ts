@@ -20,7 +20,6 @@ export class Hostel {
   id: string;
 
   @Field()
-  @Index()
   @Column('uuid')
   tenantId: string;
 

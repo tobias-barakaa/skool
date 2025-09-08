@@ -18,7 +18,6 @@ export class TransportAssignment {
   @Field(() => ID)
   id: string;
 
-  @Index()
   @Column('uuid')
   @Field()
   tenantId: string;
