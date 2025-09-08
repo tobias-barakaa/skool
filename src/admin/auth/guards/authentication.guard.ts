@@ -29,7 +29,6 @@ export class AuthenticationGuard implements CanActivate {
   } 
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    // Get auth types from metadata or default
     const authTypes =
       this.reflector.getAllAndOverride<AuthType[]>(AUTH_TYPE_KEY, [
         context.getHandler(),
@@ -38,10 +37,9 @@ export class AuthenticationGuard implements CanActivate {
 
     console.log('authTypes', authTypes);
 
-    // Flatten guards
     const guards = authTypes
       .map((type) => this.authTypeGuardMap[type])
-      .flat(); // 🛠 FIXED: added () to call .flat
+      .flat();
 
     console.log('guards', guards);
 

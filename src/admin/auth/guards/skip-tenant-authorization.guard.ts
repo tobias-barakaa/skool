@@ -15,7 +15,6 @@ export class TenantAccessGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    // Check if tenant validation should be skipped
     const skipTenantValidation = this.reflector.getAllAndOverride<boolean>(
       'skipTenantValidation',
       [context.getHandler(), context.getClass()],
@@ -25,7 +24,7 @@ export class TenantAccessGuard implements CanActivate {
       return true;
     }
 
-    let request;
+    let request:any;
     
     if (context.getType<GqlContextType>() === 'graphql') {
       const gqlContext = GqlExecutionContext.create(context);

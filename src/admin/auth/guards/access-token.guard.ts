@@ -37,6 +37,9 @@ export class AccessTokenGuard implements CanActivate {
         token,
         this.jwtConfiguration,
       );
+
+       this.logger.debug(`Decoded JWT payload::::::::::::PSYPPPDIFU::::DJFIDJFIDJSODIFJIS: ${JSON.stringify(payload, null, 2)}`);
+
       request[REQUEST_USER_KEY] = payload;
       return true;
     } catch (err: any) {

@@ -22,6 +22,7 @@ export class FeeStructureResolver {
     @Args('input') input: CreateFeeStructureInput,
     @ActiveUser() user: ActiveUserData,
   ) {
+    console.log('DEBUG ActiveUser:::::::::::::::::::::::::::::::', user);
     this.logger.log(`Creating fee structure: ${input.name} by user ${user.sub}`);
     return await this.feeStructureService.create(input, user);
   }

@@ -15,8 +15,6 @@ export const CurrentTenant = createParamDecorator(
       }
       
       const user: ActiveUserData = request[REQUEST_USER_KEY];
-      
-      // Since tenant is now required, this should always exist
       return user.tenantId;
     },
   );
