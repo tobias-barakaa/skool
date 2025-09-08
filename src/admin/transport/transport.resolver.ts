@@ -4,7 +4,7 @@ import { TransportRoute } from './entities/transport_routes.entity';
 import { TransportAssignment } from './entities/transport_assignment.entity';
 import { CreateTransportRouteInput } from './dtos/create-transport-route.input';
 import { UpdateTransportRouteInput } from './dtos/update-transport-route.input';
-import { AssignTransportInput } from './dtos/assign-transport.input';
+import { AssignTransportInput, RemoveTransportAssignmentInput } from './dtos/assign-transport.input';
 import { ActiveUserData } from '../auth/interface/active-user.interface';
 import { ActiveUser } from '../auth/decorator/active-user.decorator';
 import { MembershipRole } from '../user-tenant-membership/entities/user-tenant-membership.entity';
@@ -12,6 +12,7 @@ import { Roles } from 'src/iam/decorators/roles.decorator';
 import { BulkTransportAssignmentInput } from './dtos/bulk-assign-transport.input';
 import { CreateTransportAssignmentInput } from './dtos/transport-assign.input';
 import { UpdateTransportAssignmentInput } from './dtos/update-assignment-transport.input';
+import { arrayNotEmpty } from 'class-validator';
 
 @Resolver()
 @Roles(MembershipRole.SCHOOL_ADMIN)
@@ -106,6 +107,15 @@ bulkAssignStudentsToRoute(
   ) {
     return this.transportService.updateAssignment(input, user.tenantId);
   }
+
+  @Mutation(() => Boolean)
+removeStudentFromRoute(
+  @Args('input') input: RemoveTransportAssignmentInput,
+  @ActiveUser() user: ActiveUserData,
+) {
+  return this.transportService.removeTransportAssignment(input, user.tenantId);
+}
+
 
   @Query(() => [TransportAssignment])
   getAssignmentsByRoute(

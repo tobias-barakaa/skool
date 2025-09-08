@@ -12,6 +12,18 @@ type AcademicSummary {
   totalFeesPaid: Float!
 }
 
+type AcademicYear {
+  createdAt: DateTime!
+  endDate: DateTime!
+  id: ID!
+  isActive: Boolean!
+  name: String!
+  startDate: DateTime!
+  tenantId: String!
+  terms: [Term!]
+  updatedAt: DateTime!
+}
+
 input AcceptInvitationInput {
   password: String!
   token: String!
@@ -305,6 +317,12 @@ type CombinedSearchResult {
   totalCount: Float!
 }
 
+input CreateAcademicYearInput {
+  endDate: String!
+  name: String!
+  startDate: String!
+}
+
 input CreateAssessmentInput {
   academicYear: String!
   cutoff: Float
@@ -475,6 +493,13 @@ input CreateTenantStreamInput {
   description: String
   name: String!
   tenantGradeLevelId: String!
+}
+
+input CreateTermInput {
+  academicYearId: ID!
+  endDate: String!
+  name: String!
+  startDate: String!
 }
 
 input CreateTestInput {
@@ -781,6 +806,12 @@ type Mutation {
   bulkAssignStudentsToRoute(input: BulkTransportAssignmentInput!): [TransportAssignment!]!
   changePassword(changePasswordInput: ChangePasswordInput!): PasswordResetResponse!
   configureSchoolLevelsByNames(levelNames: [String!]!): SchoolConfigurationResponse!
+
+  """Create a new academic year for the tenant"""
+  createAcademicYear(
+    """Academic year creation input data"""
+    input: CreateAcademicYearInput!
+  ): AcademicYear!
   createAssessment(input: CreateAssessmentInput!): AssessmentOutput!
   createCustomSubject(input: CreateCustomSubjectInput!): TenantSubject!
   createHostel(input: CreateHostelInput!): Hostel!
@@ -788,6 +819,12 @@ type Mutation {
   createStream(input: CreateStreamInput!): StreamType!
   createStudent(createStudentInput: CreateStudentInput!): CreateStudentResponse!
   createTenantStreamFromScratch(input: CreateTenantStreamInput!): TenantStream!
+
+  """Create a new term within an academic year"""
+  createTerm(
+    """Term creation input data"""
+    input: CreateTermInput!
+  ): Term!
   createTest(createTestInput: CreateTestInput!): Test!
   createTransportRoute(input: CreateTransportRouteInput!): TransportRoute!
   createUser(signupInput: SignupInput!): CreateUserResponse!
@@ -819,6 +856,7 @@ type Mutation {
   removeHostel(id: String!): Boolean!
   removeHostelAssignment(id: String!): Boolean!
   removeScholarship(id: ID!): Boolean!
+  removeStudentFromRoute(input: RemoveTransportAssignmentInput!): Boolean!
   removeStudentScholarship(id: String!): Boolean!
   removeTransportRoute(id: String!): Boolean!
   resendTeacherInvitation(invitationId: String!): InviteTeacherResponse!
@@ -932,6 +970,11 @@ type PendingInvitationResponse {
 }
 
 type Query {
+  """Get a specific academic year by ID"""
+  academicYear(id: ID!): AcademicYear!
+
+  """Get all academic years for the current tenant"""
+  academicYears: [AcademicYear!]!
   activeStreams: [StreamType!]!
   allStudentScholarships: [StudentScholarship!]!
   allStudents: [Student!]!
@@ -1042,6 +1085,12 @@ type Query {
   tenantStreams: [TenantStream!]!
   tenantSubjects: [TenantSubject!]!
   termAssessmentsWithStudents(academicYear: String!, gradeLevelId: String!, term: Int!): TermAssessmentWithStudentsDto!
+
+  """Get all terms for the current tenant"""
+  terms: [Term!]!
+
+  """Get all terms for a specific academic year"""
+  termsByAcademicYear(academicYearId: ID!): [Term!]!
   testById(id: String!): Test
   testSocket(scenario: String): String!
   transportRoutes: [TransportRoute!]!
@@ -1081,6 +1130,14 @@ type ReferenceMaterial {
   fileUrl: String!
   id: ID!
   test: Test!
+}
+
+input RemoveTransportAssignmentInput {
+  """Transport route ID to remove student from"""
+  routeId: ID!
+
+  """Student ID to remove from transport route"""
+  studentId: ID!
 }
 
 input ResetPasswordInput {
@@ -1586,6 +1643,19 @@ type TenantUserSummary {
   name: String!
   role: MembershipRole!
   tenantId: String!
+}
+
+type Term {
+  academicYear: AcademicYear!
+  academicYearId: ID!
+  createdAt: DateTime!
+  endDate: DateTime!
+  id: ID!
+  isActive: Boolean!
+  name: String!
+  startDate: DateTime!
+  tenantId: String!
+  updatedAt: DateTime!
 }
 
 type TermAssessmentWithStudentsDto {

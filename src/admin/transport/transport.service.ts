@@ -153,7 +153,7 @@ export class TransportService {
       .leftJoinAndSelect('s.user', 'u')
       .leftJoinAndSelect('a.route', 'r')
       .where('a.id = :id AND a.tenantId = :tenantId', { id: saved.id, tenantId })
-      .getOneOrFail(); // throws EntityNotFoundError if somehow missing
+      .getOneOrFail(); 
   }
 
   
@@ -161,7 +161,7 @@ export class TransportService {
     this.logger.debug('Starting bulk student assignment', { input, tenantId });
 
     try {
-      // Validate route exists
+    
       const route = await this.routeRepo.findOne({
         where: { id: input.routeId, tenantId }
       });
@@ -213,7 +213,7 @@ export class TransportService {
         throw new ConflictException(`The following students are already assigned to this route: ${alreadyAssigned}`);
       }
 
-      // Create assignments
+    
       const assignments = students.map((student) =>
         this.assignmentRepo.create({
           routeId: input.routeId,

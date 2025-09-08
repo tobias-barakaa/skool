@@ -23,6 +23,7 @@ import { SchoolConfigModule } from './config/config.module';
 import { HostelModule } from './hostels/hostel.module';
 import { TransportModule } from './transport/transport.module';
 import { ScholarshipsModule } from './scholarships/scholarships.module';
+import { AcademicModule } from './academic_years/academic.module';
 
 
 @Module({
@@ -52,7 +53,8 @@ import { ScholarshipsModule } from './scholarships/scholarships.module';
     SchoolConfigModule,
     HostelModule,
     TransportModule,
-    ScholarshipsModule
+    ScholarshipsModule,
+    AcademicModule
   ],
 })
 export class AdminModule {}
