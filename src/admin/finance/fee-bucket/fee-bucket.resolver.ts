@@ -32,7 +32,7 @@ export class FeeBucketResolver {
   async feeBuckets(
     @ActiveUser() user: ActiveUserData,
   ): Promise<FeeBucket[]> {
-    this.logger.log(`Fetching fee buckets for tenant ${user.tenantId}`);
+    // this.logger.log(`Fetching fee buckets for tenant ${user.tenantId}`);
     return await this.feeBucketService.findAll(user);
   }
 

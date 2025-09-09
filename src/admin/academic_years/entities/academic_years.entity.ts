@@ -39,6 +39,10 @@ export class AcademicYear {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
+  @Field()
+  @Column({ default: false })
+  isCurrent: boolean;
+
   @Field(() => [Term], { nullable: true })
   @OneToMany(() => Term, (term) => term.academicYear, { cascade: true })
   terms?: Term[];

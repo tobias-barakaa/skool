@@ -17,6 +17,7 @@ type AcademicYear {
   endDate: DateTime!
   id: ID!
   isActive: Boolean!
+  isCurrent: Boolean!
   name: String!
   startDate: DateTime!
   tenantId: String!
@@ -1045,6 +1046,9 @@ type Mutation {
   createTransportRoute(input: CreateTransportRouteInput!): TransportRoute!
   createUser(signupInput: SignupInput!): CreateUserResponse!
   deactivateTenantSubject(tenantSubjectId: String!): Boolean!
+
+  """Delete an academic year"""
+  deleteAcademicYear(id: ID!): Boolean!
   deleteAssignment(id: String!): Boolean!
   deleteCA(id: String!): Boolean!
   deleteExam(id: String!): Boolean!
@@ -1106,10 +1110,16 @@ type Mutation {
   sendMessageToAllStudents(input: BroadcastMessageInput!): [ChatMessage!]!
   sendMessageToParent(input: SendMessageInput!): ChatMessage!
   sendMessageToStudent(input: SendMessageInput!): ChatMessage!
+
+  """Mark an academic year as the current one"""
+  setCurrentAcademicYear(id: ID!): AcademicYear!
   signIn(signInInput: SignInInput!): AuthResponse!
   submitAssignment(input: CreateAssignmentSubmissionInput!): AssignmentSubmission!
   toggleTenantStream(activate: Boolean!, tenantStreamId: String!): Boolean!
   unassignClassTeacher(input: UnassignClassTeacherInput!): Boolean!
+
+  """Update an academic year"""
+  updateAcademicYear(id: ID!, input: UpdateAcademicYearInput!): AcademicYear!
   updateCustomSubject(input: UpdateTenantSubjectInput!, tenantSubjectId: String!): TenantSubject!
 
   """Update an existing fee bucket"""
@@ -2035,6 +2045,14 @@ type TransportService {
 
 input UnassignClassTeacherInput {
   teacherId: ID!
+}
+
+input UpdateAcademicYearInput {
+  endDate: String
+  isActive: Boolean
+  isCurrent: Boolean
+  name: String
+  startDate: String
 }
 
 """Input type for updating a fee bucket"""
