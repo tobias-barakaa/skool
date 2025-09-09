@@ -54,7 +54,7 @@ export class FeeStructureResolver {
     nullable: true,
     description: 'Get fee structure by grade level, term, and academic year'
   })
-  @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.SUPER_ADMIN, MembershipRole.TEACHER)
+  @Roles(MembershipRole.SCHOOL_ADMIN)
   async feeStructureByGradeAndTerm(
     @Args('gradeLevelId', { type: () => ID }) gradeLevelId: string,
     @Args('termId', { type: () => ID }) termId: string,
@@ -65,3 +65,4 @@ export class FeeStructureResolver {
     return await this.feeStructureService.findByGradeAndTerm(gradeLevelId, termId, academicYearId, user);
   }
 }
+

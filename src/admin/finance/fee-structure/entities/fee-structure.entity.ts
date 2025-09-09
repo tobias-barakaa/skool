@@ -22,7 +22,7 @@ export class FeeStructure {
 
   @Field({ description: 'The name of the fee structure' })
   @Column()
-  name: string; // e.g. "Grade 1 Day Fee Structure"
+  name: string; 
 
   @Field(() => ID, { description: 'The ID of the academic year' })
   @Column()

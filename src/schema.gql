@@ -408,7 +408,7 @@ input CreateFeeStructureInput {
   termId: ID!
 }
 
-"""Input type for creating fee structure items"""
+"""Input for creating a new fee structure item"""
 input CreateFeeStructureItemInput {
   """The amount for this fee item"""
   amount: Float!
@@ -416,8 +416,11 @@ input CreateFeeStructureItemInput {
   """The ID of the fee bucket"""
   feeBucketId: ID!
 
-  """Whether this fee item is mandatory"""
-  isMandatory: Boolean!
+  """The ID of the fee structure"""
+  feeStructureId: ID!
+
+  """Indicates if this fee item is mandatory"""
+  isMandatory: Boolean! = true
 }
 
 input CreateHostelAssignmentInput {
@@ -758,6 +761,9 @@ type FeeStructureItem {
   """The ID of the fee bucket"""
   feeBucketId: ID!
 
+  """The fee structure this item belongs to"""
+  feeStructure: FeeStructure!
+
   """The ID of the fee structure"""
   feeStructureId: ID!
 
@@ -992,6 +998,14 @@ type Mutation {
   assignStudentsToRoute(input: BulkTransportAssignmentInput!): [TransportAssignment!]!
   bulkAssignStudentsToRoute(input: BulkTransportAssignmentInput!): [TransportAssignment!]!
 
+  """Bulk create fee structure items for a specific fee structure"""
+  bulkCreateFeeStructureItems(
+    feeStructureId: ID!
+
+    """Array of fee structure items to create"""
+    items: [CreateFeeStructureItemInput!]!
+  ): [FeeStructureItem!]!
+
   """Bulk assign fees to multiple students"""
   bulkFeeAssignment(input: BulkFeeAssignmentInput!): [FeeAssignment!]!
   changePassword(changePasswordInput: ChangePasswordInput!): PasswordResetResponse!
@@ -1013,6 +1027,9 @@ type Mutation {
 
   """Create a new fee structure with items"""
   createFeeStructure(input: CreateFeeStructureInput!): FeeStructure!
+
+  """Create a new fee structure item"""
+  createFeeStructureItem(input: CreateFeeStructureItemInput!): FeeStructureItem!
   createHostel(input: CreateHostelInput!): Hostel!
   createScholarship(input: CreateScholarshipInput!): Scholarship!
   createStream(input: CreateStreamInput!): StreamType!
@@ -1034,6 +1051,14 @@ type Mutation {
 
   """Delete a fee bucket"""
   deleteFeeBucket(id: ID!): Boolean!
+
+  """Delete a fee structure item"""
+  deleteFeeStructureItem(id: ID!): Boolean!
+
+  """
+  Delete all fee structure items for a specific fee structure and return count
+  """
+  deleteFeeStructureItemsByStructure(feeStructureId: ID!): Float!
   deleteStaff(id: String!, tenantId: String!): String!
   deleteStream(id: ID!): Boolean!
   deleteTeacher(id: String!, tenantId: String!): String!
@@ -1089,6 +1114,9 @@ type Mutation {
 
   """Update an existing fee bucket"""
   updateFeeBucket(id: ID!, input: UpdateFeeBucketInput!): FeeBucket!
+
+  """Update a fee structure item"""
+  updateFeeStructureItem(id: ID!, input: UpdateFeeStructureItemInput!): FeeStructureItem!
   updateHostel(input: UpdateHostelInput!): Hostel!
   updateHostelAssignment(input: UpdateHostelAssignmentInput!): HostelAssignment!
   updateScholarship(input: UpdateScholarshipInput!): Scholarship!
@@ -1208,6 +1236,24 @@ type Query {
   """Get fee structure by grade level, term, and academic year"""
   feeStructureByGradeAndTerm(academicYearId: ID!, gradeLevelId: ID!, termId: ID!): FeeStructure
 
+  """Get a single fee structure item by ID"""
+  feeStructureItem(id: ID!): FeeStructureItem!
+
+  """Get all fee structure items for the tenant"""
+  feeStructureItems: [FeeStructureItem!]!
+
+  """Get all fee structure items for a specific fee structure"""
+  feeStructureItemsByStructure(feeStructureId: ID!): [FeeStructureItem!]!
+
+  """Get the total amount for all mandatory items in a fee structure"""
+  feeStructureMandatoryAmount(feeStructureId: ID!): Float!
+
+  """Get the total amount for all optional items in a fee structure"""
+  feeStructureOptionalAmount(feeStructureId: ID!): Float!
+
+  """Get the total amount for all items in a fee structure"""
+  feeStructureTotalAmount(feeStructureId: ID!): Float!
+
   """Get all fee structures for the current tenant"""
   feeStructures: [FeeStructure!]!
 
@@ -1265,6 +1311,9 @@ type Query {
   gradeLevelsWithStreams: [GradeLevelWithStreamsOutput!]!
   hostel(id: String!): Hostel!
   hostelAssignments(hostelId: String!): [HostelAssignment!]!
+
+  """Get all mandatory fee structure items for a specific fee structure"""
+  mandatoryFeeStructureItems(feeStructureId: ID!): [FeeStructureItem!]!
   marksStats(academicYear: String!, gradeLevelId: String!, subjectId: String!, term: Int!): MarksStatsDto!
 
   """
@@ -1282,6 +1331,9 @@ type Query {
   Get all services (hostel, transport, scholarship) for the currently authenticated student
   """
   myStudentServices: StudentServicesProfile!
+
+  """Get all optional fee structure items for a specific fee structure"""
+  optionalFeeStructureItems(feeStructureId: ID!): [FeeStructureItem!]!
   scholarship(id: ID!): Scholarship!
   scholarships: [Scholarship!]!
   searchAvailableStudentsForParent(parentId: String!, searchTerm: String, tenantId: String!): [StudentSearchResponse!]!
@@ -1995,6 +2047,21 @@ input UpdateFeeBucketInput {
 
   """The name of the fee bucket"""
   name: String
+}
+
+"""Input for creating a new fee structure item"""
+input UpdateFeeStructureItemInput {
+  """The amount for this fee item"""
+  amount: Float!
+
+  """The ID of the fee bucket"""
+  feeBucketId: ID!
+
+  """The ID of the fee structure"""
+  feeStructureId: ID!
+
+  """Indicates if this fee item is mandatory"""
+  isMandatory: Boolean! = true
 }
 
 input UpdateHostelAssignmentInput {

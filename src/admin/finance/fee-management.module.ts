@@ -14,14 +14,16 @@ import { FeeBucketResolver } from './fee-bucket/fee-bucket.resolver';
 import { FeeStructureResolver } from './fee-structure/fee-structure.resolver';
 import { FeeAssignmentResolver } from './fee-assignment/fee-assignment.resolver';
 import { FeeStructureItemService } from './fee-structure-item/fee-structure-item.service';
+import { FeeStructureItemResolver } from './fee-structure-item/fee-structure-item.resolver';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       FeeBucket,
       FeeStructure,
-      FeeStructureItem,
       FeeAssignment,
+      FeeStructureItem,
+
     ]),
   ],
   providers: [
@@ -33,6 +35,7 @@ import { FeeStructureItemService } from './fee-structure-item/fee-structure-item
     FeeBucketResolver,
     FeeStructureResolver,
     FeeAssignmentResolver,
+    FeeStructureItemResolver
   ],
   exports: [
     FeeBucketService,

@@ -16,6 +16,7 @@ export class FeeStructureItem {
   @Column()
   tenantId: string;
 
+  @Field(() => FeeStructure, { description: 'The fee structure this item belongs to' })
   @ManyToOne(() => FeeStructure, (structure) => structure.items, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'feeStructureId' })
   feeStructure: FeeStructure;
