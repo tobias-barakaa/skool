@@ -23,40 +23,36 @@ export class FeeStructureItemService {
     createFeeStructureItemInput: CreateFeeStructureItemInput,
   ): Promise<FeeStructureItem> {
     const { feeStructureId, feeBucketId, amount, isMandatory = true } = createFeeStructureItemInput;
-
+  
     const feeStructure = await this.feeStructureRepository.findOne({
       where: { id: feeStructureId, tenantId },
     });
-
-    if (!feeStructure) {
-      throw new NotFoundException('Fee structure not found or does not belong to your organization');
-    }
-
+    if (!feeStructure) throw new NotFoundException('Fee structure not found');
+  
     const feeBucket = await this.feeBucketRepository.findOne({
       where: { id: feeBucketId, tenantId, isActive: true },
     });
-
-    if (!feeBucket) {
-      throw new NotFoundException('Fee bucket not found or is not active');
-    }
-
-    const existingItem = await this.feeStructureItemRepository.findOne({
+    if (!feeBucket) throw new NotFoundException('Fee bucket not found or inactive');
+  
+    const existing = await this.feeStructureItemRepository.findOne({
       where: { feeStructureId, feeBucketId, tenantId },
     });
-
-    if (existingItem) {
-      throw new ConflictException('Fee structure item already exists for this bucket');
-    }
-
-    const feeStructureItem = this.feeStructureItemRepository.create({
-      tenantId,
-      feeStructureId,
-      feeBucketId,
-      amount,
-      isMandatory,
+    if (existing) throw new ConflictException('Item already exists');
+  
+    const item = await this.feeStructureItemRepository.save(
+      this.feeStructureItemRepository.create({
+        tenantId,
+        feeStructureId,
+        feeBucketId,
+        amount,
+        isMandatory,
+      }),
+    );
+  
+    return this.feeStructureItemRepository.findOneOrFail({
+      where: { id: item.id },
+      relations: ['feeBucket', 'feeStructure', 'feeStructure.academicYear', 'feeStructure.term', 'feeStructure.gradeLevel', 'feeStructure.gradeLevel.gradeLevel'],
     });
-
-    return this.feeStructureItemRepository.save(feeStructureItem);
   }
 
   async findAll(tenantId: string): Promise<FeeStructureItem[]> {

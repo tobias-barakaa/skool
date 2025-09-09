@@ -83,12 +83,6 @@ export class SchoolSetupGuardService {
 
 
 
-
-
-
-
-
-
 // import { Injectable, Logger, ForbiddenException } from '@nestjs/common';
 // import { DataSource } from 'typeorm';
 // import { SchoolConfig } from 'src/admin/school-config/entities/school-config.entity';
