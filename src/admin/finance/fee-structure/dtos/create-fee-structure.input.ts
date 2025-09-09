@@ -3,21 +3,6 @@ import { IsNotEmpty, IsString, IsUUID, MaxLength, IsArray, ValidateNested } from
 import { Type } from 'class-transformer';
 import { CreateFeeStructureItemInput } from '../../fee-structure-item/dtos/create-fee-structure-item.dto';
 
-// @InputType({ description: 'Input type for creating fee structure items' })
-// export class CreateFeeStructureItemInput {
-//   @Field(() => ID, { description: 'The ID of the fee bucket' })
-//   @IsNotEmpty()
-//   @IsUUID()
-//   feeBucketId: string;
-
-//   @Field({ description: 'The amount for this fee item' })
-//   @IsNotEmpty()
-//   amount: number;
-
-//   @Field({ description: 'Whether this fee item is mandatory' })
-//   @IsNotEmpty()
-//   isMandatory: boolean;
-// }
 
 @InputType({ description: 'Input type for creating a new fee structure' })
 export class CreateFeeStructureInput {

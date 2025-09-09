@@ -7,6 +7,7 @@ import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { Roles } from 'src/iam/decorators/roles.decorator';
 import { MembershipRole } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
 import { TenantGradeLevel } from '../entities/tenant-grade-level';
+import { SkipSchoolConfigCheck } from 'src/iam/guards/school-setup-guard-service';
 
 @Resolver()
 @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.SUPER_ADMIN)
@@ -17,6 +18,7 @@ export class SchoolConfigResolver {
 
   @Mutation(() => SchoolConfigurationResponse)
   @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.SUPER_ADMIN)
+  @SkipSchoolConfigCheck()
   async configureSchoolLevelsByNames(
     @Args('levelNames', { type: () => [String] }) levelNames: string[],
     @ActiveUser() user: ActiveUserData,
