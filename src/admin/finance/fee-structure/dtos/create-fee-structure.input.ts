@@ -27,9 +27,4 @@ export class CreateFeeStructureInput {
   @IsUUID()
   gradeLevelId: string;
 
-  @Field(() => [CreateFeeStructureItemInput], { description: 'The fee items for this structure' })
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => CreateFeeStructureItemInput)
-  items: CreateFeeStructureItemInput[];
 }

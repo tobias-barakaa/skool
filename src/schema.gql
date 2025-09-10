@@ -399,9 +399,6 @@ input CreateFeeStructureInput {
   """The ID of the grade level"""
   gradeLevelId: ID!
 
-  """The fee items for this structure"""
-  items: [CreateFeeStructureItemInput!]!
-
   """The name of the fee structure"""
   name: String!
 
@@ -1026,7 +1023,7 @@ type Mutation {
   """Create a new fee bucket"""
   createFeeBucket(input: CreateFeeBucketInput!): FeeBucket!
 
-  """Create a new fee structure with items"""
+  """Create a new fee structure (items added separately)"""
   createFeeStructure(input: CreateFeeStructureInput!): FeeStructure!
 
   """Create a new fee structure item"""
@@ -1068,6 +1065,9 @@ type Mutation {
   deleteTeacher(id: String!, tenantId: String!): String!
   deleteTenantStream(tenantStreamId: String!): Boolean!
   deleteTenantSubject(tenantSubjectId: String!): Boolean!
+
+  """Delete a term"""
+  deleteTerm(id: ID!): Boolean!
   deleteTransportRoute(id: ID!): Boolean!
   enterStudentMarks(inputs: [EnterStudentMarksInput!]!): [AssessmentMark!]!
   forgotPassword(forgotPasswordInput: ForgotPasswordInput!): PasswordResetResponse!
@@ -1113,6 +1113,9 @@ type Mutation {
 
   """Mark an academic year as the current one"""
   setCurrentAcademicYear(id: ID!): AcademicYear!
+
+  """Mark a term as the current one for its academic year"""
+  setCurrentTerm(id: ID!): Term!
   signIn(signInInput: SignInInput!): AuthResponse!
   submitAssignment(input: CreateAssignmentSubmissionInput!): AssignmentSubmission!
   toggleTenantStream(activate: Boolean!, tenantStreamId: String!): Boolean!
@@ -1135,6 +1138,9 @@ type Mutation {
   updateStudentMarks(inputs: [EnterStudentMarksInput!]!): [AssessmentMark!]!
   updateStudentScholarship(input: UpdateStudentScholarshipInput!): StudentScholarship!
   updateTenantStream(input: UpdateTenantStreamInput!, tenantStreamId: String!): TenantStream!
+
+  """Update a term"""
+  updateTerm(id: ID!, input: UpdateTermInput!): Term!
   updateTest(updateTestInput: UpdateTestInput!): Test!
   updateTransportAssignment(input: UpdateTransportAssignmentInput!): TransportAssignment!
   updateTransportRoute(input: UpdateTransportRouteInput!): TransportRoute!
@@ -1958,6 +1964,7 @@ type Term {
 
   """Indicates if the term is currently active"""
   isActive: Boolean!
+  isCurrent: Boolean!
 
   """The name of the term"""
   name: String!
@@ -2162,6 +2169,15 @@ input UpdateTenantSubjectInput {
   shortName: String
   subjectType: String
   totalMarks: Float
+}
+
+"""Input for updating a term"""
+input UpdateTermInput {
+  endDate: String
+  isActive: Boolean
+  isCurrent: Boolean
+  name: String
+  startDate: String
 }
 
 input UpdateTestInput {

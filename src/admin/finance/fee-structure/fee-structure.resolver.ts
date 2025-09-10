@@ -15,14 +15,13 @@ export class FeeStructureResolver {
   constructor(private readonly feeStructureService: FeeStructureService) {}
 
   @Mutation(() => FeeStructure, { 
-    description: 'Create a new fee structure with items'
+    description: 'Create a new fee structure (items added separately)'
   })
-  @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.SUPER_ADMIN)
+  @Roles(MembershipRole.SCHOOL_ADMIN)
   async createFeeStructure(
     @Args('input') input: CreateFeeStructureInput,
     @ActiveUser() user: ActiveUserData,
   ) {
-    console.log('DEBUG ActiveUser:::::::::::::::::::::::::::::::', user);
     this.logger.log(`Creating fee structure: ${input.name} by user ${user.sub}`);
     return await this.feeStructureService.create(input, user);
   }

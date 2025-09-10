@@ -59,15 +59,13 @@ export class AcademicYearService {
 
 
 
-  // academic-year.service.ts
 async update(
   id: string,
   input: UpdateAcademicYearInput,
   tenantId: string,
 ): Promise<AcademicYear> {
-  const year = await this.findById(id, tenantId); // 404 if not found
+  const year = await this.findById(id, tenantId);
 
-  /* ---------- name uniqueness ---------- */
   if (input.name && input.name !== year.name) {
     const duplicate = await this.repo.findOne({
       where: { tenantId, name: input.name },
@@ -76,14 +74,12 @@ async update(
       throw new ConflictException(`Name '${input.name}' already in use`);
   }
 
-  /* ---------- date handling ---------- */
   const startDate = input.startDate ? new Date(input.startDate) : year.startDate;
   const endDate   = input.endDate   ? new Date(input.endDate)   : year.endDate;
 
   if (startDate >= endDate)
     throw new BadRequestException('End date must be after start date');
 
-  /* ---------- overlap check (ignore self) ---------- */
   const overlap = await this.repo
     .createQueryBuilder('y')
     .where('y.tenantId = :tenantId', { tenantId })

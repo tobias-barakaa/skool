@@ -50,4 +50,8 @@ export class Term {
   @Field(() => ID, { description: 'The ID of the academic year this term belongs to' })
   @Column({ name: 'academic_year_id' })
   academicYearId: string;
+
+  @Field()
+  @Column({ default: false })
+  isCurrent: boolean;
 }

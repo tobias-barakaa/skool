@@ -1,10 +1,15 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
+import { Repository, DataSource, In } from 'typeorm';
 import { FeeStructure } from './entities/fee-structure.entity';
 import { FeeStructureItem } from '../fee-structure-item/entities/fee-structure-item.entity';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { CreateFeeStructureInput } from './dtos/create-fee-structure.input';
+import { FeeBucket } from '../fee-bucket/entities/fee-bucket.entity';
+import { AcademicYear } from 'src/admin/academic_years/entities/academic_years.entity';
+import { Term } from 'src/admin/academic_years/entities/terms.entity';
+import { GradeLevel } from 'src/admin/level/entities/grade-level.entity';
+import { TenantGradeLevel } from 'src/admin/school-type/entities/tenant-grade-level';
 
 @Injectable()
 export class FeeStructureService {
@@ -14,6 +19,16 @@ export class FeeStructureService {
     @InjectRepository(FeeStructureItem)
     private readonly feeStructureItemRepository: Repository<FeeStructureItem>,
     private readonly dataSource: DataSource,
+    @InjectRepository(FeeBucket)
+    private readonly feeBucketRepository: Repository<FeeBucket>,
+    // @InjectRepository(AcademicYear)
+    // private readonly academicYearRepository: Repository<AcademicYear>,
+    // @InjectRepository(Term)
+    // private readonly termRepository: Repository<Term>,
+    // @InjectRepository(TenantGradeLevel)
+    // private readonly tenantGradeLevelRepository: Repository<TenantGradeLevel>
+
+
   ) {}
 
   async create(input: CreateFeeStructureInput, user: ActiveUserData) {
@@ -25,35 +40,80 @@ export class FeeStructureService {
         gradeLevelId: input.gradeLevelId,
       }
     });
-
+  
     if (existingStructure) {
       throw new ConflictException('Fee structure already exists for this combination');
     }
-
+  
+    await this.validateCoreEntities(input, user.tenantId);
+  
     return await this.dataSource.transaction(async manager => {
       const feeStructure = manager.create(FeeStructure, {
         ...input,
         tenantId: user.tenantId,
-        items: undefined,
       });
-
+  
       const savedStructure = await manager.save(feeStructure);
-
-      const structureItems = input.items.map(item => 
-        manager.create(FeeStructureItem, {
-          ...item,
-          tenantId: user.tenantId,
-          feeStructureId: savedStructure.id,
-        })
-      );
-
-      await manager.save(FeeStructureItem, structureItems);
-
+  
       return await manager.findOne(FeeStructure, {
         where: { id: savedStructure.id },
-        relations: ['items', 'items.feeBucket', 'academicYear', 'term', 'gradeLevel']
+        relations: ['academicYear', 'term', 'gradeLevel']
       });
     });
+  }
+  
+  private async validateCoreEntities(
+    input: CreateFeeStructureInput,
+    tenantId: string,
+  ): Promise<void> {
+    const validationPromises: Promise<void>[] = [];
+  
+    const academicYearRepository = this.dataSource.getRepository(AcademicYear)
+    validationPromises.push(
+      academicYearRepository.findOne({
+        where: { id: input.academicYearId, tenantId },
+        select: ['id']
+      }).then(result => {
+        if (!result) {
+          throw new BadRequestException(`Academic year with ID ${input.academicYearId} not found or doesn't belong to your organization`);
+        }
+      })
+    );
+  
+    const termRepository = this.dataSource.getRepository(Term)
+    validationPromises.push(
+      termRepository.findOne({
+        where: { id: input.termId, tenantId },
+        select: ['id']
+      }).then(result => {
+        if (!result) {
+          throw new BadRequestException(`Term with ID ${input.termId} not found or doesn't belong to your organization`);
+        }
+      })
+    );
+
+  
+    const tenantGradeLevelRepository = this.dataSource.getRepository(TenantGradeLevel);
+
+validationPromises.push(
+  tenantGradeLevelRepository
+    .findOne({
+      where: {
+        tenant: { id: tenantId },
+        gradeLevel: { id: input.gradeLevelId },
+      },
+      select: ['id'],
+    })
+    .then((row) => {
+      if (!row) {
+        throw new BadRequestException(
+          `Grade level ${input.gradeLevelId} is not enabled for your organisation`,
+        );
+      }
+    })
+);
+  
+    await Promise.all(validationPromises);
   }
 
   async findAll(user: ActiveUserData): Promise<FeeStructure[]> {
