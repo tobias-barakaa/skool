@@ -25,6 +25,6 @@ export class CreateFeeStructureInput {
   @Field(() => ID, { description: 'The ID of the grade level' })
   @IsNotEmpty()
   @IsUUID()
-  gradeLevelId: string;
+  tenantGradeLevelId: string;
 
 }

@@ -396,11 +396,11 @@ input CreateFeeStructureInput {
   """The ID of the academic year"""
   academicYearId: ID!
 
-  """The ID of the grade level"""
-  gradeLevelId: ID!
-
   """The name of the fee structure"""
   name: String!
+
+  """The ID of the grade level"""
+  tenantGradeLevelId: ID!
 
   """The ID of the term"""
   termId: ID!
@@ -717,12 +717,6 @@ type FeeStructure {
   """The date and time when the fee structure was created"""
   createdAt: DateTime!
 
-  """The grade level this fee structure applies to"""
-  gradeLevel: TenantGradeLevel!
-
-  """The ID of the grade level"""
-  gradeLevelId: ID!
-
   """The unique identifier of the fee structure"""
   id: ID!
 
@@ -734,6 +728,12 @@ type FeeStructure {
 
   """The name of the fee structure"""
   name: String!
+
+  """The grade level this fee structure applies to"""
+  tenantGradeLevel: TenantGradeLevel!
+
+  """The ID of the grade level"""
+  tenantGradeLevelId: ID!
 
   """The ID of the tenant this fee structure belongs to"""
   tenantId: String!
@@ -1128,6 +1128,9 @@ type Mutation {
   """Update an existing fee bucket"""
   updateFeeBucket(id: ID!, input: UpdateFeeBucketInput!): FeeBucket!
 
+  """Update a fee structure (full item replacement)"""
+  updateFeeStructure(id: ID!, input: UpdateFeeStructureInput!): FeeStructure!
+
   """Update a fee structure item"""
   updateFeeStructureItem(id: ID!, input: UpdateFeeStructureItemInput!): FeeStructureItem!
   updateHostel(input: UpdateHostelInput!): Hostel!
@@ -1246,11 +1249,13 @@ type Query {
   """Get all fee buckets for the current tenant"""
   feeBuckets: [FeeBucket!]!
 
-  """Get a single fee structure by ID"""
-  feeStructure(id: ID!): FeeStructure!
+  """Get a single fee structure by id (tenant scoped)"""
+  feeStructure(id: ID!): FeeStructure
 
-  """Get fee structure by grade level, term, and academic year"""
-  feeStructureByGradeAndTerm(academicYearId: ID!, gradeLevelId: ID!, termId: ID!): FeeStructure
+  """
+  Returns the single active fee-structure that matches the supplied academic-year, term and tenant-grade-level (all scoped to the logged-in tenant). Includes items and their buckets.
+  """
+  feeStructureByGradeAndTerm(academicYearId: ID!, tenantGradeLevelId: ID!, termId: ID!): FeeStructure
 
   """Get a single fee structure item by ID"""
   feeStructureItem(id: ID!): FeeStructureItem!
@@ -1270,7 +1275,9 @@ type Query {
   """Get the total amount for all items in a fee structure"""
   feeStructureTotalAmount(feeStructureId: ID!): Float!
 
-  """Get all fee structures for the current tenant"""
+  """
+  Returns every active fee-structure that belongs to the logged-in tenant, with their items, buckets and grade-level details.
+  """
   feeStructures: [FeeStructure!]!
 
   """Filter students and teachers by grade levels, subjects, and streams"""
@@ -2072,6 +2079,21 @@ input UpdateFeeBucketInput {
 
   """The name of the fee bucket"""
   name: String
+}
+
+input UpdateFeeStructureInput {
+  """The ID of the academic year"""
+  academicYearId: ID
+  isActive: Boolean
+
+  """The name of the fee structure"""
+  name: String
+
+  """The ID of the grade level"""
+  tenantGradeLevelId: ID
+
+  """The ID of the term"""
+  termId: ID
 }
 
 """Input for creating a new fee structure item"""

@@ -10,6 +10,7 @@ import { AcademicYear } from 'src/admin/academic_years/entities/academic_years.e
 import { Term } from 'src/admin/academic_years/entities/terms.entity';
 import { GradeLevel } from 'src/admin/level/entities/grade-level.entity';
 import { TenantGradeLevel } from 'src/admin/school-type/entities/tenant-grade-level';
+import { UpdateFeeStructureInput } from './dtos/update-fee-structure.input.dto';
 
 @Injectable()
 export class FeeStructureService {
@@ -37,7 +38,7 @@ export class FeeStructureService {
         tenantId: user.tenantId,
         academicYearId: input.academicYearId,
         termId: input.termId,
-        gradeLevelId: input.gradeLevelId,
+        tenantGradeLevelId: input.tenantGradeLevelId,
       }
     });
   
@@ -57,15 +58,16 @@ export class FeeStructureService {
   
       return await manager.findOne(FeeStructure, {
         where: { id: savedStructure.id },
-        relations: ['academicYear', 'term', 'gradeLevel']
+        relations: ['academicYear', 'term', 'tenantGradeLevel', 'tenantGradeLevel.gradeLevel']
       });
     });
   }
   
-  private async validateCoreEntities(
-    input: CreateFeeStructureInput,
+  private async validateCoreEntities<T extends Partial<CreateFeeStructureInput>>(
+    input: T,
     tenantId: string,
   ): Promise<void> {
+  
     const validationPromises: Promise<void>[] = [];
   
     const academicYearRepository = this.dataSource.getRepository(AcademicYear)
@@ -99,28 +101,38 @@ validationPromises.push(
   tenantGradeLevelRepository
     .findOne({
       where: {
+        id: input.tenantGradeLevelId,
         tenant: { id: tenantId },
-        gradeLevel: { id: input.gradeLevelId },
+        isActive: true
+
       },
-      select: ['id'],
+      relations: ['gradeLevel'],
     })
     .then((row) => {
       if (!row) {
         throw new BadRequestException(
-          `Grade level ${input.gradeLevelId} is not enabled for your organisation`,
+          `Grade level ${input.tenantGradeLevelId} is not enabled for your organisation`,
         );
       }
     })
 );
+
   
     await Promise.all(validationPromises);
   }
 
   async findAll(user: ActiveUserData): Promise<FeeStructure[]> {
-    return await this.feeStructureRepository.find({
+    return this.feeStructureRepository.find({
       where: { tenantId: user.tenantId, isActive: true },
-      relations: ['items', 'items.feeBucket', 'academicYear', 'term', 'gradeLevel'],
-      order: { createdAt: 'DESC' }
+      relations: [
+        'academicYear',
+        'term',
+        'tenantGradeLevel',
+        'tenantGradeLevel.gradeLevel',
+        'items',
+        'items.feeBucket',
+      ],
+      order: { createdAt: 'DESC' },
     });
   }
 
@@ -137,18 +149,92 @@ validationPromises.push(
     return feeStructure;
   }
 
-  async findByGradeAndTerm(gradeLevelId: string, termId: string, academicYearId: string, user: ActiveUserData): Promise<FeeStructure | null> {
-    return await this.feeStructureRepository.findOne({
+  async findByGradeAndTerm(
+    tenantGradeLevelId: string,
+    termId: string,
+    academicYearId: string,
+    user: ActiveUserData,
+  ): Promise<FeeStructure | null> {
+    return this.feeStructureRepository.findOne({
       where: {
         tenantId: user.tenantId,
-        gradeLevelId,
+        tenantGradeLevelId,
         termId,
         academicYearId,
-        isActive: true
+        isActive: true,
       },
-      relations: ['items', 'items.feeBucket']
+      relations: [
+        'academicYear',
+        'term',
+        'tenantGradeLevel',
+        'tenantGradeLevel.gradeLevel',
+        'items',
+        'items.feeBucket',
+      ],
     });
   }
-}
 
+
+
+
+  async findOneById(id: string, user: ActiveUserData): Promise<FeeStructure> {
+    const fs = await this.feeStructureRepository.findOne({
+      where: { id, tenantId: user.tenantId },
+      relations: [
+        'academicYear',
+        'term',
+        'tenantGradeLevel',
+        'tenantGradeLevel.gradeLevel',
+        'items',
+        'items.feeBucket',
+      ],
+    });
+    if (!fs) throw new NotFoundException('Fee structure not found');
+    return fs;
+  }
+  
+  async remove(id: string, user: ActiveUserData): Promise<boolean> {
+    const fs = await this.findOneById(id, user);        
+    await this.feeStructureRepository.remove(fs);       
+    return true;
+  }
+  
+  async update(
+    id: string,
+    input: UpdateFeeStructureInput,
+    user: ActiveUserData,
+  ): Promise<FeeStructure> {
+    await this.findOneById(id, user);
+    await this.validateCoreEntities(input, user.tenantId);
+  
+    return this.dataSource.transaction(async (mgr) => {
+      const updateData: Partial<FeeStructure> = {};
+      if (input.name !== undefined) updateData.name = input.name;
+      if (input.isActive !== undefined) updateData.isActive = input.isActive;
+      if (input.academicYearId !== undefined) updateData.academicYearId = input.academicYearId;
+      if (input.termId !== undefined) updateData.termId = input.termId;
+      if (input.tenantGradeLevelId !== undefined) updateData.tenantGradeLevelId = input.tenantGradeLevelId;
+  
+      await mgr.update(FeeStructure, id, updateData);
+  
+      const feeStructure = await mgr.findOne(FeeStructure, {
+        where: { id },
+        relations: [
+          'academicYear',
+          'term',
+          'tenantGradeLevel',
+          'tenantGradeLevel.gradeLevel',
+        ],
+      });
+  
+      if (!feeStructure) throw new Error('Fee structure not found');
+      return feeStructure;
+    });
+  }
+  
+
+
+
+
+}
 

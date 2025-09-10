@@ -12,7 +12,7 @@ import {
 } from 'typeorm';
 import { Level } from '../../level/entities/level.entities';
 
-// grade-level.entity.ts
+
 @ObjectType()
 @Entity()
 export class GradeLevel {

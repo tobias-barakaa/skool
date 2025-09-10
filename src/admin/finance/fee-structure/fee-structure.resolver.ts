@@ -7,6 +7,7 @@ import { Roles } from 'src/iam/decorators/roles.decorator';
 import { CreateFeeStructureInput } from './dtos/create-fee-structure.input';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
+import { UpdateFeeStructureInput } from './dtos/update-fee-structure.input.dto';
 
 @Resolver(() => FeeStructure)
 export class FeeStructureResolver {
@@ -26,15 +27,18 @@ export class FeeStructureResolver {
     return await this.feeStructureService.create(input, user);
   }
 
-  @Query(() => [FeeStructure], { 
-    description: 'Get all fee structures for the current tenant'
+  @Query(() => [FeeStructure], {
+    name: 'feeStructures',
+    description: 'Returns every active fee-structure that belongs to the logged-in tenant, with their items, buckets and grade-level details.',
   })
-  @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.SUPER_ADMIN, MembershipRole.TEACHER)
-  async feeStructures(
-    @ActiveUser() user: ActiveUserData,
-  ): Promise<FeeStructure[]> {
+  @Roles(
+    MembershipRole.SCHOOL_ADMIN,
+    MembershipRole.SUPER_ADMIN,
+    MembershipRole.TEACHER,
+  )
+  async feeStructures(@ActiveUser() user: ActiveUserData): Promise<FeeStructure[]> {
     this.logger.log(`Fetching fee structures for tenant ${user.tenantId}`);
-    return await this.feeStructureService.findAll(user);
+    return this.feeStructureService.findAll(user);
   }
 
   @Query(() => FeeStructure, { 
@@ -49,19 +53,68 @@ export class FeeStructureResolver {
     return await this.feeStructureService.findOne(id, user);
   }
 
-  @Query(() => FeeStructure, { 
+  @Query(() => FeeStructure, {
     nullable: true,
-    description: 'Get fee structure by grade level, term, and academic year'
+    name: 'feeStructureByGradeAndTerm',
+    description:
+      'Returns the single active fee-structure that matches the supplied ' +
+      'academic-year, term and tenant-grade-level (all scoped to the logged-in tenant). ' +
+      'Includes items and their buckets.',
   })
   @Roles(MembershipRole.SCHOOL_ADMIN)
   async feeStructureByGradeAndTerm(
-    @Args('gradeLevelId', { type: () => ID }) gradeLevelId: string,
+    @Args('tenantGradeLevelId', { type: () => ID }) tenantGradeLevelId: string,
     @Args('termId', { type: () => ID }) termId: string,
     @Args('academicYearId', { type: () => ID }) academicYearId: string,
     @ActiveUser() user: ActiveUserData,
   ): Promise<FeeStructure | null> {
-    this.logger.log(`Fetching fee structure for grade ${gradeLevelId}, term ${termId}, year ${academicYearId}`);
-    return await this.feeStructureService.findByGradeAndTerm(gradeLevelId, termId, academicYearId, user);
+    this.logger.log(
+      `Fetching fee structure for tenant ${user.tenantId} – grade-level ${tenantGradeLevelId}, ` +
+      `term ${termId}, year ${academicYearId}`,
+    );
+    return this.feeStructureService.findByGradeAndTerm(
+      tenantGradeLevelId,
+      termId,
+      academicYearId,
+      user,
+    );
   }
+
+
+
+
+  @Query(() => FeeStructure, {
+    name: 'feeStructure',
+    nullable: true,
+    description: 'Get a single fee structure by id (tenant scoped)',
+  })
+  @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.SUPER_ADMIN, MembershipRole.TEACHER)
+  async feeStructureById(
+    @Args('id', { type: () => ID }) id: string,
+    @ActiveUser() user: ActiveUserData,
+  ) {
+    return this.feeStructureService.findOneById(id, user);
+  }
+  
+  @Mutation(() => FeeStructure, {
+    description: 'Update a fee structure (full item replacement)',
+  })
+  @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.SUPER_ADMIN, MembershipRole.TEACHER)
+   @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.SUPER_ADMIN, MembershipRole.TEACHER)
+  async updateFeeStructure(
+    @Args('id', { type: () => ID }) id: string,
+    @Args('input') input: UpdateFeeStructureInput,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<FeeStructure> {
+    return this.feeStructureService.update(id, input, user);
+  }
+
+
+
+
+
+
+
+
 }
 
