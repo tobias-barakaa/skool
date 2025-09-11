@@ -1,7 +1,6 @@
 import { InputType, Field, ID } from '@nestjs/graphql';
 import { IsNotEmpty, IsString, IsUUID, MaxLength, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import { CreateFeeStructureItemInput } from '../../fee-structure-item/dtos/create-fee-structure-item.dto';
 
 
 @InputType({ description: 'Input type for creating a new fee structure' })

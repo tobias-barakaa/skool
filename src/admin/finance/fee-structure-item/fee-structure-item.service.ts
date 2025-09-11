@@ -20,47 +20,67 @@ export class FeeStructureItemService {
 
   async create(
     tenantId: string,
-    createFeeStructureItemInput: CreateFeeStructureItemInput,
+    input: CreateFeeStructureItemInput,
   ): Promise<FeeStructureItem> {
-    const { feeStructureId, feeBucketId, amount, isMandatory = true } = createFeeStructureItemInput;
+    const { feeStructureId, feeBucketId, amount, isMandatory = true } = input;
   
     const feeStructure = await this.feeStructureRepository.findOne({
       where: { id: feeStructureId, tenantId },
     });
-    if (!feeStructure) throw new NotFoundException('Fee structure not found');
-  
+    console.log(feeStructure, 'this was the fee structure')
+    if (!feeStructure) {
+      throw new NotFoundException('Fee structure not found for this tenant');
+    }
     const feeBucket = await this.feeBucketRepository.findOne({
       where: { id: feeBucketId, tenantId, isActive: true },
     });
-    if (!feeBucket) throw new NotFoundException('Fee bucket not found or inactive');
+    if (!feeBucket) {
+      throw new NotFoundException('Fee bucket not found or inactive');
+    }
   
-    const existing = await this.feeStructureItemRepository.findOne({
+    const existingItem = await this.feeStructureItemRepository.findOne({
       where: { feeStructureId, feeBucketId, tenantId },
     });
-    if (existing) throw new ConflictException('Item already exists');
-  
-    const item = await this.feeStructureItemRepository.save(
-      this.feeStructureItemRepository.create({
-        tenantId,
-        feeStructureId,
-        feeBucketId,
-        amount,
-        isMandatory,
-      }),
-    );
-  
+    if (existingItem) {
+      throw new ConflictException('This fee bucket is already assigned to the fee structure');
+    }
+    const newItem = this.feeStructureItemRepository.create({
+      tenantId,
+      feeStructureId,
+      feeBucketId,
+      amount,
+      isMandatory,
+    });
+    await this.feeStructureItemRepository.save(newItem);
     return this.feeStructureItemRepository.findOneOrFail({
-      where: { id: item.id },
-      relations: ['feeBucket', 'feeStructure', 'feeStructure.academicYear', 'feeStructure.term', 'feeStructure.gradeLevel', 'feeStructure.gradeLevel.gradeLevel'],
+      where: { id: newItem.id },
+      relations: [
+        'feeBucket',
+        'feeStructure',
+        'feeStructure.academicYear',
+        'feeStructure.term',
+        'feeStructure.tenantGradeLevel',
+        'feeStructure.tenantGradeLevel.gradeLevel',
+      ],
     });
   }
+  
 
   async findAll(tenantId: string): Promise<FeeStructureItem[]> {
     return this.feeStructureItemRepository.find({
       where: { tenantId },
-      relations: ['feeStructure', 'feeBucket'],
+      relations: [
+        'feeBucket',
+        'feeStructure',
+        'feeStructure.academicYear',
+        'feeStructure.term',
+        'feeStructure.tenantGradeLevel',
+        'feeStructure.tenantGradeLevel.gradeLevel',
+      ],
+      order: { createdAt: 'DESC' },
     });
   }
+  
 
   async findOne(id: string, tenantId: string): Promise<FeeStructureItem> {
     const feeStructureItem = await this.feeStructureItemRepository.findOne({
@@ -100,7 +120,7 @@ export class FeeStructureItemService {
     }
 
     return this.feeStructureItemRepository.find({
-      where: { feeStructureId, tenantId, isMandatory: true },
+      where: { feeStructureId, tenantId, isMandatory: false },
       relations: ['feeBucket'],
     });
   }
@@ -194,7 +214,6 @@ export class FeeStructureItemService {
       throw new NotFoundException('Fee structure item not found');
     }
 
-    // If updating fee bucket, validate it exists and belongs to tenant
     if (feeBucketId) {
       const feeBucket = await this.feeBucketRepository.findOne({
         where: { id: feeBucketId, tenantId, isActive: true },

@@ -1,5 +1,5 @@
 import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
-import { UseGuards, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { FeeStructure } from './entities/fee-structure.entity';
 import { FeeStructureService } from './fee-structure.service';
 import { MembershipRole } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
@@ -32,9 +32,7 @@ export class FeeStructureResolver {
     description: 'Returns every active fee-structure that belongs to the logged-in tenant, with their items, buckets and grade-level details.',
   })
   @Roles(
-    MembershipRole.SCHOOL_ADMIN,
-    MembershipRole.SUPER_ADMIN,
-    MembershipRole.TEACHER,
+    MembershipRole.SCHOOL_ADMIN
   )
   async feeStructures(@ActiveUser() user: ActiveUserData): Promise<FeeStructure[]> {
     this.logger.log(`Fetching fee structures for tenant ${user.tenantId}`);
@@ -44,7 +42,7 @@ export class FeeStructureResolver {
   @Query(() => FeeStructure, { 
     description: 'Get a single fee structure by ID'
   })
-  @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.SUPER_ADMIN, MembershipRole.TEACHER)
+  @Roles(MembershipRole.SCHOOL_ADMIN)
   async feeStructure(
     @Args('id', { type: () => ID }) id: string,
     @ActiveUser() user: ActiveUserData,
@@ -88,25 +86,37 @@ export class FeeStructureResolver {
     nullable: true,
     description: 'Get a single fee structure by id (tenant scoped)',
   })
-  @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.SUPER_ADMIN, MembershipRole.TEACHER)
+  @Roles(MembershipRole.SCHOOL_ADMIN)
   async feeStructureById(
     @Args('id', { type: () => ID }) id: string,
     @ActiveUser() user: ActiveUserData,
   ) {
     return this.feeStructureService.findOneById(id, user);
   }
+
   
   @Mutation(() => FeeStructure, {
     description: 'Update a fee structure (full item replacement)',
   })
-  @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.SUPER_ADMIN, MembershipRole.TEACHER)
-   @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.SUPER_ADMIN, MembershipRole.TEACHER)
+   @Roles(MembershipRole.SCHOOL_ADMIN)
   async updateFeeStructure(
     @Args('id', { type: () => ID }) id: string,
     @Args('input') input: UpdateFeeStructureInput,
     @ActiveUser() user: ActiveUserData,
   ): Promise<FeeStructure> {
     return this.feeStructureService.update(id, input, user);
+  }
+
+
+  @Mutation(() => Boolean, {
+    description: 'Permanently delete a fee structure (tenant scoped)',
+  })
+  @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.SUPER_ADMIN)
+  async deleteFeeStructure(
+    @Args('id', { type: () => ID }) id: string,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<boolean> {
+    return this.feeStructureService.remove(id, user);
   }
 
 

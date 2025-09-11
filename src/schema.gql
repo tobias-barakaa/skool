@@ -753,6 +753,9 @@ type FeeStructureItem {
   """The amount for this fee item"""
   amount: Float!
 
+  """When this fee item was created"""
+  createdAt: DateTime!
+
   """The fee bucket this item belongs to"""
   feeBucket: FeeBucket!
 
@@ -773,6 +776,9 @@ type FeeStructureItem {
 
   """The ID of the tenant this fee structure item belongs to"""
   tenantId: String!
+
+  """When this fee item was last updated"""
+  updatedAt: DateTime!
 }
 
 input FilterInput {
@@ -1053,6 +1059,9 @@ type Mutation {
   """Delete a fee bucket"""
   deleteFeeBucket(id: ID!): Boolean!
 
+  """Permanently delete a fee structure (tenant scoped)"""
+  deleteFeeStructure(id: ID!): Boolean!
+
   """Delete a fee structure item"""
   deleteFeeStructureItem(id: ID!): Boolean!
 
@@ -1283,6 +1292,9 @@ type Query {
   """Filter students and teachers by grade levels, subjects, and streams"""
   filterByGradeLevelAndSubjects(input: FilterInput!): FilteredResult!
   findAllHostels: [Hostel!]!
+
+  """Get all mandatory fee structure items for a specific fee structure"""
+  findMandatoryItems(feeStructureId: ID!): [FeeStructureItem!]!
   getActiveStaffByTenant(tenantId: String!): [StaffDto!]!
   getAllClassTeacherAssignments: [ClassTeacherAssignment!]!
   getAllTeachers: [Teacher!]!
@@ -1334,9 +1346,6 @@ type Query {
   gradeLevelsWithStreams: [GradeLevelWithStreamsOutput!]!
   hostel(id: String!): Hostel!
   hostelAssignments(hostelId: String!): [HostelAssignment!]!
-
-  """Get all mandatory fee structure items for a specific fee structure"""
-  mandatoryFeeStructureItems(feeStructureId: ID!): [FeeStructureItem!]!
   marksStats(academicYear: String!, gradeLevelId: String!, subjectId: String!, term: Int!): MarksStatsDto!
 
   """

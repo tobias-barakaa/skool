@@ -70,5 +70,3 @@ tenantGradeLevel: TenantGradeLevel;
   @UpdateDateColumn()
   updatedAt: Date;
 }
-
-

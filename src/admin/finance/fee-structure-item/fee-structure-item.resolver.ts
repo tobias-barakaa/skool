@@ -60,7 +60,7 @@ export class FeeStructureItemResolver {
   }
 
   @Query(() => [FeeStructureItem], { 
-    name: 'mandatoryFeeStructureItems',
+    name: 'findMandatoryItems',
     description: 'Get all mandatory fee structure items for a specific fee structure' 
   })
   async findMandatoryItems(

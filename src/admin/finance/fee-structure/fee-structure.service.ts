@@ -193,11 +193,11 @@ validationPromises.push(
     return fs;
   }
   
-  async remove(id: string, user: ActiveUserData): Promise<boolean> {
-    const fs = await this.findOneById(id, user);        
-    await this.feeStructureRepository.remove(fs);       
-    return true;
-  }
+  // async remove(id: string, user: ActiveUserData): Promise<boolean> {
+  //   const fs = await this.findOneById(id, user);        
+  //   await this.feeStructureRepository.remove(fs);       
+  //   return true;
+  // }
   
   async update(
     id: string,
@@ -230,6 +230,18 @@ validationPromises.push(
       if (!feeStructure) throw new Error('Fee structure not found');
       return feeStructure;
     });
+  }
+
+
+  async remove(id: string, user: ActiveUserData): Promise<boolean> {
+    const fs = await this.feeStructureRepository.findOneByOrFail({
+      id,
+      tenantId: user.tenantId,
+    });
+  
+    await this.feeStructureRepository.remove(fs);
+  
+    return true; 
   }
   
 

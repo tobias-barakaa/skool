@@ -1,5 +1,5 @@
-import { Field, ID, ObjectType, Float } from "@nestjs/graphql";
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Index } from "typeorm";
+import { Field, ID, ObjectType, Float, GraphQLISODateTime } from "@nestjs/graphql";
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Index, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { FeeStructure } from "../../fee-structure/entities/fee-structure.entity";
 import { FeeBucket } from "../../fee-bucket/entities/fee-bucket.entity";
 
@@ -41,4 +41,12 @@ export class FeeStructureItem {
   @Field({ description: 'Indicates if this fee item is mandatory' })
   @Column({ default: true })
   isMandatory: boolean; 
+
+  @Field(() => GraphQLISODateTime, { description: 'When this fee item was created' })
+  @CreateDateColumn({ type: 'timestamp with time zone' })
+  createdAt: Date;
+
+  @Field(() => GraphQLISODateTime, { description: 'When this fee item was last updated' })
+  @UpdateDateColumn({ type: 'timestamp with time zone' })
+  updatedAt: Date;
 }
