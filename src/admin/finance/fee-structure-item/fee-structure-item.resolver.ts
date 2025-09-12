@@ -107,6 +107,19 @@ export class FeeStructureItemResolver {
     return this.feeStructureItemService.getMandatoryTotal(feeStructureId, tenantId);
   }
 
+  @Mutation(() => Boolean, {
+    name: 'deleteFeeStructureItem',
+    description:
+      'Permanently delete a single fee-structure item (must belong to the logged-in tenant). ' +
+      'Returns true when the row was removed, or throws NotFoundException.',
+  })
+  async deleteFeeStructureItem(
+    @Args('id', { type: () => ID }) id: string,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<boolean> {
+    return this.feeStructureItemService.remove(id, user.tenantId);
+  }
+
   @Query(() => Float, { 
     name: 'feeStructureOptionalAmount',
     description: 'Get the total amount for all optional items in a fee structure' 
@@ -119,24 +132,40 @@ export class FeeStructureItemResolver {
     return this.feeStructureItemService.getOptionalTotal(feeStructureId, tenantId);
   }
 
-  @Mutation(() => FeeStructureItem, { description: 'Update a fee structure item' })
+  // @Mutation(() => FeeStructureItem, { description: 'Update a fee structure item' })
+  // async updateFeeStructureItem(
+  //   @Args('id', { type: () => ID }) id: string,
+  //   @Args('input') updateFeeStructureItemInput: UpdateFeeStructureItemInput,
+  //   @ActiveUser() user: ActiveUserData,
+  // ): Promise<FeeStructureItem> {
+  //   const tenantId = user.tenantId;
+  //   return this.feeStructureItemService.update(id, tenantId, updateFeeStructureItemInput);
+  // }
+
+
+  @Mutation(() => FeeStructureItem, {
+    name: 'updateFeeStructureItem',
+    description:
+      'Update a single fee-structure item that belongs to the current tenant. ' +
+      'Only the fields supplied in the input are changed; all others are left intact. ' +
+      'Returns the fully hydrated item (bucket, structure, academic-year, term, grade-level).',
+  })
   async updateFeeStructureItem(
     @Args('id', { type: () => ID }) id: string,
-    @Args('input') updateFeeStructureItemInput: UpdateFeeStructureItemInput,
+    @Args('input') input: UpdateFeeStructureItemInput,
     @ActiveUser() user: ActiveUserData,
   ): Promise<FeeStructureItem> {
-    const tenantId = user.tenantId;
-    return this.feeStructureItemService.update(id, tenantId, updateFeeStructureItemInput);
+    return this.feeStructureItemService.update(id, user.tenantId, input);
   }
 
-  @Mutation(() => Boolean, { description: 'Delete a fee structure item' })
-  async deleteFeeStructureItem(
-    @Args('id', { type: () => ID }) id: string,
-    @ActiveUser() user: ActiveUserData,
-  ): Promise<boolean> {
-    const tenantId = user.tenantId;
-    return this.feeStructureItemService.remove(id, tenantId);
-  }
+  // @Mutation(() => Boolean, { description: 'Delete a fee structure item' })
+  // async deleteFeeStructureItem(
+  //   @Args('id', { type: () => ID }) id: string,
+  //   @ActiveUser() user: ActiveUserData,
+  // ): Promise<boolean> {
+  //   const tenantId = user.tenantId;
+  //   return this.feeStructureItemService.remove(id, tenantId);
+  // }
 
   @Mutation(() => [FeeStructureItem], { 
     description: 'Bulk create fee structure items for a specific fee structure' 
@@ -160,6 +189,7 @@ export class FeeStructureItemResolver {
     return this.feeStructureItemService.bulkCreate(tenantId, feeStructureId, itemsToCreate);
   }
 
+
   @Mutation(() => Float, { 
     description: 'Delete all fee structure items for a specific fee structure and return count' 
   })
@@ -170,4 +200,7 @@ export class FeeStructureItemResolver {
     const tenantId = user.tenantId;
     return this.feeStructureItemService.removeByStructure(feeStructureId, tenantId);
   }
+
+  
 }
+

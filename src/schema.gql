@@ -1062,7 +1062,9 @@ type Mutation {
   """Permanently delete a fee structure (tenant scoped)"""
   deleteFeeStructure(id: ID!): Boolean!
 
-  """Delete a fee structure item"""
+  """
+  Permanently delete a single fee-structure item (must belong to the logged-in tenant). Returns true when the row was removed, or throws NotFoundException.
+  """
   deleteFeeStructureItem(id: ID!): Boolean!
 
   """
@@ -1140,7 +1142,9 @@ type Mutation {
   """Update a fee structure (full item replacement)"""
   updateFeeStructure(id: ID!, input: UpdateFeeStructureInput!): FeeStructure!
 
-  """Update a fee structure item"""
+  """
+  Update a single fee-structure item that belongs to the current tenant. Only the fields supplied in the input are changed; all others are left intact. Returns the fully hydrated item (bucket, structure, academic-year, term, grade-level).
+  """
   updateFeeStructureItem(id: ID!, input: UpdateFeeStructureItemInput!): FeeStructureItem!
   updateHostel(input: UpdateHostelInput!): Hostel!
   updateHostelAssignment(input: UpdateHostelAssignmentInput!): HostelAssignment!
@@ -2105,19 +2109,11 @@ input UpdateFeeStructureInput {
   termId: ID
 }
 
-"""Input for creating a new fee structure item"""
+"""Input for updating a fee structure item (partial)"""
 input UpdateFeeStructureItemInput {
-  """The amount for this fee item"""
-  amount: Float!
-
-  """The ID of the fee bucket"""
-  feeBucketId: ID!
-
-  """The ID of the fee structure"""
-  feeStructureId: ID!
-
-  """Indicates if this fee item is mandatory"""
-  isMandatory: Boolean! = true
+  amount: Float
+  feeBucketId: ID
+  isMandatory: Boolean
 }
 
 input UpdateHostelAssignmentInput {

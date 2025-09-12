@@ -18,82 +18,65 @@ export class FeeStructureItemService {
     private feeBucketRepository: Repository<FeeBucket>,
   ) {}
 
-  async create(
-    tenantId: string,
-    input: CreateFeeStructureItemInput,
-  ): Promise<FeeStructureItem> {
-    const { feeStructureId, feeBucketId, amount, isMandatory = true } = input;
-  
-    const feeStructure = await this.feeStructureRepository.findOne({
-      where: { id: feeStructureId, tenantId },
-    });
-    console.log(feeStructure, 'this was the fee structure')
-    if (!feeStructure) {
-      throw new NotFoundException('Fee structure not found for this tenant');
-    }
-    const feeBucket = await this.feeBucketRepository.findOne({
-      where: { id: feeBucketId, tenantId, isActive: true },
-    });
-    if (!feeBucket) {
-      throw new NotFoundException('Fee bucket not found or inactive');
-    }
-  
-    const existingItem = await this.feeStructureItemRepository.findOne({
-      where: { feeStructureId, feeBucketId, tenantId },
-    });
-    if (existingItem) {
-      throw new ConflictException('This fee bucket is already assigned to the fee structure');
-    }
-    const newItem = this.feeStructureItemRepository.create({
-      tenantId,
-      feeStructureId,
-      feeBucketId,
-      amount,
-      isMandatory,
-    });
-    await this.feeStructureItemRepository.save(newItem);
-    return this.feeStructureItemRepository.findOneOrFail({
-      where: { id: newItem.id },
-      relations: [
-        'feeBucket',
-        'feeStructure',
-        'feeStructure.academicYear',
-        'feeStructure.term',
-        'feeStructure.tenantGradeLevel',
-        'feeStructure.tenantGradeLevel.gradeLevel',
-      ],
-    });
-  }
+  // async create(tenantId: string, input: CreateFeeStructureItemInput): Promise<FeeStructureItem> {
+  //   const { feeStructureId, feeBucketId, amount, isMandatory = true } = input;
+
+  //   if (amount < 0) throw new BadRequestException('Amount must be ≥ 0');
+
+  //   const structure = await this.structureRepo.findOneBy({ id: feeStructureId, tenantId });
+  //   if (!structure) throw new NotFoundException('Fee structure not found');
+
+  //   const bucket = await this.bucketRepo.findOneBy({ id: feeBucketId, tenantId, isActive: true });
+  //   if (!bucket) throw new NotFoundException('Fee bucket not found or inactive');
+
+  //   const duplicate = await this.repo.findOneBy({ feeStructureId, feeBucketId, tenantId });
+  //   if (duplicate) throw new ConflictException('This bucket is already assigned to the structure');
+
+  //   const item = this.repo.create({ tenantId, feeStructureId, feeBucketId, amount, isMandatory });
+  //   await this.repo.save(item);
+
+  //   return this.repo.findOneOrFail({
+  //     where: { id: item.id },
+  //     relations: [
+  //       'feeBucket',
+  //       'feeStructure',
+  //       'feeStructure.academicYear',
+  //       'feeStructure.term',
+  //       'feeStructure.tenantGradeLevel',
+  //       'feeStructure.tenantGradeLevel.gradeLevel',
+  //     ],
+  //   });
+  // }
   
 
-  async findAll(tenantId: string): Promise<FeeStructureItem[]> {
-    return this.feeStructureItemRepository.find({
-      where: { tenantId },
-      relations: [
-        'feeBucket',
-        'feeStructure',
-        'feeStructure.academicYear',
-        'feeStructure.term',
-        'feeStructure.tenantGradeLevel',
-        'feeStructure.tenantGradeLevel.gradeLevel',
-      ],
-      order: { createdAt: 'DESC' },
-    });
-  }
+  // async findAll(tenantId: string): Promise<FeeStructureItem[]> {
+  //   return this.feeStructureItemRepository.find({
+  //     where: { tenantId },
+  //     relations: [
+  //       'feeBucket',
+  //       'feeStructure',
+  //       'feeStructure.academicYear',
+  //       'feeStructure.term',
+  //       'feeStructure.tenantGradeLevel',
+  //       'feeStructure.tenantGradeLevel.gradeLevel',
+  //     ],
+  //     order: { createdAt: 'DESC' },
+  //   });
+  // }
   
 
-  async findOne(id: string, tenantId: string): Promise<FeeStructureItem> {
-    const feeStructureItem = await this.feeStructureItemRepository.findOne({
-      where: { id, tenantId },
-      relations: ['feeStructure', 'feeBucket'],
-    });
+  // async findOne(id: string, tenantId: string): Promise<FeeStructureItem> {
+  //   const feeStructureItem = await this.feeStructureItemRepository.findOne({
+  //     where: { id, tenantId },
+  //     relations: ['feeStructure', 'feeBucket'],
+  //   });
 
-    if (!feeStructureItem) {
-      throw new NotFoundException('Fee structure item not found');
-    }
+  //   if (!feeStructureItem) {
+  //     throw new NotFoundException('Fee structure item not found');
+  //   }
 
-    return feeStructureItem;
-  }
+  //   return feeStructureItem;
+  // }
 
   async findByStructure(feeStructureId: string, tenantId: string): Promise<FeeStructureItem[]> {
     const feeStructure = await this.feeStructureRepository.findOne({
@@ -199,69 +182,97 @@ export class FeeStructureItemService {
     return parseFloat(result.total) || 0;
   }
 
+  async create(tenantId: string, input: CreateFeeStructureItemInput): Promise<FeeStructureItem> {
+    const { feeStructureId, feeBucketId, amount, isMandatory = true } = input;
+
+    if (amount < 0) throw new BadRequestException('Amount must be ≥ 0');
+
+    const structure = await this.feeStructureRepository.findOneBy({ id: feeStructureId, tenantId });
+    if (!structure) throw new NotFoundException('Fee structure not found');
+
+    const bucket = await this.feeBucketRepository.findOneBy({ id: feeBucketId, tenantId, isActive: true });
+    if (!bucket) throw new NotFoundException('Fee bucket not found or inactive');
+
+    const duplicate = await this.feeStructureItemRepository.findOneBy({ feeStructureId, feeBucketId, tenantId });
+    if (duplicate) throw new ConflictException('This bucket is already assigned to the structure');
+
+    const item = this.feeStructureItemRepository.create({ tenantId, feeStructureId, feeBucketId, amount, isMandatory });
+    await this.feeStructureItemRepository.save(item);
+
+    return this.feeStructureItemRepository.findOneOrFail({
+      where: { id: item.id },
+      relations: [
+        'feeBucket',
+        'feeStructure',
+        'feeStructure.academicYear',
+        'feeStructure.term',
+        'feeStructure.tenantGradeLevel',
+        'feeStructure.tenantGradeLevel.gradeLevel',
+      ],
+    });
+  }
+
   async update(
     id: string,
     tenantId: string,
-    updateFeeStructureItemInput: UpdateFeeStructureItemInput,
+    input: UpdateFeeStructureItemInput,
   ): Promise<FeeStructureItem> {
-    const { feeBucketId, amount, isMandatory } = updateFeeStructureItemInput;
+    const { feeBucketId, amount, isMandatory } = input;
 
-    const feeStructureItem = await this.feeStructureItemRepository.findOne({
-      where: { id, tenantId },
+    if (feeBucketId === undefined && amount === undefined && isMandatory === undefined)
+      throw new BadRequestException('No field to update');
+
+    if (amount !== undefined && amount < 0) throw new BadRequestException('Amount must be ≥ 0');
+
+    const item = await this.feeStructureItemRepository.findOneBy({ id, tenantId });
+    if (!item) throw new NotFoundException('Fee structure item not found');
+
+    if (feeBucketId !== undefined && feeBucketId !== item.feeBucketId) {
+      const bucket = await this.feeBucketRepository.findOneBy({ id: feeBucketId, tenantId, isActive: true });
+      if (!bucket) throw new NotFoundException('Fee bucket not found or inactive');
+
+      const duplicate = await this.feeStructureItemRepository.findOneBy({ feeStructureId: item.feeStructureId, feeBucketId, tenantId });
+      if (duplicate) throw new ConflictException('This bucket is already assigned to the structure');
+
+      item.feeBucketId = feeBucketId;
+    }
+
+    if (amount !== undefined) item.amount = amount;
+    if (isMandatory !== undefined) item.isMandatory = isMandatory;
+
+    await this.feeStructureItemRepository.save(item);
+
+    return this.feeStructureItemRepository.findOneOrFail({
+      where: { id },
+      relations: [
+        'feeBucket',
+        'feeStructure',
+        'feeStructure.academicYear',
+        'feeStructure.term',
+        'feeStructure.tenantGradeLevel',
+        'feeStructure.tenantGradeLevel.gradeLevel',
+      ],
     });
-
-    if (!feeStructureItem) {
-      throw new NotFoundException('Fee structure item not found');
-    }
-
-    if (feeBucketId) {
-      const feeBucket = await this.feeBucketRepository.findOne({
-        where: { id: feeBucketId, tenantId, isActive: true },
-      });
-
-      if (!feeBucket) {
-        throw new NotFoundException('Fee bucket not found or is not active');
-      }
-
-      if (feeBucketId !== feeStructureItem.feeBucketId) {
-        const existingItem = await this.feeStructureItemRepository.findOne({
-          where: { 
-            feeStructureId: feeStructureItem.feeStructureId, 
-            feeBucketId, 
-            tenantId 
-          },
-        });
-
-        if (existingItem) {
-          throw new ConflictException('Fee structure item already exists for this bucket');
-        }
-      }
-
-      feeStructureItem.feeBucketId = feeBucketId;
-    }
-
-    if (amount !== undefined) {
-      feeStructureItem.amount = amount;
-    }
-
-    if (isMandatory !== undefined) {
-      feeStructureItem.isMandatory = isMandatory;
-    }
-
-    return this.feeStructureItemRepository.save(feeStructureItem);
   }
 
+  // async remove(id: string, tenantId: string): Promise<boolean> {
+  //   const feeStructureItem = await this.feeStructureItemRepository.findOne({
+  //     where: { id, tenantId },
+  //   });
+
+  //   if (!feeStructureItem) {
+  //     throw new NotFoundException('Fee structure item not found');
+  //   }
+
+  //   await this.feeStructureItemRepository.remove(feeStructureItem);
+  //   return true;
+  // }
+
   async remove(id: string, tenantId: string): Promise<boolean> {
-    const feeStructureItem = await this.feeStructureItemRepository.findOne({
-      where: { id, tenantId },
-    });
-
-    if (!feeStructureItem) {
-      throw new NotFoundException('Fee structure item not found');
-    }
-
-    await this.feeStructureItemRepository.remove(feeStructureItem);
-    return true;
+    const item = await this.feeStructureItemRepository.findOneBy({ id, tenantId });
+    if (!item) throw new NotFoundException('Fee structure item not found');
+    await this.feeStructureItemRepository.remove(item);
+    return true; 
   }
 
   async removeByStructure(feeStructureId: string, tenantId: string): Promise<number> {
@@ -303,5 +314,38 @@ export class FeeStructureItemService {
     }
 
     return createdItems;
+  }
+
+
+  async findOne(id: string, tenantId: string): Promise<FeeStructureItem> {
+    const item = await this.feeStructureItemRepository.findOne({
+      where: { id, tenantId },
+      relations: [
+        'feeBucket',
+        'feeStructure',
+        'feeStructure.academicYear',
+        'feeStructure.term',
+        'feeStructure.tenantGradeLevel',
+        'feeStructure.tenantGradeLevel.gradeLevel',
+      ],
+    });
+    if (!item) throw new NotFoundException('Fee structure item not found');
+    return item;
+  }
+
+
+  async findAll(tenantId: string): Promise<FeeStructureItem[]> {
+    return this.feeStructureItemRepository.find({
+      where: { tenantId },
+      relations: [
+        'feeBucket',
+        'feeStructure',
+        'feeStructure.academicYear',
+        'feeStructure.term',
+        'feeStructure.tenantGradeLevel',
+        'feeStructure.tenantGradeLevel.gradeLevel',
+      ],
+      order: { createdAt: 'DESC' },
+    });
   }
 }
