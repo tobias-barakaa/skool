@@ -39,7 +39,6 @@ export class FeeAssignmentService {
 
       for (const studentId of input.studentIds) {
         for (const item of feeStructure.items) {
-          // Check if assignment already exists
           const existingAssignment = await manager.findOne(FeeAssignment, {
             where: {
               tenantId: user.tenantId,

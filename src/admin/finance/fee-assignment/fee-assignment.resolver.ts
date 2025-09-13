@@ -9,7 +9,6 @@ import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 
 @Resolver(() => FeeAssignment)
-@UseGuards(/* Add your auth guards here */)
 export class FeeAssignmentResolver {
   private readonly logger = new Logger(FeeAssignmentResolver.name);
 
@@ -65,7 +64,7 @@ export class FeeAssignmentResolver {
   @Mutation(() => Boolean, { 
     description: 'Remove a fee assignment'
   })
-  @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.SUPER_ADMIN)
+  @Roles(MembershipRole.SCHOOL_ADMIN)
   async removeFeeAssignment(
     @Args('id', { type: () => ID }) id: string,
     @ActiveUser() user: ActiveUserData,
