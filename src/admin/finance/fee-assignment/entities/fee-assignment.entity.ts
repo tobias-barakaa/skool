@@ -1,13 +1,13 @@
 import { Field, ID, ObjectType, GraphQLISODateTime } from "@nestjs/graphql";
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, Index, Unique } from "typeorm";
-import { FeeStructureItem } from "../../fee-structure-item/entities/fee-structure-item.entity";
-import { Student } from "src/admin/student/entities/student.entity";
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, Index, OneToMany } from "typeorm";
+import { FeeStructure } from "../../fee-structure/entities/fee-structure.entity";
+import { User } from "src/admin/users/entities/user.entity";
+import { StudentFeeAssignment } from "./student_fee_assignments.entity";
 
 @Entity('fee_assignments')
-@ObjectType({ description: 'Represents assignment of fee structure items to specific students' })
-@Unique(['tenantId', 'studentId', 'feeStructureItemId'])
-@Index(['tenantId', 'studentId'])
-@Index(['tenantId', 'feeStructureItemId'])
+@ObjectType({ description: 'Represents bulk assignment of fee structure to students in specific grade levels' })
+@Index(['tenantId', 'feeStructureId'])
+@Index(['tenantId', 'assignedBy'])
 export class FeeAssignment {
   @Field(() => ID, { description: 'The unique identifier of the fee assignment' })
   @PrimaryGeneratedColumn('uuid')
@@ -17,27 +17,43 @@ export class FeeAssignment {
   @Column()
   tenantId: string;
 
-  @Field(() => ID, { description: 'The ID of the student' })
+  @Field(() => ID, { description: 'The ID of the fee structure being assigned' })
   @Column()
-  studentId: string;
+  feeStructureId: string;
 
-  @Field(() => Student, { description: 'The student this fee is assigned to' })
-  @ManyToOne(() => Student, { eager: true })
-  @JoinColumn({ name: 'studentId' })
-  student: Student;
+  @Field(() => FeeStructure, { description: 'The fee structure being assigned' })
+  @ManyToOne(() => FeeStructure, { eager: true })
+  @JoinColumn({ name: 'feeStructureId' })
+  feeStructure: FeeStructure;
 
-  @Field(() => FeeStructureItem, { description: 'The fee structure item assigned to the student' })
-  @ManyToOne(() => FeeStructureItem, { eager: true })
-  @JoinColumn({ name: 'feeStructureItemId' })
-  feeStructureItem: FeeStructureItem;
+  @Field(() => [ID], { description: 'Array of grade level IDs this assignment applies to' })
+  @Column('simple-array')
+  gradeLevelIds: string[];
 
-  @Field(() => ID, { description: 'The ID of the fee structure item' })
-  @Column()
-  feeStructureItemId: string;
+  @Field(() => ID, { description: 'The ID of the user who created this assignment' })
+  @Column({ type: 'uuid' })
+  assignedBy: string;
+
+ 
+
+
+  
+    @Field(() => User)
+    @ManyToOne(() => User, { eager: true })
+    @JoinColumn({ name: 'assignedBy' })
+    assignedByUser: User;
+
+  @Field({ nullable: true, description: 'Optional description or notes about this assignment' })
+  @Column({ nullable: true })
+  description?: string;
 
   @Field({ description: 'Indicates if the fee assignment is currently active' })
   @Column({ default: true })
   isActive: boolean;
+
+  @Field(() => [StudentFeeAssignment], { description: 'Individual student assignments created from this bulk assignment' })
+  @OneToMany(() => StudentFeeAssignment, (studentAssignment) => studentAssignment.feeAssignment)
+  studentAssignments: StudentFeeAssignment[];
 
   @Field(() => GraphQLISODateTime, { description: 'The date and time when the fee assignment was created' })
   @CreateDateColumn()

@@ -15,6 +15,9 @@ import { FeeStructureResolver } from './fee-structure/fee-structure.resolver';
 import { FeeAssignmentResolver } from './fee-assignment/fee-assignment.resolver';
 import { FeeStructureItemService } from './fee-structure-item/fee-structure-item.service';
 import { FeeStructureItemResolver } from './fee-structure-item/fee-structure-item.resolver';
+import { StudentFeeAssignment } from './fee-assignment/entities/student_fee_assignments.entity';
+import { StudentFeeItem } from './fee-assignment/entities/student_fee_items.entity';
+import { StudentModule } from '../student/student.module';
 
 @Module({
   imports: [
@@ -23,8 +26,11 @@ import { FeeStructureItemResolver } from './fee-structure-item/fee-structure-ite
       FeeStructure,
       FeeAssignment,
       FeeStructureItem,
+      StudentFeeAssignment,
+      StudentFeeItem
 
     ]),
+    StudentModule
   ],
   providers: [
     FeeBucketService,

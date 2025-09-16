@@ -257,15 +257,6 @@ input BroadcastMessageInput {
   subject: String
 }
 
-"""Input type for bulk fee assignments"""
-input BulkFeeAssignmentInput {
-  """The ID of the fee structure to assign"""
-  feeStructureId: ID!
-
-  """The IDs of the students"""
-  studentIds: [ID!]!
-}
-
 input BulkTransportAssignmentInput {
   """Common pickup point for all students (optional)"""
   pickupPoint: String
@@ -373,13 +364,16 @@ input CreateCustomSubjectInput {
   totalMarks: Float
 }
 
-"""Input type for creating a new fee assignment"""
+"""Input for creating a new fee assignment"""
 input CreateFeeAssignmentInput {
-  """The IDs of the fee structure items to assign"""
-  feeStructureItemIds: [ID!]!
+  """Optional description or notes about this assignment"""
+  description: String
 
-  """The ID of the student"""
-  studentId: ID!
+  """The ID of the fee structure to assign"""
+  feeStructureId: ID!
+
+  """Array of grade level IDs to assign the fee structure to"""
+  gradeLevelIds: [ID!]!
 }
 
 """Input type for creating a new fee bucket"""
@@ -650,16 +644,28 @@ input EnterStudentMarksInput {
   studentId: ID!
 }
 
-"""Represents assignment of fee structure items to specific students"""
+"""
+Represents bulk assignment of fee structure to students in specific grade levels
+"""
 type FeeAssignment {
+  """The ID of the user who created this assignment"""
+  assignedBy: ID!
+  assignedByUser: User!
+
   """The date and time when the fee assignment was created"""
   createdAt: DateTime!
 
-  """The fee structure item assigned to the student"""
-  feeStructureItem: FeeStructureItem!
+  """Optional description or notes about this assignment"""
+  description: String
 
-  """The ID of the fee structure item"""
-  feeStructureItemId: ID!
+  """The fee structure being assigned"""
+  feeStructure: FeeStructure!
+
+  """The ID of the fee structure being assigned"""
+  feeStructureId: ID!
+
+  """Array of grade level IDs this assignment applies to"""
+  gradeLevelIds: [ID!]!
 
   """The unique identifier of the fee assignment"""
   id: ID!
@@ -667,11 +673,8 @@ type FeeAssignment {
   """Indicates if the fee assignment is currently active"""
   isActive: Boolean!
 
-  """The student this fee is assigned to"""
-  student: Student!
-
-  """The ID of the student"""
-  studentId: ID!
+  """Individual student assignments created from this bulk assignment"""
+  studentAssignments: [StudentFeeAssignment!]!
 
   """The ID of the tenant this fee assignment belongs to"""
   tenantId: String!
@@ -1009,9 +1012,6 @@ type Mutation {
     """Array of fee structure items to create"""
     items: [CreateFeeStructureItemInput!]!
   ): [FeeStructureItem!]!
-
-  """Bulk assign fees to multiple students"""
-  bulkFeeAssignment(input: BulkFeeAssignmentInput!): [FeeAssignment!]!
   changePassword(changePasswordInput: ChangePasswordInput!): PasswordResetResponse!
   configureSchoolLevelsByNames(levelNames: [String!]!): SchoolConfigurationResponse!
 
@@ -1023,8 +1023,10 @@ type Mutation {
   createAssessment(input: CreateAssessmentInput!): AssessmentOutput!
   createCustomSubject(input: CreateCustomSubjectInput!): TenantSubject!
 
-  """Create fee assignments for a student"""
-  createFeeAssignment(input: CreateFeeAssignmentInput!): [FeeAssignment!]!
+  """
+  Create a new fee assignment and assign it to students in specified grade levels
+  """
+  createFeeAssignment(createFeeAssignmentInput: CreateFeeAssignmentInput!): FeeAssignment!
 
   """Create a new fee bucket"""
   createFeeBucket(input: CreateFeeBucketInput!): FeeBucket!
@@ -1096,7 +1098,7 @@ type Mutation {
   """
   refreshSearchCache: Boolean!
 
-  """Remove a fee assignment"""
+  """Delete a fee assignment and all related student assignments"""
   removeFeeAssignment(id: ID!): Boolean!
   removeHostel(id: String!): Boolean!
   removeHostelAssignment(id: String!): Boolean!
@@ -1129,12 +1131,18 @@ type Mutation {
   setCurrentTerm(id: ID!): Term!
   signIn(signInInput: SignInInput!): AuthResponse!
   submitAssignment(input: CreateAssignmentSubmissionInput!): AssignmentSubmission!
+
+  """Activate or deactivate an optional fee item for a student"""
+  toggleStudentFeeItem(isActive: Boolean!, studentFeeItemId: ID!): StudentFeeItem!
   toggleTenantStream(activate: Boolean!, tenantStreamId: String!): Boolean!
   unassignClassTeacher(input: UnassignClassTeacherInput!): Boolean!
 
   """Update an academic year"""
   updateAcademicYear(id: ID!, input: UpdateAcademicYearInput!): AcademicYear!
   updateCustomSubject(input: UpdateTenantSubjectInput!, tenantSubjectId: String!): TenantSubject!
+
+  """Update a fee assignment"""
+  updateFeeAssignment(id: ID!, updateFeeAssignmentInput: UpdateFeeAssignmentInput!): FeeAssignment!
 
   """Update an existing fee bucket"""
   updateFeeBucket(id: ID!, input: UpdateFeeBucketInput!): FeeBucket!
@@ -1248,13 +1256,16 @@ type Query {
   allStudents: [Student!]!
   allUsersOfTenant(tenantId: String!): [TenantUserSummary!]!
   assessments(filter: AssessmentFilterInput): [AssessmentOutput!]!
+
+  """Get all students assigned to a specific fee assignment"""
+  assignedStudents(feeAssignmentId: ID!): [StudentFeeAssignment!]!
   deactivatedTenantSubjects: [TenantSubject!]!
+
+  """Get a specific fee assignment by ID"""
+  feeAssignment(id: ID!): FeeAssignment!
 
   """Get all fee assignments for the current tenant"""
   feeAssignments: [FeeAssignment!]!
-
-  """Get fee assignments for a specific student"""
-  feeAssignmentsByStudent(studentId: ID!): [FeeAssignment!]!
 
   """Get a single fee bucket by ID"""
   feeBucket(id: ID!): FeeBucket!
@@ -1383,6 +1394,9 @@ type Query {
   stream(id: ID!): StreamType!
   streams: [StreamType!]!
   streamsByGradeLevel(gradeLevelId: ID!): [StreamType!]!
+
+  """Get all fee assignments for a specific student"""
+  studentFeeAssignments(studentId: ID!): [StudentFeeAssignment!]!
 
   """Get student profile by ID (only accessible by the student themselves)"""
   studentProfileById(studentId: ID!): Student!
@@ -1698,6 +1712,75 @@ type Student {
 type StudentAcademicProfile {
   academicSummary: AcademicSummary!
   student: Student!
+}
+
+"""Represents the assignment of a fee structure to a specific student"""
+type StudentFeeAssignment {
+  """The date and time when the assignment was created"""
+  createdAt: DateTime!
+
+  """The fee assignment this belongs to"""
+  feeAssignment: FeeAssignment!
+
+  """The ID of the fee assignment"""
+  feeAssignmentId: ID!
+
+  """The fee items assigned to this student"""
+  feeItems: [StudentFeeItem!]!
+
+  """The unique identifier of the student fee assignment"""
+  id: ID!
+
+  """Indicates if the assignment is currently active"""
+  isActive: Boolean!
+
+  """The student this fee assignment belongs to"""
+  student: Student!
+
+  """The ID of the student"""
+  studentId: ID!
+
+  """The ID of the tenant this assignment belongs to"""
+  tenantId: String!
+
+  """The date and time when the assignment was last updated"""
+  updatedAt: DateTime!
+}
+
+"""Represents individual fee items assigned to a student"""
+type StudentFeeItem {
+  """The amount for this fee item"""
+  amount: Float!
+
+  """The date and time when the item was created"""
+  createdAt: DateTime!
+
+  """The fee structure item this is based on"""
+  feeStructureItem: FeeStructureItem!
+
+  """The ID of the fee structure item"""
+  feeStructureItemId: ID!
+
+  """The unique identifier of the student fee item"""
+  id: ID!
+
+  """Indicates if this fee item is currently active for the student"""
+  isActive: Boolean!
+
+  """Indicates if this fee item is mandatory"""
+  isMandatory: Boolean!
+
+  """The student fee assignment this item belongs to"""
+  studentFeeAssignment: StudentFeeAssignment!
+
+  """The ID of the student fee assignment"""
+  studentFeeAssignmentId: ID!
+
+  """The ID of the tenant this item belongs to"""
+  tenantId: String!
+
+  """The date and time when the item was last updated"""
+  updatedAt: DateTime!
 }
 
 type StudentLoginInfo {
@@ -2080,6 +2163,21 @@ input UpdateAcademicYearInput {
   isCurrent: Boolean
   name: String
   startDate: String
+}
+
+"""Input for updating a fee assignment"""
+input UpdateFeeAssignmentInput {
+  """Updated description or notes"""
+  description: String
+
+  """The ID of the fee structure to assign"""
+  feeStructureId: ID
+
+  """Array of grade level IDs to assign the fee structure to"""
+  gradeLevelIds: [ID!]
+
+  """Whether the assignment is active"""
+  isActive: Boolean
 }
 
 """Input type for updating a fee bucket"""
