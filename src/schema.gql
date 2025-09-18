@@ -372,8 +372,8 @@ input CreateFeeAssignmentInput {
   """The ID of the fee structure to assign"""
   feeStructureId: ID!
 
-  """Array of grade level IDs to assign the fee structure to"""
-  gradeLevelIds: [ID!]!
+  """Array of tenant grade level IDs (not grade level IDs)"""
+  tenantGradeLevelIds: [ID!]!
 }
 
 """Input type for creating a new fee bucket"""
@@ -664,9 +664,6 @@ type FeeAssignment {
   """The ID of the fee structure being assigned"""
   feeStructureId: ID!
 
-  """Array of grade level IDs this assignment applies to"""
-  gradeLevelIds: [ID!]!
-
   """The unique identifier of the fee assignment"""
   id: ID!
 
@@ -675,6 +672,10 @@ type FeeAssignment {
 
   """Individual student assignments created from this bulk assignment"""
   studentAssignments: [StudentFeeAssignment!]!
+  studentsAssignedCount: Int!
+
+  """Array of tenant grade level IDs that were targeted"""
+  tenantGradeLevelIds: [String!]!
 
   """The ID of the tenant this fee assignment belongs to"""
   tenantId: String!
@@ -2173,11 +2174,11 @@ input UpdateFeeAssignmentInput {
   """The ID of the fee structure to assign"""
   feeStructureId: ID
 
-  """Array of grade level IDs to assign the fee structure to"""
-  gradeLevelIds: [ID!]
-
   """Whether the assignment is active"""
   isActive: Boolean
+
+  """Array of tenant grade level IDs (not grade level IDs)"""
+  tenantGradeLevelIds: [ID!]
 }
 
 """Input type for updating a fee bucket"""

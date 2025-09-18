@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType, GraphQLISODateTime } from "@nestjs/graphql";
+import { Field, ID, ObjectType, GraphQLISODateTime, Int } from "@nestjs/graphql";
 import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, Index, OneToMany } from "typeorm";
 import { FeeStructure } from "../../fee-structure/entities/fee-structure.entity";
 import { User } from "src/admin/users/entities/user.entity";
@@ -26,9 +26,10 @@ export class FeeAssignment {
   @JoinColumn({ name: 'feeStructureId' })
   feeStructure: FeeStructure;
 
-  @Field(() => [ID], { description: 'Array of grade level IDs this assignment applies to' })
+ 
+  @Field(() => [String], { description: 'Array of tenant grade level IDs that were targeted' })
   @Column('simple-array')
-  gradeLevelIds: string[];
+  tenantGradeLevelIds: string[]; 
 
   @Field(() => ID, { description: 'The ID of the user who created this assignment' })
   @Column({ type: 'uuid' })
@@ -36,6 +37,9 @@ export class FeeAssignment {
 
  
 
+  @Field(() => Int)
+  @Column({ default: 0 }) 
+  studentsAssignedCount: number;
 
   
     @Field(() => User)
@@ -63,3 +67,4 @@ export class FeeAssignment {
   @UpdateDateColumn()
   updatedAt: Date;
 }
+

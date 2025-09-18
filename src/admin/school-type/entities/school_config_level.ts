@@ -21,7 +21,7 @@ import { Level } from 'src/admin/level/entities/level.entities';
 
 
 
-@ObjectType() // ✅ Add this line
+@ObjectType()
 @Entity()
 export class SchoolConfigLevel {
   @Field(() => ID)

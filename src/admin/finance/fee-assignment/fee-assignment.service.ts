@@ -42,7 +42,7 @@ export class FeeAssignmentService {
     createFeeAssignmentInput: CreateFeeAssignmentInput,
     user: ActiveUserData
   ): Promise<FeeAssignment> {
-    const { feeStructureId, gradeLevelIds, description } = createFeeAssignmentInput;
+    const { feeStructureId, tenantGradeLevelIds, description } = createFeeAssignmentInput;
     const tenantId = user.tenantId;
   
     const feeStructure = await this.dataSource.getRepository(FeeStructure).findOne({
@@ -60,78 +60,92 @@ export class FeeAssignmentService {
       throw new BadRequestException(`User with id ${user.sub} not found`);
     }
   
-    // 3. Validate grade levels belong to this tenant
-    const tenantGradeLevels = await this.dataSource.getRepository(TenantGradeLevel).find({
-      where: {
-        tenant: { id: tenantId },
-        gradeLevel: { id: In(gradeLevelIds) },
-        isActive: true,
-      },
-      relations: ['gradeLevel'],
-    });
+    console.log('=== DEBUGGING TENANT GRADE LEVEL QUERY ===');
+    console.log('Target Tenant ID:', tenantId);
+    console.log('Target Tenant Grade Level IDs:', tenantGradeLevelIds);
   
-    if (tenantGradeLevels.length !== gradeLevelIds.length) {
+    const validTenantGradeLevels = await this.dataSource
+      .getRepository(TenantGradeLevel)
+      .createQueryBuilder('tgl')
+      .innerJoin('tgl.tenant', 'tenant')
+      .leftJoinAndSelect('tgl.gradeLevel', 'gradeLevel') 
+      .where('tenant.id = :tenantId', { tenantId })
+      .andWhere('tgl.id IN (:...tenantGradeLevelIds)', { tenantGradeLevelIds })
+      .andWhere('tgl.isActive = true')
+      .getMany();
+  
+    if (validTenantGradeLevels.length !== tenantGradeLevelIds.length) {
+      const foundIds = validTenantGradeLevels.map(tgl => tgl.id);
+      const missingIds = tenantGradeLevelIds.filter(id => !foundIds.includes(id));
       throw new BadRequestException(
-        `One or more grade levels do not belong to this tenant`
+        `Some tenant grade levels do not belong to this tenant or are inactive. Missing IDs: ${missingIds.join(', ')}`
       );
     }
   
-    // 4. Create fee assignment
+    const actualGradeLevelIds = validTenantGradeLevels.map(tgl => tgl.gradeLevel.id);
+    
+    console.log('Valid tenant grade levels found:', validTenantGradeLevels.length);
+    console.log('Extracted grade level IDs for students:', actualGradeLevelIds);
+  
     const feeAssignment = this.feeAssignmentRepo.create({
       tenantId,
       feeStructureId,
-      gradeLevelIds,
+      tenantGradeLevelIds, 
       assignedBy: assignedByUserData.id,
       description,
     });
     const savedFeeAssignment = await this.feeAssignmentRepo.save(feeAssignment);
   
-    // 5. Find students in those grade levels
     const students = await this.studentRepo.find({
       where: {
         tenant_id: tenantId,
-        grade: { id: In(gradeLevelIds) },
+        grade: { id: In(actualGradeLevelIds) }, 
         isActive: true,
       },
     });
   
-    if (students.length === 0) {
-      throw new BadRequestException('No active students found for the specified grade levels');
-    }
+    console.log('Students found:', students.length);
   
-    // 6. Get fee structure items
-    const items = await this.feeStructureItemRepo.find({
-      where: { tenantId, feeStructureId },
+    let studentsAssigned = 0;
+
+if (students.length > 0) {
+  const items = await this.feeStructureItemRepo.find({
+    where: { tenantId, feeStructureId },
+  });
+  if (items.length === 0) {
+    throw new BadRequestException('No fee structure items found for the specified fee structure');
+  }
+
+  for (const student of students) {
+    const studentAssignment = this.studentFeeAssignmentRepo.create({
+      tenantId,
+      studentId: student.id,
+      feeAssignmentId: savedFeeAssignment.id,
     });
-    if (items.length === 0) {
-      throw new BadRequestException('No fee structure items found for the specified fee structure');
-    }
-  
-    // 7. Assign fees to each student
-    for (const student of students) {
-      const studentAssignment = this.studentFeeAssignmentRepo.create({
+
+    const savedStudentAssignment = await this.studentFeeAssignmentRepo.save(studentAssignment);
+
+    for (const item of items) {
+      const studentFeeItem = this.studentFeeItemRepo.create({
         tenantId,
-        studentId: student.id,
-        feeAssignmentId: savedFeeAssignment.id,
+        studentFeeAssignmentId: savedStudentAssignment.id,
+        feeStructureItemId: item.id,
+        amount: item.amount,
+        isMandatory: item.isMandatory,
+        isActive: item.isMandatory,
       });
-  
-      const savedStudentAssignment = await this.studentFeeAssignmentRepo.save(studentAssignment);
-  
-      for (const item of items) {
-        const studentFeeItem = this.studentFeeItemRepo.create({
-          tenantId,
-          studentFeeAssignmentId: savedStudentAssignment.id,
-          feeStructureItemId: item.id,
-          amount: item.amount,
-          isMandatory: item.isMandatory,
-          isActive: item.isMandatory,
-        });
-  
-        await this.studentFeeItemRepo.save(studentFeeItem);
-      }
+
+      await this.studentFeeItemRepo.save(studentFeeItem);
     }
+    studentsAssigned++;
+  }
+}
+
+savedFeeAssignment.studentsAssignedCount = studentsAssigned;
+await this.feeAssignmentRepo.save(savedFeeAssignment);
   
-    // 8. Return final fee assignment with relations
+    console.log('Successfully assigned fees to', studentsAssigned, 'students');
+  
     return this.feeAssignmentRepo.findOne({
       where: { id: savedFeeAssignment.id },
       relations: ['assignedByUser', 'feeStructure'],
@@ -142,6 +156,7 @@ export class FeeAssignmentService {
       return feeAssignment;
     });
   }
+
   
 
   // async create(

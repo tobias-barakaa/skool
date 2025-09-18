@@ -13,13 +13,11 @@ export class CreateFeeAssignmentInput {
   @IsUUID()
   feeStructureId: string;
 
-  @Field(() => [ID], {
-    description: 'Array of grade level IDs to assign the fee structure to'
-  })
+  @Field(() => [ID], { description: 'Array of tenant grade level IDs (not grade level IDs)' })
   @IsArray()
   @ArrayNotEmpty()
   @IsUUID(4, { each: true })
-  gradeLevelIds: string[];
+  tenantGradeLevelIds: string[];
 
  
   @Field({
