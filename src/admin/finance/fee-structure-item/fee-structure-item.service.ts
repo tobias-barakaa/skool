@@ -205,9 +205,7 @@ export class FeeStructureItemService {
         'feeBucket',
         'feeStructure',
         'feeStructure.academicYear',
-        'feeStructure.term',
-        'feeStructure.tenantGradeLevel',
-        'feeStructure.tenantGradeLevel.gradeLevel',
+        'feeStructure.term'
       ],
     });
   }
@@ -248,9 +246,7 @@ export class FeeStructureItemService {
         'feeBucket',
         'feeStructure',
         'feeStructure.academicYear',
-        'feeStructure.term',
-        'feeStructure.tenantGradeLevel',
-        'feeStructure.tenantGradeLevel.gradeLevel',
+        'feeStructure.term'
       ],
     });
   }
@@ -267,6 +263,9 @@ export class FeeStructureItemService {
   //   await this.feeStructureItemRepository.remove(feeStructureItem);
   //   return true;
   // }
+
+
+  
 
   async remove(id: string, tenantId: string): Promise<boolean> {
     const item = await this.feeStructureItemRepository.findOneBy({ id, tenantId });
@@ -342,8 +341,6 @@ export class FeeStructureItemService {
         'feeStructure',
         'feeStructure.academicYear',
         'feeStructure.term',
-        'feeStructure.tenantGradeLevel',
-        'feeStructure.tenantGradeLevel.gradeLevel',
       ],
       order: { createdAt: 'DESC' },
     });

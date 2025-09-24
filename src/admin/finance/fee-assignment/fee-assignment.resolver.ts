@@ -7,6 +7,10 @@ import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { UpdateFeeAssignmentInput } from './dtos/update-fee-assignment.input';
 import { StudentFeeAssignment } from './entities/student_fee_assignments.entity';
 import { StudentFeeItem } from './entities/student_fee_items.entity';
+import { BulkToggleByFeeStructureItemInput } from './dtos/bulk-toggle-by-fee-structure-item.input';
+import { BulkToggleStudentFeeItemsInput } from './dtos/bulk-toggle-student-fee-items.input';
+import { FeeAssignmentWithStudents, GetFeeAssignmentsByGradeLevelsInput, TenantFeeAssignmentSummary } from './dtos/fee-summary.dto';
+import GraphQLJSON from 'graphql-type-json';
 
 @Resolver(() => FeeAssignment)
 export class FeeAssignmentResolver {
@@ -100,5 +104,139 @@ export class FeeAssignmentResolver {
     const tenantId = user.tenantId;
     return this.feeAssignmentService.toggleStudentFeeItem(studentFeeItemId, isActive, tenantId);
   }
+
+
+
+  // @Mutation(() => StudentFeeItem, {
+  //   description: 'Activate or deactivate an optional fee item for a student'
+  // })
+  // async toggleStudentFeeItem(
+  //   @Args('studentFeeItemId', { type: () => ID }) studentFeeItemId: string,
+  //   @Args('isActive', { type: () => Boolean }) isActive: boolean,
+  //   @ActiveUser() user: ActiveUserData,
+  // ): Promise<StudentFeeItem> {
+  //   const tenantId = user.tenantId;
+  //   return this.feeAssignmentService.toggleStudentFeeItem(studentFeeItemId, isActive, tenantId);
+  // }
+
+  @Query(() => [StudentFeeItem], {
+    description: 'Get all fee items for a specific student'
+  })
+  async studentFeeItems(
+    @Args('studentId', { type: () => ID }) studentId: string,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<StudentFeeItem[]> {
+    const tenantId = user.tenantId;
+    return this.feeAssignmentService.getStudentFeeItems(studentId, tenantId);
+  }
+
+  @Mutation(() => [StudentFeeItem], {
+    description: 'Bulk activate or deactivate multiple student fee items'
+  })
+  async bulkToggleStudentFeeItems(
+    @Args('bulkToggleInput') bulkToggleInput: BulkToggleStudentFeeItemsInput,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<StudentFeeItem[]> {
+    const tenantId = user.tenantId;
+    return this.feeAssignmentService.bulkToggleStudentFeeItems(bulkToggleInput, tenantId);
+  }
+
+  @Mutation(() => [StudentFeeItem], {
+    description: 'Bulk toggle fee items by fee structure item and grade levels (e.g., activate transport for all Grade 1 students)'
+  })
+  async bulkToggleByFeeStructureItem(
+    @Args('bulkToggleByFeeStructureItemInput') input: BulkToggleByFeeStructureItemInput,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<StudentFeeItem[]> {
+    const tenantId = user.tenantId;
+    const { feeStructureItemId, gradeLevelIds, isActive } = input;
+    return this.feeAssignmentService.bulkToggleByFeeStructureItem(
+      feeStructureItemId,
+      gradeLevelIds,
+      isActive,
+      tenantId
+    );
+  }
+
+
+
+
+
+  @Query(() => [FeeAssignmentWithStudents], {
+    description: 'Get fee assignments for specific tenant grade levels with all student details and fee items'
+  })
+  async getFeeAssignmentsByGradeLevels(
+    @Args('input') input: GetFeeAssignmentsByGradeLevelsInput,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<FeeAssignmentWithStudents[]> {
+    return this.feeAssignmentService.getFeeAssignmentsByGradeLevels(input, user);
+  }
+  
+  @Query(() => TenantFeeAssignmentSummary, {
+    description: 'Get all fee assignments for the current tenant with complete student and grade level data'
+  })
+  async getAllTenantFeeAssignments(
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<TenantFeeAssignmentSummary> {
+    return this.feeAssignmentService.getAllTenantFeeAssignments(user);
+  }
+  
+  @Query(() => FeeAssignmentWithStudents, {
+    description: 'Get a specific fee assignment by ID with all student details'
+  })
+  async getFeeAssignmentById(
+    @Args('feeAssignmentId', { type: () => ID }) feeAssignmentId: string,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<FeeAssignmentWithStudents> {
+    return this.feeAssignmentService.getFeeAssignmentById(feeAssignmentId, user);
+  }
+  
+  // Additional utility query to get fee assignment statistics
+//   @Query(() => GraphQLJSON, {
+//     description: 'Get statistical summary of fee assignments for the tenant'
+//   })
+//   async getFeeAssignmentStatistics(
+//     @ActiveUser() user: ActiveUserData,
+//   ): Promise<any> {
+//     const tenantId = user.tenantId;
+  
+//     const totalFeeAssignments = await this.feeAssignmentService.feeAssignmentRepo.count({
+//       where: { tenantId, isActive: true }
+//     });
+  
+//     const totalStudentAssignments = await this.feeAssignmentService.studentFeeAssignmentRepo.count({
+//       where: { tenantId, isActive: true }
+//     });
+  
+//     const totalFeeItems = await this.feeAssignmentService.studentFeeItemRepo.count({
+//       where: { tenantId, isActive: true }
+//     });
+  
+//     // Get fee assignments grouped by fee structure
+//     const feeStructureStats = await this.feeAssignmentService.feeAssignmentRepo
+//       .createQueryBuilder('fa')
+//       .select('fs.name', 'feeStructureName')
+//       .addSelect('COUNT(fa.id)', 'assignmentCount')
+//       .addSelect('SUM(fa.studentsAssignedCount)', 'totalStudents')
+//       .leftJoin('fa.feeStructure', 'fs')
+//       .where('fa.tenantId = :tenantId', { tenantId })
+//       .andWhere('fa.isActive = true')
+//       .groupBy('fa.feeStructureId')
+//       .addGroupBy('fs.name')
+//       .getRawMany();
+  
+//     return {
+//       overview: {
+//         totalFeeAssignments,
+//         totalStudentAssignments,
+//         totalFeeItems,
+//       },
+//       feeStructureBreakdown: feeStructureStats,
+//       generatedAt: new Date().toISOString(),
+//     };
+  
+
+// }
+
 }
 

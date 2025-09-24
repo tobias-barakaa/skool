@@ -3,6 +3,7 @@ import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, CreateDa
 import { FeeStructure } from "../../fee-structure/entities/fee-structure.entity";
 import { User } from "src/admin/users/entities/user.entity";
 import { StudentFeeAssignment } from "./student_fee_assignments.entity";
+import { FeeAssignmentGradeLevel } from "./fee_assignment_grade_levels.entity";
 
 @Entity('fee_assignments')
 @ObjectType({ description: 'Represents bulk assignment of fee structure to students in specific grade levels' })
@@ -27,9 +28,8 @@ export class FeeAssignment {
   feeStructure: FeeStructure;
 
  
-  @Field(() => [String], { description: 'Array of tenant grade level IDs that were targeted' })
-  @Column('simple-array')
-  tenantGradeLevelIds: string[]; 
+  @OneToMany(() => FeeAssignmentGradeLevel, agl => agl.feeAssignment, { cascade: true })
+  gradeLevels: FeeAssignmentGradeLevel[];
 
   @Field(() => ID, { description: 'The ID of the user who created this assignment' })
   @Column({ type: 'uuid' })
@@ -55,8 +55,12 @@ export class FeeAssignment {
   @Column({ default: true })
   isActive: boolean;
 
+
   @Field(() => [StudentFeeAssignment], { description: 'Individual student assignments created from this bulk assignment' })
-  @OneToMany(() => StudentFeeAssignment, (studentAssignment) => studentAssignment.feeAssignment)
+  @OneToMany(() => StudentFeeAssignment, sfa => sfa.feeAssignment, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   studentAssignments: StudentFeeAssignment[];
 
   @Field(() => GraphQLISODateTime, { description: 'The date and time when the fee assignment was created' })
@@ -67,4 +71,3 @@ export class FeeAssignment {
   @UpdateDateColumn()
   updatedAt: Date;
 }
-

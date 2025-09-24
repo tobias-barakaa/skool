@@ -38,7 +38,7 @@ export class FeeStructureService {
         tenantId: user.tenantId,
         academicYearId: input.academicYearId,
         termId: input.termId,
-        tenantGradeLevelId: input.tenantGradeLevelId,
+        name: input.name,
       }
     });
   
@@ -58,7 +58,7 @@ export class FeeStructureService {
   
       return await manager.findOne(FeeStructure, {
         where: { id: savedStructure.id },
-        relations: ['academicYear', 'term', 'tenantGradeLevel', 'tenantGradeLevel.gradeLevel']
+        relations: ['academicYear', 'term']
       });
     });
   }
@@ -95,27 +95,26 @@ export class FeeStructureService {
     );
 
   
-    const tenantGradeLevelRepository = this.dataSource.getRepository(TenantGradeLevel);
+//     const tenantGradeLevelRepository = this.dataSource.getRepository(TenantGradeLevel);
 
-validationPromises.push(
-  tenantGradeLevelRepository
-    .findOne({
-      where: {
-        id: input.tenantGradeLevelId,
-        tenant: { id: tenantId },
-        isActive: true
+// validationPromises.push(
+//   tenantGradeLevelRepository
+//     .findOne({
+//       where: {
+//         tenant: { id: tenantId },
+//         isActive: true
 
-      },
-      relations: ['gradeLevel'],
-    })
-    .then((row) => {
-      if (!row) {
-        throw new BadRequestException(
-          `Grade level ${input.tenantGradeLevelId} is not enabled for your organisation`,
-        );
-      }
-    })
-);
+//       },
+//       relations: ['gradeLevel'],
+//     })
+//     .then((row) => {
+//       if (!row) {
+//         throw new BadRequestException(
+//           `Grade level ${input.termId} is not enabled for your organisation`,
+//         );
+//       }
+//     })
+// );
 
   
     await Promise.all(validationPromises);
@@ -127,8 +126,6 @@ validationPromises.push(
       relations: [
         'academicYear',
         'term',
-        'tenantGradeLevel',
-        'tenantGradeLevel.gradeLevel',
         'items',
         'items.feeBucket',
       ],
@@ -150,7 +147,6 @@ validationPromises.push(
   }
 
   async findByGradeAndTerm(
-    tenantGradeLevelId: string,
     termId: string,
     academicYearId: string,
     user: ActiveUserData,
@@ -158,7 +154,6 @@ validationPromises.push(
     return this.feeStructureRepository.findOne({
       where: {
         tenantId: user.tenantId,
-        tenantGradeLevelId,
         termId,
         academicYearId,
         isActive: true,
@@ -166,8 +161,6 @@ validationPromises.push(
       relations: [
         'academicYear',
         'term',
-        'tenantGradeLevel',
-        'tenantGradeLevel.gradeLevel',
         'items',
         'items.feeBucket',
       ],
@@ -183,8 +176,6 @@ validationPromises.push(
       relations: [
         'academicYear',
         'term',
-        'tenantGradeLevel',
-        'tenantGradeLevel.gradeLevel',
         'items',
         'items.feeBucket',
       ],
@@ -213,7 +204,6 @@ validationPromises.push(
       if (input.isActive !== undefined) updateData.isActive = input.isActive;
       if (input.academicYearId !== undefined) updateData.academicYearId = input.academicYearId;
       if (input.termId !== undefined) updateData.termId = input.termId;
-      if (input.tenantGradeLevelId !== undefined) updateData.tenantGradeLevelId = input.tenantGradeLevelId;
   
       await mgr.update(FeeStructure, id, updateData);
   
@@ -222,8 +212,6 @@ validationPromises.push(
         relations: [
           'academicYear',
           'term',
-          'tenantGradeLevel',
-          'tenantGradeLevel.gradeLevel',
         ],
       });
   
@@ -245,8 +233,8 @@ validationPromises.push(
   }
   
 
-
-
-
 }
+
+
+
 

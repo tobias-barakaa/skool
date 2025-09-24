@@ -18,6 +18,13 @@ import { FeeStructureItemResolver } from './fee-structure-item/fee-structure-ite
 import { StudentFeeAssignment } from './fee-assignment/entities/student_fee_assignments.entity';
 import { StudentFeeItem } from './fee-assignment/entities/student_fee_items.entity';
 import { StudentModule } from '../student/student.module';
+import { InvoiceResolver } from './invoice/invoice.resolver';
+import { InvoiceService } from './invoice/invoice.service';
+import { PaymentResolver } from './payment/payment.resolver';
+import { PaymentService } from './payment/payment.service';
+import { Invoice } from './invoice/invoice.entity';
+import { Payment } from './payment/entities/payment.entity';
+import { FeeAssignmentGradeLevel } from './fee-assignment/entities/fee_assignment_grade_levels.entity';
 
 @Module({
   imports: [
@@ -27,7 +34,10 @@ import { StudentModule } from '../student/student.module';
       FeeAssignment,
       FeeStructureItem,
       StudentFeeAssignment,
-      StudentFeeItem
+      StudentFeeItem,
+      FeeAssignmentGradeLevel,
+      Invoice,
+      Payment
 
     ]),
     StudentModule
@@ -41,13 +51,24 @@ import { StudentModule } from '../student/student.module';
     FeeBucketResolver,
     FeeStructureResolver,
     FeeAssignmentResolver,
-    FeeStructureItemResolver
+    FeeStructureItemResolver,
+
+    InvoiceResolver,
+    InvoiceService,
+
+    PaymentResolver,
+    PaymentService
   ],
   exports: [
     FeeBucketService,
     FeeStructureService,
     FeeStructureItemService,
     FeeAssignmentService,
+    InvoiceResolver,
+    InvoiceService,
+
+    PaymentResolver,
+    PaymentService
   ],
 })
 export class FeeManagementModule {}

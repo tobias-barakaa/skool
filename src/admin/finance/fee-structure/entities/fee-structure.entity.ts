@@ -8,9 +8,7 @@ import { FeeStructureItem } from "../../fee-structure-item/entities/fee-structur
 
 @Entity('fee_structures')
 @ObjectType({ description: 'Represents a fee structure for a specific grade, term and academic year' })
-@Unique(['tenantId', 'academicYearId', 'termId', 'tenantGradeLevelId'])
-@Index(['tenantId', 'academicYearId', 'termId'])
-@Index(['tenantId', 'tenantGradeLevelId'])
+@Unique(['tenantId', 'academicYearId', 'termId', 'name'])
 export class FeeStructure {
   @Field(() => ID, { description: 'The unique identifier of the fee structure' })
   @PrimaryGeneratedColumn('uuid')
@@ -41,18 +39,6 @@ export class FeeStructure {
   @ManyToOne(() => Term, { eager: true })
   @JoinColumn({ name: 'termId' })
   term: Term;
-
-  @Field(() => ID, { description: 'The ID of the grade level' })
-  @Column()
-  tenantGradeLevelId: string;
-
-
-
-  @Field(() => TenantGradeLevel, { description: 'The grade level this fee structure applies to' })
-@ManyToOne(() => TenantGradeLevel, { eager: true })
-@JoinColumn({ name: 'tenantGradeLevelId' }) 
-tenantGradeLevel: TenantGradeLevel;
-
 
   @Field({ description: 'Indicates if the fee structure is currently active' })
   @Column({ default: true })

@@ -6,7 +6,6 @@ import { Tenant } from 'src/admin/tenants/entities/tenant.entity';
 import { Repository } from 'typeorm';
 import resendConfig from '../config/resend.config';
 
-// Email template interfaces
 interface BaseEmailData {
   recipientName: string;
   schoolName: string;
@@ -104,7 +103,6 @@ export class EmailService {
     `;
   }
 
-  // Common components
   private getInvitationButton(
     url: string,
     text: string,
@@ -334,8 +332,6 @@ export class EmailService {
       html: content,
     };
   }
-
-  // Generic email sender
   private async sendEmail(to: string, template: EmailTemplate): Promise<any> {
     const { data, error } = await this.resend.emails.send({
       from: this.resendConfiguration.fromEmail || 'noreply@squl.co.ke',
@@ -352,13 +348,12 @@ export class EmailService {
     return data;
   }
 
-  // Public methods - now much cleaner
   async sendTeacherInvitation(
     email: string,
     teacherName: string,
     schoolName: string,
     invitationToken: string,
-    inviterName: string, // Now receives name instead of ID
+    inviterName: string,
     tenantId: string,
   ): Promise<void> {
     try {

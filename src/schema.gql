@@ -257,6 +257,29 @@ input BroadcastMessageInput {
   subject: String
 }
 
+"""
+Input for bulk toggling fee items by fee structure item and grade levels
+"""
+input BulkToggleByFeeStructureItemInput {
+  """The fee structure item ID to toggle for students"""
+  feeStructureItemId: ID!
+
+  """Array of grade level IDs to apply the toggle to"""
+  gradeLevelIds: [ID!]!
+
+  """Whether to activate or deactivate the fee items"""
+  isActive: Boolean!
+}
+
+"""Input for bulk toggling student fee items"""
+input BulkToggleStudentFeeItemsInput {
+  """Whether to activate or deactivate the fee items"""
+  isActive: Boolean!
+
+  """Array of student fee item IDs to toggle"""
+  studentFeeItemIds: [ID!]!
+}
+
 input BulkTransportAssignmentInput {
   """Common pickup point for all students (optional)"""
   pickupPoint: String
@@ -393,9 +416,6 @@ input CreateFeeStructureInput {
   """The name of the fee structure"""
   name: String!
 
-  """The ID of the grade level"""
-  tenantGradeLevelId: ID!
-
   """The ID of the term"""
   termId: ID!
 }
@@ -428,6 +448,27 @@ input CreateHostelInput {
   name: String!
 }
 
+"""Input type for creating a new invoice"""
+input CreateInvoiceInput {
+  """The ID of the academic year"""
+  academicYearId: ID!
+
+  """Additional notes or description"""
+  description: String
+
+  """The due date for payment"""
+  dueDate: String!
+
+  """The ID of the student"""
+  studentId: ID!
+
+  """The ID of the term"""
+  termId: ID!
+
+  """The total amount of the invoice"""
+  totalAmount: Float!
+}
+
 input CreateOptionInput {
   imageUrl: String
   isCorrect: Boolean!
@@ -445,6 +486,30 @@ input CreateParentInvitationDto {
   studentGrade: String
   studentName: String
   studentPhone: String
+}
+
+"""Input type for creating a new payment"""
+input CreatePaymentInput {
+  """The amount paid"""
+  amount: Float!
+
+  """The ID of the invoice this payment is for"""
+  invoiceId: ID
+
+  """Additional notes about the payment"""
+  notes: String
+
+  """The date when the payment was made"""
+  paymentDate: String!
+
+  """The method used for payment"""
+  paymentMethod: PaymentMethod!
+
+  """The ID of the student making the payment"""
+  studentId: ID!
+
+  """Transaction ID from payment provider"""
+  transactionId: String
 }
 
 input CreateQuestionInput {
@@ -674,14 +739,23 @@ type FeeAssignment {
   studentAssignments: [StudentFeeAssignment!]!
   studentsAssignedCount: Int!
 
-  """Array of tenant grade level IDs that were targeted"""
-  tenantGradeLevelIds: [String!]!
-
   """The ID of the tenant this fee assignment belongs to"""
   tenantId: String!
 
   """The date and time when the fee assignment was last updated"""
   updatedAt: DateTime!
+}
+
+"""Fee assignment with detailed student information and fee items"""
+type FeeAssignmentWithStudents {
+  """The fee assignment details"""
+  feeAssignment: FeeAssignment!
+
+  """All student assignments for this fee assignment"""
+  studentAssignments: [StudentFeeAssignment!]!
+
+  """Total number of students assigned"""
+  totalStudents: Int!
 }
 
 """Represents a fee category/bucket like Tuition, Transport, etc."""
@@ -732,12 +806,6 @@ type FeeStructure {
 
   """The name of the fee structure"""
   name: String!
-
-  """The grade level this fee structure applies to"""
-  tenantGradeLevel: TenantGradeLevel!
-
-  """The ID of the grade level"""
-  tenantGradeLevelId: ID!
 
   """The ID of the tenant this fee structure belongs to"""
   tenantId: String!
@@ -824,6 +892,15 @@ type GeneratedQuestionOutput {
   order: Int!
   text: String!
   type: String!
+}
+
+"""Input for retrieving fee assignments by specific tenant grade levels"""
+input GetFeeAssignmentsByGradeLevelsInput {
+  """Optional fee structure ID to filter by specific fee structure"""
+  feeStructureId: ID
+
+  """Array of tenant grade level IDs to filter by"""
+  tenantGradeLevelIds: [ID!]!
 }
 
 type Grade {
@@ -952,6 +1029,82 @@ type InviteTeacherResponse {
   status: String!
 }
 
+"""Represents an invoice for student fees"""
+type Invoice {
+  """The academic year this invoice belongs to"""
+  academicYear: AcademicYear!
+
+  """The ID of the academic year"""
+  academicYearId: ID!
+
+  """The remaining balance"""
+  balance: Float!
+
+  """The date and time when the invoice was created"""
+  createdAt: DateTime!
+
+  """The ID of the user who created this invoice"""
+  createdBy: ID!
+
+  """The user who created this invoice"""
+  createdByUser: User!
+
+  """Additional notes or description"""
+  description: String
+
+  """The due date for payment"""
+  dueDate: DateTime!
+
+  """The unique identifier of the invoice"""
+  id: ID!
+
+  """The invoice number"""
+  invoiceNumber: String!
+
+  """Indicates if the invoice is currently active"""
+  isActive: Boolean!
+
+  """The date when the invoice was issued"""
+  issueDate: DateTime!
+
+  """The amount paid so far"""
+  paidAmount: Float!
+
+  """The status of the invoice"""
+  status: InvoiceStatus!
+
+  """The student this invoice belongs to"""
+  student: Student!
+
+  """The ID of the student"""
+  studentId: ID!
+
+  """The ID of the tenant this invoice belongs to"""
+  tenantId: String!
+
+  """The term this invoice belongs to"""
+  term: Term!
+
+  """The ID of the term"""
+  termId: ID!
+
+  """The total amount of the invoice"""
+  totalAmount: Float!
+
+  """The date and time when the invoice was last updated"""
+  updatedAt: DateTime!
+}
+
+"""The status of an invoice"""
+enum InvoiceStatus {
+  CANCELLED
+  DRAFT
+  OVERDUE
+  PAID
+  PARTIALLY_PAID
+  PENDING
+}
+
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
@@ -1013,6 +1166,14 @@ type Mutation {
     """Array of fee structure items to create"""
     items: [CreateFeeStructureItemInput!]!
   ): [FeeStructureItem!]!
+
+  """
+  Bulk toggle fee items by fee structure item and grade levels (e.g., activate transport for all Grade 1 students)
+  """
+  bulkToggleByFeeStructureItem(bulkToggleByFeeStructureItemInput: BulkToggleByFeeStructureItemInput!): [StudentFeeItem!]!
+
+  """Bulk activate or deactivate multiple student fee items"""
+  bulkToggleStudentFeeItems(bulkToggleInput: BulkToggleStudentFeeItemsInput!): [StudentFeeItem!]!
   changePassword(changePasswordInput: ChangePasswordInput!): PasswordResetResponse!
   configureSchoolLevelsByNames(levelNames: [String!]!): SchoolConfigurationResponse!
 
@@ -1038,6 +1199,12 @@ type Mutation {
   """Create a new fee structure item"""
   createFeeStructureItem(input: CreateFeeStructureItemInput!): FeeStructureItem!
   createHostel(input: CreateHostelInput!): Hostel!
+
+  """Create a new invoice"""
+  createInvoice(input: CreateInvoiceInput!): Invoice!
+
+  """Record a new payment"""
+  createPayment(input: CreatePaymentInput!): Payment!
   createScholarship(input: CreateScholarshipInput!): Scholarship!
   createStream(input: CreateStreamInput!): StreamType!
   createStudent(createStudentInput: CreateStudentInput!): CreateStudentResponse!
@@ -1074,7 +1241,13 @@ type Mutation {
   Delete all fee structure items for a specific fee structure and return count
   """
   deleteFeeStructureItemsByStructure(feeStructureId: ID!): Float!
-  deleteStaff(id: String!, tenantId: String!): String!
+
+  """Delete an invoice"""
+  deleteInvoice(id: ID!): Boolean!
+
+  """Delete a payment (only for non-completed payments)"""
+  deletePayment(id: ID!): Boolean!
+  deleteStaff(id: ID!): Boolean!
   deleteStream(id: ID!): Boolean!
   deleteTeacher(id: String!, tenantId: String!): String!
   deleteTenantStream(tenantStreamId: String!): Boolean!
@@ -1087,7 +1260,7 @@ type Mutation {
   forgotPassword(forgotPasswordInput: ForgotPasswordInput!): PasswordResetResponse!
   generateQuestions(generateQuestionsInput: GenerateQuestionsInput!): [GeneratedQuestionOutput!]!
   inviteParent(createParentDto: CreateParentInvitationDto!, studentIds: [String!]!, tenantId: String!): InviteParentResponse!
-  inviteStaff(createStaffDto: CreateStaffInvitationDto!, tenantId: String!): InviteStaffResponse!
+  inviteStaff(createStaffDto: CreateStaffInvitationDto!): InviteStaffResponse!
   inviteTeacher(createTeacherDto: CreateTeacherInvitationDto!): InviteTeacherResponse!
 
   """Mark attendance for students in a specific grade"""
@@ -1098,6 +1271,9 @@ type Mutation {
   Refresh search cache for current user tenant (placeholder for future caching)
   """
   refreshSearchCache: Boolean!
+
+  """Refund a completed payment"""
+  refundPayment(id: ID!, refundReason: String): Payment!
 
   """Delete a fee assignment and all related student assignments"""
   removeFeeAssignment(id: ID!): Boolean!
@@ -1111,7 +1287,6 @@ type Mutation {
   resetPassword(resetPasswordInput: ResetPasswordInput!): PasswordResetResponse!
   revokeInvitation(invitationId: String!): RevokeInvitationResponse!
   revokeParentInvitation(invitationId: String!): RevokeInvitationResponse!
-  revokeStaffInvitation(invitationId: String!): String!
   revokeStudent(studentId: String!): String!
   runFullSocketTest: String!
 
@@ -1157,8 +1332,17 @@ type Mutation {
   updateFeeStructureItem(id: ID!, input: UpdateFeeStructureItemInput!): FeeStructureItem!
   updateHostel(input: UpdateHostelInput!): Hostel!
   updateHostelAssignment(input: UpdateHostelAssignmentInput!): HostelAssignment!
+
+  """Update an existing invoice"""
+  updateInvoice(id: ID!, input: UpdateInvoiceInput!): Invoice!
+
+  """Update the payment status of an invoice"""
+  updateInvoicePaymentStatus(id: ID!, paidAmount: Float!): Invoice!
+
+  """Update an existing payment"""
+  updatePayment(id: ID!, input: UpdatePaymentInput!): Payment!
   updateScholarship(input: UpdateScholarshipInput!): Scholarship!
-  updateStaff(tenantId: String!, updateStaffInput: UpdateStaffInput!): StaffDto!
+  updateStaff(updateInput: UpdateStaffInput!): StaffDto!
   updateStream(input: UpdateStreamInput!): StreamType!
   updateStudentMarks(inputs: [EnterStudentMarksInput!]!): [AssessmentMark!]!
   updateStudentScholarship(input: UpdateStudentScholarshipInput!): StudentScholarship!
@@ -1228,6 +1412,97 @@ type PasswordResetResponse {
   message: String!
 }
 
+"""Represents a payment made by a student"""
+type Payment {
+  """The amount paid"""
+  amount: Float!
+
+  """The date and time when the payment was created"""
+  createdAt: DateTime!
+
+  """The unique identifier of the payment"""
+  id: ID!
+
+  """The invoice this payment is for"""
+  invoice: Invoice
+
+  """The ID of the invoice this payment is for"""
+  invoiceId: ID
+
+  """Indicates if the payment is currently active"""
+  isActive: Boolean!
+
+  """Additional notes about the payment"""
+  notes: String
+
+  """The date when the payment was made"""
+  paymentDate: DateTime!
+
+  """The method used for payment"""
+  paymentMethod: PaymentMethod!
+
+  """The ID of the user who recorded this payment"""
+  recordedBy: ID!
+
+  """The user who recorded this payment"""
+  recordedByUser: User!
+
+  """The payment reference number"""
+  referenceNumber: String!
+
+  """The status of the payment"""
+  status: PaymentStatus!
+
+  """The student making the payment"""
+  student: Student!
+
+  """The ID of the student making the payment"""
+  studentId: ID!
+
+  """The ID of the tenant this payment belongs to"""
+  tenantId: String!
+
+  """Transaction ID from payment provider"""
+  transactionId: String
+
+  """The date and time when the payment was last updated"""
+  updatedAt: DateTime!
+}
+
+"""The method used for payment"""
+enum PaymentMethod {
+  BANK_TRANSFER
+  CARD
+  CASH
+  CHEQUE
+  MOBILE_MONEY
+  ONLINE
+}
+
+"""The status of a payment"""
+enum PaymentStatus {
+  CANCELLED
+  COMPLETED
+  FAILED
+  PENDING
+  REFUNDED
+}
+
+"""Payment summary for a student"""
+type PaymentSummary {
+  """Number of payments"""
+  paymentCount: Int!
+
+  """Total amount paid"""
+  totalPaid: Float!
+
+  """Total amount pending"""
+  totalPending: Float!
+
+  """Total amount refunded"""
+  totalRefunded: Float!
+}
+
 type PendingInvitation {
   createdAt: DateTime!
   email: String!
@@ -1280,7 +1555,7 @@ type Query {
   """
   Returns the single active fee-structure that matches the supplied academic-year, term and tenant-grade-level (all scoped to the logged-in tenant). Includes items and their buckets.
   """
-  feeStructureByGradeAndTerm(academicYearId: ID!, tenantGradeLevelId: ID!, termId: ID!): FeeStructure
+  feeStructureByGradeAndTerm(academicYearId: ID!, termId: ID!): FeeStructure
 
   """Get a single fee structure item by ID"""
   feeStructureItem(id: ID!): FeeStructureItem!
@@ -1311,9 +1586,14 @@ type Query {
 
   """Get all mandatory fee structure items for a specific fee structure"""
   findMandatoryItems(feeStructureId: ID!): [FeeStructureItem!]!
-  getActiveStaffByTenant(tenantId: String!): [StaffDto!]!
   getAllClassTeacherAssignments: [ClassTeacherAssignment!]!
+  getAllStaff: [StaffDto!]!
   getAllTeachers: [Teacher!]!
+
+  """
+  Get all fee assignments for the current tenant with complete student and grade level data
+  """
+  getAllTenantFeeAssignments: TenantFeeAssignmentSummary!
   getAssignment(id: ID!): Assignment!
   getAssignmentsByRoute(routeId: String!): [TransportAssignment!]!
   getAttendanceByDate(date: String!, gradeId: String!): [Attendance!]!
@@ -1321,21 +1601,25 @@ type Query {
   """Get all students and teachers for current user tenant"""
   getBothStudentsAndTeachersByTenant: CombinedSearchResult!
   getChatMessages(chatRoomId: String!, limit: Float = 50, offset: Float = 0): [ChatMessage!]!
+
+  """Get a specific fee assignment by ID with all student details"""
+  getFeeAssignmentById(feeAssignmentId: ID!): FeeAssignmentWithStudents!
+
+  """
+  Get fee assignments for specific tenant grade levels with all student details and fee items
+  """
+  getFeeAssignmentsByGradeLevels(input: GetFeeAssignmentsByGradeLevelsInput!): [FeeAssignmentWithStudents!]!
   getGradeLevelClassTeacher(gradeLevelId: String!): ClassTeacherAssignment
   getMyAssignmentss(limit: Float = 10, offset: Float = 0, status: AssignmentStatus, subjectId: ID): AssignmentsResponse!
   getMyChats: [ChatRoom!]!
   getParentsByTenant(tenantId: String!): [Parent!]!
   getPendingInvitations(tenantId: String!): [PendingInvitation!]!
   getPendingParentInvitations(tenantId: String!): [PendingInvitation!]!
-  getPendingStaffInvitations(tenantId: String!): String!
   getPendingTeacherInvitation(email: String!): PendingInvitationResponse
   getPendingTeacherInvitations: [PendingInvitationResponse!]
   getSchoolConfiguration: SchoolConfigurationResponse!
   getSocketClients: [String!]!
-  getStaffByDepartment(department: String!, tenantId: String!): [StaffDto!]!
-  getStaffById(id: String!, tenantId: String!): StaffDto!
-  getStaffByTenant(tenantId: String!): [StaffDto!]!
-  getStaffCount(tenantId: String!): Float!
+  getStaffById(id: ID!): StaffDto!
   getStreamClassTeacher(streamId: String!): ClassTeacherAssignment
 
   """Get all streams for current user tenant"""
@@ -1362,6 +1646,18 @@ type Query {
   gradeLevelsWithStreams: [GradeLevelWithStreamsOutput!]!
   hostel(id: String!): Hostel!
   hostelAssignments(hostelId: String!): [HostelAssignment!]!
+
+  """Get a single invoice by ID"""
+  invoice(id: ID!): Invoice!
+
+  """Get all invoices for the current tenant"""
+  invoices: [Invoice!]!
+
+  """Get all invoices with a specific status"""
+  invoicesByStatus(status: InvoiceStatus!): [Invoice!]!
+
+  """Get all invoices for a specific student"""
+  invoicesByStudent(studentId: ID!): [Invoice!]!
   marksStats(academicYear: String!, gradeLevelId: String!, subjectId: String!, term: Int!): MarksStatsDto!
 
   """
@@ -1382,10 +1678,33 @@ type Query {
 
   """Get all optional fee structure items for a specific fee structure"""
   optionalFeeStructureItems(feeStructureId: ID!): [FeeStructureItem!]!
+
+  """Get all overdue invoices"""
+  overdueInvoices: [Invoice!]!
+
+  """Get a single payment by ID"""
+  payment(id: ID!): Payment!
+
+  """Get a payment by reference number"""
+  paymentByReferenceNumber(referenceNumber: String!): Payment!
+
+  """Get payment summary for a specific student"""
+  paymentSummaryByStudent(studentId: ID!): PaymentSummary!
+
+  """Get all payments for the current tenant"""
+  payments: [Payment!]!
+
+  """Get all payments for a specific invoice"""
+  paymentsByInvoice(invoiceId: ID!): [Payment!]!
+
+  """Get all payments with a specific status"""
+  paymentsByStatus(status: PaymentStatus!): [Payment!]!
+
+  """Get all payments for a specific student"""
+  paymentsByStudent(studentId: ID!): [Payment!]!
   scholarship(id: ID!): Scholarship!
   scholarships: [Scholarship!]!
   searchAvailableStudentsForParent(parentId: String!, searchTerm: String, tenantId: String!): [StudentSearchResponse!]!
-  searchStaff(searchTerm: String!, tenantId: String!): [StaffDto!]!
   searchStudentByAdmission(admissionNumber: String!, tenantId: String!): StudentSearchResponse
   searchStudentsByManualInput(studentFullName: String, studentGrade: String, studentPhone: String, tenantId: String!): [StudentSearchResponse!]!
   searchStudentsByName(name: String!, tenantId: String!): [StudentSearchResponse!]!
@@ -1398,6 +1717,9 @@ type Query {
 
   """Get all fee assignments for a specific student"""
   studentFeeAssignments(studentId: ID!): [StudentFeeAssignment!]!
+
+  """Get all fee items for a specific student"""
+  studentFeeItems(studentId: ID!): [StudentFeeItem!]!
 
   """Get student profile by ID (only accessible by the student themselves)"""
   studentProfileById(studentId: ID!): Student!
@@ -1987,6 +2309,23 @@ type Tenant {
   updatedAt: DateTime!
 }
 
+"""
+Complete fee assignment data for a tenant including all grade levels and students
+"""
+type TenantFeeAssignmentSummary {
+  """All fee assignments for this tenant"""
+  feeAssignments: [FeeAssignmentWithStudents!]!
+
+  """The tenant ID"""
+  tenantId: ID!
+
+  """Total number of fee assignments"""
+  totalFeeAssignments: Int!
+
+  """Total number of students with fee assignments"""
+  totalStudentsWithFees: Int!
+}
+
 type TenantGradeLevel {
   createdAt: DateTime!
   curriculum: Curriculum!
@@ -2201,9 +2540,6 @@ input UpdateFeeStructureInput {
   """The name of the fee structure"""
   name: String
 
-  """The ID of the grade level"""
-  tenantGradeLevelId: ID
-
   """The ID of the term"""
   termId: ID
 }
@@ -2228,6 +2564,45 @@ input UpdateHostelInput {
   feeAmount: Float
   id: ID!
   name: String
+}
+
+"""Input type for updating an invoice"""
+input UpdateInvoiceInput {
+  """Additional notes or description"""
+  description: String
+
+  """The due date for payment"""
+  dueDate: String
+
+  """Whether the invoice is active"""
+  isActive: Boolean
+
+  """The total amount of the invoice"""
+  totalAmount: Float
+}
+
+"""Input type for updating a payment"""
+input UpdatePaymentInput {
+  """The amount paid"""
+  amount: Float
+
+  """Whether the payment is active"""
+  isActive: Boolean
+
+  """Additional notes about the payment"""
+  notes: String
+
+  """The date when the payment was made"""
+  paymentDate: String
+
+  """The method used for payment"""
+  paymentMethod: PaymentMethod
+
+  """The status of the payment"""
+  status: PaymentStatus
+
+  """Transaction ID from payment provider"""
+  transactionId: String
 }
 
 input UpdateScholarshipInput {

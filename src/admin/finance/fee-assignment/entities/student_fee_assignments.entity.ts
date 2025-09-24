@@ -30,8 +30,14 @@ export class StudentFeeAssignment {
   @Column()
   feeAssignmentId: string;
 
+  // @ManyToOne(() => FeeAssignment, { eager: true })
+  // @JoinColumn({ name: 'feeAssignmentId' })
+  // feeAssignment: FeeAssignment;
+
   @Field(() => FeeAssignment, { description: 'The fee assignment this belongs to' })
-  @ManyToOne(() => FeeAssignment, { eager: true })
+  @ManyToOne(() => FeeAssignment, fa => fa.studentAssignments, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'feeAssignmentId' })
   feeAssignment: FeeAssignment;
 

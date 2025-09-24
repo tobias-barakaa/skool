@@ -1,4 +1,4 @@
-import { Args, Context, GraphQLExecutionContext, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, GraphQLExecutionContext, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { Auth } from 'src/admin/auth/decorator/auth.decorator';
 import { AuthType } from 'src/admin/auth/enums/auth-type.enum';
@@ -19,26 +19,21 @@ import { MembershipRole } from '../user-tenant-membership/entities/user-tenant-m
   MembershipRole.SCHOOL_ADMIN,
 )
 export class StaffResolver {
-  constructor(private staffService: StaffService) {}
+  constructor(private readonly staffService: StaffService) {}
 
   @Mutation(() => InviteStaffResponse)
   async inviteStaff(
     @Args('createStaffDto') createStaffDto: CreateStaffInvitationDto,
-    @Args('tenantId') tenantId: string,
     @ActiveUser() currentUser: ActiveUserData,
-  ) {
+  ): Promise<InviteStaffResponse> {
     console.log(Object.keys(createStaffDto), 'DTO keys');
-    console.log(tenantId, 'this is the tenant id');
-    console.log(currentUser.tenantId, 'this is the user tenant id');
-    console.log(createStaffDto, 'received createStaffDto');
+    console.log(currentUser.tenantId, 'Current user tenant ID');
+    console.log(createStaffDto, 'Received createStaffDto');
 
-    return await this.staffService.inviteStaff(
-      createStaffDto,
-      currentUser,
-      tenantId,
-    );
+    return await this.staffService.inviteStaff(createStaffDto, currentUser);
   }
 
+  
   @Mutation(() => AcceptStaffInvitationResponse)
   @Auth(AuthType.None)
   @SkipTenantValidation()
@@ -64,115 +59,191 @@ export class StaffResolver {
   }
 
   @Query(() => [StaffDto])
-  async getStaffByTenant(
-    @Args('tenantId') tenantId: string,
-    @ActiveUser() currentUser: User,
-  ) {
-    return this.staffService.getStaffByTenant(tenantId);
+  async getAllStaff(
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise<StaffDto[]> {
+    return await this.staffService.getAllStaff(currentUser.tenantId);
   }
 
   @Query(() => StaffDto)
   async getStaffById(
-    @Args('id') id: string,
-    @Args('tenantId') tenantId: string,
-    @ActiveUser() currentUser: User,
-  ) {
-    console.log(`Fetching staff with ID: ${id} for tenant: ${tenantId}`);
-
-    return this.staffService.getStaffById(id, tenantId);
+    @Args('id', { type: () => ID }) id: string,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise<StaffDto> {
+    return await this.staffService.getStaffById(id, currentUser.tenantId);
   }
-
 
   @Mutation(() => StaffDto)
   async updateStaff(
-    @Args('updateStaffInput') updateStaffInput: UpdateStaffInput,
-    @Args('tenantId') tenantId: string,
-    @ActiveUser() currentUser: User,
-  ) {
-    return this.staffService.updateStaff(
-      updateStaffInput,
-      currentUser,
-      tenantId,
-    );
+    @Args('updateInput') updateInput: UpdateStaffInput,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise<StaffDto> {
+    return await this.staffService.updateStaff(updateInput, currentUser.tenantId);
   }
 
-  @Mutation(() => String)
+  @Mutation(() => Boolean)
   async deleteStaff(
-    @Args('id') id: string,
-    @Args('tenantId') tenantId: string,
-    @ActiveUser() currentUser: User,
-  ) {
-    const result = await this.staffService.deleteStaff(
-      id,
-      currentUser,
-      tenantId,
-    );
-    return JSON.stringify(result);
-  }
-
-  @Query(() => String)
-  async getPendingStaffInvitations(
-    @Args('tenantId') tenantId: string,
-    @ActiveUser() currentUser: User,
-  ) {
-    const result = await this.staffService.getPendingInvitations(
-      tenantId,
-      currentUser,
-    );
-    return JSON.stringify(result);
-  }
-
-  @Mutation(() => String)
-  async revokeStaffInvitation(
-    @Args('invitationId') invitationId: string,
-    @ActiveUser() currentUser: User,
-  ) {
-    const result = await this.staffService.revokeInvitation(
-      invitationId,
-      currentUser,
-    );
-    return JSON.stringify(result);
-  }
-
-  // @Query(() => [String])
-  // async getStaffRoles() {
-  //   return Object.values(StaffRole);
-  // }
-
-  @Query(() => [StaffDto])
-  async getActiveStaffByTenant(
-    @Args('tenantId') tenantId: string,
-    @ActiveUser() currentUser: User,
-  ) {
-    return this.staffService.getActiveStaffByTenant(tenantId);
-  }
-
-  @Query(() => [StaffDto])
-  async getStaffByDepartment(
-    @Args('department') department: string,
-    @Args('tenantId') tenantId: string,
-    @ActiveUser() currentUser: User,
-  ) {
-    return this.staffService.getStaffByDepartment(department, tenantId);
-  }
-
-  @Query(() => Number)
-  async getStaffCount(
-    @Args('tenantId') tenantId: string,
-    @ActiveUser() currentUser: User,
-  ) {
-    return this.staffService.getStaffCount(tenantId);
-  }
-
-  @Query(() => [StaffDto])
-  async searchStaff(
-    @Args('searchTerm') searchTerm: string,
-    @Args('tenantId') tenantId: string,
-    @ActiveUser() currentUser: User,
-  ) {
-    return this.staffService.searchStaff(searchTerm, tenantId);
+    @Args('id', { type: () => ID }) id: string,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise<boolean> {
+    return await this.staffService.deleteStaff(id, currentUser.tenantId);
   }
 }
+// export class StaffResolver {
+//   constructor(private staffService: StaffService) {}
+
+//   @Mutation(() => InviteStaffResponse)
+//   async inviteStaff(
+//     @Args('createStaffDto') createStaffDto: CreateStaffInvitationDto,
+//     @Args('tenantId') tenantId: string,
+//     @ActiveUser() currentUser: ActiveUserData,
+//   ) {
+//     console.log(Object.keys(createStaffDto), 'DTO keys');
+//     console.log(tenantId, 'this is the tenant id');
+//     console.log(currentUser.tenantId, 'this is the user tenant id');
+//     console.log(createStaffDto, 'received createStaffDto');
+
+//     return await this.staffService.inviteStaff(
+//       createStaffDto,
+//       currentUser,
+//       tenantId,
+//     );
+//   }
+
+//   @Mutation(() => AcceptStaffInvitationResponse)
+//   @Auth(AuthType.None)
+//   @SkipTenantValidation()
+//   @SetMetadata('isPublic', true)
+//   async acceptStaffInvitation(
+//     @Args('acceptInvitationInput', { type: () => AcceptStaffInvitationInput })
+//     input: AcceptInvitationInput,
+//     @Context() context: GraphQLExecutionContext,
+//   ): Promise<AcceptStaffInvitationResponse> {
+//     const { message, user, tokens, staff, invitation, role } =
+//       await this.staffService.acceptInvitation(input.token, input.password);
+
+//     setAuthCookies(context, tokens, invitation.tenant.id);
+
+//     return {
+//       message,
+//       user,
+//       tokens,
+//       staff: staff || undefined,
+//       invitation,
+//       role,
+//     };
+//   }
+
+//   @Query(() => [StaffDto])
+//   async getStaffByTenant(
+//     @Args('tenantId') tenantId: string,
+//     @ActiveUser() currentUser: User,
+//   ) {
+//     return this.staffService.getStaffByTenant(tenantId);
+//   }
+
+//   @Query(() => StaffDto)
+//   async getStaffById(
+//     @Args('id') id: string,
+//     @Args('tenantId') tenantId: string,
+//     @ActiveUser() currentUser: User,
+//   ) {
+//     console.log(`Fetching staff with ID: ${id} for tenant: ${tenantId}`);
+
+//     return this.staffService.getStaffById(id, tenantId);
+//   }
+
+
+//   @Mutation(() => StaffDto)
+//   async updateStaff(
+//     @Args('updateStaffInput') updateStaffInput: UpdateStaffInput,
+//     @Args('tenantId') tenantId: string,
+//     @ActiveUser() currentUser: User,
+//   ) {
+//     return this.staffService.updateStaff(
+//       updateStaffInput,
+//       currentUser,
+//       tenantId,
+//     );
+//   }
+
+//   @Mutation(() => String)
+//   async deleteStaff(
+//     @Args('id') id: string,
+//     @Args('tenantId') tenantId: string,
+//     @ActiveUser() currentUser: User,
+//   ) {
+//     const result = await this.staffService.deleteStaff(
+//       id,
+//       currentUser,
+//       tenantId,
+//     );
+//     return JSON.stringify(result);
+//   }
+
+//   @Query(() => String)
+//   async getPendingStaffInvitations(
+//     @Args('tenantId') tenantId: string,
+//     @ActiveUser() currentUser: User,
+//   ) {
+//     const result = await this.staffService.getPendingInvitations(
+//       tenantId,
+//       currentUser,
+//     );
+//     return JSON.stringify(result);
+//   }
+
+//   @Mutation(() => String)
+//   async revokeStaffInvitation(
+//     @Args('invitationId') invitationId: string,
+//     @ActiveUser() currentUser: User,
+//   ) {
+//     const result = await this.staffService.revokeInvitation(
+//       invitationId,
+//       currentUser,
+//     );
+//     return JSON.stringify(result);
+//   }
+
+//   // @Query(() => [String])
+//   // async getStaffRoles() {
+//   //   return Object.values(StaffRole);
+//   // }
+
+//   @Query(() => [StaffDto])
+//   async getActiveStaffByTenant(
+//     @Args('tenantId') tenantId: string,
+//     @ActiveUser() currentUser: User,
+//   ) {
+//     return this.staffService.getActiveStaffByTenant(tenantId);
+//   }
+
+//   @Query(() => [StaffDto])
+//   async getStaffByDepartment(
+//     @Args('department') department: string,
+//     @Args('tenantId') tenantId: string,
+//     @ActiveUser() currentUser: User,
+//   ) {
+//     return this.staffService.getStaffByDepartment(department, tenantId);
+//   }
+
+//   @Query(() => Number)
+//   async getStaffCount(
+//     @Args('tenantId') tenantId: string,
+//     @ActiveUser() currentUser: User,
+//   ) {
+//     return this.staffService.getStaffCount(tenantId);
+//   }
+
+//   @Query(() => [StaffDto])
+//   async searchStaff(
+//     @Args('searchTerm') searchTerm: string,
+//     @Args('tenantId') tenantId: string,
+//     @ActiveUser() currentUser: User,
+//   ) {
+//     return this.staffService.searchStaff(searchTerm, tenantId);
+//   }
+// }
 
 
 

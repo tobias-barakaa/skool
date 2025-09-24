@@ -1,5 +1,4 @@
 import { InputType, Field, ID, PartialType } from '@nestjs/graphql';
-
 import { IsOptional, IsBoolean } from 'class-validator';
 import { CreateFeeAssignmentInput } from './assignment-structure.input';
 

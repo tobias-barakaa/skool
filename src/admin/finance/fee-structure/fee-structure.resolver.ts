@@ -61,17 +61,15 @@ export class FeeStructureResolver {
   })
   @Roles(MembershipRole.SCHOOL_ADMIN)
   async feeStructureByGradeAndTerm(
-    @Args('tenantGradeLevelId', { type: () => ID }) tenantGradeLevelId: string,
     @Args('termId', { type: () => ID }) termId: string,
     @Args('academicYearId', { type: () => ID }) academicYearId: string,
     @ActiveUser() user: ActiveUserData,
   ): Promise<FeeStructure | null> {
     this.logger.log(
-      `Fetching fee structure for tenant ${user.tenantId} – grade-level ${tenantGradeLevelId}, ` +
+      `Fetching fee structure for tenant ${user.tenantId} – grade-level }, ` +
       `term ${termId}, year ${academicYearId}`,
     );
     return this.feeStructureService.findByGradeAndTerm(
-      tenantGradeLevelId,
       termId,
       academicYearId,
       user,

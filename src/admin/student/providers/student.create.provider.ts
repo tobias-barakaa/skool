@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { HashingProvider } from 'src/admin/auth/providers/hashing.provider';
 import { DataSource, Like, QueryRunner, Repository } from 'typeorm';
 import { CreateStudentInput } from '../dtos/create-student-input.dto';
-import { CreateStudentResponse } from '../dtos/student-response.dto';
 import { Student } from '../entities/student.entity';
 import { MembershipRole, UserTenantMembership } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
 import { User } from 'src/admin/users/entities/user.entity';
@@ -16,6 +15,9 @@ import { FeeStructureItem } from 'src/admin/finance/fee-structure-item/entities/
 import { StudentFeeAssignment } from 'src/admin/finance/fee-assignment/entities/student_fee_assignments.entity';
 import { StudentFeeItem } from 'src/admin/finance/fee-assignment/entities/student_fee_items.entity';
 import { randomBytes } from 'crypto';
+import { CreateStudentResponse } from '../dtos/student-response.dto';
+
+
 
 @Injectable()
 export class UsersCreateStudentProvider {
@@ -61,6 +63,82 @@ export class UsersCreateStudentProvider {
     return membership;
   }
 
+  // private async executeStudentCreation(
+  //   input: CreateStudentInput, 
+  //   tenantId: string, 
+  //   currentUser: ActiveUserData
+  // ): Promise<CreateStudentResponse> {
+  //   const queryRunner = this.dataSource.createQueryRunner();
+  //   await queryRunner.connect();
+  //   await queryRunner.startTransaction();
+
+  //   try {
+  //     await this.validateStudentData(queryRunner, input, tenantId);
+      
+  //     const tenantGradeLevel = await this.getValidatedGradeLevel(queryRunner, input.tenantGradeLevelId);
+      
+  //     const generatedPassword = this.generateSecurePassword();
+      
+  //     const user = await this.createUserRecord(queryRunner, input, currentUser, generatedPassword);
+  //     const student = await this.createStudentRecord(queryRunner, input, user, tenantGradeLevel, tenantId);
+      
+  //     await this.assignFeeStructures(queryRunner, student, tenantGradeLevel, tenantId);
+      
+  //     await this.createStudentMembership(queryRunner, user.id, tenantId);
+      
+  //     await queryRunner.commitTransaction();
+      
+  //     this.logger.log(`Student created successfully with ID: ${student.id}`);
+      
+  //     return {
+  //       user,
+  //       student,
+  //       generatedPassword,
+  //     };
+  //   } catch (error) {
+  //     await queryRunner.rollbackTransaction();
+  //     this.logger.error(`Error creating student: ${error.message}`, error.stack);
+  //     throw error;
+  //   } finally {
+  //     await queryRunner.release();
+  //   }
+  // }
+
+
+  private async assignFeeStructuresWithRetry(
+    queryRunner: QueryRunner,
+    student: Student,
+    tenantGradeLevel: TenantGradeLevel,
+    tenantId: string,
+    maxRetries: number = 3
+  ): Promise<void> {
+    let attempt = 0;
+    
+    while (attempt < maxRetries) {
+      try {
+        await this.assignFeeStructures(queryRunner, student, tenantGradeLevel, tenantId);
+        return; 
+      } catch (error) {
+        attempt++;
+        
+        if (error.code === '42P01' || error.message?.includes('does not exist')) {
+          this.logger.log('Tables do not exist, skipping fee assignment');
+          return;
+        }
+        
+        if (attempt >= maxRetries) {
+          this.logger.error(`Failed to assign fee structures after ${maxRetries} attempts: ${error.message}`);
+          throw error;
+        }
+        
+        const waitTime = Math.pow(2, attempt) * 1000; 
+        this.logger.warn(`Fee assignment attempt ${attempt} failed, retrying in ${waitTime}ms: ${error.message}`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+      }
+    }
+  }
+
+
   private async executeStudentCreation(
     input: CreateStudentInput, 
     tenantId: string, 
@@ -69,7 +147,7 @@ export class UsersCreateStudentProvider {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
-
+  
     try {
       await this.validateStudentData(queryRunner, input, tenantId);
       
@@ -80,7 +158,26 @@ export class UsersCreateStudentProvider {
       const user = await this.createUserRecord(queryRunner, input, currentUser, generatedPassword);
       const student = await this.createStudentRecord(queryRunner, input, user, tenantGradeLevel, tenantId);
       
-      await this.assignFeeStructures(queryRunner, student, tenantGradeLevel, tenantId);
+      // Create a savepoint before fee assignment
+      await queryRunner.query('SAVEPOINT before_fee_assignment');
+      
+      try {
+        await this.assignFeeStructures(queryRunner, student, tenantGradeLevel, tenantId);
+        // Release the savepoint if fee assignment succeeds
+        await queryRunner.query('RELEASE SAVEPOINT before_fee_assignment');
+      } catch (feeError) {
+        // Rollback to savepoint if fee assignment fails
+        this.logger.warn(`Fee assignment failed, rolling back to savepoint: ${feeError.message}`);
+        
+        try {
+          await queryRunner.query('ROLLBACK TO SAVEPOINT before_fee_assignment');
+          await queryRunner.query('RELEASE SAVEPOINT before_fee_assignment');
+        } catch (savepointError) {
+          this.logger.error(`Failed to rollback to savepoint: ${savepointError.message}`);
+        }
+        
+        // Continue with the rest of the transaction
+      }
       
       await this.createStudentMembership(queryRunner, user.id, tenantId);
       
@@ -94,13 +191,71 @@ export class UsersCreateStudentProvider {
         generatedPassword,
       };
     } catch (error) {
-      await queryRunner.rollbackTransaction();
+      try {
+        await queryRunner.rollbackTransaction();
+      } catch (rollbackError) {
+        this.logger.error(`Failed to rollback transaction: ${rollbackError.message}`);
+      }
+      
       this.logger.error(`Error creating student: ${error.message}`, error.stack);
       throw error;
     } finally {
       await queryRunner.release();
     }
   }
+
+  
+  
+
+  // private async executeStudentCreation(
+  //   input: CreateStudentInput, 
+  //   tenantId: string, 
+  //   currentUser: ActiveUserData
+  // ): Promise<CreateStudentResponse> {
+  //   const queryRunner = this.dataSource.createQueryRunner();
+  //   await queryRunner.connect();
+  //   await queryRunner.startTransaction();
+  
+  //   try {
+  //     await this.validateStudentData(queryRunner, input, tenantId);
+      
+  //     const tenantGradeLevel = await this.getValidatedGradeLevel(queryRunner, input.tenantGradeLevelId);
+      
+  //     const generatedPassword = this.generateSecurePassword();
+      
+  //     const user = await this.createUserRecord(queryRunner, input, currentUser, generatedPassword);
+  //     const student = await this.createStudentRecord(queryRunner, input, user, tenantGradeLevel, tenantId);
+      
+  //     try {
+  //       await this.assignFeeStructures(queryRunner, student, tenantGradeLevel, tenantId);
+  //     } catch (feeError) {
+  //       this.logger.warn(`Fee assignment failed for student ${student.id}: ${feeError.message}`, feeError.stack);
+  //     }
+      
+  //     await this.createStudentMembership(queryRunner, user.id, tenantId);
+      
+  //     await queryRunner.commitTransaction();
+      
+  //     this.logger.log(`Student created successfully with ID: ${student.id}`);
+      
+  //     return {
+  //       user,
+  //       student,
+  //       generatedPassword,
+  //     };
+  //   } catch (error) {
+  //     try {
+  //       await queryRunner.rollbackTransaction();
+  //     } catch (rollbackError) {
+  //       this.logger.error(`Failed to rollback transaction: ${rollbackError.message}`);
+  //     }
+      
+  //     this.logger.error(`Error creating student: ${error.message}`, error.stack);
+  //     throw error;
+  //   } finally {
+  //     await queryRunner.release();
+  //   }
+  // }
 
   private async validateStudentData(
     queryRunner: QueryRunner, 
@@ -223,6 +378,49 @@ export class UsersCreateStudentProvider {
     return await queryRunner.manager.save(student);
   }
 
+  // private async assignFeeStructures(
+  //   queryRunner: QueryRunner,
+  //   student: Student,
+  //   tenantGradeLevel: TenantGradeLevel,
+  //   tenantId: string,
+  // ): Promise<void> {
+  //   try {
+  //     const hasFeeTables = await this.checkFeeTablesExist(queryRunner);
+      
+  //     if (!hasFeeTables) {
+  //       this.logger.log('Fee assignment tables not found. Skipping fee assignment for student creation.');
+  //       return;
+  //     }
+
+  //     const feeAssignments = await this.getFeeAssignmentsForGrade(
+  //       queryRunner,
+  //       tenantGradeLevel.id,
+  //       tenantId
+  //     );
+
+  //     if (feeAssignments.length === 0) {
+  //       this.logger.log(`No fee assignments found for grade level ${tenantGradeLevel.id}. Student created without fee assignments.`);
+  //       return;
+  //     }
+
+  //     await Promise.all(
+  //       feeAssignments.map(async (assignment) => {
+  //         await this.createStudentFeeAssignment(queryRunner, assignment, student.id, tenantId);
+  //         await this.incrementAssignmentCount(queryRunner, assignment);
+  //       })
+  //     );
+
+  //     this.logger.log(`Successfully assigned ${feeAssignments.length} fee structures to student ${student.id}`);
+  //   } catch (error) {
+  //     if (error.message?.includes('does not exist') || error.code === '42P01') {
+  //       this.logger.log('Fee-related tables do not exist yet. Student created without fee assignments.');
+  //       return;
+  //     }
+      
+  //     throw error;
+  //   }
+  // }
+
   private async assignFeeStructures(
     queryRunner: QueryRunner,
     student: Student,
@@ -236,71 +434,140 @@ export class UsersCreateStudentProvider {
         this.logger.log('Fee assignment tables not found. Skipping fee assignment for student creation.');
         return;
       }
-
+  
       const feeAssignments = await this.getFeeAssignmentsForGrade(
         queryRunner,
         tenantGradeLevel.id,
         tenantId
       );
-
+  
       if (feeAssignments.length === 0) {
         this.logger.log(`No fee assignments found for grade level ${tenantGradeLevel.id}. Student created without fee assignments.`);
         return;
       }
-
-      await Promise.all(
-        feeAssignments.map(async (assignment) => {
+  
+      let successCount = 0;
+      for (const assignment of feeAssignments) {
+        try {
           await this.createStudentFeeAssignment(queryRunner, assignment, student.id, tenantId);
           await this.incrementAssignmentCount(queryRunner, assignment);
-        })
-      );
-
-      this.logger.log(`Successfully assigned ${feeAssignments.length} fee structures to student ${student.id}`);
+          successCount++;
+        } catch (assignmentError) {
+          this.logger.error(`Failed to assign fee structure ${assignment.id} to student ${student.id}: ${assignmentError.message}`);
+        }
+      }
+  
+      this.logger.log(`Successfully assigned ${successCount}/${feeAssignments.length} fee structures to student ${student.id}`);
     } catch (error) {
       if (error.message?.includes('does not exist') || error.code === '42P01') {
         this.logger.log('Fee-related tables do not exist yet. Student created without fee assignments.');
         return;
       }
       
+      if (error.code === '25P02') { 
+        this.logger.error('Transaction aborted during fee assignment. This indicates a previous error in the transaction.');
+        throw new Error('Transaction was aborted during fee assignment. Please check previous operations.');
+      }
+      
       throw error;
     }
   }
 
+  
+
+  // private async checkFeeTablesExist(queryRunner: QueryRunner): Promise<boolean> {
+  //   try {
+  //     const result = await queryRunner.query(`
+  //       SELECT EXISTS (
+  //         SELECT FROM information_schema.tables 
+  //         WHERE table_schema = 'public' 
+  //         AND table_name = 'fee_assignments'
+  //       ) as fee_assignments_exists,
+  //       EXISTS (
+  //         SELECT FROM information_schema.tables 
+  //         WHERE table_schema = 'public' 
+  //         AND table_name = 'fee_structure_items'
+  //       ) as fee_structure_items_exists,
+  //       EXISTS (
+  //         SELECT FROM information_schema.tables 
+  //         WHERE table_schema = 'public' 
+  //         AND table_name = 'student_fee_assignments'
+  //       ) as student_fee_assignments_exists,
+  //       EXISTS (
+  //         SELECT FROM information_schema.tables 
+  //         WHERE table_schema = 'public' 
+  //         AND table_name = 'student_fee_items'
+  //       ) as student_fee_items_exists;
+  //     `);
+
+  //     const tables = result[0];
+  //     return tables.fee_assignments_exists && 
+  //            tables.fee_structure_items_exists && 
+  //            tables.student_fee_assignments_exists && 
+  //            tables.student_fee_items_exists;
+  //   } catch (error) {
+  //     this.logger.error('Error checking fee table existence:', error.message);
+  //     return false;
+  //   }
+  // }
+
+
   private async checkFeeTablesExist(queryRunner: QueryRunner): Promise<boolean> {
     try {
+      const requiredTables = [
+        'fee_assignments',
+        'fee_structure_items', 
+        'student_fee_assignments',
+        'student_fee_items'
+      ];
+  
       const result = await queryRunner.query(`
-        SELECT EXISTS (
-          SELECT FROM information_schema.tables 
-          WHERE table_schema = 'public' 
-          AND table_name = 'fee_assignments'
-        ) as fee_assignments_exists,
-        EXISTS (
-          SELECT FROM information_schema.tables 
-          WHERE table_schema = 'public' 
-          AND table_name = 'fee_structure_items'
-        ) as fee_structure_items_exists,
-        EXISTS (
-          SELECT FROM information_schema.tables 
-          WHERE table_schema = 'public' 
-          AND table_name = 'student_fee_assignments'
-        ) as student_fee_assignments_exists,
-        EXISTS (
-          SELECT FROM information_schema.tables 
-          WHERE table_schema = 'public' 
-          AND table_name = 'student_fee_items'
-        ) as student_fee_items_exists;
+        SELECT 
+          ${requiredTables.map(table => `
+            EXISTS (
+              SELECT FROM information_schema.tables 
+              WHERE table_schema = 'public' 
+              AND table_name = '${table}'
+            ) as ${table}_exists
+          `).join(',\n')}
       `);
-
+  
       const tables = result[0];
-      return tables.fee_assignments_exists && 
-             tables.fee_structure_items_exists && 
-             tables.student_fee_assignments_exists && 
-             tables.student_fee_items_exists;
+      const allTablesExist = requiredTables.every(table => tables[`${table}_exists`]);
+      
+      if (!allTablesExist) {
+        const missingTables = requiredTables.filter(table => !tables[`${table}_exists`]);
+        this.logger.log(`Missing fee tables: ${missingTables.join(', ')}`);
+      }
+      
+      return allTablesExist;
     } catch (error) {
       this.logger.error('Error checking fee table existence:', error.message);
       return false;
     }
   }
+
+  // private async getFeeAssignmentsForGrade(
+  //   queryRunner: QueryRunner,
+  //   gradeId: string,
+  //   tenantId: string,
+  // ): Promise<FeeAssignment[]> {
+  //   try {
+  //     return await queryRunner.manager.find(FeeAssignment, {
+  //       where: {
+  //         tenantId,
+  //         tenantGradeLevelIds: Like(`%${gradeId}%`),
+  //         isActive: true,
+  //       },
+  //     });
+  //   } catch (error) {
+  //     if (error.message?.includes('does not exist') || error.code === '42P01') {
+  //       this.logger.log('Fee assignment table does not exist. Returning empty array.');
+  //       return [];
+  //     }
+  //     throw error;
+  //   }
+  // }
 
   private async getFeeAssignmentsForGrade(
     queryRunner: QueryRunner,
@@ -308,13 +575,12 @@ export class UsersCreateStudentProvider {
     tenantId: string,
   ): Promise<FeeAssignment[]> {
     try {
-      return await queryRunner.manager.find(FeeAssignment, {
-        where: {
-          tenantId,
-          tenantGradeLevelIds: Like(`%${gradeId}%`),
-          isActive: true,
-        },
-      });
+      return await queryRunner.manager
+        .createQueryBuilder(FeeAssignment, 'fa')
+        .where('fa.tenantId = :tenantId', { tenantId })
+        .andWhere('fa.isActive = true')
+        .andWhere(':gradeId = ANY(string_to_array(fa.tenantGradeLevelIds, \',\'))', { gradeId })
+        .getMany();
     } catch (error) {
       if (error.message?.includes('does not exist') || error.code === '42P01') {
         this.logger.log('Fee assignment table does not exist. Returning empty array.');
@@ -324,6 +590,53 @@ export class UsersCreateStudentProvider {
     }
   }
 
+  // private async createStudentFeeAssignment(
+  //   queryRunner: QueryRunner,
+  //   feeAssignment: FeeAssignment,
+  //   studentId: string,
+  //   tenantId: string,
+  // ): Promise<void> {
+  //   try {
+  //     const studentAssignment = queryRunner.manager.create(StudentFeeAssignment, {
+  //       tenantId,
+  //       studentId,
+  //       feeAssignmentId: feeAssignment.id,
+  //     });
+
+  //     const savedStudentAssignment = await queryRunner.manager.save(studentAssignment);
+
+  //     const feeStructureItems = await this.getFeeStructureItems(
+  //       queryRunner,
+  //       feeAssignment.feeStructureId,
+  //       tenantId
+  //     );
+
+  //     if (feeStructureItems.length === 0) {
+  //       this.logger.log(`No fee structure items found for fee structure ${feeAssignment.feeStructureId}`);
+  //       return;
+  //     }
+
+  //     const studentFeeItems = feeStructureItems.map(item =>
+  //       queryRunner.manager.create(StudentFeeItem, {
+  //         tenantId,
+  //         studentFeeAssignmentId: savedStudentAssignment.id,
+  //         feeStructureItemId: item.id,
+  //         amount: item.amount,
+  //         isMandatory: item.isMandatory,
+  //         isActive: item.isMandatory,
+  //       })
+  //     );
+
+  //     await queryRunner.manager.save(studentFeeItems);
+  //   } catch (error) {
+  //     if (error.message?.includes('does not exist') || error.code === '42P01') {
+  //       this.logger.log('Fee-related tables do not exist. Skipping fee assignment creation.');
+  //       return;
+  //     }
+  //     throw error;
+  //   }
+  // }
+
   private async createStudentFeeAssignment(
     queryRunner: QueryRunner,
     feeAssignment: FeeAssignment,
@@ -331,37 +644,55 @@ export class UsersCreateStudentProvider {
     tenantId: string,
   ): Promise<void> {
     try {
+      const existingAssignment = await queryRunner.manager.findOne(StudentFeeAssignment, {
+        where: {
+          tenantId,
+          studentId,
+          feeAssignmentId: feeAssignment.id,
+        },
+      });
+  
+      if (existingAssignment) {
+        this.logger.log(`Student fee assignment already exists for student ${studentId} and fee assignment ${feeAssignment.id}`);
+        return;
+      }
+  
       const studentAssignment = queryRunner.manager.create(StudentFeeAssignment, {
         tenantId,
         studentId,
         feeAssignmentId: feeAssignment.id,
       });
-
+  
       const savedStudentAssignment = await queryRunner.manager.save(studentAssignment);
-
+  
       const feeStructureItems = await this.getFeeStructureItems(
         queryRunner,
         feeAssignment.feeStructureId,
         tenantId
       );
-
+  
       if (feeStructureItems.length === 0) {
         this.logger.log(`No fee structure items found for fee structure ${feeAssignment.feeStructureId}`);
         return;
       }
-
-      const studentFeeItems = feeStructureItems.map(item =>
-        queryRunner.manager.create(StudentFeeItem, {
-          tenantId,
-          studentFeeAssignmentId: savedStudentAssignment.id,
-          feeStructureItemId: item.id,
-          amount: item.amount,
-          isMandatory: item.isMandatory,
-          isActive: item.isMandatory,
-        })
-      );
-
-      await queryRunner.manager.save(studentFeeItems);
+  
+      const batchSize = 100;
+      for (let i = 0; i < feeStructureItems.length; i += batchSize) {
+        const batch = feeStructureItems.slice(i, i + batchSize);
+        
+        const studentFeeItems = batch.map(item =>
+          queryRunner.manager.create(StudentFeeItem, {
+            tenantId,
+            studentFeeAssignmentId: savedStudentAssignment.id,
+            feeStructureItemId: item.id,
+            amount: item.amount,
+            isMandatory: item.isMandatory,
+            isActive: item.isMandatory,
+          })
+        );
+  
+        await queryRunner.manager.save(studentFeeItems);
+      }
     } catch (error) {
       if (error.message?.includes('does not exist') || error.code === '42P01') {
         this.logger.log('Fee-related tables do not exist. Skipping fee assignment creation.');
