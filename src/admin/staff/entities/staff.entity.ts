@@ -94,13 +94,15 @@ export class Staff {
   @Column({ nullable: true })
   nationalId?: string;
 
-  @Field({ nullable: true })
-  @Column({ type: 'date', nullable: true })
-  dateOfBirth?: Date;
+
 
   @Field({ nullable: true })
   @Column({ type: 'date', nullable: true })
-  dateOfJoining?: Date;
+dateOfBirth?: string;   
+
+@Field({ nullable: true })
+@Column({ type: 'date', nullable: true })
+dateOfJoining?: string;
 
   @Field({ nullable: true })
   @Column({ nullable: true })

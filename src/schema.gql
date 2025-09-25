@@ -1379,6 +1379,20 @@ type Parent {
   user: User
 }
 
+type ParentDto {
+  address: String
+  createdAt: DateTime!
+  email: String!
+  id: ID!
+  isActive: Boolean!
+  name: String!
+  occupation: String
+  phone: String!
+  students: [StudentForParentDto!]!
+  updatedAt: DateTime!
+  userId: String
+}
+
 type ParentInfo {
   email: String!
   isPrimary: Boolean!
@@ -1587,6 +1601,7 @@ type Query {
   """Get all mandatory fee structure items for a specific fee structure"""
   findMandatoryItems(feeStructureId: ID!): [FeeStructureItem!]!
   getAllClassTeacherAssignments: [ClassTeacherAssignment!]!
+  getAllParents: [ParentDto!]!
   getAllStaff: [StaffDto!]!
   getAllTeachers: [Teacher!]!
 
@@ -1937,8 +1952,8 @@ type StaffDto {
   bankAccount: String
   bankName: String
   createdAt: DateTime!
-  dateOfBirth: DateTime
-  dateOfJoining: DateTime
+  dateOfBirth: String
+  dateOfJoining: String
   department: String
   email: String!
   emergencyContact: String
@@ -2104,6 +2119,16 @@ type StudentFeeItem {
 
   """The date and time when the item was last updated"""
   updatedAt: DateTime!
+}
+
+type StudentForParentDto {
+  admissionNumber: String!
+  firstName: String!
+  grade: String!
+  id: ID!
+  isPrimary: Boolean!
+  lastName: String!
+  relationship: String!
 }
 
 type StudentLoginInfo {

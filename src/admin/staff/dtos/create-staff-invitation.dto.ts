@@ -164,10 +164,10 @@ export class StaffDto {
   nationalId?: string;
 
   @Field({ nullable: true })
-  dateOfBirth?: Date;
+dateOfBirth?: string;
 
-  @Field({ nullable: true })
-  dateOfJoining?: Date;
+@Field({ nullable: true })
+dateOfJoining?: string;
 
   @Field({ nullable: true })
   address?: string;

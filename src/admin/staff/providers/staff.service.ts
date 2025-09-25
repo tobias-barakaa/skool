@@ -277,7 +277,7 @@ private async handleInvitationResendLogic(
         ? {
             id: staff.id,
             name: staff.fullName,
-            role: staff.role, // Ensure the role is included
+            role: staff.role, 
           }
         : undefined,
       invitation: result.invitation,

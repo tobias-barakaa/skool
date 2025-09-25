@@ -19,6 +19,7 @@ import { AcceptParentInvitationResponse } from './dtos/accept-parent-invitation.
 import { MembershipRole } from '../user-tenant-membership/entities/user-tenant-membership.entity';
 import { Roles } from 'src/iam/decorators/roles.decorator';
 import { SkipTenantValidation } from '../auth/decorator/skip-tenant-validation.decorator';
+import { ParentDto } from './dtos/parent.dto';
 
 @Resolver()
 @Roles(
@@ -50,6 +51,13 @@ export class ParentResolver {
       tenantId,
     );
   }
+
+  @Query(() => [ParentDto])
+async getAllParents(
+  @ActiveUser() currentUser: ActiveUserData,
+): Promise<ParentDto[]> {
+  return this.parentService.getAllParents(currentUser.tenantId);
+}
 
   @Mutation(() => AcceptParentInvitationResponse)
   @Auth(AuthType.None)
