@@ -371,8 +371,6 @@ private async createStudentRecord(
 
 
 
-
-
 private async createStudentMembership(
   queryRunner: QueryRunner,
   userId: string,

@@ -393,10 +393,10 @@ input CreateFeeAssignmentInput {
   description: String
 
   """The ID of the fee structure to assign"""
-  feeStructureId: ID!
+  feeStructureId: String!
 
   """Array of tenant grade level IDs (not grade level IDs)"""
-  tenantGradeLevelIds: [ID!]!
+  tenantGradeLevelIds: [String!]!
 }
 
 """Input type for creating a new fee bucket"""
@@ -411,13 +411,13 @@ input CreateFeeBucketInput {
 """Input type for creating a new fee structure"""
 input CreateFeeStructureInput {
   """The ID of the academic year"""
-  academicYearId: ID!
+  academicYearId: String!
 
   """The name of the fee structure"""
   name: String!
 
   """The ID of the term"""
-  termId: ID!
+  termId: String!
 }
 
 """Input for creating a new fee structure item"""
@@ -2536,13 +2536,13 @@ input UpdateFeeAssignmentInput {
   description: String
 
   """The ID of the fee structure to assign"""
-  feeStructureId: ID
+  feeStructureId: String
 
   """Whether the assignment is active"""
   isActive: Boolean
 
   """Array of tenant grade level IDs (not grade level IDs)"""
-  tenantGradeLevelIds: [ID!]
+  tenantGradeLevelIds: [String!]
 }
 
 """Input type for updating a fee bucket"""
@@ -2559,14 +2559,14 @@ input UpdateFeeBucketInput {
 
 input UpdateFeeStructureInput {
   """The ID of the academic year"""
-  academicYearId: ID
+  academicYearId: String
   isActive: Boolean
 
   """The name of the fee structure"""
   name: String
 
   """The ID of the term"""
-  termId: ID
+  termId: String
 }
 
 """Input for updating a fee structure item (partial)"""

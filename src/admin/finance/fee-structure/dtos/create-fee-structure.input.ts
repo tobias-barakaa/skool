@@ -11,15 +11,19 @@ export class CreateFeeStructureInput {
   @MaxLength(200)
   name: string;
 
-  @Field(() => ID, { description: 'The ID of the academic year' })
+  @Field(() => String, { description: 'The ID of the academic year' })
   @IsNotEmpty()
   @IsUUID()
   academicYearId: string;
 
-  @Field(() => ID, { description: 'The ID of the term' })
-  @IsNotEmpty()
-  @IsUUID()
-  termId: string;
+  // @Field(() => ID, { description: 'The ID of the term' })
+  // @IsNotEmpty()
+  // @IsUUID()
+  // termId: string;
 
+  @Field(() => String, { description: 'The ID of the term' })
+@IsNotEmpty()
+@IsUUID()
+termId: string;
 
 }

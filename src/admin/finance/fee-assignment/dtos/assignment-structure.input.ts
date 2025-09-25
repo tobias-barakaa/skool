@@ -6,18 +6,18 @@ import { IsNotEmpty, IsArray, IsUUID, ArrayNotEmpty, IsOptional, IsBoolean, IsSt
   description: 'Input for creating a new fee assignment'
 })
 export class CreateFeeAssignmentInput {
-  @Field(() => ID, {
+  @Field(() => String, {
     description: 'The ID of the fee structure to assign'
   })
   @IsNotEmpty()
   @IsUUID()
   feeStructureId: string;
 
-  @Field(() => [ID], { description: 'Array of tenant grade level IDs (not grade level IDs)' })
-  @IsArray()
-  @ArrayNotEmpty()
-  @IsUUID(4, { each: true })
-  tenantGradeLevelIds: string[];
+  @Field(() => [String], { description: 'Array of tenant grade level IDs (not grade level IDs)' })
+@IsArray()
+@ArrayNotEmpty()
+@IsUUID(4, { each: true })
+tenantGradeLevelIds: string[];
 
  
   @Field({
