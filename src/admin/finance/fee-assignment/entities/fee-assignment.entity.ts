@@ -63,6 +63,10 @@ export class FeeAssignment {
   })
   studentAssignments: StudentFeeAssignment[];
 
+  @Field({ description: 'Indicates if the fee assignment has any student assignments' })
+  @Column({ default: false })
+  hasItems: boolean;
+
   @Field(() => GraphQLISODateTime, { description: 'The date and time when the fee assignment was created' })
   @CreateDateColumn()
   createdAt: Date;

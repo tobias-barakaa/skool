@@ -40,7 +40,7 @@ export class FeeAssignmentService {
 
   ) {}
 
-
+  
   async create(
     createFeeAssignmentInput: CreateFeeAssignmentInput,
     user: ActiveUserData
@@ -183,7 +183,6 @@ export class FeeAssignmentService {
   
     return finalFeeAssignment;
   }
-
 
 
 
@@ -687,6 +686,7 @@ export class FeeAssignmentService {
         relations: [
           'student',
           'student.grade',
+          'student.user',
           'student.grade.gradeLevel',
           'feeItems',
           'feeItems.feeStructureItem',
@@ -763,3 +763,6 @@ export class FeeAssignmentService {
 
   
 }
+
+
+

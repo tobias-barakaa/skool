@@ -729,6 +729,9 @@ type FeeAssignment {
   """The ID of the fee structure being assigned"""
   feeStructureId: ID!
 
+  """Indicates if the fee assignment has any student assignments"""
+  hasItems: Boolean!
+
   """The unique identifier of the fee assignment"""
   id: ID!
 
