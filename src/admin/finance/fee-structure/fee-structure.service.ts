@@ -227,9 +227,11 @@ export class FeeStructureService {
         'term',
         'items',
         'items.feeBucket',
+        'gradeLevels', 
       ],
     });
   }
+  
 
 
 
