@@ -2565,18 +2565,9 @@ input UpdateFeeBucketInput {
 }
 
 input UpdateFeeStructureInput {
-  """The ID of the academic year"""
-  academicYearId: String
-
-  """Array of grade level IDs this fee structure applies to"""
   gradeLevelIds: [String!]
   isActive: Boolean
-
-  """The name of the fee structure"""
   name: String
-
-  """The ID of the term"""
-  termId: String
 }
 
 """Input for updating a fee structure item (partial)"""

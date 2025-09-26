@@ -262,30 +262,50 @@ export class FeeStructureService {
     user: ActiveUserData,
   ): Promise<FeeStructure> {
     await this.findOneById(id, user);
-    await this.validateCoreEntities(input, user.tenantId);
   
     return this.dataSource.transaction(async (mgr) => {
       const updateData: Partial<FeeStructure> = {};
+  
       if (input.name !== undefined) updateData.name = input.name;
       if (input.isActive !== undefined) updateData.isActive = input.isActive;
-      if (input.academicYearId !== undefined) updateData.academicYearId = input.academicYearId;
-      if (input.termId !== undefined) updateData.termId = input.termId;
   
       await mgr.update(FeeStructure, id, updateData);
   
+      if (input.gradeLevelIds && input.gradeLevelIds.length > 0) {
+        const newGradeLevels = await this.validateGradeLevels(
+          input.gradeLevelIds,
+          user.tenantId,
+        );
+  
+        const feeStructureToUpdate = await mgr.findOne(FeeStructure, {
+          where: { id },
+          relations: ['gradeLevels'],
+        });
+  
+        if (!feeStructureToUpdate) throw new Error('Fee structure not found');
+  
+        const existing: TenantGradeLevel[] = feeStructureToUpdate.gradeLevels ?? [];
+  
+        const mergedMap = new Map<string, TenantGradeLevel>();
+        for (const gl of existing) mergedMap.set(gl.id, gl);
+        for (const gl of newGradeLevels) mergedMap.set(gl.id, gl);
+  
+        feeStructureToUpdate.gradeLevels = Array.from(mergedMap.values());
+  
+        await mgr.save(feeStructureToUpdate);
+      }
+  
       const feeStructure = await mgr.findOne(FeeStructure, {
         where: { id },
-        relations: [
-          'academicYear',
-          'term',
-        ],
+        relations: ['academicYear', 'term', 'gradeLevels'],
       });
   
       if (!feeStructure) throw new Error('Fee structure not found');
       return feeStructure;
     });
   }
-
+  
+  
 
   async remove(id: string, user: ActiveUserData): Promise<boolean> {
     const fs = await this.feeStructureRepository.findOneByOrFail({
@@ -300,7 +320,6 @@ export class FeeStructureService {
   
 
 }
-
 
 
 
