@@ -418,34 +418,85 @@ export class FeeAssignmentService {
   async toggleStudentFeeItem(studentFeeItemId: string, isActive: boolean, tenantId: string): Promise<StudentFeeItem> {
     const studentFeeItem = await this.studentFeeItemRepo.findOne({
       where: { id: studentFeeItemId, tenantId },
+      relations: [
+        'studentFeeAssignment',
+        'studentFeeAssignment.student',
+        'studentFeeAssignment.student.user',
+        'feeStructureItem',
+        'feeStructureItem.feeBucket',
+      ],
     });
-
+  
     if (!studentFeeItem) {
       throw new NotFoundException(`Student fee item with ID ${studentFeeItemId} not found`);
     }
-
+  
     if (studentFeeItem.isMandatory && !isActive) {
       throw new BadRequestException('Cannot deactivate mandatory fee items');
     }
-
+  
     studentFeeItem.isActive = isActive;
     return this.studentFeeItemRepo.save(studentFeeItem);
   }
 
 
+  // async getStudentFeeItems(studentId: string, tenantId: string): Promise<StudentFeeItem[]> {
+  //   return this.studentFeeItemRepo.find({
+  //     where: {
+  //       tenantId,
+  //       studentFeeAssignment: {
+  //         studentId,
+  //         tenantId,
+  //         isActive: true,
+  //       },
+  //     },
+  //     relations: [
+  //       'feeStructureItem',
+  //       'feeStructureItem.feeBucket',
+  //       'studentFeeAssignment',
+  //       'studentFeeAssignment.student',
+  //       'studentFeeAssignment.student.user',
+  //       'studentFeeAssignment.student.grade',
+  //       'studentFeeAssignment.student.grade.gradeLevel',
+  //       'studentFeeAssignment.feeAssignment',
+  //       'studentFeeAssignment.feeAssignment.feeStructure',
+  //       'studentFeeAssignment.feeAssignment.feeStructure.academicYear',
+  //       'studentFeeAssignment.feeAssignment.feeStructure.term',
+  //     ],
+  //   });
+  // };
+
+
+
+
   async getStudentFeeItems(studentId: string, tenantId: string): Promise<StudentFeeItem[]> {
-    return this.studentFeeItemRepo.find({
-      where: {
-        tenantId,
-        studentFeeAssignment: {
-          studentId,
-          tenantId,
-          isActive: true
-        }
-      },
-      relations: ['feeStructureItem', 'feeStructureItem.feeBucket', 'studentFeeAssignment'],
-    });
+    return this.studentFeeItemRepo
+      .createQueryBuilder('studentFeeItem')
+      .leftJoinAndSelect('studentFeeItem.feeStructureItem', 'feeStructureItem')
+      .leftJoinAndSelect('feeStructureItem.feeBucket', 'feeBucket')
+      .leftJoinAndSelect('studentFeeItem.studentFeeAssignment', 'studentFeeAssignment')
+      .leftJoinAndSelect('studentFeeAssignment.student', 'student')
+      .leftJoinAndSelect('student.user', 'user')
+      .leftJoinAndSelect('student.grade', 'grade')
+      .leftJoinAndSelect('grade.gradeLevel', 'gradeLevel')
+      .leftJoinAndSelect('studentFeeAssignment.feeAssignment', 'feeAssignment')
+      .leftJoinAndSelect('feeAssignment.feeStructure', 'feeStructure')
+      .leftJoinAndSelect('feeStructure.academicYear', 'academicYear')
+      .leftJoinAndSelect('feeStructure.term', 'term')
+      .where('studentFeeItem.tenantId = :tenantId', { tenantId })
+      .andWhere('studentFeeAssignment.studentId = :studentId', { studentId })
+      .andWhere('studentFeeAssignment.tenantId = :tenantId', { tenantId })
+      .andWhere('studentFeeAssignment.isActive = :isActive', { isActive: true })
+      .getMany();
   };
+
+
+
+
+
+  
+
+
 
 
   async bulkToggleStudentFeeItems(input: BulkToggleStudentFeeItemsInput, tenantId: string): Promise<StudentFeeItem[]> {

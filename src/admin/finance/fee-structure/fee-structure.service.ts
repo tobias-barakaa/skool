@@ -32,6 +32,40 @@ export class FeeStructureService {
 
   ) {}
 
+  // async create(input: CreateFeeStructureInput, user: ActiveUserData) {
+  //   const existingStructure = await this.feeStructureRepository.findOne({
+  //     where: {
+  //       tenantId: user.tenantId,
+  //       academicYearId: input.academicYearId,
+  //       termId: input.termId,
+  //       name: input.name,
+  //     }
+  //   });
+  
+  //   if (existingStructure) {
+  //     throw new ConflictException('Fee structure already exists for this combination');
+  //   }
+  
+  //   await this.validateCoreEntities(input, user.tenantId);
+  
+  //   return await this.dataSource.transaction(async manager => {
+  //     const feeStructure = manager.create(FeeStructure, {
+  //       ...input,
+  //       tenantId: user.tenantId,
+  //     });
+  
+  //     const savedStructure = await manager.save(feeStructure);
+  
+  //     return await manager.findOne(FeeStructure, {
+  //       where: { id: savedStructure.id },
+  //       relations: ['academicYear', 'term']
+  //     });
+  //   });
+  // }
+  
+
+
+
   async create(input: CreateFeeStructureInput, user: ActiveUserData) {
     const existingStructure = await this.feeStructureRepository.findOne({
       where: {
@@ -41,28 +75,58 @@ export class FeeStructureService {
         name: input.name,
       }
     });
-  
+
     if (existingStructure) {
       throw new ConflictException('Fee structure already exists for this combination');
     }
-  
+
     await this.validateCoreEntities(input, user.tenantId);
-  
+    
+    let gradeLevels: TenantGradeLevel[] = [];
+    if (input.gradeLevelIds && input.gradeLevelIds.length > 0) {
+      gradeLevels = await this.validateGradeLevels(input.gradeLevelIds, user.tenantId);
+    }
+
     return await this.dataSource.transaction(async manager => {
       const feeStructure = manager.create(FeeStructure, {
-        ...input,
+        name: input.name,
+        academicYearId: input.academicYearId,
+        termId: input.termId,
         tenantId: user.tenantId,
       });
-  
+
       const savedStructure = await manager.save(feeStructure);
-  
+
+      if (gradeLevels.length > 0) {
+        savedStructure.gradeLevels = gradeLevels;
+        await manager.save(savedStructure);
+      }
+
       return await manager.findOne(FeeStructure, {
         where: { id: savedStructure.id },
-        relations: ['academicYear', 'term']
+        relations: ['academicYear', 'term', 'gradeLevels']
       });
     });
   }
+
+  private async validateGradeLevels(gradeLevelIds: string[], tenantId: string): Promise<TenantGradeLevel[]> {
+   
+
+    const gradeLevels = await this.dataSource.getRepository(TenantGradeLevel).createQueryBuilder('tenantGradeLevel')
+  .where('tenantGradeLevel.id IN (:...gradeLevelIds) AND tenantGradeLevel.tenantId = :tenantId', { gradeLevelIds, tenantId })
+  .getMany();
+
+    if (gradeLevels.length !== gradeLevelIds.length) {
+      throw new BadRequestException('One or more grade levels not found or do not belong to your tenant');
+    }
+
+    return gradeLevels;
+  }
+
   
+  
+
+
   private async validateCoreEntities<T extends Partial<CreateFeeStructureInput>>(
     input: T,
     tenantId: string,
