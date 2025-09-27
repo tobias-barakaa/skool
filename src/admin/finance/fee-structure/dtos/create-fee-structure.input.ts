@@ -15,7 +15,7 @@ export class CreateFeeStructureInput {
   @IsUUID()
   academicYearId: string;
 
-  @Field(() => String, { description: 'The ID of the term' })
+  @Field(() => [String], { description: 'The ID of the term' })
   @IsNotEmpty()
   @IsUUID()
   termIds: string[]; 

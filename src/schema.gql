@@ -420,7 +420,7 @@ input CreateFeeStructureInput {
   name: String!
 
   """The ID of the term"""
-  termIds: String!
+  termIds: [String!]!
 }
 
 """Input for creating a new fee structure item"""
