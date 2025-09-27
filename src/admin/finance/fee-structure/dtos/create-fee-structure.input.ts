@@ -15,10 +15,12 @@ export class CreateFeeStructureInput {
   @IsUUID()
   academicYearId: string;
 
-  @Field(() => [String], { description: 'The ID of the term' })
-  @IsNotEmpty()
-  @IsUUID()
-  termIds: string[]; 
+
+  @Field(() => [String], { description: 'The IDs of the terms' })
+@IsNotEmpty()
+@IsArray()
+@IsUUID('4', { each: true })
+termIds: string[];
 
   @Field(() => [String], { 
     description: 'Array of grade level IDs this fee structure applies to',

@@ -76,22 +76,26 @@ export class FeeStructureService {
     });
   
     if (existingStructure) {
-      throw new ConflictException('Fee structure already exists for this academic year and name');
+      throw new ConflictException(
+        'Fee structure already exists for this academic year and name',
+      );
     }
   
     await this.validateCoreEntities(input, user.tenantId);
   
     let gradeLevels: TenantGradeLevel[] = [];
     if (input.gradeLevelIds?.length) {
-      gradeLevels = await this.validateGradeLevels(input.gradeLevelIds, user.tenantId);
+      gradeLevels = await this.validateGradeLevels(
+        input.gradeLevelIds,
+        user.tenantId,
+      );
     }
   
-
     const termRepository = this.dataSource.getRepository(Term);
-
     const terms = await termRepository.find({
       where: {
         id: In(input.termIds),
+        tenantId: user.tenantId,
       },
     });
   
@@ -101,14 +105,10 @@ export class FeeStructureService {
         academicYearId: input.academicYearId,
         tenantId: user.tenantId,
         terms,
+        gradeLevels,
       });
   
       const savedStructure = await manager.save(feeStructure);
-  
-      if (gradeLevels.length > 0) {
-        savedStructure.gradeLevels = gradeLevels;
-        await manager.save(savedStructure);
-      }
   
       return await manager.findOne(FeeStructure, {
         where: { id: savedStructure.id },
@@ -116,6 +116,70 @@ export class FeeStructureService {
       });
     });
   }
+  
+  private async validateCoreEntities(
+    input: CreateFeeStructureInput,
+    tenantId: string,
+  ): Promise<void> {
+    const repo = this.dataSource.getRepository.bind(this.dataSource);
+  
+    const ayPromise = repo(AcademicYear)
+      .findOne({
+        where: { id: input.academicYearId, tenantId },
+        select: ['id'],
+      })
+      .then((row) => {
+        if (!row) {
+          throw new BadRequestException(
+            `Academic year ${input.academicYearId} not found or does not belong to your organisation.`,
+          );
+        }
+      });
+  
+    const termPromise = repo(Term)
+      .find({
+        where: {
+          id: In(input.termIds),
+          tenantId,
+        },
+        select: ['id'],
+      })
+      .then((rows) => {
+        if (rows.length !== input.termIds.length) {
+          const found = new Set(rows.map((r) => r.id));
+          const missing = input.termIds.filter((id) => !found.has(id));
+          throw new BadRequestException(
+            `Term(s) ${missing.join(', ')} not found or do not belong to your organisation.`,
+          );
+        }
+      });
+  
+    let glPromise: Promise<void> = Promise.resolve();
+    const glIds = input.gradeLevelIds ?? []; 
+  
+    if (glIds.length) {
+      glPromise = repo(TenantGradeLevel)
+        .find({
+          where: {
+            id: In(glIds),
+            tenant: { id: tenantId },
+          },
+          select: ['id'],
+        })
+        .then((rows) => {
+          if (rows.length !== glIds.length) {
+            const found = new Set(rows.map((r) => r.id));
+            const missing = glIds.filter((id) => !found.has(id));
+            throw new BadRequestException(
+              `Grade level(s) ${missing.join(', ')} not found or do not belong to your organisation.`,
+            );
+          }
+        });
+    }
+  
+    await Promise.all([ayPromise, termPromise, glPromise]);
+  }
+  
   
   // async create(input: CreateFeeStructureInput, user: ActiveUserData) {
   //   const existingStructure = await this.feeStructureRepository.findOne({
@@ -177,57 +241,59 @@ export class FeeStructureService {
   
   
 
-  private async validateCoreEntities(
-    input: CreateFeeStructureInput,
-    tenantId: string,
-  ): Promise<void> {
-    const repo = this.dataSource.getRepository.bind(this.dataSource);
+  // private async validateCoreEntities(
+  //   input: CreateFeeStructureInput,
+  //   tenantId: string,
+  // ): Promise<void> {
+  //   const repo = this.dataSource.getRepository.bind(this.dataSource);
   
-    /* ---------- 1. Academic-year check ---------- */
-    const ayPromise = repo(AcademicYear)
-      .findOne({ where: { id: input.academicYearId, tenantId }, select: ['id'] })
-      .then((row) => {
-        if (!row)
-          throw new BadRequestException(
-            `Academic-year ${input.academicYearId} not found or does not belong to your organisation.`,
-          );
-      });
+  //   const ayPromise = repo(AcademicYear)
+  //     .findOne({ where: { id: input.academicYearId, tenantId }, select: ['id'] })
+  //     .then((row) => {
+  //       if (!row)
+  //         throw new BadRequestException(
+  //           `Academic-year ${input.academicYearId} not found or does not belong to your organisation.`,
+  //         );
+  //     });
   
-    /* ---------- 2. Term(s) check ---------- */
-    const termPromise = repo(Term)
-      .find({
-        where: { id: In(input.termIds), tenantId },
-        select: ['id'],
-      })
-      .then((rows) => {
-        if (rows.length !== input.termIds.length) {
-          const found = new Set(rows.map((r) => r.id));
-          const missing = input.termIds.filter((id) => !found.has(id));
-          throw new BadRequestException(
-            `Term(s) ${missing.join(', ')} not found or do not belong to your organisation.`,
-          );
-        }
-      });
+  //     const termPromise = repo(Term).find({
+  //       where: {
+  //         id: In(input.termIds),
+  //         tenantId,   
+  //       },
+  //       select: ['id'],
+  //     })
+  //     .then((rows: any) => {
+  //       if (rows.length !== input.termIds.length) {
+  //         const found = new Set(rows.map((r) => r.id));
+  //         const missing = input.termIds.filter((id) => !found.has(id));
+  //         throw new BadRequestException(
+  //           `Term(s) ${missing.join(', ')} not found or do not belong to your organisation.`,
+  //         );
+  //       }
+  //     });
   
-      let glPromise: Promise<void> = Promise.resolve();
-      const glIds = input.gradeLevelIds;          
-      if (glIds?.length) {
-        glPromise = repo(TenantGradeLevel)
-          .find({
-            where: { id: In(glIds), tenantId },
-            select: ['id'],
-          })
-          .then((rows) => {
-            if (rows.length !== glIds.length) {
-              const found = new Set(rows.map((r) => r.id));
-              const missing = glIds.filter((id) => !found.has(id)); // <-- safe
-              throw new BadRequestException(
-                `Grade-level(s) ${missing.join(', ')} not found or do not belong to your organisation.`,
-              );
-            }
-          });
-      }
-    }
+  //     let glPromise: Promise<void> = Promise.resolve();
+  //     const glIds = input.gradeLevelIds;          
+  //     if (glIds?.length) {
+  //       glPromise = repo(TenantGradeLevel).find({
+  //         where: {
+  //           id: In(glIds),
+  //           tenant: { id: tenantId }, 
+  //         },
+  //         relations: ['tenant'],
+  //         select: ['id'],
+  //       }).then((rows:any) => {
+  //           if (rows.length !== glIds.length) {
+  //             const found = new Set(rows.map((r) => r.id));
+  //             const missing = glIds.filter((id) => !found.has(id));
+  //             throw new BadRequestException(
+  //               `Grade-level(s) ${missing.join(', ')} not found or do not belong to your organisation.`,
+  //             );
+  //           }
+  //         });
+  //       }
+  //   }
       
 
   // private async validateCoreEntities<T extends Partial<CreateFeeStructureInput>>(
@@ -290,18 +356,36 @@ export class FeeStructureService {
 //     })
 // );
 
-  async findAll(user: ActiveUserData): Promise<FeeStructure[]> {
-    return this.feeStructureRepository.find({
-      where: { tenantId: user.tenantId, isActive: true },
-      relations: [
-        'academicYear',
-        'term',
-        'items',
-        'items.feeBucket',
-      ],
-      order: { createdAt: 'DESC' },
-    });
-  }
+async findAll(user: ActiveUserData): Promise<FeeStructure[]> {
+  return this.feeStructureRepository
+    .createQueryBuilder('fs')
+    .leftJoinAndSelect('fs.academicYear', 'ay')
+    .leftJoinAndSelect('fs.terms', 'terms')
+    .leftJoinAndSelect('fs.gradeLevels', 'gl')
+    .leftJoinAndSelect('gl.gradeLevel', 'grade')
+    .leftJoinAndSelect('fs.items', 'items')
+    .leftJoinAndSelect('items.feeBucket', 'feeBucket')
+    .where('fs.tenantId = :tenantId', { tenantId: user.tenantId })
+    .andWhere('fs.isActive = :isActive', { isActive: true })
+    .orderBy('fs.createdAt', 'DESC')
+    .getMany();
+}
+
+
+// async findAll(user: ActiveUserData): Promise<FeeStructure[]> {
+//   return this.feeStructureRepository.find({
+//     where: { tenantId: user.tenantId, isActive: true },
+//     relations: [
+//       'academicYear',
+//       'terms',              
+//       'items',
+//       'items.feeBucket',
+//       'gradeLevels',        
+//     ],
+//     order: { createdAt: 'DESC' },
+//   });
+// }
+
 
   async findOne(id: string, user: ActiveUserData): Promise<FeeStructure> {
     const feeStructure = await this.feeStructureRepository.findOne({
@@ -321,22 +405,21 @@ export class FeeStructureService {
     academicYearId: string,
     user: ActiveUserData,
   ): Promise<FeeStructure | null> {
-    return this.feeStructureRepository.findOne({
-      where: {
-        tenantId: user.tenantId,
-        termId,
-        academicYearId,
-        isActive: true,
-      },
-      relations: [
-        'academicYear',
-        'term',
-        'items',
-        'items.feeBucket',
-        'gradeLevels', 
-      ],
-    });
+    return this.feeStructureRepository
+      .createQueryBuilder('fs')
+      .leftJoinAndSelect('fs.academicYear', 'academicYear')
+      .leftJoinAndSelect('fs.terms', 'term')
+      .leftJoinAndSelect('fs.items', 'items')
+      .leftJoinAndSelect('items.feeBucket', 'feeBucket')
+      .leftJoinAndSelect('fs.gradeLevels', 'gradeLevels')
+      .where('fs.tenantId = :tenantId', { tenantId: user.tenantId })
+      .andWhere('fs.academicYearId = :academicYearId', { academicYearId })
+      .andWhere('fs.isActive = true')
+      .andWhere('term.id = :termId', { termId })
+      .getOne();
   }
+  
+  
   
 
 

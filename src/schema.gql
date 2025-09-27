@@ -419,7 +419,7 @@ input CreateFeeStructureInput {
   """The name of the fee structure"""
   name: String!
 
-  """The ID of the term"""
+  """The IDs of the terms"""
   termIds: [String!]!
 }
 
@@ -788,7 +788,9 @@ type FeeBucket {
   updatedAt: DateTime!
 }
 
-"""Represents a fee structure for specific grades, term and academic year"""
+"""
+Represents a fee structure for specific grades, terms and academic year
+"""
 type FeeStructure {
   """The academic year this fee structure belongs to"""
   academicYear: AcademicYear!
@@ -816,9 +818,6 @@ type FeeStructure {
 
   """The ID of the tenant this fee structure belongs to"""
   tenantId: String!
-
-  """The ID of the term"""
-  termId: ID!
 
   """The terms this fee structure applies to"""
   terms: [Term!]!

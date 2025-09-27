@@ -205,7 +205,7 @@ export class FeeStructureItemService {
         'feeBucket',
         'feeStructure',
         'feeStructure.academicYear',
-        'feeStructure.term'
+        'feeStructure.terms'
       ],
     });
   }
