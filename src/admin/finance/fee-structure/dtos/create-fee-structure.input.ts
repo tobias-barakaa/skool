@@ -18,7 +18,7 @@ export class CreateFeeStructureInput {
   @Field(() => String, { description: 'The ID of the term' })
   @IsNotEmpty()
   @IsUUID()
-  termId: string;
+  termIds: string[]; 
 
   @Field(() => [String], { 
     description: 'Array of grade level IDs this fee structure applies to',
@@ -28,6 +28,8 @@ export class CreateFeeStructureInput {
   @IsArray()
   @IsUUID('4', { each: true })
   gradeLevelIds?: string[];
+
+
 }
 
 // import { InputType, Field, ID } from '@nestjs/graphql';

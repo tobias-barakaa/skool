@@ -61,3 +61,6 @@ export class TenantGradeLevel {
   @UpdateDateColumn()
   updatedAt: Date;
 }
+
+
+

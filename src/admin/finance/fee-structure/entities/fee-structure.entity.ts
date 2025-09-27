@@ -94,10 +94,27 @@ export class FeeStructure {
   @Column()
   termId: string;
 
-  @Field(() => Term, { description: 'The term this fee structure belongs to' })
-  @ManyToOne(() => Term, { eager: true })
-  @JoinColumn({ name: 'termId' })
-  term: Term;
+  // @Field(() => Term, { description: 'The term this fee structure belongs to' })
+  // @ManyToOne(() => Term, { eager: true })
+  // @JoinColumn({ name: 'termId' })
+  // term: Term;
+
+  @Field(() => [Term], { description: 'The terms this fee structure applies to' })
+  @ManyToMany(() => Term, { eager: true })
+  @JoinTable({
+    name: 'fee_structure_terms',
+    joinColumn: {
+      name: 'fee_structure_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'term_id',
+      referencedColumnName: 'id',
+    },
+  })
+  terms: Term[];
+  
+
 
   @Field(() => [TenantGradeLevel], { 
     description: 'The grade levels this fee structure applies to',

@@ -493,6 +493,27 @@ export class FeeAssignmentService {
 
 
 
+  async getTenantFeeItems(tenantId: string): Promise<StudentFeeItem[]> {
+    return this.studentFeeItemRepo
+      .createQueryBuilder('studentFeeItem')
+      .leftJoinAndSelect('studentFeeItem.feeStructureItem', 'feeStructureItem')
+      .leftJoinAndSelect('feeStructureItem.feeBucket', 'feeBucket')
+      .leftJoinAndSelect('studentFeeItem.studentFeeAssignment', 'studentFeeAssignment')
+      .leftJoinAndSelect('studentFeeAssignment.student', 'student')
+      .leftJoinAndSelect('student.user', 'user')
+      .leftJoinAndSelect('student.grade', 'grade')
+      .leftJoinAndSelect('grade.gradeLevel', 'gradeLevel')
+      .leftJoinAndSelect('studentFeeAssignment.feeAssignment', 'feeAssignment')
+      .leftJoinAndSelect('feeAssignment.feeStructure', 'feeStructure')
+      .leftJoinAndSelect('feeStructure.academicYear', 'academicYear')
+      .leftJoinAndSelect('feeStructure.term', 'term')
+      .where('studentFeeItem.tenantId = :tenantId', { tenantId })
+      .andWhere('studentFeeAssignment.tenantId = :tenantId', { tenantId })
+      .andWhere('studentFeeAssignment.isActive = :isActive', { isActive: true })
+      .getMany();
+  }
+  
+
 
   
 
@@ -503,10 +524,14 @@ export class FeeAssignmentService {
     const { studentFeeItemIds, isActive } = input;
 
     const studentFeeItems = await this.studentFeeItemRepo.find({
-      where: { 
-        id: In(studentFeeItemIds), 
-        tenantId 
-      },
+      where: { id: In(studentFeeItemIds), tenantId },
+      relations: [
+        'studentFeeAssignment',
+        'studentFeeAssignment.student',
+        'studentFeeAssignment.student.user',
+        'feeStructureItem',
+        'feeStructureItem.feeBucket',
+      ],
     });
 
     if (studentFeeItems.length === 0) {
@@ -814,6 +839,3 @@ export class FeeAssignmentService {
 
   
 }
-
-
-

@@ -71,43 +71,94 @@ export class FeeStructureService {
       where: {
         tenantId: user.tenantId,
         academicYearId: input.academicYearId,
-        termId: input.termId,
         name: input.name,
-      }
+      },
     });
-
+  
     if (existingStructure) {
-      throw new ConflictException('Fee structure already exists for this combination');
+      throw new ConflictException('Fee structure already exists for this academic year and name');
     }
-
+  
     await this.validateCoreEntities(input, user.tenantId);
-    
+  
     let gradeLevels: TenantGradeLevel[] = [];
-    if (input.gradeLevelIds && input.gradeLevelIds.length > 0) {
+    if (input.gradeLevelIds?.length) {
       gradeLevels = await this.validateGradeLevels(input.gradeLevelIds, user.tenantId);
     }
+  
 
-    return await this.dataSource.transaction(async manager => {
+    const termRepository = this.dataSource.getRepository(Term);
+
+    const terms = await termRepository.find({
+      where: {
+        id: In(input.termIds),
+      },
+    });
+  
+    return await this.dataSource.transaction(async (manager) => {
       const feeStructure = manager.create(FeeStructure, {
         name: input.name,
         academicYearId: input.academicYearId,
-        termId: input.termId,
         tenantId: user.tenantId,
+        terms,
       });
-
+  
       const savedStructure = await manager.save(feeStructure);
-
+  
       if (gradeLevels.length > 0) {
         savedStructure.gradeLevels = gradeLevels;
         await manager.save(savedStructure);
       }
-
+  
       return await manager.findOne(FeeStructure, {
         where: { id: savedStructure.id },
-        relations: ['academicYear', 'term', 'gradeLevels']
+        relations: ['academicYear', 'terms', 'gradeLevels'],
       });
     });
   }
+  
+  // async create(input: CreateFeeStructureInput, user: ActiveUserData) {
+  //   const existingStructure = await this.feeStructureRepository.findOne({
+  //     where: {
+  //       tenantId: user.tenantId,
+  //       academicYearId: input.academicYearId,
+  //       termId: input.termId,
+  //       name: input.name,
+  //     }
+  //   });
+
+  //   if (existingStructure) {
+  //     throw new ConflictException('Fee structure already exists for this combination');
+  //   }
+
+  //   await this.validateCoreEntities(input, user.tenantId);
+    
+  //   let gradeLevels: TenantGradeLevel[] = [];
+  //   if (input.gradeLevelIds && input.gradeLevelIds.length > 0) {
+  //     gradeLevels = await this.validateGradeLevels(input.gradeLevelIds, user.tenantId);
+  //   }
+
+  //   return await this.dataSource.transaction(async manager => {
+  //     const feeStructure = manager.create(FeeStructure, {
+  //       name: input.name,
+  //       academicYearId: input.academicYearId,
+  //       termId: input.termId,
+  //       tenantId: user.tenantId,
+  //     });
+
+  //     const savedStructure = await manager.save(feeStructure);
+
+  //     if (gradeLevels.length > 0) {
+  //       savedStructure.gradeLevels = gradeLevels;
+  //       await manager.save(savedStructure);
+  //     }
+
+  //     return await manager.findOne(FeeStructure, {
+  //       where: { id: savedStructure.id },
+  //       relations: ['academicYear', 'term', 'gradeLevels']
+  //     });
+  //   });
+  // }
 
   private async validateGradeLevels(gradeLevelIds: string[], tenantId: string): Promise<TenantGradeLevel[]> {
    
@@ -126,39 +177,98 @@ export class FeeStructureService {
   
   
 
-
-  private async validateCoreEntities<T extends Partial<CreateFeeStructureInput>>(
-    input: T,
+  private async validateCoreEntities(
+    input: CreateFeeStructureInput,
     tenantId: string,
   ): Promise<void> {
+    const repo = this.dataSource.getRepository.bind(this.dataSource);
   
-    const validationPromises: Promise<void>[] = [];
+    /* ---------- 1. Academic-year check ---------- */
+    const ayPromise = repo(AcademicYear)
+      .findOne({ where: { id: input.academicYearId, tenantId }, select: ['id'] })
+      .then((row) => {
+        if (!row)
+          throw new BadRequestException(
+            `Academic-year ${input.academicYearId} not found or does not belong to your organisation.`,
+          );
+      });
   
-    const academicYearRepository = this.dataSource.getRepository(AcademicYear)
-    validationPromises.push(
-      academicYearRepository.findOne({
-        where: { id: input.academicYearId, tenantId },
-        select: ['id']
-      }).then(result => {
-        if (!result) {
-          throw new BadRequestException(`Academic year with ID ${input.academicYearId} not found or doesn't belong to your organization`);
-        }
+    /* ---------- 2. Term(s) check ---------- */
+    const termPromise = repo(Term)
+      .find({
+        where: { id: In(input.termIds), tenantId },
+        select: ['id'],
       })
-    );
-  
-    const termRepository = this.dataSource.getRepository(Term)
-    validationPromises.push(
-      termRepository.findOne({
-        where: { id: input.termId, tenantId },
-        select: ['id']
-      }).then(result => {
-        if (!result) {
-          throw new BadRequestException(`Term with ID ${input.termId} not found or doesn't belong to your organization`);
+      .then((rows) => {
+        if (rows.length !== input.termIds.length) {
+          const found = new Set(rows.map((r) => r.id));
+          const missing = input.termIds.filter((id) => !found.has(id));
+          throw new BadRequestException(
+            `Term(s) ${missing.join(', ')} not found or do not belong to your organisation.`,
+          );
         }
-      })
-    );
+      });
+  
+      let glPromise: Promise<void> = Promise.resolve();
+      const glIds = input.gradeLevelIds;          
+      if (glIds?.length) {
+        glPromise = repo(TenantGradeLevel)
+          .find({
+            where: { id: In(glIds), tenantId },
+            select: ['id'],
+          })
+          .then((rows) => {
+            if (rows.length !== glIds.length) {
+              const found = new Set(rows.map((r) => r.id));
+              const missing = glIds.filter((id) => !found.has(id)); // <-- safe
+              throw new BadRequestException(
+                `Grade-level(s) ${missing.join(', ')} not found or do not belong to your organisation.`,
+              );
+            }
+          });
+      }
+    }
+      
+
+  // private async validateCoreEntities<T extends Partial<CreateFeeStructureInput>>(
+  //   input: T,
+  //   tenantId: string,
+  // ): Promise<void> {
+  
+  //   const validationPromises: Promise<void>[] = [];
+  
+  //   const academicYearRepository = this.dataSource.getRepository(AcademicYear)
+  //   validationPromises.push(
+  //     academicYearRepository.findOne({
+  //       where: { id: input.academicYearId, tenantId },
+  //       select: ['id']
+  //     }).then(result => {
+  //       if (!result) {
+  //         throw new BadRequestException(`Academic year with ID ${input.academicYearId} not found or doesn't belong to your organization`);
+  //       }
+  //     })
+  //   );
+  
+  //   const termRepository = this.dataSource.getRepository(Term)
+  //   validationPromises.push(
+  //     termRepository.findOne({
+  //       where: { id: input.termId, tenantId },
+  //       select: ['id']
+  //     }).then(result => {
+  //       if (!result) {
+  //         throw new BadRequestException(`Term with ID ${input.termId} not found or doesn't belong to your organization`);
+  //       }
+  //     })
+  //   );
 
   
+
+  
+  //   await Promise.all(validationPromises);
+  // }
+
+
+
 //     const tenantGradeLevelRepository = this.dataSource.getRepository(TenantGradeLevel);
 
 // validationPromises.push(
@@ -179,10 +289,6 @@ export class FeeStructureService {
 //       }
 //     })
 // );
-
-  
-    await Promise.all(validationPromises);
-  }
 
   async findAll(user: ActiveUserData): Promise<FeeStructure[]> {
     return this.feeStructureRepository.find({

@@ -141,6 +141,19 @@ export class FeeAssignmentResolver {
     return this.feeAssignmentService.bulkToggleStudentFeeItems(bulkToggleInput, tenantId);
   }
 
+
+
+  @Query(() => [StudentFeeItem], {
+    description: 'Get all fee items for a tenant'
+  })
+  async tenantFeeItems(
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<StudentFeeItem[]> {
+    const tenantId = user.tenantId;
+    return this.feeAssignmentService.getTenantFeeItems(tenantId);
+  }
+  
+
   @Mutation(() => [StudentFeeItem], {
     description: 'Bulk toggle fee items by fee structure item and grade levels (e.g., activate transport for all Grade 1 students)'
   })

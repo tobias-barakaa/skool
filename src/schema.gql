@@ -420,7 +420,7 @@ input CreateFeeStructureInput {
   name: String!
 
   """The ID of the term"""
-  termId: String!
+  termIds: String!
 }
 
 """Input for creating a new fee structure item"""
@@ -817,11 +817,11 @@ type FeeStructure {
   """The ID of the tenant this fee structure belongs to"""
   tenantId: String!
 
-  """The term this fee structure belongs to"""
-  term: Term!
-
   """The ID of the term"""
   termId: ID!
+
+  """The terms this fee structure applies to"""
+  terms: [Term!]!
 
   """The date and time when the fee structure was last updated"""
   updatedAt: DateTime!
@@ -1758,6 +1758,9 @@ type Query {
   teacherGetStudentsByGradeLevel(gradeLevelId: String!): [Student!]!
   teacherGetStudentsByStream(streamId: String!): [Student!]!
   teacherGetStudentsWithParents: [StudentWithParentsType!]!
+
+  """Get all fee items for a tenant"""
+  tenantFeeItems: [StudentFeeItem!]!
   tenantStreams: [TenantStream!]!
   tenantSubjects: [TenantSubject!]!
 
