@@ -246,7 +246,7 @@ export class FeeStructureItemService {
         'feeBucket',
         'feeStructure',
         'feeStructure.academicYear',
-        'feeStructure.term'
+        'feeStructure.terms'
       ],
     });
   }
@@ -323,7 +323,7 @@ export class FeeStructureItemService {
         'feeBucket',
         'feeStructure',
         'feeStructure.academicYear',
-        'feeStructure.term',
+        'feeStructure.terms',
         'feeStructure.tenantGradeLevel',
         'feeStructure.tenantGradeLevel.gradeLevel',
       ],
@@ -340,7 +340,7 @@ export class FeeStructureItemService {
         'feeBucket',
         'feeStructure',
         'feeStructure.academicYear',
-        'feeStructure.term',
+        'feeStructure.terms',
       ],
       order: { createdAt: 'DESC' },
     });
@@ -348,3 +348,6 @@ export class FeeStructureItemService {
 }
 
 
+ 
+
+ 
