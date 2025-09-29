@@ -121,13 +121,28 @@ export class FeeAssignmentService {
     );
     await this.dataSource.getRepository(FeeAssignmentGradeLevel).save(feeAssignmentGradeLevels);
   
-    const students = await this.studentRepo.find({
-      where: {
-        tenant_id: tenantId,
-        grade: In(tenantGradeLevelIds),
-        isActive: true,
-      },
-    });
+    // const students = await this.studentRepo.find({
+    //   where: {
+    //     tenant_id: tenantId,
+    //     grade: In(tenantGradeLevelIds),
+    //     isActive: true,
+    //   },
+    // });
+
+
+    // const students = await this.studentRepo.find({
+    //   where: {
+    //     tenant_id: tenantId,
+    //     grade: { id: In(tenantGradeLevelIds) },  
+    //     isActive: true,
+    //   },
+    // });
+    const students = await this.studentRepo
+    .createQueryBuilder('student')
+    .where('student.tenant_id = :tenantId', { tenantId })
+    .andWhere('student.grade_level_id IN (:...tenantGradeLevelIds)', { tenantGradeLevelIds })
+    .andWhere('student.isActive = true')
+    .getMany();
   
     console.log(students, 'students found for assignment...');
     console.log('Students found:', students.length);
@@ -839,3 +854,13 @@ export class FeeAssignmentService {
 
   
 }
+
+
+
+
+
+
+
+
+
+

@@ -20,11 +20,10 @@ import { StudentFeeItem } from './fee-assignment/entities/student_fee_items.enti
 import { StudentModule } from '../student/student.module';
 import { InvoiceResolver } from './invoice/invoice.resolver';
 import { InvoiceService } from './invoice/invoice.service';
-import { PaymentResolver } from './payment/payment.resolver';
-import { PaymentService } from './payment/payment.service';
-import { Invoice } from './invoice/invoice.entity';
+import { Invoice } from './invoice/entities/invoice.entity';
 import { Payment } from './payment/entities/payment.entity';
 import { FeeAssignmentGradeLevel } from './fee-assignment/entities/fee_assignment_grade_levels.entity';
+import { InvoiceItem } from './invoice/entities/invoice.entity.item';
 
 @Module({
   imports: [
@@ -37,7 +36,8 @@ import { FeeAssignmentGradeLevel } from './fee-assignment/entities/fee_assignmen
       StudentFeeItem,
       FeeAssignmentGradeLevel,
       Invoice,
-      Payment
+      Payment,
+      InvoiceItem
 
     ]),
     StudentModule
@@ -56,8 +56,6 @@ import { FeeAssignmentGradeLevel } from './fee-assignment/entities/fee_assignmen
     InvoiceResolver,
     InvoiceService,
 
-    PaymentResolver,
-    PaymentService
   ],
   exports: [
     FeeBucketService,
@@ -67,8 +65,6 @@ import { FeeAssignmentGradeLevel } from './fee-assignment/entities/fee_assignmen
     InvoiceResolver,
     InvoiceService,
 
-    PaymentResolver,
-    PaymentService
   ],
 })
 export class FeeManagementModule {}

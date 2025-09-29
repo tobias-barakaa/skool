@@ -1,53 +1,43 @@
 import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
-import { UseGuards, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { InvoiceService } from './invoice.service';
-import { MembershipRole } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
-import { Roles } from 'src/iam/decorators/roles.decorator';
-import { CreateInvoiceInput, UpdateInvoiceInput } from './dtos/create-invoice.input';
+import { Invoice } from './entities/invoice.entity';
+import { CreateInvoiceInput } from './dtos/create-invoice.input';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
-import { Invoice, InvoiceStatus } from './invoice.entity';
+import { Payment } from '../payment/entities/payment.entity';
+import { CreatePaymentInput } from './dtos/invoice.dto';
+
 
 @Resolver(() => Invoice)
-@Roles(MembershipRole.SCHOOL_ADMIN)
 export class InvoiceResolver {
   private readonly logger = new Logger(InvoiceResolver.name);
 
   constructor(private readonly invoiceService: InvoiceService) {}
 
-  @Mutation(() => Invoice, { 
-    description: 'Create a new invoice'
+  @Mutation(() => [Invoice], {
+    description: 'Generate invoices for students based on their fee assignments'
   })
-  @Roles(MembershipRole.SCHOOL_ADMIN)
-  async createInvoice(
+  async generateInvoices(
     @Args('input') input: CreateInvoiceInput,
     @ActiveUser() user: ActiveUserData,
-  ): Promise<Invoice> {
-    this.logger.log(`Creating invoice for student ${input.studentId} by user ${user.sub}`);
-    return await this.invoiceService.create(input, user);
-  }
-
-  @Query(() => [Invoice], { 
-    description: 'Get all invoices for the current tenant'
-  })
-  async invoices(
-    @ActiveUser() user: ActiveUserData,
   ): Promise<Invoice[]> {
-    return await this.invoiceService.findAll(user);
+    this.logger.log(`Generating invoices for term ${input.termId} by user ${user.sub}`);
+    return await this.invoiceService.generateInvoices(input, user);
   }
 
-  @Query(() => Invoice, { 
-    description: 'Get a single invoice by ID'
+  @Mutation(() => Payment, {
+    description: 'Record a payment against an invoice'
   })
-  async invoice(
-    @Args('id', { type: () => ID }) id: string,
+  async createPayment(
+    @Args('input') input: CreatePaymentInput,
     @ActiveUser() user: ActiveUserData,
-  ): Promise<Invoice> {
-    this.logger.log(`Fetching invoice ${id} by user ${user.sub}`);
-    return await this.invoiceService.findOne(id, user);
+  ): Promise<Payment> {
+    this.logger.log(`Creating payment for invoice ${input.invoiceId} by user ${user.sub}`);
+    return await this.invoiceService.createPayment(input, user);
   }
 
-  @Query(() => [Invoice], { 
+  @Query(() => [Invoice], {
     description: 'Get all invoices for a specific student'
   })
   async invoicesByStudent(
@@ -58,62 +48,24 @@ export class InvoiceResolver {
     return await this.invoiceService.findByStudent(studentId, user);
   }
 
-  @Query(() => [Invoice], { 
-    description: 'Get all invoices with a specific status'
+  @Query(() => Invoice, {
+    description: 'Get a single invoice by ID'
   })
-  async invoicesByStatus(
-    @Args('status', { type: () => InvoiceStatus }) status: InvoiceStatus,
-    @ActiveUser() user: ActiveUserData,
-  ): Promise<Invoice[]> {
-    this.logger.log(`Fetching invoices with status ${status} by user ${user.sub}`);
-    return await this.invoiceService.findByStatus(status, user);
-  }
-
-  @Query(() => [Invoice], { 
-    description: 'Get all overdue invoices'
-  })
-  async overdueInvoices(
-    @ActiveUser() user: ActiveUserData,
-  ): Promise<Invoice[]> {
-    this.logger.log(`Fetching overdue invoices by user ${user.sub}`);
-    return await this.invoiceService.findOverdueInvoices(user);
-  }
-
-  @Mutation(() => Invoice, { 
-    description: 'Update an existing invoice'
-  })
-  @Roles(MembershipRole.SCHOOL_ADMIN)
-  async updateInvoice(
+  async invoice(
     @Args('id', { type: () => ID }) id: string,
-    @Args('input') input: UpdateInvoiceInput,
     @ActiveUser() user: ActiveUserData,
   ): Promise<Invoice> {
-    this.logger.log(`Updating invoice ${id} by user ${user.sub}`);
-    return await this.invoiceService.update(id, input, user);
+    this.logger.log(`Fetching invoice ${id} by user ${user.sub}`);
+    return await this.invoiceService.findById(id, user);
   }
 
-  @Mutation(() => Invoice, { 
-    description: 'Update the payment status of an invoice'
+  @Query(() => [Invoice], {
+    description: 'Get all invoices for the tenant'
   })
-  @Roles(MembershipRole.SCHOOL_ADMIN)
-  async updateInvoicePaymentStatus(
-    @Args('id', { type: () => ID }) id: string,
-    @Args('paidAmount', { type: () => Number }) paidAmount: number,
+  async invoices(
     @ActiveUser() user: ActiveUserData,
-  ): Promise<Invoice> {
-    this.logger.log(`Updating payment status for invoice ${id} by user ${user.sub}`);
-    return await this.invoiceService.updatePaymentStatus(id, paidAmount, user);
-  }
-
-  @Mutation(() => Boolean, { 
-    description: 'Delete an invoice'
-  })
-  @Roles(MembershipRole.SCHOOL_ADMIN)
-  async deleteInvoice(
-    @Args('id', { type: () => ID }) id: string,
-    @ActiveUser() user: ActiveUserData,
-  ): Promise<boolean> {
-    this.logger.log(`Deleting invoice ${id} by user ${user.sub}`);
-    return await this.invoiceService.remove(id, user);
+  ): Promise<Invoice[]> {
+    this.logger.log(`Fetching all invoices for tenant ${user.tenantId} by user ${user.sub}`);
+    return await this.invoiceService.findAllByTenant(user);
   }
 }

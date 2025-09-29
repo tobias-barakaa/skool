@@ -95,6 +95,14 @@ export class TermService {
 
 
 
+  async findAllTerms(tenantId: string): Promise<Term[]> {
+    return this.termRepo.find({
+      where: { tenantId },
+      relations: ['academicYear'],
+      order: { startDate: 'ASC' },
+    });
+  }
+
   async update(id: string, input: UpdateTermInput, tenantId: string): Promise<Term> {
     const term = await this.findById(id, tenantId);
   

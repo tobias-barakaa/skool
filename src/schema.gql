@@ -451,25 +451,17 @@ input CreateHostelInput {
   name: String!
 }
 
-"""Input type for creating a new invoice"""
 input CreateInvoiceInput {
-  """The ID of the academic year"""
-  academicYearId: ID!
+  dueDate: String
+  issueDate: String
+  notes: String
 
-  """Additional notes or description"""
-  description: String
+  """Student ID - required if not generating for all students"""
+  studentId: ID
 
-  """The due date for payment"""
-  dueDate: String!
-
-  """The ID of the student"""
-  studentId: ID!
-
-  """The ID of the term"""
+  """Specific tenant grade level IDs to generate invoices for"""
+  tenantGradeLevelIds: [ID!]
   termId: ID!
-
-  """The total amount of the invoice"""
-  totalAmount: Float!
 }
 
 input CreateOptionInput {
@@ -491,28 +483,13 @@ input CreateParentInvitationDto {
   studentPhone: String
 }
 
-"""Input type for creating a new payment"""
 input CreatePaymentInput {
-  """The amount paid"""
   amount: Float!
-
-  """The ID of the invoice this payment is for"""
-  invoiceId: ID
-
-  """Additional notes about the payment"""
+  invoiceId: ID!
   notes: String
-
-  """The date when the payment was made"""
-  paymentDate: String!
-
-  """The method used for payment"""
+  paymentDate: String
   paymentMethod: PaymentMethod!
-
-  """The ID of the student making the payment"""
-  studentId: ID!
-
-  """Transaction ID from payment provider"""
-  transactionId: String
+  transactionReference: String
 }
 
 input CreateQuestionInput {
@@ -1035,73 +1012,44 @@ type InviteTeacherResponse {
   status: String!
 }
 
-"""Represents an invoice for student fees"""
+"""Represents a student invoice"""
 type Invoice {
-  """The academic year this invoice belongs to"""
   academicYear: AcademicYear!
-
-  """The ID of the academic year"""
   academicYearId: ID!
-
-  """The remaining balance"""
-  balance: Float!
-
-  """The date and time when the invoice was created"""
+  balanceAmount: Float!
   createdAt: DateTime!
-
-  """The ID of the user who created this invoice"""
-  createdBy: ID!
-
-  """The user who created this invoice"""
-  createdByUser: User!
-
-  """Additional notes or description"""
-  description: String
-
-  """The due date for payment"""
   dueDate: DateTime!
-
-  """The unique identifier of the invoice"""
   id: ID!
-
-  """The invoice number"""
   invoiceNumber: String!
-
-  """Indicates if the invoice is currently active"""
-  isActive: Boolean!
-
-  """The date when the invoice was issued"""
   issueDate: DateTime!
-
-  """The amount paid so far"""
+  items: [InvoiceItem!]!
+  notes: String
   paidAmount: Float!
-
-  """The status of the invoice"""
+  payments: [Payment!]
   status: InvoiceStatus!
-
-  """The student this invoice belongs to"""
   student: Student!
-
-  """The ID of the student"""
   studentId: ID!
-
-  """The ID of the tenant this invoice belongs to"""
   tenantId: String!
-
-  """The term this invoice belongs to"""
   term: Term!
-
-  """The ID of the term"""
   termId: ID!
-
-  """The total amount of the invoice"""
   totalAmount: Float!
-
-  """The date and time when the invoice was last updated"""
   updatedAt: DateTime!
 }
 
-"""The status of an invoice"""
+"""Represents individual line items on an invoice"""
+type InvoiceItem {
+  amount: Float!
+  createdAt: DateTime!
+  description: String!
+  feeBucket: FeeBucket!
+  feeBucketId: ID!
+  id: ID!
+  invoice: Invoice!
+  invoiceId: ID!
+  isMandatory: Boolean!
+  tenantId: String!
+}
+
 enum InvoiceStatus {
   CANCELLED
   DRAFT
@@ -1206,10 +1154,7 @@ type Mutation {
   createFeeStructureItem(input: CreateFeeStructureItemInput!): FeeStructureItem!
   createHostel(input: CreateHostelInput!): Hostel!
 
-  """Create a new invoice"""
-  createInvoice(input: CreateInvoiceInput!): Invoice!
-
-  """Record a new payment"""
+  """Record a payment against an invoice"""
   createPayment(input: CreatePaymentInput!): Payment!
   createScholarship(input: CreateScholarshipInput!): Scholarship!
   createStream(input: CreateStreamInput!): StreamType!
@@ -1247,12 +1192,6 @@ type Mutation {
   Delete all fee structure items for a specific fee structure and return count
   """
   deleteFeeStructureItemsByStructure(feeStructureId: ID!): Float!
-
-  """Delete an invoice"""
-  deleteInvoice(id: ID!): Boolean!
-
-  """Delete a payment (only for non-completed payments)"""
-  deletePayment(id: ID!): Boolean!
   deleteStaff(id: ID!): Boolean!
   deleteStream(id: ID!): Boolean!
   deleteTeacher(id: String!, tenantId: String!): String!
@@ -1264,6 +1203,9 @@ type Mutation {
   deleteTransportRoute(id: ID!): Boolean!
   enterStudentMarks(inputs: [EnterStudentMarksInput!]!): [AssessmentMark!]!
   forgotPassword(forgotPasswordInput: ForgotPasswordInput!): PasswordResetResponse!
+
+  """Generate invoices for students based on their fee assignments"""
+  generateInvoices(input: CreateInvoiceInput!): [Invoice!]!
   generateQuestions(generateQuestionsInput: GenerateQuestionsInput!): [GeneratedQuestionOutput!]!
   inviteParent(createParentDto: CreateParentInvitationDto!, studentIds: [String!]!, tenantId: String!): InviteParentResponse!
   inviteStaff(createStaffDto: CreateStaffInvitationDto!): InviteStaffResponse!
@@ -1277,9 +1219,6 @@ type Mutation {
   Refresh search cache for current user tenant (placeholder for future caching)
   """
   refreshSearchCache: Boolean!
-
-  """Refund a completed payment"""
-  refundPayment(id: ID!, refundReason: String): Payment!
 
   """Delete a fee assignment and all related student assignments"""
   removeFeeAssignment(id: ID!): Boolean!
@@ -1338,15 +1277,6 @@ type Mutation {
   updateFeeStructureItem(id: ID!, input: UpdateFeeStructureItemInput!): FeeStructureItem!
   updateHostel(input: UpdateHostelInput!): Hostel!
   updateHostelAssignment(input: UpdateHostelAssignmentInput!): HostelAssignment!
-
-  """Update an existing invoice"""
-  updateInvoice(id: ID!, input: UpdateInvoiceInput!): Invoice!
-
-  """Update the payment status of an invoice"""
-  updateInvoicePaymentStatus(id: ID!, paidAmount: Float!): Invoice!
-
-  """Update an existing payment"""
-  updatePayment(id: ID!, input: UpdatePaymentInput!): Payment!
   updateScholarship(input: UpdateScholarshipInput!): Scholarship!
   updateStaff(updateInput: UpdateStaffInput!): StaffDto!
   updateStream(input: UpdateStreamInput!): StreamType!
@@ -1432,95 +1362,33 @@ type PasswordResetResponse {
   message: String!
 }
 
-"""Represents a payment made by a student"""
+"""Represents a payment made towards an invoice"""
 type Payment {
-  """The amount paid"""
   amount: Float!
-
-  """The date and time when the payment was created"""
   createdAt: DateTime!
-
-  """The unique identifier of the payment"""
   id: ID!
-
-  """The invoice this payment is for"""
-  invoice: Invoice
-
-  """The ID of the invoice this payment is for"""
-  invoiceId: ID
-
-  """Indicates if the payment is currently active"""
-  isActive: Boolean!
-
-  """Additional notes about the payment"""
+  invoice: Invoice!
+  invoiceId: ID!
   notes: String
-
-  """The date when the payment was made"""
   paymentDate: DateTime!
-
-  """The method used for payment"""
   paymentMethod: PaymentMethod!
-
-  """The ID of the user who recorded this payment"""
-  recordedBy: ID!
-
-  """The user who recorded this payment"""
-  recordedByUser: User!
-
-  """The payment reference number"""
-  referenceNumber: String!
-
-  """The status of the payment"""
-  status: PaymentStatus!
-
-  """The student making the payment"""
+  receiptNumber: String!
+  receivedBy: ID!
+  receivedByUser: User!
   student: Student!
-
-  """The ID of the student making the payment"""
   studentId: ID!
-
-  """The ID of the tenant this payment belongs to"""
   tenantId: String!
-
-  """Transaction ID from payment provider"""
-  transactionId: String
-
-  """The date and time when the payment was last updated"""
+  transactionReference: String
   updatedAt: DateTime!
 }
 
-"""The method used for payment"""
 enum PaymentMethod {
   BANK_TRANSFER
   CARD
   CASH
   CHEQUE
-  MOBILE_MONEY
-  ONLINE
-}
-
-"""The status of a payment"""
-enum PaymentStatus {
-  CANCELLED
-  COMPLETED
-  FAILED
-  PENDING
-  REFUNDED
-}
-
-"""Payment summary for a student"""
-type PaymentSummary {
-  """Number of payments"""
-  paymentCount: Int!
-
-  """Total amount paid"""
-  totalPaid: Float!
-
-  """Total amount pending"""
-  totalPending: Float!
-
-  """Total amount refunded"""
-  totalRefunded: Float!
+  MPESA
+  OTHER
 }
 
 type PendingInvitation {
@@ -1671,11 +1539,8 @@ type Query {
   """Get a single invoice by ID"""
   invoice(id: ID!): Invoice!
 
-  """Get all invoices for the current tenant"""
+  """Get all invoices for the tenant"""
   invoices: [Invoice!]!
-
-  """Get all invoices with a specific status"""
-  invoicesByStatus(status: InvoiceStatus!): [Invoice!]!
 
   """Get all invoices for a specific student"""
   invoicesByStudent(studentId: ID!): [Invoice!]!
@@ -1699,30 +1564,6 @@ type Query {
 
   """Get all optional fee structure items for a specific fee structure"""
   optionalFeeStructureItems(feeStructureId: ID!): [FeeStructureItem!]!
-
-  """Get all overdue invoices"""
-  overdueInvoices: [Invoice!]!
-
-  """Get a single payment by ID"""
-  payment(id: ID!): Payment!
-
-  """Get a payment by reference number"""
-  paymentByReferenceNumber(referenceNumber: String!): Payment!
-
-  """Get payment summary for a specific student"""
-  paymentSummaryByStudent(studentId: ID!): PaymentSummary!
-
-  """Get all payments for the current tenant"""
-  payments: [Payment!]!
-
-  """Get all payments for a specific invoice"""
-  paymentsByInvoice(invoiceId: ID!): [Payment!]!
-
-  """Get all payments with a specific status"""
-  paymentsByStatus(status: PaymentStatus!): [Payment!]!
-
-  """Get all payments for a specific student"""
-  paymentsByStudent(studentId: ID!): [Payment!]!
   scholarship(id: ID!): Scholarship!
   scholarships: [Scholarship!]!
   searchAvailableStudentsForParent(parentId: String!, searchTerm: String, tenantId: String!): [StudentSearchResponse!]!
@@ -1769,6 +1610,9 @@ type Query {
     id: ID!
   ): Term!
   termAssessmentsWithStudents(academicYear: String!, gradeLevelId: String!, term: Int!): TermAssessmentWithStudentsDto!
+
+  """Get all terms for the current tenant, including academic year details"""
+  terms: [Term!]!
 
   """Get all terms for a specific academic year"""
   termsByAcademicYear(academicYearId: ID!): [Term!]!
@@ -2074,6 +1918,9 @@ type StudentFeeAssignment {
 
   """The fee items assigned to this student"""
   feeItems: [StudentFeeItem!]!
+
+  """Indicates whether this student fee assignment has an invoice"""
+  hasInvoice: Boolean!
 
   """The unique identifier of the student fee assignment"""
   id: ID!
@@ -2592,45 +2439,6 @@ input UpdateHostelInput {
   feeAmount: Float
   id: ID!
   name: String
-}
-
-"""Input type for updating an invoice"""
-input UpdateInvoiceInput {
-  """Additional notes or description"""
-  description: String
-
-  """The due date for payment"""
-  dueDate: String
-
-  """Whether the invoice is active"""
-  isActive: Boolean
-
-  """The total amount of the invoice"""
-  totalAmount: Float
-}
-
-"""Input type for updating a payment"""
-input UpdatePaymentInput {
-  """The amount paid"""
-  amount: Float
-
-  """Whether the payment is active"""
-  isActive: Boolean
-
-  """Additional notes about the payment"""
-  notes: String
-
-  """The date when the payment was made"""
-  paymentDate: String
-
-  """The method used for payment"""
-  paymentMethod: PaymentMethod
-
-  """The status of the payment"""
-  status: PaymentStatus
-
-  """Transaction ID from payment provider"""
-  transactionId: String
 }
 
 input UpdateScholarshipInput {

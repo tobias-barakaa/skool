@@ -56,4 +56,8 @@ export class StudentFeeAssignment {
   @Field(() => GraphQLISODateTime, { description: 'The date and time when the assignment was last updated' })
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Field(() => Boolean, { description: 'Indicates whether this student fee assignment has an invoice' })
+ @Column({ type: 'boolean', default: false })
+  hasInvoice: boolean;
 }

@@ -13,9 +13,6 @@ export class TermResolver {
   @Mutation(() => Term, {
     description: 'Create a new term within an academic year'
   })
-  @Mutation(() => Term, {
-    description: 'Create a new term within an academic year'
-  })
   async createTerm(
     @Args('input', {
       type: () => CreateTermInput,
@@ -35,6 +32,15 @@ async updateTerm(
 ): Promise<Term> {
   return this.service.update(id,input,user.tenantId);
 }
+
+
+@Query(() => [Term], {
+  description: 'Get all terms for the current tenant, including academic year details',
+})
+async terms(@ActiveUser() user: ActiveUserData): Promise<Term[]> {
+  return this.service.findAllTerms(user.tenantId);
+}
+
 
 @Mutation(() => Boolean, { description: 'Delete a term' })
 async deleteTerm(
@@ -87,4 +93,7 @@ async term(
     return this.service.findByAcademicYear(academicYearId, user.tenantId);
   }
 }
+
+
+
 

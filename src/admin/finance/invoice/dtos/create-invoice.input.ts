@@ -1,59 +1,35 @@
 import { InputType, Field, ID, Float } from '@nestjs/graphql';
-import { IsNotEmpty, IsString, IsUUID, IsNumber, IsOptional, IsDateString, Min } from 'class-validator';
+import { IsUUID, IsOptional, IsString, IsDateString, IsNumber, Min, IsArray } from 'class-validator';
 
-@InputType({ description: 'Input type for creating a new invoice' })
+@InputType()
 export class CreateInvoiceInput {
-  @Field(() => ID, { description: 'The ID of the student' })
-  @IsNotEmpty()
+  @Field(() => ID, { nullable: true, description: 'Student ID - required if not generating for all students' })
+  @IsOptional()
   @IsUUID()
-  studentId: string;
+  studentId?: string;
 
-  @Field(() => ID, { description: 'The ID of the academic year' })
-  @IsNotEmpty()
-  @IsUUID()
-  academicYearId: string;
-
-  @Field(() => ID, { description: 'The ID of the term' })
-  @IsNotEmpty()
+  @Field(() => ID)
   @IsUUID()
   termId: string;
 
-  @Field(() => Float, { description: 'The total amount of the invoice' })
-  @IsNotEmpty()
-  @IsNumber()
-  @Min(0)
-  totalAmount: number;
+  @Field(() => [ID], { nullable: true, description: 'Specific tenant grade level IDs to generate invoices for' })
+  @IsOptional()
+  @IsArray()
+  @IsUUID('4', { each: true })
+  tenantGradeLevelIds?: string[];
 
-  @Field({ description: 'The due date for payment' })
-  @IsNotEmpty()
+  @Field({ nullable: true })
+  @IsOptional()
   @IsDateString()
-  dueDate: string;
+  issueDate?: string;
 
-  @Field({ nullable: true, description: 'Additional notes or description' })
-  @IsOptional()
-  @IsString()
-  description?: string;
-}
-
-@InputType({ description: 'Input type for updating an invoice' })
-export class UpdateInvoiceInput {
-  @Field(() => Float, { nullable: true, description: 'The total amount of the invoice' })
-  @IsOptional()
-  @IsNumber()
-  @Min(0)
-  totalAmount?: number;
-
-  @Field({ nullable: true, description: 'The due date for payment' })
+  @Field({ nullable: true })
   @IsOptional()
   @IsDateString()
   dueDate?: string;
 
-  @Field({ nullable: true, description: 'Additional notes or description' })
+  @Field({ nullable: true })
   @IsOptional()
   @IsString()
-  description?: string;
-
-  @Field({ nullable: true, description: 'Whether the invoice is active' })
-  @IsOptional()
-  isActive?: boolean;
+  notes?: string;
 }
