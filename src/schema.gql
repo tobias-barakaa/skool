@@ -1192,6 +1192,9 @@ type Mutation {
   Delete all fee structure items for a specific fee structure and return count
   """
   deleteFeeStructureItemsByStructure(feeStructureId: ID!): Float!
+
+  """Permanently delete a payment (admin only)"""
+  deletePayment(id: ID!): Boolean!
   deleteStaff(id: ID!): Boolean!
   deleteStream(id: ID!): Boolean!
   deleteTeacher(id: String!, tenantId: String!): String!
@@ -1277,6 +1280,9 @@ type Mutation {
   updateFeeStructureItem(id: ID!, input: UpdateFeeStructureItemInput!): FeeStructureItem!
   updateHostel(input: UpdateHostelInput!): Hostel!
   updateHostelAssignment(input: UpdateHostelAssignmentInput!): HostelAssignment!
+
+  """Update an existing payment"""
+  updatePayment(id: ID!, input: UpdatePaymentInput!): Payment!
   updateScholarship(input: UpdateScholarshipInput!): Scholarship!
   updateStaff(updateInput: UpdateStaffInput!): StaffDto!
   updateStream(input: UpdateStreamInput!): StreamType!
@@ -1289,6 +1295,9 @@ type Mutation {
   updateTest(updateTestInput: UpdateTestInput!): Test!
   updateTransportAssignment(input: UpdateTransportAssignmentInput!): TransportAssignment!
   updateTransportRoute(input: UpdateTransportRouteInput!): TransportRoute!
+
+  """Void/cancel a payment (soft delete)"""
+  voidPayment(id: ID!, reason: String!): Boolean!
 }
 
 type Option {
@@ -1380,6 +1389,15 @@ type Payment {
   tenantId: String!
   transactionReference: String
   updatedAt: DateTime!
+}
+
+input PaymentFilters {
+  endDate: String
+  invoiceId: ID
+  paymentMethod: PaymentMethod
+  receiptNumber: String
+  startDate: String
+  studentId: ID
 }
 
 enum PaymentMethod {
@@ -1564,6 +1582,18 @@ type Query {
 
   """Get all optional fee structure items for a specific fee structure"""
   optionalFeeStructureItems(feeStructureId: ID!): [FeeStructureItem!]!
+
+  """Get a single payment by ID"""
+  payment(id: ID!): Payment!
+
+  """Get all payments for the tenant with optional filters"""
+  payments(filters: PaymentFilters): [Payment!]!
+
+  """Get all payments for a specific invoice"""
+  paymentsByInvoice(invoiceId: ID!): [Payment!]!
+
+  """Get all payments for a specific student"""
+  paymentsByStudent(studentId: ID!): [Payment!]!
   scholarship(id: ID!): Scholarship!
   scholarships: [Scholarship!]!
   searchAvailableStudentsForParent(parentId: String!, searchTerm: String, tenantId: String!): [StudentSearchResponse!]!
@@ -2439,6 +2469,14 @@ input UpdateHostelInput {
   feeAmount: Float
   id: ID!
   name: String
+}
+
+input UpdatePaymentInput {
+  amount: Float
+  notes: String
+  paymentDate: String
+  paymentMethod: PaymentMethod
+  transactionReference: String
 }
 
 input UpdateScholarshipInput {

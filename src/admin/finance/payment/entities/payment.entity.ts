@@ -94,4 +94,7 @@ export class Payment {
   @Field(() => GraphQLISODateTime)
   @UpdateDateColumn()
   updatedAt: Date;
+  isVoided: boolean;
+  voidedAt: Date;
+  voidedBy: string;
 }

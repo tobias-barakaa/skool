@@ -11,12 +11,8 @@ import { StudentFeeAssignment } from '../fee-assignment/entities/student_fee_ass
 import { StudentFeeItem } from '../fee-assignment/entities/student_fee_items.entity';
 import { CreateInvoiceInput } from './dtos/create-invoice.input';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
-import { CreatePaymentInput } from './dtos/invoice.dto';
 
 
-interface StudentFeeAssignmentWithHasInvoice extends StudentFeeAssignment {
-  hasInvoice: boolean;
-}
 @Injectable()
 export class InvoiceService {
   private readonly logger = new Logger(InvoiceService.name);
@@ -200,70 +196,72 @@ export class InvoiceService {
     return generatedInvoices;
   }
 
-  async createPayment(
-    input: CreatePaymentInput,
-    user: ActiveUserData,
-  ): Promise<Payment> {
-    const { invoiceId, amount, paymentMethod, transactionReference, paymentDate, notes } = input;
-    const tenantId = user.tenantId;
+  // async createPayment(
+  //   input: CreatePaymentInput,
+  //   user: ActiveUserData,
+  // ): Promise<Payment> {
+  //   const { invoiceId, amount, paymentMethod, transactionReference, paymentDate, notes } = input;
+  //   const tenantId = user.tenantId;
 
-    const invoice = await this.invoiceRepo.findOne({
-      where: { id: invoiceId, tenantId },
-      relations: ['student'],
-    });
+  //   const invoice = await this.invoiceRepo.findOne({
+  //     where: { id: invoiceId, tenantId },
+  //     relations: ['student'],
+  //   });
 
-    if (!invoice) {
-      throw new NotFoundException(`Invoice with id ${invoiceId} not found`);
-    }
+  //   if (!invoice) {
+  //     throw new NotFoundException(`Invoice with id ${invoiceId} not found`);
+  //   }
 
-    if (amount > invoice.balanceAmount) {
-      throw new BadRequestException(
-        `Payment amount (${amount}) exceeds balance amount (${invoice.balanceAmount})`
-      );
-    }
+  //   if (amount > invoice.balanceAmount) {
+  //     throw new BadRequestException(
+  //       `Payment amount (${amount}) exceeds balance amount (${invoice.balanceAmount})`
+  //     );
+  //   }
 
-    const receiptNumber = await this.generateReceiptNumber(tenantId);
+  //   const receiptNumber = await this.generateReceiptNumber(tenantId);
 
-    const payment = this.paymentRepo.create({
-      tenantId,
-      receiptNumber,
-      invoiceId: invoice.id,
-      studentId: invoice.studentId,
-      amount,
-      paymentMethod,
-      transactionReference,
-      paymentDate: paymentDate ? new Date(paymentDate) : new Date(),
-      receivedBy: user.sub,
-      notes,
-    });
+  //   const payment = this.paymentRepo.create({
+  //     tenantId,
+  //     receiptNumber,
+  //     invoiceId: invoice.id,
+  //     studentId: invoice.studentId,
+  //     amount,
+  //     paymentMethod,
+  //     transactionReference,
+  //     paymentDate: paymentDate ? new Date(paymentDate) : new Date(),
+  //     receivedBy: user.sub,
+  //     notes,
+  //   });
 
-    const savedPayment = await this.paymentRepo.save(payment);
+  //   const savedPayment = await this.paymentRepo.save(payment);
 
-    const newPaidAmount = Number(invoice.paidAmount) + Number(amount);
-    const newBalanceAmount = Number(invoice.totalAmount) - newPaidAmount;
+  //   const newPaidAmount = Number(invoice.paidAmount) + Number(amount);
+  //   const newBalanceAmount = Number(invoice.totalAmount) - newPaidAmount;
 
-    let newStatus = invoice.status;
-    if (newBalanceAmount === 0) {
-      newStatus = InvoiceStatus.PAID;
-    } else if (newPaidAmount > 0 && newBalanceAmount > 0) {
-      newStatus = InvoiceStatus.PARTIALLY_PAID;
-    }
+  //   let newStatus = invoice.status;
+  //   if (newBalanceAmount === 0) {
+  //     newStatus = InvoiceStatus.PAID;
+  //   } else if (newPaidAmount > 0 && newBalanceAmount > 0) {
+  //     newStatus = InvoiceStatus.PARTIALLY_PAID;
+  //   }
 
-    await this.invoiceRepo.update(invoice.id, {
-      paidAmount: newPaidAmount,
-      balanceAmount: newBalanceAmount,
-      status: newStatus,
-    });
+  //   await this.invoiceRepo.update(invoice.id, {
+  //     paidAmount: newPaidAmount,
+  //     balanceAmount: newBalanceAmount,
+  //     status: newStatus,
+  //   });
 
-    this.logger.log(`Payment ${receiptNumber} of ${amount} recorded for invoice ${invoice.invoiceNumber}`);
+  //   this.logger.log(`Payment ${receiptNumber} of ${amount} recorded for invoice ${invoice.invoiceNumber}`);
 
-    return this.paymentRepo.findOneOrFail({
-      where: { id: savedPayment.id },
-      relations: ['invoice', 'student', 'receivedByUser'],
-    });
+  //   return this.paymentRepo.findOneOrFail({
+  //     where: { id: savedPayment.id },
+  //     relations: ['invoice', 'student', 'receivedByUser'],
+  //   });
 
     
-  }
+  // }
+  
+
 
   async findByStudent(studentId: string, user: ActiveUserData): Promise<Invoice[]> {
     return await this.invoiceRepo.find({
@@ -279,7 +277,7 @@ export class InvoiceService {
   async findById(id: string, user: ActiveUserData): Promise<Invoice> {
     const invoice = await this.invoiceRepo.findOne({
       where: { id, tenantId: user.tenantId },
-      relations: ['student', 'term', 'academicYear', 'items', 'items.feeBucket', 'payments', 'payments.receivedByUser'],
+      relations: ['student','student.user', 'term', 'academicYear', 'items', 'items.feeBucket', 'payments', 'payments.receivedByUser'],
     });
 
     if (!invoice) {
@@ -292,7 +290,9 @@ export class InvoiceService {
   async findAllByTenant(user: ActiveUserData): Promise<Invoice[]> {
     return await this.invoiceRepo.find({
       where: { tenantId: user.tenantId },
-      relations: ['student', 'term', 'academicYear', 'items', 'payments'],
+      // relations: ['student', 'term', 'academicYear', 'items', 'payments'],
+      relations: ['student','student.user', 'term', 'academicYear', 'items', 'items.feeBucket', 'payments'],
+
       order: { createdAt: 'DESC' },
     });
   }

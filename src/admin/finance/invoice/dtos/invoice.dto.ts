@@ -51,36 +51,36 @@ export class CreateBulkInvoicesInput {
   notes?: string;
 }
 
-@InputType()
-export class CreatePaymentInput {
-  @Field(() => ID)
-  @IsUUID()
-  invoiceId: string;
+// @InputType()
+// export class CreatePaymentInput {
+//   @Field(() => ID)
+//   @IsUUID()
+//   invoiceId: string;
 
-  @Field(() => Float)
-  @IsNumber()
-  @Min(0.01)
-  amount: number;
+//   @Field(() => Float)
+//   @IsNumber()
+//   @Min(0.01)
+//   amount: number;
 
-  @Field(() => PaymentMethod)
-  @IsEnum(PaymentMethod)
-  paymentMethod: PaymentMethod;
+//   @Field(() => PaymentMethod)
+//   @IsEnum(PaymentMethod)
+//   paymentMethod: PaymentMethod;
 
-  @Field({ nullable: true })
-  @IsString()
-  @IsOptional()
-  transactionReference?: string;
+//   @Field({ nullable: true })
+//   @IsString()
+//   @IsOptional()
+//   transactionReference?: string;
 
-  @Field({ nullable: true })
-  @IsDateString()
-  @IsOptional()
-  paymentDate?: string;
+//   @Field({ nullable: true })
+//   @IsDateString()
+//   @IsOptional()
+//   paymentDate?: string;
 
-  @Field({ nullable: true })
-  @IsString()
-  @IsOptional()
-  notes?: string;
-}
+//   @Field({ nullable: true })
+//   @IsString()
+//   @IsOptional()
+//   notes?: string;
+// }
 
 @ObjectType()
 export class BulkInvoiceResult {

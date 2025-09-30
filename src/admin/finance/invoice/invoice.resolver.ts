@@ -6,7 +6,6 @@ import { CreateInvoiceInput } from './dtos/create-invoice.input';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { Payment } from '../payment/entities/payment.entity';
-import { CreatePaymentInput } from './dtos/invoice.dto';
 
 
 @Resolver(() => Invoice)
@@ -26,16 +25,16 @@ export class InvoiceResolver {
     return await this.invoiceService.generateInvoices(input, user);
   }
 
-  @Mutation(() => Payment, {
-    description: 'Record a payment against an invoice'
-  })
-  async createPayment(
-    @Args('input') input: CreatePaymentInput,
-    @ActiveUser() user: ActiveUserData,
-  ): Promise<Payment> {
-    this.logger.log(`Creating payment for invoice ${input.invoiceId} by user ${user.sub}`);
-    return await this.invoiceService.createPayment(input, user);
-  }
+  // @Mutation(() => Payment, {
+  //   description: 'Record a payment against an invoice'
+  // })
+  // async createPayments(
+  //   @Args('input') input: CreatePaymentInput,
+  //   @ActiveUser() user: ActiveUserData,
+  // ): Promise<Payment> {
+  //   this.logger.log(`Creating payment for invoice ${input.invoiceId} by user ${user.sub}`);
+  //   return await this.invoiceService.createPayment(input, user);
+  // }
 
   @Query(() => [Invoice], {
     description: 'Get all invoices for a specific student'

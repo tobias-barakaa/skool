@@ -1,3 +1,111 @@
+
+import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
+import { Logger, UseGuards } from '@nestjs/common';
+import { Payment } from './entities/payment.entity';
+import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
+import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
+import { PaymentService } from './payment.service';
+import { CreatePaymentInput, PaymentFilters, UpdatePaymentInput } from './dtos/create-payment.input';
+
+@Resolver(() => Payment)
+export class PaymentResolver {
+  private readonly logger = new Logger(PaymentResolver.name);
+
+  constructor(private readonly paymentService: PaymentService) {}
+
+  @Mutation(() => Payment, {
+    description: 'Record a payment against an invoice'
+  })
+
+  async createPayment(
+    @Args('input') input: CreatePaymentInput,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<Payment> {
+    this.logger.log(`Creating payment for invoice ${input.invoiceId} by user ${user.sub}`);
+    return await this.paymentService.createPayment(input, user);
+  }
+
+  @Mutation(() => Payment, {
+    description: 'Update an existing payment'
+  })
+  async updatePayment(
+    @Args('id', { type: () => ID }) id: string,
+    @Args('input') input: UpdatePaymentInput,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<Payment> {
+    this.logger.log(`Updating payment ${id} by user ${user.sub}`);
+    return await this.paymentService.updatePayment(id, input, user);
+  }
+
+  @Mutation(() => Boolean, {
+    description: 'Void/cancel a payment (soft delete)'
+  })
+  async voidPayment(
+    @Args('id', { type: () => ID }) id: string,
+    @Args('reason', { type: () => String }) reason: string,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<boolean> {
+    this.logger.log(`Voiding payment ${id} by user ${user.sub}`);
+    return await this.paymentService.voidPayment(id, reason, user);
+  }
+
+  @Mutation(() => Boolean, {
+    description: 'Permanently delete a payment (admin only)'
+  })
+  async deletePayment(
+    @Args('id', { type: () => ID }) id: string,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<boolean> {
+    this.logger.log(`Deleting payment ${id} by user ${user.sub}`);
+    return await this.paymentService.deletePayment(id, user);
+  }
+
+  @Query(() => Payment, {
+    description: 'Get a single payment by ID'
+  })
+  async payment(
+    @Args('id', { type: () => ID }) id: string,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<Payment> {
+    this.logger.log(`Fetching payment ${id} by user ${user.sub}`);
+    return await this.paymentService.findById(id, user);
+  }
+
+  @Query(() => [Payment], {
+    description: 'Get all payments for the tenant with optional filters'
+  })
+  async payments(
+    @Args('filters', { type: () => PaymentFilters, nullable: true }) filters: PaymentFilters,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<Payment[]> {
+    this.logger.log(`Fetching payments for tenant ${user.tenantId}`);
+    return await this.paymentService.findAll(filters, user);
+  }
+
+  @Query(() => [Payment], {
+    description: 'Get all payments for a specific student'
+  })
+  async paymentsByStudent(
+    @Args('studentId', { type: () => ID }) studentId: string,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<Payment[]> {
+    this.logger.log(`Fetching payments for student ${studentId}`);
+    return await this.paymentService.findByStudent(studentId, user);
+  }
+
+  @Query(() => [Payment], {
+    description: 'Get all payments for a specific invoice'
+  })
+  async paymentsByInvoice(
+    @Args('invoiceId', { type: () => ID }) invoiceId: string,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<Payment[]> {
+    this.logger.log(`Fetching payments for invoice ${invoiceId}`);
+    return await this.paymentService.findByInvoice(invoiceId, user);
+  }
+}
+
+
 // import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
 // import { UseGuards, Logger } from '@nestjs/common';
 // import { Payment } from './entities/payment.entity';

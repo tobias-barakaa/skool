@@ -24,6 +24,10 @@ import { Invoice } from './invoice/entities/invoice.entity';
 import { Payment } from './payment/entities/payment.entity';
 import { FeeAssignmentGradeLevel } from './fee-assignment/entities/fee_assignment_grade_levels.entity';
 import { InvoiceItem } from './invoice/entities/invoice.entity.item';
+import { Receipt } from './receipt/receipt.entity';
+import { PaymentService } from './payment/payment.service';
+import { PaymentResolver } from './payment/payment.resolver';
+
 
 @Module({
   imports: [
@@ -37,7 +41,8 @@ import { InvoiceItem } from './invoice/entities/invoice.entity.item';
       FeeAssignmentGradeLevel,
       Invoice,
       Payment,
-      InvoiceItem
+      InvoiceItem,
+      Receipt
 
     ]),
     StudentModule
@@ -55,6 +60,9 @@ import { InvoiceItem } from './invoice/entities/invoice.entity.item';
 
     InvoiceResolver,
     InvoiceService,
+
+    PaymentService,
+    PaymentResolver
 
   ],
   exports: [
