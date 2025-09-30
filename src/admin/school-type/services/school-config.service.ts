@@ -98,11 +98,22 @@ export class SchoolConfigService {
         await manager.delete(TenantStream, { tenant: { id: tenant.id } });
 
         for (const curriculum of levels) {
+          // const tenantGradeLevels = curriculum.gradeLevels.map((gradeLevel) =>
+          //   manager.create(TenantGradeLevel, {
+          //     tenant: { id: tenant.id },
+          //     curriculum: { id: curriculum.id },
+          //     gradeLevel: { id: gradeLevel.id },
+          //     isActive: true,
+          //   }),
+          // );
+
+
           const tenantGradeLevels = curriculum.gradeLevels.map((gradeLevel) =>
             manager.create(TenantGradeLevel, {
               tenant: { id: tenant.id },
               curriculum: { id: curriculum.id },
               gradeLevel: { id: gradeLevel.id },
+              name: gradeLevel.name,
               isActive: true,
             }),
           );

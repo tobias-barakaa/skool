@@ -1,5 +1,4 @@
 import { InputType, Field, PartialType } from '@nestjs/graphql';
-import { CreateFeeStructureInput } from './create-fee-structure.input';
 import { IsArray, IsBoolean, IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
 
 @InputType()

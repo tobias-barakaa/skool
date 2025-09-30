@@ -4,13 +4,13 @@ import { Repository, DataSource, In } from 'typeorm';
 import { FeeStructure } from './entities/fee-structure.entity';
 import { FeeStructureItem } from '../fee-structure-item/entities/fee-structure-item.entity';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
-import { CreateFeeStructureInput } from './dtos/create-fee-structure.input';
 import { FeeBucket } from '../fee-bucket/entities/fee-bucket.entity';
 import { AcademicYear } from 'src/admin/academic_years/entities/academic_years.entity';
 import { Term } from 'src/admin/academic_years/entities/terms.entity';
 import { GradeLevel } from 'src/admin/level/entities/grade-level.entity';
 import { TenantGradeLevel } from 'src/admin/school-type/entities/tenant-grade-level';
 import { UpdateFeeStructureInput } from './dtos/update-fee-structure.input.dto';
+import { CreateFeeStructureWithItemsInput } from '../fee-structure-item/dtos/create-fee-structure-item.dto';
 
 @Injectable()
 export class FeeStructureService {
@@ -66,7 +66,11 @@ export class FeeStructureService {
 
 
 
-  async create(input: CreateFeeStructureInput, user: ActiveUserData) {
+
+  async createWithItems(
+    input: CreateFeeStructureWithItemsInput,
+    user: ActiveUserData,
+  ): Promise<FeeStructure> {
     const existingStructure = await this.feeStructureRepository.findOne({
       where: {
         tenantId: user.tenantId,
@@ -74,15 +78,15 @@ export class FeeStructureService {
         name: input.name,
       },
     });
-  
+
     if (existingStructure) {
       throw new ConflictException(
         'Fee structure already exists for this academic year and name',
       );
     }
-  
+
     await this.validateCoreEntities(input, user.tenantId);
-  
+
     let gradeLevels: TenantGradeLevel[] = [];
     if (input.gradeLevelIds?.length) {
       gradeLevels = await this.validateGradeLevels(
@@ -90,7 +94,7 @@ export class FeeStructureService {
         user.tenantId,
       );
     }
-  
+
     const termRepository = this.dataSource.getRepository(Term);
     const terms = await termRepository.find({
       where: {
@@ -98,7 +102,37 @@ export class FeeStructureService {
         tenantId: user.tenantId,
       },
     });
-  
+
+    if (terms.length !== input.termIds.length) {
+      throw new NotFoundException('One or more terms not found');
+    }
+
+    if (input.items?.length) {
+      const bucketIds = input.items.map(item => item.feeBucketId);
+      const buckets = await this.feeBucketRepository.find({
+        where: {
+          id: In(bucketIds),
+          tenantId: user.tenantId,
+          isActive: true,
+        },
+      });
+
+      if (buckets.length !== bucketIds.length) {
+        throw new NotFoundException('One or more fee buckets not found or inactive');
+      }
+
+      const uniqueBuckets = new Set(bucketIds);
+      if (uniqueBuckets.size !== bucketIds.length) {
+        throw new BadRequestException('Duplicate fee buckets in items');
+      }
+
+      for (const item of input.items) {
+        if (item.amount < 0) {
+          throw new BadRequestException('Amount must be greater than or equal to 0');
+        }
+      }
+    }
+
     return await this.dataSource.transaction(async (manager) => {
       const feeStructure = manager.create(FeeStructure, {
         name: input.name,
@@ -107,18 +141,42 @@ export class FeeStructureService {
         terms,
         gradeLevels,
       });
-  
+
+
+      
       const savedStructure = await manager.save(feeStructure);
-  
-      return await manager.findOne(FeeStructure, {
+
+      if (input.items?.length) {
+        const itemsToCreate = input.items.map(item =>
+          manager.create(FeeStructureItem, {
+            tenantId: user.tenantId,
+            feeStructureId: savedStructure.id,
+            feeBucketId: item.feeBucketId,
+            amount: item.amount,
+            isMandatory: item.isMandatory ?? true,
+          })
+        );
+
+        await manager.save(FeeStructureItem, itemsToCreate);
+      }
+
+      return await manager.findOneOrFail(FeeStructure, {
         where: { id: savedStructure.id },
-        relations: ['academicYear', 'terms', 'gradeLevels'],
+        relations: [
+          'academicYear',
+          'terms',
+          'gradeLevels',
+          'gradeLevels.gradeLevel',
+          'gradeLevels.curriculum',
+          'items',
+          'items.feeBucket',
+        ],
       });
     });
   }
   
   private async validateCoreEntities(
-    input: CreateFeeStructureInput,
+    input: CreateFeeStructureWithItemsInput,
     tenantId: string,
   ): Promise<void> {
     const repo = this.dataSource.getRepository.bind(this.dataSource);

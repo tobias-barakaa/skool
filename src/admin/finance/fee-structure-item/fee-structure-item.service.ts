@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { FeeStructureItem } from './entities/fee-structure-item.entity';
 import { FeeStructure } from '../fee-structure/entities/fee-structure.entity';
 import { FeeBucket } from '../fee-bucket/entities/fee-bucket.entity';
-import { CreateFeeStructureItemInput } from './dtos/create-fee-structure-item.dto';
 import { UpdateFeeStructureItemInput } from './dtos/update-fee-structure-item.dto';
 
 @Injectable()
@@ -182,33 +181,33 @@ export class FeeStructureItemService {
     return parseFloat(result.total) || 0;
   }
 
-  async create(tenantId: string, input: CreateFeeStructureItemInput): Promise<FeeStructureItem> {
-    const { feeStructureId, feeBucketId, amount, isMandatory = true } = input;
+  // async create(tenantId: string, input: CreateFeeStructureItemInput): Promise<FeeStructureItem> {
+  //   const { feeStructureId, feeBucketId, amount, isMandatory = true } = input;
 
-    if (amount < 0) throw new BadRequestException('Amount must be ≥ 0');
+  //   if (amount < 0) throw new BadRequestException('Amount must be ≥ 0');
 
-    const structure = await this.feeStructureRepository.findOneBy({ id: feeStructureId, tenantId });
-    if (!structure) throw new NotFoundException('Fee structure not found');
+  //   const structure = await this.feeStructureRepository.findOneBy({ id: feeStructureId, tenantId });
+  //   if (!structure) throw new NotFoundException('Fee structure not found');
 
-    const bucket = await this.feeBucketRepository.findOneBy({ id: feeBucketId, tenantId, isActive: true });
-    if (!bucket) throw new NotFoundException('Fee bucket not found or inactive');
+  //   const bucket = await this.feeBucketRepository.findOneBy({ id: feeBucketId, tenantId, isActive: true });
+  //   if (!bucket) throw new NotFoundException('Fee bucket not found or inactive');
 
-    const duplicate = await this.feeStructureItemRepository.findOneBy({ feeStructureId, feeBucketId, tenantId });
-    if (duplicate) throw new ConflictException('This bucket is already assigned to the structure');
+  //   const duplicate = await this.feeStructureItemRepository.findOneBy({ feeStructureId, feeBucketId, tenantId });
+  //   if (duplicate) throw new ConflictException('This bucket is already assigned to the structure');
 
-    const item = this.feeStructureItemRepository.create({ tenantId, feeStructureId, feeBucketId, amount, isMandatory });
-    await this.feeStructureItemRepository.save(item);
+  //   const item = this.feeStructureItemRepository.create({ tenantId, feeStructureId, feeBucketId, amount, isMandatory });
+  //   await this.feeStructureItemRepository.save(item);
 
-    return this.feeStructureItemRepository.findOneOrFail({
-      where: { id: item.id },
-      relations: [
-        'feeBucket',
-        'feeStructure',
-        'feeStructure.academicYear',
-        'feeStructure.terms'
-      ],
-    });
-  }
+  //   return this.feeStructureItemRepository.findOneOrFail({
+  //     where: { id: item.id },
+  //     relations: [
+  //       'feeBucket',
+  //       'feeStructure',
+  //       'feeStructure.academicYear',
+  //       'feeStructure.terms'
+  //     ],
+  //   });
+  // }
 
   async update(
     id: string,
@@ -283,37 +282,37 @@ export class FeeStructureItemService {
     return result.affected || 0;
   }
 
-  async bulkCreate(
-    tenantId: string,
-    feeStructureId: string,
-    items: Array<{ feeBucketId: string; amount: number; isMandatory?: boolean }>,
-  ): Promise<FeeStructureItem[]> {
-    const feeStructure = await this.feeStructureRepository.findOne({
-      where: { id: feeStructureId, tenantId },
-    });
+  // async bulkCreate(
+  //   tenantId: string,
+  //   feeStructureId: string,
+  //   items: Array<{ feeBucketId: string; amount: number; isMandatory?: boolean }>,
+  // ): Promise<FeeStructureItem[]> {
+  //   const feeStructure = await this.feeStructureRepository.findOne({
+  //     where: { id: feeStructureId, tenantId },
+  //   });
 
-    if (!feeStructure) {
-      throw new NotFoundException('Fee structure not found');
-    }
+  //   if (!feeStructure) {
+  //     throw new NotFoundException('Fee structure not found');
+  //   }
 
-    const createdItems: FeeStructureItem[] = [];
+  //   const createdItems: FeeStructureItem[] = [];
 
-    for (const item of items) {
-      try {
-        const createdItem = await this.create(tenantId, {
-          feeStructureId,
-          feeBucketId: item.feeBucketId,
-          amount: item.amount,
-          isMandatory: item.isMandatory ?? true,
-        });
-        createdItems.push(createdItem);
-      } catch (error) {
-        console.warn(`Failed to create fee structure item for bucket ${item.feeBucketId}:`, error.message);
-      }
-    }
+  //   for (const item of items) {
+  //     try {
+  //       const createdItem = await this.create(tenantId, {
+  //         feeStructureId,
+  //         feeBucketId: item.feeBucketId,
+  //         amount: item.amount,
+  //         isMandatory: item.isMandatory ?? true,
+  //       });
+  //       createdItems.push(createdItem);
+  //     } catch (error) {
+  //       console.warn(`Failed to create fee structure item for bucket ${item.feeBucketId}:`, error.message);
+  //     }
+  //   }
 
-    return createdItems;
-  }
+  //   return createdItems;
+  // }
 
 
   async findOne(id: string, tenantId: string): Promise<FeeStructureItem> {

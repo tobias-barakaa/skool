@@ -53,6 +53,11 @@ export class TenantGradeLevel {
   @OneToMany(() => TenantStream, (ts) => ts.tenantGradeLevel)
   tenantStreams?: TenantStream[];
 
+  @Field({ nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  name?: string;
+
+
   @Field(() => Date)
   @CreateDateColumn()
   createdAt: Date;

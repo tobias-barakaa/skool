@@ -408,34 +408,12 @@ input CreateFeeBucketInput {
   name: String!
 }
 
-"""Input type for creating a new fee structure"""
-input CreateFeeStructureInput {
-  """The ID of the academic year"""
+input CreateFeeStructureWithItemsInput {
   academicYearId: String!
-
-  """Array of grade level IDs this fee structure applies to"""
   gradeLevelIds: [String!]
-
-  """The name of the fee structure"""
+  items: [FeeStructureItemInput!]
   name: String!
-
-  """The IDs of the terms"""
   termIds: [String!]!
-}
-
-"""Input for creating a new fee structure item"""
-input CreateFeeStructureItemInput {
-  """The amount for this fee item"""
-  amount: Float!
-
-  """The ID of the fee bucket"""
-  feeBucketId: ID!
-
-  """The ID of the fee structure"""
-  feeStructureId: ID!
-
-  """Indicates if this fee item is mandatory"""
-  isMandatory: Boolean! = true
 }
 
 input CreateHostelAssignmentInput {
@@ -765,75 +743,37 @@ type FeeBucket {
   updatedAt: DateTime!
 }
 
-"""
-Represents a fee structure for specific grades, terms and academic year
-"""
 type FeeStructure {
-  """The academic year this fee structure belongs to"""
   academicYear: AcademicYear!
-
-  """The ID of the academic year"""
-  academicYearId: ID!
-
-  """The date and time when the fee structure was created"""
+  academicYearId: String!
   createdAt: DateTime!
-
-  """The grade levels this fee structure applies to"""
   gradeLevels: [TenantGradeLevel!]
-
-  """The unique identifier of the fee structure"""
   id: ID!
-
-  """Indicates if the fee structure is currently active"""
   isActive: Boolean!
-
-  """The fee items in this structure"""
-  items: [FeeStructureItem!]!
-
-  """The name of the fee structure"""
+  items: [FeeStructureItem!]
   name: String!
-
-  """The ID of the tenant this fee structure belongs to"""
   tenantId: String!
-
-  """The terms this fee structure applies to"""
   terms: [Term!]!
-
-  """The date and time when the fee structure was last updated"""
   updatedAt: DateTime!
 }
 
-"""Represents individual fee items within a fee structure"""
 type FeeStructureItem {
-  """The amount for this fee item"""
   amount: Float!
-
-  """When this fee item was created"""
   createdAt: DateTime!
-
-  """The fee bucket this item belongs to"""
   feeBucket: FeeBucket!
-
-  """The ID of the fee bucket"""
-  feeBucketId: ID!
-
-  """The fee structure this item belongs to"""
+  feeBucketId: String!
   feeStructure: FeeStructure!
-
-  """The ID of the fee structure"""
-  feeStructureId: ID!
-
-  """The unique identifier of the fee structure item"""
+  feeStructureId: String!
   id: ID!
-
-  """Indicates if this fee item is mandatory"""
   isMandatory: Boolean!
-
-  """The ID of the tenant this fee structure item belongs to"""
   tenantId: String!
-
-  """When this fee item was last updated"""
   updatedAt: DateTime!
+}
+
+input FeeStructureItemInput {
+  amount: Float!
+  feeBucketId: String!
+  isMandatory: Boolean! = true
 }
 
 input FilterInput {
@@ -1113,14 +1053,6 @@ type Mutation {
   assignStudentsToRoute(input: BulkTransportAssignmentInput!): [TransportAssignment!]!
   bulkAssignStudentsToRoute(input: BulkTransportAssignmentInput!): [TransportAssignment!]!
 
-  """Bulk create fee structure items for a specific fee structure"""
-  bulkCreateFeeStructureItems(
-    feeStructureId: ID!
-
-    """Array of fee structure items to create"""
-    items: [CreateFeeStructureItemInput!]!
-  ): [FeeStructureItem!]!
-
   """
   Bulk toggle fee items by fee structure item and grade levels (e.g., activate transport for all Grade 1 students)
   """
@@ -1147,11 +1079,8 @@ type Mutation {
   """Create a new fee bucket"""
   createFeeBucket(input: CreateFeeBucketInput!): FeeBucket!
 
-  """Create a new fee structure (items added separately)"""
-  createFeeStructure(input: CreateFeeStructureInput!): FeeStructure!
-
-  """Create a new fee structure item"""
-  createFeeStructureItem(input: CreateFeeStructureItemInput!): FeeStructureItem!
+  """Create a new fee structure with optional items in a single transaction"""
+  createFeeStructureWithItems(input: CreateFeeStructureWithItemsInput!): FeeStructure!
   createHostel(input: CreateHostelInput!): Hostel!
 
   """Record a payment against an invoice"""
@@ -2243,6 +2172,7 @@ type TenantGradeLevel {
   gradeLevel: GradeLevel!
   id: ID!
   isActive: Boolean!
+  name: String
   shortName: String
   sortOrder: Float
   tenant: Tenant!

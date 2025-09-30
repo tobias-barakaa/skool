@@ -168,6 +168,9 @@ query GetPayment {
   }
 }
 
+
+
+
 # Get all payments with filters
 query GetAllPayments {
   payments(filters: {

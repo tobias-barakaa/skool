@@ -175,7 +175,6 @@ export class PaymentService {
       throw new NotFoundException(`Payment with id ${id} not found`);
     }
 
-    // Reverse invoice updates
     const invoice = payment.invoice;
     const newPaidAmount = Number(invoice.paidAmount) - Number(payment.amount);
     const newBalanceAmount = Number(invoice.totalAmount) - newPaidAmount;
@@ -202,7 +201,7 @@ export class PaymentService {
   async findById(id: string, user: ActiveUserData): Promise<Payment> {
     const payment = await this.paymentRepo.findOne({
       where: { id, tenantId: user.tenantId },
-      relations: ['invoice', 'student', 'receivedByUser'],
+      relations: ['invoice', 'student', 'student.user', 'receivedByUser'],
     });
 
     if (!payment) {
@@ -228,15 +227,17 @@ export class PaymentService {
 
     return this.paymentRepo.find({
       where,
-      relations: ['invoice', 'student', 'receivedByUser'],
+      relations: ['invoice', 'student','student.user', 'receivedByUser'],
       order: { paymentDate: 'DESC' },
     });
   }
 
+  
+
   async findByStudent(studentId: string, user: ActiveUserData): Promise<Payment[]> {
     return this.paymentRepo.find({
       where: { studentId, tenantId: user.tenantId },
-      relations: ['invoice', 'receivedByUser'],
+      relations: ['invoice','invoice.term', 'receivedByUser'],
       order: { paymentDate: 'DESC' },
     });
   }

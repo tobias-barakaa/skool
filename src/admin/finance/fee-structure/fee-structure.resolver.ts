@@ -4,10 +4,10 @@ import { FeeStructure } from './entities/fee-structure.entity';
 import { FeeStructureService } from './fee-structure.service';
 import { MembershipRole } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
 import { Roles } from 'src/iam/decorators/roles.decorator';
-import { CreateFeeStructureInput } from './dtos/create-fee-structure.input';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { UpdateFeeStructureInput } from './dtos/update-fee-structure.input.dto';
+import { CreateFeeStructureWithItemsInput } from '../fee-structure-item/dtos/create-fee-structure-item.dto';
 
 @Resolver(() => FeeStructure)
 export class FeeStructureResolver {
@@ -15,17 +15,31 @@ export class FeeStructureResolver {
 
   constructor(private readonly feeStructureService: FeeStructureService) {}
 
-  @Mutation(() => FeeStructure, { 
-    description: 'Create a new fee structure (items added separately)'
+  @Mutation(() => FeeStructure, {
+    description: 'Create a new fee structure with optional items in a single transaction',
   })
   @Roles(MembershipRole.SCHOOL_ADMIN)
-  async createFeeStructure(
-    @Args('input') input: CreateFeeStructureInput,
+  async createFeeStructureWithItems(
+    @Args('input') input: CreateFeeStructureWithItemsInput,
     @ActiveUser() user: ActiveUserData,
-  ) {
-    this.logger.log(`Creating fee structure: ${input.name} by user ${user.sub}`);
-    return await this.feeStructureService.create(input, user);
+  ): Promise<FeeStructure> {
+    this.logger.log(
+      `Creating fee structure with items: ${input.name} by user ${user.sub}`,
+    );
+    return await this.feeStructureService.createWithItems(input, user);
   }
+
+  // @Mutation(() => FeeStructure, { 
+  //   description: 'Create a new fee structure (items added separately)'
+  // })
+  // @Roles(MembershipRole.SCHOOL_ADMIN)
+  // async createFeeStructure(
+  //   @Args('input') input: CreateFeeStructureInput,
+  //   @ActiveUser() user: ActiveUserData,
+  // ) {
+  //   this.logger.log(`Creating fee structure: ${input.name} by user ${user.sub}`);
+  //   return await this.feeStructureService.create(input, user);
+  // }
 
   @Query(() => [FeeStructure], {
     name: 'feeStructures',

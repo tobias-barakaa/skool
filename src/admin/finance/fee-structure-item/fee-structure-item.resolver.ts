@@ -2,7 +2,6 @@ import { Resolver, Query, Mutation, Args, ID, Float } from '@nestjs/graphql';
 import { UseGuards, Request } from '@nestjs/common';
 import { FeeStructureItem } from './entities/fee-structure-item.entity';
 import { FeeStructureItemService } from './fee-structure-item.service';
-import { CreateFeeStructureItemInput } from './dtos/create-fee-structure-item.dto';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { UpdateFeeStructureItemInput } from './dtos/update-fee-structure-item.dto';
@@ -14,15 +13,15 @@ import { MembershipRole } from 'src/admin/user-tenant-membership/entities/user-t
 export class FeeStructureItemResolver {
   constructor(private readonly feeStructureItemService: FeeStructureItemService) {}
 
-  @Mutation(() => FeeStructureItem, { description: 'Create a new fee structure item' })
-  async createFeeStructureItem(
-    @Args('input') createFeeStructureItemInput: CreateFeeStructureItemInput,
-    @ActiveUser() user: ActiveUserData,
-  ): Promise<FeeStructureItem> {
-    const tenantId = user.tenantId;
-    console.log(tenantId, 'this is the tenant Iddd')
-    return this.feeStructureItemService.create(tenantId, createFeeStructureItemInput);
-  }
+  // @Mutation(() => FeeStructureItem, { description: 'Create a new fee structure item' })
+  // async createFeeStructureItem(
+  //   @Args('input') createFeeStructureItemInput: CreateFeeStructureItemInput,
+  //   @ActiveUser() user: ActiveUserData,
+  // ): Promise<FeeStructureItem> {
+  //   const tenantId = user.tenantId;
+  //   console.log(tenantId, 'this is the tenant Iddd')
+  //   return this.feeStructureItemService.create(tenantId, createFeeStructureItemInput);
+  // }
 
   @Query(() => [FeeStructureItem], { 
     name: 'feeStructureItems',
@@ -167,27 +166,27 @@ export class FeeStructureItemResolver {
   //   return this.feeStructureItemService.remove(id, tenantId);
   // }
 
-  @Mutation(() => [FeeStructureItem], { 
-    description: 'Bulk create fee structure items for a specific fee structure' 
-  })
-  async bulkCreateFeeStructureItems(
-    @Args('feeStructureId', { type: () => ID }) feeStructureId: string,
-    @Args('items', { 
-      type: () => [CreateFeeStructureItemInput],
-      description: 'Array of fee structure items to create' 
-    }) items: CreateFeeStructureItemInput[],
-    @ActiveUser() user: ActiveUserData,
-  ): Promise<FeeStructureItem[]> {
-    const tenantId = user.tenantId;
+  // @Mutation(() => [FeeStructureItem], { 
+  //   description: 'Bulk create fee structure items for a specific fee structure' 
+  // })
+  // async bulkCreateFeeStructureItems(
+  //   @Args('feeStructureId', { type: () => ID }) feeStructureId: string,
+  //   @Args('items', { 
+  //     type: () => [CreateFeeStructureItemInput],
+  //     description: 'Array of fee structure items to create' 
+  //   }) items: CreateFeeStructureItemInput[],
+  //   @ActiveUser() user: ActiveUserData,
+  // ): Promise<FeeStructureItem[]> {
+  //   const tenantId = user.tenantId;
     
-    const itemsToCreate = items.map(item => ({
-      feeBucketId: item.feeBucketId,
-      amount: item.amount,
-      isMandatory: item.isMandatory,
-    }));
+  //   const itemsToCreate = items.map(item => ({
+  //     feeBucketId: item.feeBucketId,
+  //     amount: item.amount,
+  //     isMandatory: item.isMandatory,
+  //   }));
 
-    return this.feeStructureItemService.bulkCreate(tenantId, feeStructureId, itemsToCreate);
-  }
+  //   return this.feeStructureItemService.bulkCreate(tenantId, feeStructureId, itemsToCreate);
+  // }
 
 
   @Mutation(() => Float, { 

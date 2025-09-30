@@ -274,6 +274,10 @@ export class InvoiceService {
     });
   }
 
+
+
+
+
   async findById(id: string, user: ActiveUserData): Promise<Invoice> {
     const invoice = await this.invoiceRepo.findOne({
       where: { id, tenantId: user.tenantId },
