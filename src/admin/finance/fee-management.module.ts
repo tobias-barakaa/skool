@@ -27,6 +27,8 @@ import { InvoiceItem } from './invoice/entities/invoice.entity.item';
 import { Receipt } from './receipt/receipt.entity';
 import { PaymentService } from './payment/payment.service';
 import { PaymentResolver } from './payment/payment.resolver';
+import { FeeStructureSummaryService } from './fee-structure/summary/fee-structure.summary.service';
+import { FeeStructureSummaryResolver } from './fee-structure/summary/fee-structure.summary.resolver';
 
 
 @Module({
@@ -62,7 +64,11 @@ import { PaymentResolver } from './payment/payment.resolver';
     InvoiceService,
 
     PaymentService,
-    PaymentResolver
+    PaymentResolver,
+
+    FeeStructureSummaryService,
+    FeeStructureSummaryResolver
+
 
   ],
   exports: [
@@ -76,3 +82,7 @@ import { PaymentResolver } from './payment/payment.resolver';
   ],
 })
 export class FeeManagementModule {}
+
+
+
+

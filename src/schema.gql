@@ -341,6 +341,13 @@ type CombinedSearchResult {
   totalCount: Float!
 }
 
+type ComprehensiveFeeStructureSummary {
+  academicYearSummaries: [FeeStructureSummaryByAcademicYear!]!
+  feeBucketSummaries: [FeeStructureSummaryByFeeBucket!]!
+  gradeLevelSummaries: [FeeStructureSummaryByGradeLevel!]!
+  tenantSummary: FeeStructureSummaryByTenant!
+}
+
 input CreateAcademicYearInput {
   endDate: String!
   name: String!
@@ -774,6 +781,49 @@ input FeeStructureItemInput {
   amount: Float!
   feeBucketId: String!
   isMandatory: Boolean! = true
+}
+
+type FeeStructureSummaryByAcademicYear {
+  academicYearId: String!
+  academicYearName: String!
+  affectedGradeLevels: Int!
+  terms: [String!]!
+  totalAmount: Float!
+  totalFeeStructures: Int!
+}
+
+type FeeStructureSummaryByFeeBucket {
+  feeBucketId: String!
+  feeBucketName: String!
+  mandatoryCount: Int!
+  optionalCount: Int!
+  totalAmount: Float!
+  usageCount: Int!
+}
+
+type FeeStructureSummaryByGradeLevel {
+  academicYears: [String!]!
+  gradeLevelId: String!
+  gradeLevelName: String!
+  terms: [String!]!
+  totalAmount: Float!
+  totalFeeStructures: Int!
+  totalItems: Int!
+  totalMandatoryAmount: Float!
+  totalOptionalAmount: Float!
+}
+
+type FeeStructureSummaryByTenant {
+  grandTotalAmount: Float!
+  tenantId: String!
+  totalFeeItems: Int!
+  totalFeeStructures: Int!
+  totalGradeLevels: Int!
+  totalMandatoryAmount: Float!
+  totalOptionalAmount: Float!
+  uniqueAcademicYears: [String!]!
+  uniqueFeeBuckets: [String!]!
+  uniqueTerms: [String!]!
 }
 
 input FilterInput {
@@ -1370,6 +1420,9 @@ type Query {
 
   """Get all students assigned to a specific fee assignment"""
   assignedStudents(feeAssignmentId: ID!): [StudentFeeAssignment!]!
+
+  """Get comprehensive summary of all fee structures with breakdowns"""
+  comprehensiveFeeStructureSummary: ComprehensiveFeeStructureSummary!
   deactivatedTenantSubjects: [TenantSubject!]!
 
   """Get a specific fee assignment by ID"""
@@ -1387,10 +1440,19 @@ type Query {
   """Get a single fee structure by id (tenant scoped)"""
   feeStructure(id: ID!): FeeStructure
 
+  """Get fee structure summaries grouped by academic year"""
+  feeStructureAcademicYearSummaries: [FeeStructureSummaryByAcademicYear!]!
+
   """
   Returns the single active fee-structure that matches the supplied academic-year, term and tenant-grade-level (all scoped to the logged-in tenant). Includes items and their buckets.
   """
   feeStructureByGradeAndTerm(academicYearId: ID!, termId: ID!): FeeStructure
+
+  """Get fee structure summaries grouped by fee bucket"""
+  feeStructureFeeBucketSummaries: [FeeStructureSummaryByFeeBucket!]!
+
+  """Get fee structure summaries grouped by grade level"""
+  feeStructureGradeLevelSummaries: [FeeStructureSummaryByGradeLevel!]!
 
   """Get a single fee structure item by ID"""
   feeStructureItem(id: ID!): FeeStructureItem!
@@ -1406,6 +1468,9 @@ type Query {
 
   """Get the total amount for all optional items in a fee structure"""
   feeStructureOptionalAmount(feeStructureId: ID!): Float!
+
+  """Get tenant-wide fee structure summary"""
+  feeStructureTenantSummary: FeeStructureSummaryByTenant!
 
   """Get the total amount for all items in a fee structure"""
   feeStructureTotalAmount(feeStructureId: ID!): Float!

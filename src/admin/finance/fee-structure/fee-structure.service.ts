@@ -482,7 +482,6 @@ async findAll(user: ActiveUserData): Promise<FeeStructure[]> {
 
 
 
-
   async findOneById(id: string, user: ActiveUserData): Promise<FeeStructure> {
     const fs = await this.feeStructureRepository.findOne({
       where: { id, tenantId: user.tenantId },
