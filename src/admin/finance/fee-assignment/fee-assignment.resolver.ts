@@ -11,6 +11,7 @@ import { BulkToggleByFeeStructureItemInput } from './dtos/bulk-toggle-by-fee-str
 import { BulkToggleStudentFeeItemsInput } from './dtos/bulk-toggle-student-fee-items.input';
 import { FeeAssignmentWithStudents, GetFeeAssignmentsByGradeLevelsInput, TenantFeeAssignmentSummary } from './dtos/fee-summary.dto';
 import GraphQLJSON from 'graphql-type-json';
+import { StudentFeeSummary } from './dtos/student-fee-summary.dto';
 
 @Resolver(() => FeeAssignment)
 export class FeeAssignmentResolver {
@@ -129,6 +130,14 @@ export class FeeAssignmentResolver {
     const tenantId = user.tenantId;
     return this.feeAssignmentService.getStudentFeeItems(studentId, tenantId);
   }
+
+  @Query(() => StudentFeeSummary, { nullable: true })
+async studentFeeSummary(
+  @Args('studentId', { type: () => ID }) studentId: string,
+  @ActiveUser() user: ActiveUserData,
+): Promise<StudentFeeSummary | null> {
+  return this.feeAssignmentService.getStudentFeeSummary(studentId, user.tenantId);
+}
 
   @Mutation(() => [StudentFeeItem], {
     description: 'Bulk activate or deactivate multiple student fee items'

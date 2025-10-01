@@ -15,6 +15,10 @@ import { TenantGradeLevel } from 'src/admin/school-type/entities/tenant-grade-le
 import { BulkToggleStudentFeeItemsInput } from './dtos/bulk-toggle-student-fee-items.input';
 import { FeeAssignmentWithStudents, GetFeeAssignmentsByGradeLevelsInput, TenantFeeAssignmentSummary } from './dtos/fee-summary.dto';
 import { FeeAssignmentGradeLevel } from './entities/fee_assignment_grade_levels.entity';
+import { StudentFeeSummary } from './dtos/student-fee-summary.dto';
+
+
+
 
 @Injectable()
 export class FeeAssignmentService {
@@ -481,6 +485,47 @@ export class FeeAssignmentService {
   //   });
   // };
 
+  
+
+  async getStudentFeeSummary(studentId: string, tenantId: string): Promise<StudentFeeSummary | null> {
+    const feeItems = await this.getStudentFeeItems(studentId, tenantId);
+  
+    if (!feeItems.length) return null;
+  
+    const student = feeItems[0].studentFeeAssignment.student;
+    const feeStructure = feeItems[0].studentFeeAssignment.feeAssignment.feeStructure;
+  
+    const items = feeItems.map(item => ({
+      id: item.id,
+      bucketName: item.feeStructureItem.feeBucket.name,
+      amount: Number(item.amount),  
+      isMandatory: item.isMandatory,
+    }));
+  
+    const totalMandatory = items
+      .filter(b => b.isMandatory)
+      .reduce((sum, b) => sum + Number(b.amount), 0);
+  
+    const totalOptional = items
+      .filter(b => !b.isMandatory)
+      .reduce((sum, b) => sum + Number(b.amount), 0);
+  
+    const totalAmount = totalMandatory + totalOptional;
+  
+    return {
+      studentId: student.id,
+      studentName: student.user.name,
+      admissionNumber: student.admission_number,
+      gradeLevel: student.grade.gradeLevel.name,
+      feeStructureName: feeStructure?.name || null,
+      academicYear: feeStructure.academicYear.name,
+      terms: feeStructure.terms.map(t => t.name),
+      totalAmount, 
+      items,
+    };
+  }
+  
+  
 
 
 

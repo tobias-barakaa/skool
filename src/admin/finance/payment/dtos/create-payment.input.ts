@@ -15,10 +15,14 @@ export class CreatePaymentInput {
   @IsNotEmpty()
   amount: number;
 
-  @Field(() => PaymentMethod)
-  @IsEnum(PaymentMethod)
-  @IsNotEmpty()
-  paymentMethod: PaymentMethod;
+  // @Field(() => PaymentMethod)
+  // @IsEnum(PaymentMethod)
+  // @IsNotEmpty()
+  // paymentMethod: PaymentMethod;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  paymentMethod?: string;
 
   @Field({ nullable: true })
   @IsOptional()
@@ -72,10 +76,13 @@ export class PaymentFilters {
   @IsUUID()
   invoiceId?: string;
 
-  @Field(() => PaymentMethod, { nullable: true })
+  // @Field(() => PaymentMethod, { nullable: true })
+  // @IsOptional()
+  // @IsEnum(PaymentMethod)
+  // paymentMethod?: PaymentMethod;
+  @Field({ nullable: true })
   @IsOptional()
-  @IsEnum(PaymentMethod)
-  paymentMethod?: PaymentMethod;
+  paymentMethod?: string;
 
   @Field({ nullable: true })
   @IsOptional()

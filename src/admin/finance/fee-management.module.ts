@@ -81,8 +81,7 @@ import { FeeStructureSummaryResolver } from './fee-structure/summary/fee-structu
 
   ],
 })
+
 export class FeeManagementModule {}
-
-
 
 

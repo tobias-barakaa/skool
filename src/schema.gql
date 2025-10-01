@@ -473,7 +473,7 @@ input CreatePaymentInput {
   invoiceId: ID!
   notes: String
   paymentDate: String
-  paymentMethod: PaymentMethod!
+  paymentMethod: String
   transactionReference: String
 }
 
@@ -1359,7 +1359,7 @@ type Payment {
   invoiceId: ID!
   notes: String
   paymentDate: DateTime!
-  paymentMethod: PaymentMethod!
+  paymentMethod: String
   receiptNumber: String!
   receivedBy: ID!
   receivedByUser: User!
@@ -1373,7 +1373,7 @@ type Payment {
 input PaymentFilters {
   endDate: String
   invoiceId: ID
-  paymentMethod: PaymentMethod
+  paymentMethod: String
   receiptNumber: String
   startDate: String
   studentId: ID
@@ -1606,6 +1606,7 @@ type Query {
 
   """Get all fee items for a specific student"""
   studentFeeItems(studentId: ID!): [StudentFeeItem!]!
+  studentFeeSummary(studentId: ID!): StudentFeeSummary
 
   """Get student profile by ID (only accessible by the student themselves)"""
   studentProfileById(studentId: ID!): Student!
@@ -1999,6 +2000,25 @@ type StudentFeeItem {
 
   """The date and time when the item was last updated"""
   updatedAt: DateTime!
+}
+
+type StudentFeeItemSummary {
+  amount: Float!
+  bucketName: String!
+  id: ID!
+  isMandatory: Boolean!
+}
+
+type StudentFeeSummary {
+  academicYear: String!
+  admissionNumber: String!
+  feeStructureName: String
+  gradeLevel: String!
+  items: [StudentFeeItemSummary!]!
+  studentId: ID!
+  studentName: String!
+  terms: [String!]!
+  totalAmount: Float!
 }
 
 type StudentForParentDto {

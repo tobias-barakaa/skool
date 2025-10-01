@@ -279,38 +279,38 @@ export class ReceiptService {
   /**
    * Get receipt statistics for reporting
    */
-  async getReceiptStatistics(
-    dateRange: DateRangeInput,
-    user: ActiveUserData,
-  ): Promise<{
-    totalReceipts: number;
-    totalAmount: number;
-    byPaymentMethod: Record<PaymentMethod, { count: number; amount: number }>;
-  }> {
-    const receipts = await this.findByDateRange(
-      dateRange.startDate,
-      dateRange.endDate,
-      user,
-    );
+  // async getReceiptStatistics(
+  //   dateRange: DateRangeInput,
+  //   user: ActiveUserData,
+  // ): Promise<{
+  //   totalReceipts: number;
+  //   totalAmount: number;
+  //   byPaymentMethod: Record<PaymentMethod, { count: number; amount: number }>;
+  // }> {
+  //   const receipts = await this.findByDateRange(
+  //     dateRange.startDate,
+  //     dateRange.endDate,
+  //     user,
+  //   );
 
-    const stats = {
-      totalReceipts: receipts.length,
-      totalAmount: receipts.reduce((sum, r) => sum + Number(r.amount), 0),
-      byPaymentMethod: {} as Record<PaymentMethod, { count: number; amount: number }>,
-    };
+  //   const stats = {
+  //     totalReceipts: receipts.length,
+  //     totalAmount: receipts.reduce((sum, r) => sum + Number(r.amount), 0),
+  //     byPaymentMethod: {} as Record<PaymentMethod, { count: number; amount: number }>,
+  //   };
 
-    // Group by payment method
-    receipts.forEach((receipt) => {
-      const method = receipt.payment.paymentMethod;
-      if (!stats.byPaymentMethod[method]) {
-        stats.byPaymentMethod[method] = { count: 0, amount: 0 };
-      }
-      stats.byPaymentMethod[method].count++;
-      stats.byPaymentMethod[method].amount += Number(receipt.amount);
-    });
+  //   // Group by payment method
+  //   receipts.forEach((receipt) => {
+  //     const method = receipt.payment.paymentMethod;
+  //     if (!stats.byPaymentMethod[method]) {
+  //       stats.byPaymentMethod[method] = { count: 0, amount: 0 };
+  //     }
+  //     // stats.byPaymentMethod[method].count++;
+  //     // stats.byPaymentMethod[method].amount += Number(receipt.amount);
+  //   });
 
-    return stats;
-  }
+  //   return stats;
+  // }
 
   /**
    * Bulk generate receipts for multiple payments

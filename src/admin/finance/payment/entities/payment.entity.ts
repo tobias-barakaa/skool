@@ -58,13 +58,17 @@ export class Payment {
   @Column('decimal', { precision: 12, scale: 2 })
   amount: number;
 
-  @Field(() => PaymentMethod)
-  @Column({
-    type: 'enum',
-    enum: PaymentMethod,
-    default: PaymentMethod.CASH
-  })
-  paymentMethod: PaymentMethod;
+  // @Field(() => PaymentMethod)
+  // @Column({
+  //   type: 'enum',
+  //   enum: PaymentMethod,
+  //   default: PaymentMethod.CASH
+  // })
+  // paymentMethod: PaymentMethod;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  paymentMethod?: string;
 
   @Field({ nullable: true })
   @Column({ nullable: true })
