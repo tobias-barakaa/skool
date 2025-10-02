@@ -750,6 +750,16 @@ type FeeBucket {
   updatedAt: DateTime!
 }
 
+type FeeItemSummary {
+  academicYearName: String!
+  amount: Float!
+  feeBucketName: String!
+  feeStructureName: String!
+  id: ID!
+  isMandatory: Boolean!
+  termName: String!
+}
+
 type FeeStructure {
   academicYear: AcademicYear!
   academicYearId: String!
@@ -918,6 +928,17 @@ type GradeLevelInfo {
 type GradeLevelOutput {
   id: ID!
   name: String!
+}
+
+type GradeLevelStudentsSummary {
+  curriculumName: String!
+  gradeLevelId: ID!
+  gradeLevelName: String!
+  students: [StudentSummary!]!
+  totalBalance: Float!
+  totalFeesOwed: Float!
+  totalFeesPaid: Float!
+  totalStudents: Int!
 }
 
 type GradeLevelWithStreamsOutput {
@@ -1415,6 +1436,9 @@ type Query {
   activeStreams: [StreamType!]!
   allStudentScholarships: [StudentScholarship!]!
   allStudents: [Student!]!
+
+  """Get comprehensive summaries for all students in the tenant"""
+  allStudentsSummary: [StudentSummary!]!
   allUsersOfTenant(tenantId: String!): [TenantUserSummary!]!
   assessments(filter: AssessmentFilterInput): [AssessmentOutput!]!
 
@@ -1611,8 +1635,19 @@ type Query {
   """Get student profile by ID (only accessible by the student themselves)"""
   studentProfileById(studentId: ID!): Student!
   studentScholarships(studentId: String!): [StudentScholarship!]!
+
+  """
+  Get comprehensive summary for a single student including all fee details
+  """
+  studentSummary(studentId: ID!): StudentSummary!
   studentsByGradeLevel(tenantGradeLevelId: ID!): [Student!]!
   studentsForTenant: [StudentLoginInfo!]!
+
+  """Get students summary grouped by grade level with aggregated statistics"""
+  studentsSummaryByGradeLevel: [GradeLevelStudentsSummary!]!
+
+  """Get students summary for a specific grade level"""
+  studentsSummaryForGradeLevel(gradeLevelId: ID!): GradeLevelStudentsSummary!
   teacherGetParentById(parentId: String!): Parent
   teacherGetParents: [Parent!]!
   teacherGetParentsByStudentId(studentId: String!): [Parent!]!
@@ -2021,6 +2056,14 @@ type StudentFeeSummary {
   totalAmount: Float!
 }
 
+type StudentFeeSummarys {
+  balance: Float!
+  feeItems: [FeeItemSummary!]!
+  numberOfFeeItems: Int!
+  totalOwed: Float!
+  totalPaid: Float!
+}
+
 type StudentForParentDto {
   admissionNumber: String!
   firstName: String!
@@ -2071,6 +2114,23 @@ type StudentServices {
 type StudentServicesProfile {
   services: StudentServices!
   student: Student!
+}
+
+type StudentSummary {
+  admissionNumber: String!
+  createdAt: DateTime!
+  curriculumName: String!
+  email: String!
+  feeSummary: StudentFeeSummarys!
+  gender: String!
+  gradeLevelName: String!
+  id: ID!
+  isActive: Boolean!
+  phone: String!
+  schoolType: String!
+  streamName: String
+  studentName: String!
+  updatedAt: DateTime!
 }
 
 type StudentSummaryDto {
