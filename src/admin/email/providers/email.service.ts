@@ -75,6 +75,45 @@ export class EmailService {
     return tenant.subdomain;
   }
 
+
+
+  async sendReceiptEmail(
+    to: string,
+    data: {
+      recipientName: string;
+      schoolName: string;
+      receiptNumber: string;
+      amount: number;
+      paymentMethod: string;
+      paymentDate: string;
+      invoiceNumber?: string;
+      balanceAmount?: number;
+      pdfUrl: string;
+    }
+  ) {
+    const template = this.buildReceiptTemplate(data);
+  
+    const { error } = await this.resend.emails.send({
+      from: this.resendConfiguration.fromEmail || 'noreply@squl.co.ke',
+      to,
+      subject: template.subject,
+      html: template.html,
+      attachments: [
+        {
+          filename: `receipt-${data.receiptNumber}.pdf`,
+          path: data.pdfUrl,
+        },
+      ],
+    });
+  
+    if (error) {
+      this.logger.error(`Failed to send receipt to ${to}`, error);
+      throw new Error('Failed to send receipt email');
+    }
+  
+    this.logger.log(`Receipt ${data.receiptNumber} emailed to ${to}`);
+  }
+
   // Base email layout template
   private getBaseEmailTemplate(content: string, schoolName: string): string {
     return `
@@ -182,6 +221,53 @@ export class EmailService {
       html: this.getBaseEmailTemplate(content, data.schoolName),
     };
   }
+
+
+
+  private buildReceiptTemplate(
+    data: {
+      recipientName: string;
+      schoolName: string;
+      receiptNumber: string;
+      amount: number;
+      paymentMethod: string;
+      paymentDate: string;
+      invoiceNumber?: string;
+      balanceAmount?: number;
+    }
+  ): EmailTemplate {
+    const content = `
+      <p style="font-size: 18px; color: #333; margin-bottom: 20px;">Dear ${data.recipientName},</p>
+      
+      <p style="color: #555; line-height: 1.6; margin-bottom: 20px;">
+        This is to confirm receipt of your payment to <strong>${data.schoolName}</strong>.
+      </p>
+  
+      <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+        <h3 style="margin: 0 0 15px; color: #333;">Receipt Details:</h3>
+        <ul style="color: #555; padding-left: 20px; line-height: 1.6;">
+          <li><strong>Receipt Number:</strong> ${data.receiptNumber}</li>
+          <li><strong>Amount Paid:</strong> ${data.amount}</li>
+          <li><strong>Payment Method:</strong> ${data.paymentMethod}</li>
+          <li><strong>Payment Date:</strong> ${data.paymentDate}</li>
+          ${data.invoiceNumber ? `<li><strong>Invoice:</strong> ${data.invoiceNumber}</li>` : ''}
+          ${data.balanceAmount != null ? `<li><strong>Balance Remaining:</strong> ${data.balanceAmount}</li>` : ''}
+        </ul>
+      </div>
+  
+      <p style="color: #555; margin-bottom: 20px;">
+        Please find the detailed receipt attached as PDF.
+      </p>
+    `;
+  
+    return {
+      subject: `Payment Receipt - ${data.receiptNumber}`,
+      html: this.getBaseEmailTemplate(content, data.schoolName),
+    };
+  }
+  
+
+
 
   private async buildParentInvitationTemplate(
     data: ParentInvitationData,
@@ -441,4 +527,17 @@ export class EmailService {
 
     return this.sendEmail(email, template);
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

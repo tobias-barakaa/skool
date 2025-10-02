@@ -664,6 +664,11 @@ type CustomSubject {
   totalMarks: Float
 }
 
+input DateRangeInput {
+  endDate: String!
+  startDate: String!
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
@@ -1075,6 +1080,29 @@ The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://
 """
 scalar JSON
 
+"""Individual ledger entry"""
+type LedgerEntry {
+  balance: Float!
+  credit: Float!
+  date: DateTime!
+  debit: Float!
+  description: String!
+  invoiceNumber: String
+  receiptNumber: String
+  reference: String!
+}
+
+"""Ledger summary"""
+type LedgerSummary {
+  averagePaymentAmount: Float!
+  invoiceCount: Int!
+  lastPaymentDate: DateTime
+  paymentCount: Int!
+  totalBalance: Float!
+  totalInvoiced: Float!
+  totalPaid: Float!
+}
+
 type Level {
   description: String
   gradeLevels: [GradeLevel!]
@@ -1204,12 +1232,21 @@ type Mutation {
   """Delete a term"""
   deleteTerm(id: ID!): Boolean!
   deleteTransportRoute(id: ID!): Boolean!
+
+  """Email receipt to student/parent"""
+  emailReceipt(emailAddress: String!, paymentId: ID!): Boolean!
   enterStudentMarks(inputs: [EnterStudentMarksInput!]!): [AssessmentMark!]!
   forgotPassword(forgotPasswordInput: ForgotPasswordInput!): PasswordResetResponse!
 
   """Generate invoices for students based on their fee assignments"""
   generateInvoices(input: CreateInvoiceInput!): [Invoice!]!
+
+  """Generate ledger report PDF"""
+  generateLedgerPDF(dateRange: DateRangeInput, studentId: ID!): String!
   generateQuestions(generateQuestionsInput: GenerateQuestionsInput!): [GeneratedQuestionOutput!]!
+
+  """Generate PDF receipt for a payment"""
+  generateReceiptPDF(paymentId: ID!): String!
   inviteParent(createParentDto: CreateParentInvitationDto!, studentIds: [String!]!, tenantId: String!): InviteParentResponse!
   inviteStaff(createStaffDto: CreateStaffInvitationDto!): InviteStaffResponse!
   inviteTeacher(createTeacherDto: CreateTeacherInvitationDto!): InviteTeacherResponse!
@@ -1580,6 +1617,15 @@ type Query {
 
   """Get all invoices for a specific student"""
   invoicesByStudent(studentId: ID!): [Invoice!]!
+
+  """Get ledger entries for a student"""
+  ledgerEntries(dateRange: DateRangeInput, studentId: ID!): [LedgerEntry!]!
+
+  """Get ledger summary for a student"""
+  ledgerSummary(studentId: ID!): LedgerSummary!
+
+  """Get ledgers for multiple students by grade level"""
+  ledgersByGradeLevel(dateRange: DateRangeInput, gradeLevelId: ID!): [StudentLedger!]!
   marksStats(academicYear: String!, gradeLevelId: String!, subjectId: String!, term: Int!): MarksStatsDto!
 
   """
@@ -1612,6 +1658,15 @@ type Query {
 
   """Get all payments for a specific student"""
   paymentsByStudent(studentId: ID!): [Payment!]!
+
+  """Get receipt by receipt number"""
+  receiptByNumber(receiptNumber: String!): Receipt!
+
+  """Get receipt by payment ID"""
+  receiptByPayment(paymentId: ID!): Receipt!
+
+  """Get all receipts for a student"""
+  receiptsByStudent(studentId: ID!): [Receipt!]!
   scholarship(id: ID!): Scholarship!
   scholarships: [Scholarship!]!
   searchAvailableStudentsForParent(parentId: String!, searchTerm: String, tenantId: String!): [StudentSearchResponse!]!
@@ -1631,6 +1686,9 @@ type Query {
   """Get all fee items for a specific student"""
   studentFeeItems(studentId: ID!): [StudentFeeItem!]!
   studentFeeSummary(studentId: ID!): StudentFeeSummary
+
+  """Get complete ledger for a student"""
+  studentLedger(dateRange: DateRangeInput, studentId: ID!): StudentLedger!
 
   """Get student profile by ID (only accessible by the student themselves)"""
   studentProfileById(studentId: ID!): Student!
@@ -1706,6 +1764,28 @@ enum QuestionType {
 
   """True or false question"""
   TRUE_FALSE
+}
+
+"""Represents a payment receipt"""
+type Receipt {
+  amount: Float!
+  createdAt: DateTime!
+  id: ID!
+  payment: Payment!
+  paymentId: ID!
+  pdfUrl: String
+  receiptDate: DateTime!
+  receiptNumber: String!
+  student: Student!
+  studentId: ID!
+  tenantId: String!
+  type: ReceiptType!
+}
+
+enum ReceiptType {
+  ADJUSTMENT
+  PAYMENT
+  REFUND
 }
 
 type ReferenceMaterial {
@@ -2072,6 +2152,17 @@ type StudentForParentDto {
   isPrimary: Boolean!
   lastName: String!
   relationship: String!
+}
+
+"""Complete student ledger"""
+type StudentLedger {
+  dateRangeEnd: DateTime
+  dateRangeStart: DateTime
+  entries: [LedgerEntry!]!
+  generatedAt: DateTime!
+  student: Student!
+  studentId: ID!
+  summary: LedgerSummary!
 }
 
 type StudentLoginInfo {

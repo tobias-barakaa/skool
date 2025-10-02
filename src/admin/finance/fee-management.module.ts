@@ -29,6 +29,11 @@ import { PaymentService } from './payment/payment.service';
 import { PaymentResolver } from './payment/payment.resolver';
 import { FeeStructureSummaryService } from './fee-structure/summary/fee-structure.summary.service';
 import { FeeStructureSummaryResolver } from './fee-structure/summary/fee-structure.summary.resolver';
+import { LedgerService } from './ledger/ledger.service';
+import { LedgerResolver } from './ledger/student.ledger.resolver';
+import { ReceiptService } from './receipt/receipt.service';
+import { ReceiptResolver } from './receipt/receipt.resolver';
+import { EmailModule } from '../email/email.module';
 
 
 @Module({
@@ -47,7 +52,8 @@ import { FeeStructureSummaryResolver } from './fee-structure/summary/fee-structu
       Receipt
 
     ]),
-    StudentModule
+    StudentModule,
+    EmailModule
   ],
   providers: [
     FeeBucketService,
@@ -67,7 +73,13 @@ import { FeeStructureSummaryResolver } from './fee-structure/summary/fee-structu
     PaymentResolver,
 
     FeeStructureSummaryService,
-    FeeStructureSummaryResolver
+    FeeStructureSummaryResolver,
+
+    LedgerService,
+    LedgerResolver,
+
+    ReceiptResolver,
+    ReceiptService
 
 
   ],
@@ -78,6 +90,7 @@ import { FeeStructureSummaryResolver } from './fee-structure/summary/fee-structu
     FeeAssignmentService,
     InvoiceResolver,
     InvoiceService,
+    ReceiptResolver
 
   ],
 })

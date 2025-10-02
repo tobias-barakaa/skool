@@ -48,6 +48,9 @@ export class StudentSummaryService {
 
  
 
+
+
+
   async getAllStudentsSummary(
     user: ActiveUserData,
   ): Promise<StudentSummary[]> {
@@ -280,4 +283,5 @@ WHERE sfa."studentId" = $1
     };
   }
 }
+
 
