@@ -98,12 +98,12 @@ export class EmailService {
       to,
       subject: template.subject,
       html: template.html,
-      attachments: [
-        {
-          filename: `receipt-${data.receiptNumber}.pdf`,
-          path: data.pdfUrl,
-        },
-      ],
+      // attachments: [
+      //   {
+      //     filename: `receipt-${data.receiptNumber}.pdf`,
+      //     path: data.pdfUrl,
+      //   },
+      // ],
     });
   
     if (error) {
@@ -114,7 +114,33 @@ export class EmailService {
     this.logger.log(`Receipt ${data.receiptNumber} emailed to ${to}`);
   }
 
-  // Base email layout template
+
+  // private async sendEmail(to: string, template: EmailTemplate): Promise<any> {
+  //   const { data, error } = await this.resend.emails.send({
+  //     from: this.resendConfiguration.fromEmail || 'noreply@squl.co.ke',
+  //     to,
+  //     subject: template.subject,
+  //     html: template.html,
+  //   });
+
+  //   if (error) {
+  //     console.error('Resend error:', error);
+  //     throw new Error('Failed to send email');
+  //   }
+
+  //   return data;
+  // }
+
+
+
+
+
+
+
+
+
+
+
   private getBaseEmailTemplate(content: string, schoolName: string): string {
     return `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -255,11 +281,13 @@ export class EmailService {
         </ul>
       </div>
   
-      <p style="color: #555; margin-bottom: 20px;">
-        Please find the detailed receipt attached as PDF.
-      </p>
+     
     `;
   
+
+  //   <p style="color: #555; margin-bottom: 20px;">
+  //   Please find the detailed receipt attached as PDF.
+  // </p>
     return {
       subject: `Payment Receipt - ${data.receiptNumber}`,
       html: this.getBaseEmailTemplate(content, data.schoolName),
@@ -418,6 +446,10 @@ export class EmailService {
       html: content,
     };
   }
+
+
+
+
   private async sendEmail(to: string, template: EmailTemplate): Promise<any> {
     const { data, error } = await this.resend.emails.send({
       from: this.resendConfiguration.fromEmail || 'noreply@squl.co.ke',

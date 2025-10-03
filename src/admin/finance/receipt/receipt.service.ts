@@ -62,12 +62,8 @@ export class ReceiptService {
       this.logger.log(`Receipt ${receipt.receiptNumber} generated for payment ${paymentId}`);
     }
 
-    // return this.receiptRepo.findOneOrFail({
-    //   where: { id: receipt.id },
-    //   relations: ['payment', 'student', 'student.user', 'payment.invoice', 'payment.receivedByUser'],
-    // });
-
-    return this.receiptRepo.findOneOrFail({
+ 
+   const receiptWithRelations = await this.receiptRepo.findOneOrFail({
       where: { id: receipt.id },
       relations: [
         'payment',
@@ -79,6 +75,9 @@ export class ReceiptService {
         'payment.receivedByUser',
       ],
     });
+
+    console.log(receiptWithRelations, 'this is receipt with relations........................../h>>>>>>>>?????????')
+    return receiptWithRelations;
   }
 
   async findByReceiptNumber(receiptNumber: string, user: ActiveUserData): Promise<Receipt> {

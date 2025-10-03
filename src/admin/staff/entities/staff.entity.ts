@@ -63,7 +63,7 @@ export class Staff {
   lastName: string;
 
   @Field()
-  @Column({ unique: true })
+  @Column()
   email: string;
 
   @Field({ nullable: true })
