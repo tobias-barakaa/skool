@@ -1160,6 +1160,7 @@ type Mutation {
   """Bulk activate or deactivate multiple student fee items"""
   bulkToggleStudentFeeItems(bulkToggleInput: BulkToggleStudentFeeItemsInput!): [StudentFeeItem!]!
   changePassword(changePasswordInput: ChangePasswordInput!): PasswordResetResponse!
+  configureSchoolLevelsByNames(levelNames: [String!]!): SchoolConfigurationResponse!
 
   """Create a new academic year for the tenant"""
   createAcademicYear(

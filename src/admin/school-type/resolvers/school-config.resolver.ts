@@ -13,7 +13,6 @@ import { Auth } from 'src/admin/auth/decorator/auth.decorator';
 import { SkipTenantValidation } from 'src/admin/auth/decorator/skip-tenant-validation.decorator';
 
 @Resolver()
-@Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.SUPER_ADMIN)
 export class SchoolConfigResolver {
   private readonly logger = new Logger(SchoolConfigResolver.name);
 
