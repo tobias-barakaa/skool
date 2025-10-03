@@ -1,5 +1,5 @@
 import { Resolver, Mutation, Query, Args } from '@nestjs/graphql';
-import {  Logger, SetMetadata } from '@nestjs/common';
+import {  Logger } from '@nestjs/common';
 import { SchoolConfigService } from '../services/school-config.service';
 import { SchoolConfigurationResponse } from '../dtos/config/school-configuration.response';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
@@ -8,25 +8,17 @@ import { Roles } from 'src/iam/decorators/roles.decorator';
 import { MembershipRole } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
 import { TenantGradeLevel } from '../entities/tenant-grade-level';
 import { SkipSchoolConfigCheck } from 'src/iam/guards/school-setup-guard-service';
-import { AuthType } from 'src/admin/auth/enums/auth-type.enum';
-import { Auth } from 'src/admin/auth/decorator/auth.decorator';
-import { SkipTenantValidation } from 'src/admin/auth/decorator/skip-tenant-validation.decorator';
 
 @Resolver()
+@Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.SUPER_ADMIN)
 export class SchoolConfigResolver {
   private readonly logger = new Logger(SchoolConfigResolver.name);
 
   constructor(private readonly schoolConfigService: SchoolConfigService) {}
 
   @Mutation(() => SchoolConfigurationResponse)
-  // @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.SUPER_ADMIN)
-  // @SkipSchoolConfigCheck()
-    //  @Auth(AuthType.None)
-    //  @Auth(AuthType.None)
-          @Auth(AuthType.None)
-          @SkipTenantValidation()
-          @SetMetadata('isPublic', true)
-          @SkipSchoolConfigCheck()
+  @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.SUPER_ADMIN)
+  @SkipSchoolConfigCheck()
   async configureSchoolLevelsByNames(
     @Args('levelNames', { type: () => [String] }) levelNames: string[],
     @ActiveUser() user: ActiveUserData,
