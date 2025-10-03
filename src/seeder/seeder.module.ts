@@ -40,6 +40,11 @@ import { Mark } from 'src/teacher/marksheet/entities/marksheet-entity';
 import { Assessment } from 'src/teacher/marksheet/assessment/entity/assessment.entity';
 import { ClassTeacherAssignment } from 'src/admin/teacher/entities/class_teacher_assignments.entity';
 import { Hostel } from 'src/admin/hostels/entities/hostel.entity';
+import { HostelAssignment } from 'src/admin/hostels/entities/hostel.assignment';
+import { Scholarship } from 'src/admin/scholarships/entities/scholarship.entity';
+import { StudentScholarship } from 'src/admin/scholarships/entities/scholarship_assignments.entity';
+import { TransportAssignment } from 'src/admin/transport/entities/transport_assignment.entity';
+import { TransportRoute } from 'src/admin/transport/entities/transport_routes.entity';
 
 
 
@@ -105,6 +110,13 @@ const ENV = process.env.NODE_ENV;
       Assessment,
       ClassTeacherAssignment,
       Hostel,
+
+      HostelAssignment,
+      Scholarship,
+      StudentScholarship,
+      TransportAssignment,
+      TransportRoute
+
       
     ]),
   ],
