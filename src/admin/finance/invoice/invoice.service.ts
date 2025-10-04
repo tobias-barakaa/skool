@@ -161,6 +161,8 @@ export class InvoiceService {
 
       const savedInvoice = await this.invoiceRepo.save(invoice);
 
+      
+
       const invoiceItems = feeItems.map(feeItem => {
         return this.invoiceItemRepo.create({
           tenantId,

@@ -19,12 +19,18 @@ registerEnumType(InvoiceStatus, {
   name: 'InvoiceStatus',
 });
 
+// @Entity('invoices')
+// @ObjectType({ description: 'Represents a student invoice' })
+// @Index(['tenantId', 'studentId'])
+// @Index(['tenantId', 'termId'])
+// @Index(['tenantId', 'invoiceNumber'])
+// @Index(['tenantId', 'status'])
 @Entity('invoices')
 @ObjectType({ description: 'Represents a student invoice' })
 @Index(['tenantId', 'studentId'])
 @Index(['tenantId', 'termId'])
-@Index(['tenantId', 'invoiceNumber'])
 @Index(['tenantId', 'status'])
+@Index(['tenantId', 'invoiceNumber'], { unique: true }) 
 export class Invoice {
   @Field(() => ID)
   @PrimaryGeneratedColumn('uuid')
@@ -34,9 +40,9 @@ export class Invoice {
   @Column()
   tenantId: string;
 
-  @Field()
-  @Column({ unique: true })
-  invoiceNumber: string;
+  @Index(['tenantId', 'invoiceNumber'], { unique: true })
+@Column()
+invoiceNumber: string;
 
   @Field(() => ID)
   @Column()

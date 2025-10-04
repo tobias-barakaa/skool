@@ -1036,7 +1036,6 @@ type Invoice {
   createdAt: DateTime!
   dueDate: DateTime!
   id: ID!
-  invoiceNumber: String!
   issueDate: DateTime!
   items: [InvoiceItem!]!
   notes: String
