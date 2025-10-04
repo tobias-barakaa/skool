@@ -1,5 +1,5 @@
 import { Field, ID, ObjectType, GraphQLISODateTime, Float, registerEnumType } from "@nestjs/graphql";
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, Index } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, Index, Unique } from "typeorm";
 
 import { User } from "src/admin/users/entities/user.entity";
 import { Invoice } from "../../invoice/entities/invoice.entity";
@@ -18,11 +18,16 @@ registerEnumType(PaymentMethod, {
   name: 'PaymentMethod',
 });
 
+// @Entity('payments')
+// @ObjectType({ description: 'Represents a payment made towards an invoice' })
+// @Index(['tenantId', 'invoiceId'])
+// @Index(['tenantId', 'studentId'])
+// @Unique(['tenantId', 'receiptNumber'])
 @Entity('payments')
 @ObjectType({ description: 'Represents a payment made towards an invoice' })
 @Index(['tenantId', 'invoiceId'])
 @Index(['tenantId', 'studentId'])
-@Index(['tenantId', 'receiptNumber'])
+@Unique(['tenantId', 'receiptNumber'])  
 export class Payment {
   @Field(() => ID)
   @PrimaryGeneratedColumn('uuid')
@@ -33,7 +38,7 @@ export class Payment {
   tenantId: string;
 
   @Field()
-  @Column({ unique: true })
+  @Column() 
   receiptNumber: string;
 
   @Field(() => ID)
@@ -58,13 +63,7 @@ export class Payment {
   @Column('decimal', { precision: 12, scale: 2 })
   amount: number;
 
-  // @Field(() => PaymentMethod)
-  // @Column({
-  //   type: 'enum',
-  //   enum: PaymentMethod,
-  //   default: PaymentMethod.CASH
-  // })
-  // paymentMethod: PaymentMethod;
+
 
   @Field({ nullable: true })
   @Column({ nullable: true })
