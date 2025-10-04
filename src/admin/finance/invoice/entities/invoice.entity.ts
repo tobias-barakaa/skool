@@ -40,7 +40,7 @@ export class Invoice {
   @Column()
   tenantId: string;
 
-  @Index(['tenantId', 'invoiceNumber'], { unique: true })
+  @Field(() => String)
 @Column()
 invoiceNumber: string;
 
