@@ -241,21 +241,25 @@ export class StudentSummaryService {
 
  
 
-  private mapToStudentSummary(student: Student, feeItems: any[]): StudentSummary {
+  private mapToStudentSummary(
+    student: Student,
+    feeItems: any[],
+  ): StudentSummary {
     const feeItemSummaries: FeeItemSummary[] = feeItems.map((item) => ({
       id: item.id,
       feeBucketName: item.fee_bucket_name,
       amount: parseFloat(item.amount),
-      amountPaid: parseFloat(item.amountPaid || 0), // <-- add this
       isMandatory: item.isMandatory,
       feeStructureName: item.fee_structure_name,
       academicYearName: item.academic_year_name,
       termName: item.term_name,
     }));
-  
-    const totalOwed = feeItemSummaries.reduce((sum, item) => sum + item.amount, 0);
-    const totalPaid = feeItemSummaries.reduce((sum, item) => sum + ((item as any).amountPaid || 0), 0); // <-- sum actual payments
-  
+
+    const totalOwed = feeItemSummaries.reduce(
+      (sum, item) => sum + item.amount,
+      0,
+    );
+
     return {
       id: student.id,
       admissionNumber: student.admission_number,
@@ -269,8 +273,8 @@ export class StudentSummaryService {
       streamName: student.stream?.name,
       feeSummary: {
         totalOwed,
-        totalPaid, 
-        balance: totalOwed - totalPaid,
+        totalPaid: student.totalFeesPaid,
+        balance: totalOwed - student.totalFeesPaid,
         numberOfFeeItems: feeItemSummaries.length,
         feeItems: feeItemSummaries,
       },
