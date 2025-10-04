@@ -69,6 +69,8 @@ export class PaymentService {
       balanceAmount: newBalanceAmount,
       status: newStatus,
     });
+    await this.allocatePaymentToFeeItems(invoice.studentId, tenantId, amount);
+
 
     this.logger.log(`Payment ${receiptNumber} of ${amount} recorded for invoice ${invoice.invoiceNumber}`);
 
@@ -77,6 +79,44 @@ export class PaymentService {
       relations: ['invoice', 'student','student.user', 'receivedByUser'],
     });
   }
+
+
+
+  async allocatePaymentToFeeItems(
+    studentId: string,
+    tenantId: string,
+    paymentAmount: number,
+    ruleOrder: string[] = ['TUITION', 'LUNCH', 'BUS'],
+  ): Promise<{ [feeItemId: string]: number }> {
+    const studentFeeItemRepo = this.paymentRepo.manager.getRepository('StudentFeeItem');
+    const feeItems = await studentFeeItemRepo.find({
+      where: { studentId, tenantId, isActive: true },
+      relations: ['feeStructureItem', 'feeStructureItem.feeBucket'],
+      order: { 'feeStructureItem.feeBucket.name': 'ASC' }, 
+    });
+  
+    let remaining = paymentAmount;
+    const allocations: Record<string, number> = {};
+  
+    for (const bucket of ruleOrder) {
+      const itemsInBucket = feeItems.filter(
+        (fi) => fi.feeStructureItem.feeBucket.name.toUpperCase() === bucket
+      );
+  
+      for (const item of itemsInBucket) {
+        if (remaining <= 0) break;
+        const unpaid = Number(item.amount) - Number(item.amountPaid || 0);
+        const toPay = Math.min(unpaid, remaining);
+        allocations[item.id] = toPay;
+        item.amountPaid = (item.amountPaid || 0) + toPay;
+        remaining -= toPay;
+        await studentFeeItemRepo.save(item);
+      }
+    }
+  
+    return allocations;
+  }
+  
 
   async updatePayment(id: string, input: UpdatePaymentInput, user: ActiveUserData): Promise<Payment> {
     const payment = await this.paymentRepo.findOne({
