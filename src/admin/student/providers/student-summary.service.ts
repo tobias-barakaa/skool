@@ -218,47 +218,44 @@ export class StudentSummaryService {
     tenantId: string,
   ): Promise<any[]> {
     const query = `
-     SELECT DISTINCT sfi.id, sfi.amount, sfi."isMandatory",
-  fb.name as fee_bucket_name,
-  fs.name as fee_structure_name,
-  ay.name as academic_year_name
-FROM student_fee_items sfi
-JOIN student_fee_assignments sfa ON sfi."studentFeeAssignmentId" = sfa.id
-JOIN fee_structure_items fsi ON sfi."feeStructureItemId" = fsi.id
-JOIN fee_buckets fb ON fsi."feeBucketId" = fb.id
-JOIN fee_assignments fa ON sfa."feeAssignmentId" = fa.id
-JOIN fee_structures fs ON fa."feeStructureId" = fs.id
-JOIN academic_years ay ON fs."academicYearId" = ay.id
-WHERE sfa."studentId" = $1
-  AND sfi."tenantId" = $2
-  AND sfi."isActive" = true
-  AND sfa."isActive" = true;
+       SELECT DISTINCT sfi.id, sfi.amount, sfi."amountPaid", sfi."isMandatory",
+         fb.name as fee_bucket_name,
+         fs.name as fee_structure_name,
+         ay.name as academic_year_name,
+         fa.term_name as term_name
+       FROM student_fee_items sfi
+       JOIN student_fee_assignments sfa ON sfi."studentFeeAssignmentId" = sfa.id
+       JOIN fee_structure_items fsi ON sfi."feeStructureItemId" = fsi.id
+       JOIN fee_buckets fb ON fsi."feeBucketId" = fb.id
+       JOIN fee_assignments fa ON sfa."feeAssignmentId" = fa.id
+       JOIN fee_structures fs ON fa."feeStructureId" = fs.id
+       JOIN academic_years ay ON fs."academicYearId" = ay.id
+       WHERE sfa."studentId" = $1
+         AND sfi."tenantId" = $2
+         AND sfi."isActive" = true
+         AND sfa."isActive" = true;
     `;
-
+  
     return await this.dataSource.query(query, [studentId, tenantId]);
   }
 
  
 
-  private mapToStudentSummary(
-    student: Student,
-    feeItems: any[],
-  ): StudentSummary {
+  private mapToStudentSummary(student: Student, feeItems: any[]): StudentSummary {
     const feeItemSummaries: FeeItemSummary[] = feeItems.map((item) => ({
       id: item.id,
       feeBucketName: item.fee_bucket_name,
       amount: parseFloat(item.amount),
+      amountPaid: parseFloat(item.amountPaid || 0), // <-- add this
       isMandatory: item.isMandatory,
       feeStructureName: item.fee_structure_name,
       academicYearName: item.academic_year_name,
       termName: item.term_name,
     }));
-
-    const totalOwed = feeItemSummaries.reduce(
-      (sum, item) => sum + item.amount,
-      0,
-    );
-
+  
+    const totalOwed = feeItemSummaries.reduce((sum, item) => sum + item.amount, 0);
+    const totalPaid = feeItemSummaries.reduce((sum, item) => sum + ((item as any).amountPaid || 0), 0); // <-- sum actual payments
+  
     return {
       id: student.id,
       admissionNumber: student.admission_number,
@@ -272,8 +269,8 @@ WHERE sfa."studentId" = $1
       streamName: student.stream?.name,
       feeSummary: {
         totalOwed,
-        totalPaid: student.totalFeesPaid,
-        balance: totalOwed - student.totalFeesPaid,
+        totalPaid, 
+        balance: totalOwed - totalPaid,
         numberOfFeeItems: feeItemSummaries.length,
         feeItems: feeItemSummaries,
       },
