@@ -88,19 +88,23 @@ export class PaymentService {
     paymentAmount: number,
     ruleOrder: string[] = ['TUITION', 'LUNCH', 'BUS'],
   ): Promise<{ [feeItemId: string]: number }> {
-    const studentFeeItemRepo = this.paymentRepo.manager.getRepository('StudentFeeItem');
-    const feeItems = await studentFeeItemRepo.find({
-      where: { studentId, tenantId, isActive: true },
-      relations: ['feeStructureItem', 'feeStructureItem.feeBucket'],
-      order: { 'feeStructureItem.feeBucket.name': 'ASC' }, 
-    });
+    const feeItems = await this.paymentRepo.manager
+      .getRepository('StudentFeeItem')
+      .createQueryBuilder('sfi')
+      .innerJoinAndSelect('sfi.studentFeeAssignment', 'sfa')
+      .innerJoinAndSelect('sfi.feeStructureItem', 'fsi')
+      .innerJoinAndSelect('fsi.feeBucket', 'fb')
+      .where('sfa.studentId = :studentId', { studentId })
+      .andWhere('sfi.tenantId = :tenantId', { tenantId })
+      .andWhere('sfi.isActive = true')
+      .getMany();
   
     let remaining = paymentAmount;
     const allocations: Record<string, number> = {};
   
     for (const bucket of ruleOrder) {
       const itemsInBucket = feeItems.filter(
-        (fi) => fi.feeStructureItem.feeBucket.name.toUpperCase() === bucket
+        (fi) => fi.feeStructureItem.feeBucket.name.toUpperCase() === bucket,
       );
   
       for (const item of itemsInBucket) {
@@ -110,12 +114,14 @@ export class PaymentService {
         allocations[item.id] = toPay;
         item.amountPaid = (item.amountPaid || 0) + toPay;
         remaining -= toPay;
-        await studentFeeItemRepo.save(item);
+  
+        await this.paymentRepo.manager.getRepository('StudentFeeItem').save(item);
       }
     }
   
     return allocations;
   }
+  
   
 
   async updatePayment(id: string, input: UpdatePaymentInput, user: ActiveUserData): Promise<Payment> {
