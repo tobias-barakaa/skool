@@ -1183,7 +1183,7 @@ type Mutation {
   createHostel(input: CreateHostelInput!): Hostel!
 
   """Record a payment against an invoice"""
-  createPayment(input: CreatePaymentInput!): Payment!
+  createPayment(input: CreatePaymentInput!): Boolean!
   createScholarship(input: CreateScholarshipInput!): Scholarship!
   createStream(input: CreateStreamInput!): StreamType!
   createStudent(createStudentInput: CreateStudentInput!): CreateStudentResponse!

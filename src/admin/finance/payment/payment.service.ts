@@ -18,7 +18,13 @@ export class PaymentService {
     private readonly invoiceRepo: Repository<Invoice>,
   ) {}
 
-  async createPayment(input: CreatePaymentInput, user: ActiveUserData): Promise<Payment> {
+
+
+
+  async createPayment(
+    input: CreatePaymentInput,
+    user: ActiveUserData,
+  ) {
     const { invoiceId, amount, paymentMethod, transactionReference, paymentDate, notes } = input;
     const tenantId = user.tenantId;
 
@@ -33,7 +39,7 @@ export class PaymentService {
 
     if (amount > invoice.balanceAmount) {
       throw new BadRequestException(
-        `Payment amount (${amount}) exceeds balance amount (${invoice.balanceAmount})`
+        `Payment amount (${amount}) exceeds balance amount (${invoice.balanceAmount})`,
       );
     }
 
@@ -54,6 +60,7 @@ export class PaymentService {
 
     const savedPayment = await this.paymentRepo.save(payment);
 
+    // Update invoice
     const newPaidAmount = Number(invoice.paidAmount) + Number(amount);
     const newBalanceAmount = Number(invoice.totalAmount) - newPaidAmount;
 
@@ -69,16 +76,72 @@ export class PaymentService {
       balanceAmount: newBalanceAmount,
       status: newStatus,
     });
-    await this.allocatePaymentToFeeItems(invoice.studentId, tenantId, amount);
 
 
-    this.logger.log(`Payment ${receiptNumber} of ${amount} recorded for invoice ${invoice.invoiceNumber}`);
 
-    return this.paymentRepo.findOneOrFail({
-      where: { id: savedPayment.id },
-      relations: ['invoice', 'student','student.user', 'receivedByUser'],
-    });
-  }
+
+}
+  // async createPayment(input: CreatePaymentInput, user: ActiveUserData): Promise<Payment> {
+  //   const { invoiceId, amount, paymentMethod, transactionReference, paymentDate, notes } = input;
+  //   const tenantId = user.tenantId;
+
+  //   const invoice = await this.invoiceRepo.findOne({
+  //     where: { id: invoiceId, tenantId },
+  //     relations: ['student'],
+  //   });
+
+  //   if (!invoice) {
+  //     throw new NotFoundException(`Invoice with id ${invoiceId} not found`);
+  //   }
+
+  //   if (amount > invoice.balanceAmount) {
+  //     throw new BadRequestException(
+  //       `Payment amount (${amount}) exceeds balance amount (${invoice.balanceAmount})`
+  //     );
+  //   }
+
+  //   const receiptNumber = await this.generateReceiptNumber(tenantId);
+
+  //   const payment = this.paymentRepo.create({
+  //     tenantId,
+  //     receiptNumber,
+  //     invoiceId: invoice.id,
+  //     studentId: invoice.studentId,
+  //     amount,
+  //     paymentMethod,
+  //     transactionReference,
+  //     paymentDate: paymentDate ? new Date(paymentDate) : new Date(),
+  //     receivedBy: user.sub,
+  //     notes,
+  //   });
+
+  //   const savedPayment = await this.paymentRepo.save(payment);
+
+  //   const newPaidAmount = Number(invoice.paidAmount) + Number(amount);
+  //   const newBalanceAmount = Number(invoice.totalAmount) - newPaidAmount;
+
+  //   let newStatus = invoice.status;
+  //   if (newBalanceAmount === 0) {
+  //     newStatus = InvoiceStatus.PAID;
+  //   } else if (newPaidAmount > 0 && newBalanceAmount > 0) {
+  //     newStatus = InvoiceStatus.PARTIALLY_PAID;
+  //   }
+
+  //   await this.invoiceRepo.update(invoice.id, {
+  //     paidAmount: newPaidAmount,
+  //     balanceAmount: newBalanceAmount,
+  //     status: newStatus,
+  //   });
+  //   await this.allocatePaymentToFeeItems(invoice.studentId, tenantId, amount);
+
+
+  //   this.logger.log(`Payment ${receiptNumber} of ${amount} recorded for invoice ${invoice.invoiceNumber}`);
+
+  //   return this.paymentRepo.findOneOrFail({
+  //     where: { id: savedPayment.id },
+  //     relations: ['invoice', 'student','student.user', 'receivedByUser'],
+  //   });
+  // }
 
 
 
