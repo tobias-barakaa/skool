@@ -249,7 +249,6 @@ export class StudentSummaryService {
     };
   }
 
-  // NEW: Get entire school financial summary
   async getSchoolFinancialSummary(
     user: ActiveUserData,
   ): Promise<SchoolFinancialSummary> {
