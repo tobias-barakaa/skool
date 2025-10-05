@@ -71,9 +71,8 @@ export class UsersCreateStudentProvider {
     queryRunner: QueryRunner,
     student: Student,
     tenantGradeLevelId: string,
-    tenantId: string
+    tenantId: string,
   ): Promise<void> {
-    
     const activeFeeAssignments = await queryRunner.manager
       .getRepository(FeeAssignment)
       .createQueryBuilder('fa')
@@ -81,11 +80,15 @@ export class UsersCreateStudentProvider {
       .innerJoinAndSelect('fa.feeStructure', 'fs')
       .where('fa.tenantId = :tenantId', { tenantId })
       .andWhere('fa.isActive = true')
-      .andWhere('fagl.tenantGradeLevelId = :tenantGradeLevelId', { tenantGradeLevelId })
+      .andWhere('fagl.tenantGradeLevelId = :tenantGradeLevelId', {
+        tenantGradeLevelId,
+      })
       .getMany();
 
     if (activeFeeAssignments.length === 0) {
-      this.logger.log(`No active fee assignments found for grade level ${tenantGradeLevelId}`);
+      this.logger.log(
+        `No active fee assignments found for grade level ${tenantGradeLevelId}`,
+      );
       return;
     }
 
@@ -102,54 +105,176 @@ export class UsersCreateStudentProvider {
         });
 
       if (existingAssignment) {
-        this.logger.log(`Student ${student.id} already has fee assignment ${feeAssignment.id}`);
+        this.logger.log(
+          `Student ${student.id} already has fee assignment ${feeAssignment.id}`,
+        );
         continue;
       }
 
-      const studentFeeAssignment = this.dataSource.getRepository(StudentFeeAssignment);
-      const studentAssignment = studentFeeAssignment.create({
-        tenantId,
-        studentId: student.id,
-        feeAssignmentId: feeAssignment.id,
+      const studentFeeAssignment = queryRunner.manager
+        .getRepository(StudentFeeAssignment)
+        .create({
+          tenantId,
+          studentId: student.id,
+          feeAssignmentId: feeAssignment.id,
+        });
+
+      const savedStudentAssignment = await queryRunner.manager.save(
+        StudentFeeAssignment,
+        studentFeeAssignment,
+      );
+
+      const items = await queryRunner.manager.getRepository(FeeStructureItem).find({
+        where: {
+          tenantId,
+          feeStructureId: feeAssignment.feeStructureId,
+        },
       });
 
-      const savedStudentAssignment = await queryRunner.manager.save(StudentFeeAssignment, studentAssignment);
-
-      const items = await queryRunner.manager
-        .getRepository(FeeStructureItem)
-        .find({
-          where: { 
-            tenantId, 
-            feeStructureId: feeAssignment.feeStructureId 
-          },
-        });
-
       if (items.length === 0) {
-        this.logger.warn(`No fee items found for fee structure ${feeAssignment.feeStructureId}`);
+        this.logger.warn(
+          `No fee items found for fee structure ${feeAssignment.feeStructureId}`,
+        );
         continue;
       }
 
-      const studentFeeItemRepo = this.dataSource.getRepository(StudentFeeItem);
-
       for (const item of items) {
-        const studentFeeItem = studentFeeItemRepo.create({
-          tenantId,
-          studentFeeAssignmentId: savedStudentAssignment.id,
-          feeStructureItemId: item.id,
-          amount: item.amount,
-          isMandatory: item.isMandatory,
-          isActive: true,
-        });
+        const studentFeeItem = queryRunner.manager
+          .getRepository(StudentFeeItem)
+          .create({
+            tenantId,
+            studentFeeAssignmentId: savedStudentAssignment.id,
+            feeStructureItemId: item.id,
+            amount: item.amount,
+            amountPaid: 0,
+            isMandatory: item.isMandatory,
+            isActive: true,
+          });
 
         await queryRunner.manager.save(StudentFeeItem, studentFeeItem);
       }
 
       assignedCount++;
-      this.logger.log(`Assigned fee assignment ${feeAssignment.id} to student ${student.id}`);
+      this.logger.log(
+        `Assigned fee assignment ${feeAssignment.id} to student ${student.id}`,
+      );
     }
 
-    this.logger.log(`Successfully assigned ${assignedCount} fee assignments to student ${student.id}`);
+    // Update student's feesOwed
+    await this.updateStudentFeesOwed(student.id, queryRunner);
+
+    this.logger.log(
+      `Successfully assigned ${assignedCount} fee assignments to student ${student.id}`,
+    );
   }
+
+
+  private async updateStudentFeesOwed(
+    studentId: string,
+    queryRunner?: QueryRunner,
+  ): Promise<void> {
+    const manager = queryRunner ? queryRunner.manager : this.dataSource.manager;
+
+    const result = await manager.query(
+      `
+      SELECT COALESCE(SUM(sfi.amount), 0) as total_owed
+      FROM student_fee_items sfi
+      JOIN student_fee_assignments sfa ON sfi."studentFeeAssignmentId" = sfa.id
+      WHERE sfa."studentId" = $1 AND sfi."isActive" = true
+    `,
+      [studentId],
+    );
+
+    const totalOwed = parseFloat(result[0]?.total_owed || 0);
+
+    await manager
+      .getRepository(Student)
+      .update({ id: studentId }, { feesOwed: totalOwed });
+  }
+
+  // async assignApplicableFeesToStudent(
+  //   queryRunner: QueryRunner,
+  //   student: Student,
+  //   tenantGradeLevelId: string,
+  //   tenantId: string
+  // ): Promise<void> {
+    
+  //   const activeFeeAssignments = await queryRunner.manager
+  //     .getRepository(FeeAssignment)
+  //     .createQueryBuilder('fa')
+  //     .innerJoinAndSelect('fa.gradeLevels', 'fagl')
+  //     .innerJoinAndSelect('fa.feeStructure', 'fs')
+  //     .where('fa.tenantId = :tenantId', { tenantId })
+  //     .andWhere('fa.isActive = true')
+  //     .andWhere('fagl.tenantGradeLevelId = :tenantGradeLevelId', { tenantGradeLevelId })
+  //     .getMany();
+
+  //   if (activeFeeAssignments.length === 0) {
+  //     this.logger.log(`No active fee assignments found for grade level ${tenantGradeLevelId}`);
+  //     return;
+  //   }
+
+  //   let assignedCount = 0;
+
+  //   for (const feeAssignment of activeFeeAssignments) {
+  //     const existingAssignment = await queryRunner.manager
+  //       .getRepository(StudentFeeAssignment)
+  //       .findOne({
+  //         where: {
+  //           studentId: student.id,
+  //           feeAssignmentId: feeAssignment.id,
+  //         },
+  //       });
+
+  //     if (existingAssignment) {
+  //       this.logger.log(`Student ${student.id} already has fee assignment ${feeAssignment.id}`);
+  //       continue;
+  //     }
+
+  //     const studentFeeAssignment = this.dataSource.getRepository(StudentFeeAssignment);
+  //     const studentAssignment = studentFeeAssignment.create({
+  //       tenantId,
+  //       studentId: student.id,
+  //       feeAssignmentId: feeAssignment.id,
+  //     });
+
+  //     const savedStudentAssignment = await queryRunner.manager.save(StudentFeeAssignment, studentAssignment);
+
+  //     const items = await queryRunner.manager
+  //       .getRepository(FeeStructureItem)
+  //       .find({
+  //         where: { 
+  //           tenantId, 
+  //           feeStructureId: feeAssignment.feeStructureId 
+  //         },
+  //       });
+
+  //     if (items.length === 0) {
+  //       this.logger.warn(`No fee items found for fee structure ${feeAssignment.feeStructureId}`);
+  //       continue;
+  //     }
+
+  //     const studentFeeItemRepo = this.dataSource.getRepository(StudentFeeItem);
+
+  //     for (const item of items) {
+  //       const studentFeeItem = studentFeeItemRepo.create({
+  //         tenantId,
+  //         studentFeeAssignmentId: savedStudentAssignment.id,
+  //         feeStructureItemId: item.id,
+  //         amount: item.amount,
+  //         isMandatory: item.isMandatory,
+  //         isActive: true,
+  //       });
+
+  //       await queryRunner.manager.save(StudentFeeItem, studentFeeItem);
+  //     }
+
+  //     assignedCount++;
+  //     this.logger.log(`Assigned fee assignment ${feeAssignment.id} to student ${student.id}`);
+  //   }
+
+  //   this.logger.log(`Successfully assigned ${assignedCount} fee assignments to student ${student.id}`);
+  // }
 
   async updateFeeAssignmentForFutureStudents(
     feeAssignmentId: string,

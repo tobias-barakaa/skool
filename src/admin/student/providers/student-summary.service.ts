@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, Logger, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource } from 'typeorm';
+import { Repository, DataSource, QueryRunner } from 'typeorm';
 import { FeeItemSummary, GradeLevelStudentsSummary, StudentSummary } from '../dtos/student-summary.dto';
 import { Student } from '../entities/student.entity';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
@@ -279,24 +279,127 @@ export class StudentSummaryService {
 
 
 
+  // private mapToStudentSummary(
+  //   student: Student,
+  //   feeItems: any[],
+  // ): StudentSummary {
+  //   const feeItemSummaries: FeeItemSummary[] = feeItems.map((item) => ({
+  //     id: item.id,
+  //     feeBucketName: item.fee_bucket_name,
+  //     amount: parseFloat(item.amount),
+  //     isMandatory: item.isMandatory,
+  //     feeStructureName: item.fee_structure_name,
+  //     academicYearName: item.academic_year_name,
+  //     termName: item.term_name,
+  //   }));
+
+  //   const totalOwed = feeItemSummaries.reduce(
+  //     (sum, item) => sum + item.amount,
+  //     0,
+  //   );
+
+  //   return {
+  //     id: student.id,
+  //     admissionNumber: student.admission_number,
+  //     studentName: student.user.name,
+  //     email: student.user.email,
+  //     phone: student.phone,
+  //     gender: student.gender,
+  //     schoolType: student.schoolType || 'day',
+  //     gradeLevelName: student.grade.gradeLevel.name,
+  //     curriculumName: student.grade.curriculum.name,
+  //     streamName: student.stream?.name,
+  //     feeSummary: {
+  //       totalOwed,
+  //       totalPaid: student.totalFeesPaid,
+  //       balance: totalOwed - student.totalFeesPaid,
+  //       numberOfFeeItems: feeItemSummaries.length,
+  //       feeItems: feeItemSummaries,
+  //     },
+  //     isActive: student.isActive,
+  //     createdAt: student.createdAt,
+  //     updatedAt: student.updatedAt,
+  //   };
+  // }
+
+
+
+  private async updateStudentFeesOwed(
+    studentId: string,
+    queryRunner?: QueryRunner,
+  ): Promise<void> {
+    const manager = queryRunner ? queryRunner.manager : this.dataSource.manager;
+
+    const result = await manager.query(
+      `
+      SELECT COALESCE(SUM(sfi.amount), 0) as total_owed
+      FROM student_fee_items sfi
+      JOIN student_fee_assignments sfa ON sfi."studentFeeAssignmentId" = sfa.id
+      WHERE sfa."studentId" = $1 AND sfi."isActive" = true
+    `,
+      [studentId],
+    );
+
+    const totalOwed = parseFloat(result[0]?.total_owed || 0);
+
+    await manager
+      .getRepository(Student)
+      .update({ id: studentId }, { feesOwed: totalOwed });
+  }
+
+  private async getStudentFeeItems(
+    studentId: string,
+    tenantId: string,
+  ): Promise<any[]> {
+    const query = `
+      SELECT 
+        sfi.id, 
+        sfi.amount, 
+        COALESCE(sfi."amountPaid", 0) as "amountPaid", 
+        sfi."isMandatory",
+        fb.name as fee_bucket_name,
+        fs.name as fee_structure_name,
+        ay.name as academic_year_name,
+        COALESCE(fa.term_name, 'N/A') as term_name
+      FROM student_fee_items sfi
+      JOIN student_fee_assignments sfa ON sfi."studentFeeAssignmentId" = sfa.id
+      JOIN fee_structure_items fsi ON sfi."feeStructureItemId" = fsi.id
+      JOIN fee_buckets fb ON fsi."feeBucketId" = fb.id
+      JOIN fee_assignments fa ON sfa."feeAssignmentId" = fa.id
+      JOIN fee_structures fs ON fa."feeStructureId" = fs.id
+      JOIN academic_years ay ON fs."academicYearId" = ay.id
+      WHERE sfa."studentId" = $1
+        AND sfi."tenantId" = $2
+        AND sfi."isActive" = true
+        AND sfa."isActive" = true
+      ORDER BY fb.name, fs.name;
+    `;
+
+    return await this.dataSource.query(query, [studentId, tenantId]);
+  }
+
   private mapToStudentSummary(
     student: Student,
     feeItems: any[],
   ): StudentSummary {
-    const feeItemSummaries: FeeItemSummary[] = feeItems.map((item) => ({
-      id: item.id,
-      feeBucketName: item.fee_bucket_name,
-      amount: parseFloat(item.amount),
-      isMandatory: item.isMandatory,
-      feeStructureName: item.fee_structure_name,
-      academicYearName: item.academic_year_name,
-      termName: item.term_name,
-    }));
+    const feeItemSummaries: FeeItemSummary[] = feeItems.map((item) => {
+      const amount = parseFloat(item.amount);
+      const amountPaid = parseFloat(item.amountPaid || 0);
+      return {
+        id: item.id,
+        feeBucketName: item.fee_bucket_name,
+        amount,
+        amountPaid,
+        balance: amount - amountPaid,
+        isMandatory: item.isMandatory,
+        feeStructureName: item.fee_structure_name,
+        academicYearName: item.academic_year_name,
+        termName: item.term_name,
+      };
+    });
 
-    const totalOwed = feeItemSummaries.reduce(
-      (sum, item) => sum + item.amount,
-      0,
-    );
+    const totalOwed = feeItemSummaries.reduce((sum, item) => sum + item.amount, 0);
+    const totalPaid = feeItemSummaries.reduce((sum, item) => sum + (('amountPaid' in item) ? (item as any).amountPaid : 0), 0);
 
     return {
       id: student.id,
@@ -311,8 +414,8 @@ export class StudentSummaryService {
       streamName: student.stream?.name,
       feeSummary: {
         totalOwed,
-        totalPaid: student.totalFeesPaid,
-        balance: totalOwed - student.totalFeesPaid,
+        totalPaid,
+        balance: totalOwed - totalPaid,
         numberOfFeeItems: feeItemSummaries.length,
         feeItems: feeItemSummaries,
       },
@@ -321,43 +424,6 @@ export class StudentSummaryService {
       updatedAt: student.updatedAt,
     };
   }
-
-
-
-
-
-  private async getStudentFeeItems(
-    studentId: string,
-    tenantId: string,
-  ): Promise<any[]> {
-    const query = `
-      SELECT DISTINCT 
-        sfi.id,
-        sfi.amount,
-        sfi."amountPaid",
-        sfi."isMandatory",
-        fb.name AS fee_bucket_name,
-        fs.name AS fee_structure_name,
-        ay.name AS academic_year_name,
-        t.name AS term_name
-      FROM student_fee_items sfi
-      JOIN student_fee_assignments sfa ON sfi."studentFeeAssignmentId" = sfa.id
-      JOIN fee_structure_items fsi ON sfi."feeStructureItemId" = fsi.id
-      JOIN fee_buckets fb ON fsi."feeBucketId" = fb.id
-      JOIN fee_assignments fa ON sfa."feeAssignmentId" = fa.id
-      JOIN fee_structures fs ON fa."feeStructureId" = fs.id
-      JOIN academic_years ay ON fs."academicYearId" = ay.id
-      JOIN fee_structure_terms fst ON fst.fee_structure_id = fs.id
-      JOIN terms t ON t.id = fst.term_id
-      WHERE sfa."studentId" = $1
-        AND sfi."tenantId" = $2
-        AND sfi."isActive" = true
-        AND sfa."isActive" = true;
-    `;
-  
-    return await this.dataSource.query(query, [studentId, tenantId]);
-  }
-
 
 
 

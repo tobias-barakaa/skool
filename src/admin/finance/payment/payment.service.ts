@@ -1,7 +1,7 @@
 
 import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between } from 'typeorm';
+import { Repository, Between, DataSource } from 'typeorm';
 import { Payment } from './entities/payment.entity';
 import { Invoice, InvoiceStatus } from '../invoice/entities/invoice.entity';
 import { CreatePaymentInput, PaymentFilters, UpdatePaymentInput } from './dtos/create-payment.input';
@@ -16,71 +16,103 @@ export class PaymentService {
     private readonly paymentRepo: Repository<Payment>,
     @InjectRepository(Invoice)
     private readonly invoiceRepo: Repository<Invoice>,
+    private readonly dataSource: DataSource,
   ) {}
 
 
 
 
   async createPayment(
-    input: CreatePaymentInput,
-    user: ActiveUserData,
-  ) {
-    const { invoiceId, amount, paymentMethod, transactionReference, paymentDate, notes } = input;
-    const tenantId = user.tenantId;
-
-    const invoice = await this.invoiceRepo.findOne({
-      where: { id: invoiceId, tenantId },
-      relations: ['student'],
-    });
-
-    if (!invoice) {
-      throw new NotFoundException(`Invoice with id ${invoiceId} not found`);
+      input: CreatePaymentInput,
+      user: ActiveUserData,
+    ): Promise<Payment> {
+      const { invoiceId, amount, paymentMethod, transactionReference, paymentDate, notes } = input;
+      const tenantId = user.tenantId;
+  
+      const invoice = await this.invoiceRepo.findOne({
+        where: { id: invoiceId, tenantId },
+        relations: ['student'],
+      });
+  
+      if (!invoice) {
+        throw new NotFoundException(`Invoice with id ${invoiceId} not found`);
+      }
+  
+      if (amount > invoice.balanceAmount) {
+        throw new BadRequestException(
+          `Payment amount (${amount}) exceeds balance amount (${invoice.balanceAmount})`,
+        );
+      }
+  
+      const receiptNumber = await this.generateReceiptNumber(tenantId);
+  
+      const payment = this.paymentRepo.create({
+        tenantId,
+        receiptNumber,
+        invoiceId: invoice.id,
+        studentId: invoice.studentId,
+        amount,
+        paymentMethod,
+        transactionReference,
+        paymentDate: paymentDate ? new Date(paymentDate) : new Date(),
+        receivedBy: user.sub,
+        notes,
+      });
+  
+      const savedPayment = await this.paymentRepo.save(payment);
+  
+      // Update invoice
+      const newPaidAmount = Number(invoice.paidAmount) + Number(amount);
+      const newBalanceAmount = Number(invoice.totalAmount) - newPaidAmount;
+  
+      let newStatus = invoice.status;
+      if (newBalanceAmount === 0) {
+        newStatus = InvoiceStatus.PAID;
+      } else if (newPaidAmount > 0 && newBalanceAmount > 0) {
+        newStatus = InvoiceStatus.PARTIALLY_PAID;
+      }
+  
+      await this.invoiceRepo.update(invoice.id, {
+        paidAmount: newPaidAmount,
+        balanceAmount: newBalanceAmount,
+        status: newStatus,
+      });
+  
+      
+      await this.allocatePaymentToFeeItems(invoice.studentId, tenantId, amount);
+  
+      
+      await this.updateStudentTotalFeesPaid(invoice.studentId);
+  
+      this.logger.log(
+        `Payment ${receiptNumber} of ${amount} recorded for invoice ${invoice.invoiceNumber}`,
+      );
+  
+      return this.paymentRepo.findOneOrFail({
+        where: { id: savedPayment.id },
+        relations: ['invoice', 'student', 'student.user', 'receivedByUser'],
+      });
     }
 
-    if (amount > invoice.balanceAmount) {
-      throw new BadRequestException(
-        `Payment amount (${amount}) exceeds balance amount (${invoice.balanceAmount})`,
+
+    private async updateStudentTotalFeesPaid(studentId: string): Promise<void> {
+      const result = await this.dataSource.query(
+        `
+        SELECT COALESCE(SUM(sfi."amountPaid"), 0) as total_paid
+        FROM student_fee_items sfi
+        JOIN student_fee_assignments sfa ON sfi."studentFeeAssignmentId" = sfa.id
+        WHERE sfa."studentId" = $1 AND sfi."isActive" = true
+      `,
+        [studentId],
+      );
+  
+      const totalPaid = parseFloat(result[0]?.total_paid || 0);
+  const studentRepository = this.dataSource.getRepository('Student');
+      await studentRepository.update(
+        { id: studentId },
+        { totalFeesPaid: totalPaid },
       );
     }
-
-    const receiptNumber = await this.generateReceiptNumber(tenantId);
-
-    const payment = this.paymentRepo.create({
-      tenantId,
-      receiptNumber,
-      invoiceId: invoice.id,
-      studentId: invoice.studentId,
-      amount,
-      paymentMethod,
-      transactionReference,
-      paymentDate: paymentDate ? new Date(paymentDate) : new Date(),
-      receivedBy: user.sub,
-      notes,
-    });
-
-    const savedPayment = await this.paymentRepo.save(payment);
-
-    // Update invoice
-    const newPaidAmount = Number(invoice.paidAmount) + Number(amount);
-    const newBalanceAmount = Number(invoice.totalAmount) - newPaidAmount;
-
-    let newStatus = invoice.status;
-    if (newBalanceAmount === 0) {
-      newStatus = InvoiceStatus.PAID;
-    } else if (newPaidAmount > 0 && newBalanceAmount > 0) {
-      newStatus = InvoiceStatus.PARTIALLY_PAID;
-    }
-
-    await this.invoiceRepo.update(invoice.id, {
-      paidAmount: newPaidAmount,
-      balanceAmount: newBalanceAmount,
-      status: newStatus,
-    });
-
-
-
-
-}
   // async createPayment(input: CreatePaymentInput, user: ActiveUserData): Promise<Payment> {
   //   const { invoiceId, amount, paymentMethod, transactionReference, paymentDate, notes } = input;
   //   const tenantId = user.tenantId;
@@ -149,10 +181,10 @@ export class PaymentService {
     studentId: string,
     tenantId: string,
     paymentAmount: number,
-    ruleOrder: string[] = ['TUITION', 'LUNCH', 'BUS'],
+    ruleOrder: string[] = ['TUITION', 'LUNCH', 'BUS', 'TRANSPORT'],
   ): Promise<{ [feeItemId: string]: number }> {
-    const feeItems = await this.paymentRepo.manager
-      .getRepository('StudentFeeItem')
+    const studentFeeItemRepository = this.paymentRepo.manager.getRepository('StudentFeeItem');
+    const feeItems = await studentFeeItemRepository
       .createQueryBuilder('sfi')
       .innerJoinAndSelect('sfi.studentFeeAssignment', 'sfa')
       .innerJoinAndSelect('sfi.feeStructureItem', 'fsi')
@@ -160,31 +192,86 @@ export class PaymentService {
       .where('sfa.studentId = :studentId', { studentId })
       .andWhere('sfi.tenantId = :tenantId', { tenantId })
       .andWhere('sfi.isActive = true')
+      .orderBy('fb.name', 'ASC')
       .getMany();
-  
+
     let remaining = paymentAmount;
     const allocations: Record<string, number> = {};
-  
+
+    // Allocate based on priority order
     for (const bucket of ruleOrder) {
+      if (remaining <= 0) break;
+
       const itemsInBucket = feeItems.filter(
         (fi) => fi.feeStructureItem.feeBucket.name.toUpperCase() === bucket,
       );
-  
+
       for (const item of itemsInBucket) {
         if (remaining <= 0) break;
         const unpaid = Number(item.amount) - Number(item.amountPaid || 0);
+        if (unpaid <= 0) continue;
+
         const toPay = Math.min(unpaid, remaining);
         allocations[item.id] = toPay;
-        item.amountPaid = (item.amountPaid || 0) + toPay;
+        item.amountPaid = Number(item.amountPaid || 0) + toPay;
         remaining -= toPay;
-  
-        await this.paymentRepo.manager.getRepository('StudentFeeItem').save(item);
+
+        await studentFeeItemRepository.save(item);
       }
     }
-  
+
+    if (remaining > 0) {
+      for (const item of feeItems) {
+        if (remaining <= 0) break;
+        const unpaid = Number(item.amount) - Number(item.amountPaid || 0);
+        if (unpaid <= 0) continue;
+
+        const toPay = Math.min(unpaid, remaining);
+        allocations[item.id] = (allocations[item.id] || 0) + toPay;
+        item.amountPaid = Number(item.amountPaid || 0) + toPay;
+        remaining -= toPay;
+
+        await studentFeeItemRepository.save(item);
+      }
+    }
+
     return allocations;
   }
-  
+
+
+
+  async deallocatePaymentFromFeeItems(
+    studentId: string,
+    tenantId: string,
+    amount: number,
+  ): Promise<void> {
+    const studentFeeItemRepository = this.paymentRepo.manager.getRepository('StudentFeeItem');
+
+    const feeItems = await studentFeeItemRepository
+      .createQueryBuilder('sfi')
+      .innerJoinAndSelect('sfi.studentFeeAssignment', 'sfa')
+      .innerJoinAndSelect('sfi.feeStructureItem', 'fsi')
+      .innerJoinAndSelect('fsi.feeBucket', 'fb')
+      .where('sfa.studentId = :studentId', { studentId })
+      .andWhere('sfi.tenantId = :tenantId', { tenantId })
+      .andWhere('sfi.isActive = true')
+      .andWhere('sfi.amountPaid > 0')
+      .orderBy('fb.name', 'DESC')
+      .getMany();
+
+    let remaining = amount;
+
+    for (const item of feeItems) {
+      if (remaining <= 0) break;
+      const paid = Number(item.amountPaid || 0);
+      const toDeduct = Math.min(paid, remaining);
+
+      item.amountPaid = paid - toDeduct;
+      remaining -= toDeduct;
+
+      await studentFeeItemRepository.save(item);
+    }
+  }
   
 
   async updatePayment(id: string, input: UpdatePaymentInput, user: ActiveUserData): Promise<Payment> {
