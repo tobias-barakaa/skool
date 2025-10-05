@@ -34,6 +34,10 @@ export class StudentFeeItem {
   @JoinColumn({ name: 'feeStructureItemId' })
   feeStructureItem: FeeStructureItem;
 
+
+  @Field(() => Float)
+  @Column('decimal', { precision: 12, scale: 2, default: 0 })
+  amountPaid: number;
   
 
   @Field(() => Float, { description: 'The amount for this fee item' })

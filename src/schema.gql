@@ -2085,6 +2085,7 @@ type StudentFeeAssignment {
 type StudentFeeItem {
   """The amount for this fee item"""
   amount: Float!
+  amountPaid: Float!
 
   """The date and time when the item was created"""
   createdAt: DateTime!

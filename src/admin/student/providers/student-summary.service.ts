@@ -139,22 +139,10 @@ export class StudentSummaryService {
         'grade.curriculum',
         'stream',
       ],
-      // remove nested sortOrder (TypeORM typing doesn't allow unknown property here),
-      // keep createdAt ordering from the DB and perform grade-level ordering in JS below
       order: {
+        grade: { gradeLevel: { sortOrder: 'ASC' } },
         createdAt: 'ASC',
-      },
-    });
-
-    // If gradeLevel.sortOrder exists on the relation, apply a stable JS sort so we
-    // effectively order by gradeLevel.sortOrder then createdAt.
-    students.sort((a, b) => {
-      const aSort = (a.grade?.gradeLevel as any)?.sortOrder ?? 0;
-      const bSort = (b.grade?.gradeLevel as any)?.sortOrder ?? 0;
-      if (aSort !== bSort) return aSort - bSort;
-      const aTime = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-      const bTime = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-      return aTime - bTime;
+      } as any,
     });
 
     const groupedByGrade = new Map<string, Student[]>();
@@ -262,7 +250,6 @@ export class StudentSummaryService {
     };
   }
 
-  // NEW: Get entire school financial summary
   async getSchoolFinancialSummary(
     user: ActiveUserData,
   ): Promise<SchoolFinancialSummary> {
