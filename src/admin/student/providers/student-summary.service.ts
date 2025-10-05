@@ -360,7 +360,7 @@ export class StudentSummaryService {
         fb.name as fee_bucket_name,
         fs.name as fee_structure_name,
         ay.name as academic_year_name,
-        COALESCE(fa.term_name, 'N/A') as term_name
+        COALESCE(t.name, 'N/A') as term_name
       FROM student_fee_items sfi
       JOIN student_fee_assignments sfa ON sfi."studentFeeAssignmentId" = sfa.id
       JOIN fee_structure_items fsi ON sfi."feeStructureItemId" = fsi.id
@@ -368,13 +368,15 @@ export class StudentSummaryService {
       JOIN fee_assignments fa ON sfa."feeAssignmentId" = fa.id
       JOIN fee_structures fs ON fa."feeStructureId" = fs.id
       JOIN academic_years ay ON fs."academicYearId" = ay.id
+      LEFT JOIN fee_structure_terms fst ON fst.fee_structure_id = fs.id    
+      LEFT JOIN terms t ON t.id = fst.term_id                              
       WHERE sfa."studentId" = $1
         AND sfi."tenantId" = $2
         AND sfi."isActive" = true
         AND sfa."isActive" = true
       ORDER BY fb.name, fs.name;
     `;
-
+  
     return await this.dataSource.query(query, [studentId, tenantId]);
   }
 
