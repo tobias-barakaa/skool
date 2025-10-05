@@ -198,7 +198,6 @@ export class PaymentService {
     let remaining = paymentAmount;
     const allocations: Record<string, number> = {};
 
-    // Allocate based on priority order
     for (const bucket of ruleOrder) {
       if (remaining <= 0) break;
 

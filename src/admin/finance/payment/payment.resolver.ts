@@ -13,17 +13,15 @@ export class PaymentResolver {
 
   constructor(private readonly paymentService: PaymentService) {}
 
-  @Mutation(() => Boolean, {
-    description: 'Record a payment against an invoice'
+  @Mutation(() => Payment, {
+    description: 'Record a payment against an invoice',
   })
-
   async createPayment(
     @Args('input') input: CreatePaymentInput,
     @ActiveUser() user: ActiveUserData,
-  ): Promise<boolean> {
+  ): Promise<Payment> {
     this.logger.log(`Creating payment for invoice ${input.invoiceId} by user ${user.sub}`);
-    await this.paymentService.createPayment(input, user);
-    return true;
+    return this.paymentService.createPayment(input, user);
   }
 
   @Mutation(() => Payment, {
