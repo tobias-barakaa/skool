@@ -63,7 +63,6 @@ export class StudentSummaryService {
 
 
 
-
   async getStudentSummary(
     studentId: string,
     user: ActiveUserData,
@@ -250,6 +249,7 @@ export class StudentSummaryService {
     };
   }
 
+  // NEW: Get entire school financial summary
   async getSchoolFinancialSummary(
     user: ActiveUserData,
   ): Promise<SchoolFinancialSummary> {
@@ -323,32 +323,6 @@ export class StudentSummaryService {
     };
   }
 
-
-  // private async getStudentFeeItems(
-  //   studentId: string,
-  //   tenantId: string,
-  // ): Promise<any[]> {
-  //   const query = `
-  //      SELECT DISTINCT sfi.id, sfi.amount, sfi."amountPaid", sfi."isMandatory",
-  //        fb.name as fee_bucket_name,
-  //        fs.name as fee_structure_name,
-  //        ay.name as academic_year_name,
-  //        fa.term_name as term_name
-  //      FROM student_fee_items sfi
-  //      JOIN student_fee_assignments sfa ON sfi."studentFeeAssignmentId" = sfa.id
-  //      JOIN fee_structure_items fsi ON sfi."feeStructureItemId" = fsi.id
-  //      JOIN fee_buckets fb ON fsi."feeBucketId" = fb.id
-  //      JOIN fee_assignments fa ON sfa."feeAssignmentId" = fa.id
-  //      JOIN fee_structures fs ON fa."feeStructureId" = fs.id
-  //      JOIN academic_years ay ON fs."academicYearId" = ay.id
-  //      WHERE sfa."studentId" = $1
-  //        AND sfi."tenantId" = $2
-  //        AND sfi."isActive" = true
-  //        AND sfa."isActive" = true;
-  //   `;
-  
-  //   return await this.dataSource.query(query, [studentId, tenantId]);
-  // }
 
 
 
