@@ -25,6 +25,17 @@ type AcademicYear {
   updatedAt: DateTime!
 }
 
+type AcademicYearFinancialSummary {
+  academicYearId: ID!
+  academicYearName: String!
+  gradeLevelSummaries: [GradeLevelStudentsSummary!]!
+  tenantId: ID!
+  totalBalance: Float!
+  totalFeesOwed: Float!
+  totalFeesPaid: Float!
+  totalStudents: Int!
+}
+
 input AcceptInvitationInput {
   password: String!
   token: String!
@@ -1468,6 +1479,9 @@ type Query {
   """Get a specific academic year by ID"""
   academicYear(id: ID!): AcademicYear!
 
+  """Get financial summary filtered by academic year"""
+  academicYearFinancialSummary(academicYearId: ID!): AcademicYearFinancialSummary!
+
   """Get all academic years for the current tenant"""
   academicYears: [AcademicYear!]!
   activeStreams: [StreamType!]!
@@ -1706,6 +1720,9 @@ type Query {
 
   """Get students summary grouped by grade level with aggregated statistics"""
   studentsSummaryByGradeLevel: [GradeLevelStudentsSummary!]!
+
+  """Get students summaries for a specific grade level"""
+  studentsSummaryBySpecificGradeLevel(gradeLevelId: ID!): GradeLevelStudentsSummary!
 
   """Get students summary for a specific grade level"""
   studentsSummaryForGradeLevel(gradeLevelId: ID!): GradeLevelStudentsSummary!

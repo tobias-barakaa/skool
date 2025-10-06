@@ -6,7 +6,7 @@ import { Roles } from 'src/iam/decorators/roles.decorator';
 import { MembershipRole } from '../user-tenant-membership/entities/user-tenant-membership.entity';
 import { ActiveUserData } from '../auth/interface/active-user.interface';
 import { ActiveUser } from '../auth/decorator/active-user.decorator';
-import { SchoolFinancialSummary } from './dtos/school-financial-summary.dto';
+import { AcademicYearFinancialSummary, SchoolFinancialSummary } from './dtos/school-financial-summary.dto';
 
 @Resolver()
 export class StudentSummaryResolver {
@@ -86,6 +86,37 @@ export class StudentSummaryResolver {
   ): Promise<SchoolFinancialSummary> {
     this.logger.log(`Fetching school financial summary for tenant ${user.tenantId}`);
     return this.summaryService.getSchoolFinancialSummary(user);
+  }
+
+
+
+  @Query(() => AcademicYearFinancialSummary, {
+    name: 'academicYearFinancialSummary',
+    description: 'Get financial summary filtered by academic year',
+  })
+  @Roles(MembershipRole.SCHOOL_ADMIN)
+  async academicYearFinancialSummary(
+    @Args('academicYearId', { type: () => ID }) academicYearId: string,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<AcademicYearFinancialSummary> {
+    this.logger.log(
+      `Fetching financial summary for academic year ${academicYearId} in tenant ${user.tenantId}`,
+    );
+    return this.summaryService.getFinancialSummaryByAcademicYear(academicYearId, user);
+  }
+  
+
+  @Query(() => GradeLevelStudentsSummary, {
+    name: 'studentsSummaryBySpecificGradeLevel',
+    description: 'Get students summaries for a specific grade level',
+  })
+  @Roles(MembershipRole.SCHOOL_ADMIN)
+  async studentsSummaryBySpecificGradeLevel(
+    @Args('gradeLevelId', { type: () => ID }) gradeLevelId: string,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<GradeLevelStudentsSummary> {
+    this.logger.log(`Fetching students summary for grade level ${gradeLevelId}`);
+    return this.summaryService.getStudentsSummaryBySpecificGradeLevel(gradeLevelId, user);
   }
 
 
