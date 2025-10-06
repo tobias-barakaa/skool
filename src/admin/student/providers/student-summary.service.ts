@@ -521,9 +521,10 @@ export class StudentSummaryService {
   .leftJoinAndSelect('student.stream', 'stream')
   .where('student.tenant_id = :tenantId', { tenantId: user.tenantId })
   .andWhere('student.isActive = true')
-  .orderBy('grade_level.sortOrder', 'ASC')
+  .orderBy('"grade_level"."sortOrder"', 'ASC')
   .addOrderBy('student.createdAt', 'ASC')
   .getMany();
+
 
 
   
