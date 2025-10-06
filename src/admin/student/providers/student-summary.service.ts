@@ -510,41 +510,23 @@ export class StudentSummaryService {
       );
     }
   
-    // // Get all students
-    // const students = await this.studentRepository.find({
-    //   where: {
-    //     tenant_id: user.tenantId,
-    //     isActive: true,
-    //   },
-    //   relations: [
-    //     'user',
-    //     'grade',
-    //     'grade.gradeLevel',
-    //     'grade.curriculum',
-    //     'stream',
-    //   ],
-    //   order: {
-    //     grade: { gradeLevel: { sortOrder: 'ASC' } },
-    //     createdAt: 'ASC',
-    //   } as any,
-    // });
-
+   
 
     const students = await this.studentRepository
   .createQueryBuilder('student')
   .leftJoinAndSelect('student.user', 'user')
   .leftJoinAndSelect('student.grade', 'grade')
-  .leftJoinAndSelect('grade.gradeLevel', 'gradeLevel')
+  .leftJoinAndSelect('grade.gradeLevel', 'grade_level')
   .leftJoinAndSelect('grade.curriculum', 'curriculum')
   .leftJoinAndSelect('student.stream', 'stream')
   .where('student.tenant_id = :tenantId', { tenantId: user.tenantId })
   .andWhere('student.isActive = true')
-  .orderBy('gradeLevel.sortOrder', 'ASC')
+  .orderBy('grade_level.sortOrder', 'ASC')
   .addOrderBy('student.createdAt', 'ASC')
   .getMany();
 
+
   
-    // Group by grade level
     const groupedByGrade = new Map<string, Student[]>();
     students.forEach((student) => {
       const gradeId = student.grade.id;
@@ -560,7 +542,6 @@ export class StudentSummaryService {
       const firstStudent = gradeStudents[0];
       const studentSummaries = await Promise.all(
         gradeStudents.map(async (student) => {
-          // Get fee items filtered by academic year
           const feeItems = await this.getStudentFeeItemsByAcademicYear(
             student.id,
             user.tenantId,
