@@ -510,24 +510,39 @@ export class StudentSummaryService {
       );
     }
   
-    // Get all students
-    const students = await this.studentRepository.find({
-      where: {
-        tenant_id: user.tenantId,
-        isActive: true,
-      },
-      relations: [
-        'user',
-        'grade',
-        'grade.gradeLevel',
-        'grade.curriculum',
-        'stream',
-      ],
-      order: {
-        grade: { gradeLevel: { sortOrder: 'ASC' } },
-        createdAt: 'ASC',
-      } as any,
-    });
+    // // Get all students
+    // const students = await this.studentRepository.find({
+    //   where: {
+    //     tenant_id: user.tenantId,
+    //     isActive: true,
+    //   },
+    //   relations: [
+    //     'user',
+    //     'grade',
+    //     'grade.gradeLevel',
+    //     'grade.curriculum',
+    //     'stream',
+    //   ],
+    //   order: {
+    //     grade: { gradeLevel: { sortOrder: 'ASC' } },
+    //     createdAt: 'ASC',
+    //   } as any,
+    // });
+
+
+    const students = await this.studentRepository
+  .createQueryBuilder('student')
+  .leftJoinAndSelect('student.user', 'user')
+  .leftJoinAndSelect('student.grade', 'grade')
+  .leftJoinAndSelect('grade.gradeLevel', 'gradeLevel')
+  .leftJoinAndSelect('grade.curriculum', 'curriculum')
+  .leftJoinAndSelect('student.stream', 'stream')
+  .where('student.tenant_id = :tenantId', { tenantId: user.tenantId })
+  .andWhere('student.isActive = true')
+  .orderBy('gradeLevel.sortOrder', 'ASC')
+  .addOrderBy('student.createdAt', 'ASC')
+  .getMany();
+
   
     // Group by grade level
     const groupedByGrade = new Map<string, Student[]>();

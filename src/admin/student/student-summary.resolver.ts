@@ -105,6 +105,7 @@ export class StudentSummaryResolver {
     return this.summaryService.getFinancialSummaryByAcademicYear(academicYearId, user);
   }
   
+  
 
   @Query(() => GradeLevelStudentsSummary, {
     name: 'studentsSummaryBySpecificGradeLevel',
