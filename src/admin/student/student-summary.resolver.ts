@@ -6,6 +6,7 @@ import { Roles } from 'src/iam/decorators/roles.decorator';
 import { MembershipRole } from '../user-tenant-membership/entities/user-tenant-membership.entity';
 import { ActiveUserData } from '../auth/interface/active-user.interface';
 import { ActiveUser } from '../auth/decorator/active-user.decorator';
+import { SchoolFinancialSummary } from './dtos/school-financial-summary.dto';
 
 @Resolver()
 export class StudentSummaryResolver {
@@ -71,4 +72,22 @@ export class StudentSummaryResolver {
       user,
     );
   }
+
+
+
+
+  @Query(() => SchoolFinancialSummary, {
+    name: 'schoolFinancialSummary',
+    description: 'Get complete financial summary for the entire school/tenant',
+  })
+  @Roles(MembershipRole.SCHOOL_ADMIN)
+  async schoolFinancialSummary(
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<SchoolFinancialSummary> {
+    this.logger.log(`Fetching school financial summary for tenant ${user.tenantId}`);
+    return this.summaryService.getSchoolFinancialSummary(user);
+  }
+
+
+
 }

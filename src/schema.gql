@@ -1183,7 +1183,7 @@ type Mutation {
   createHostel(input: CreateHostelInput!): Hostel!
 
   """Record a payment against an invoice"""
-  createPayment(input: CreatePaymentInput!): Boolean!
+  createPayment(input: CreatePaymentInput!): Payment!
   createScholarship(input: CreateScholarshipInput!): Scholarship!
   createStream(input: CreateStreamInput!): StreamType!
   createStudent(createStudentInput: CreateStudentInput!): CreateStudentResponse!
@@ -1669,6 +1669,9 @@ type Query {
   receiptsByStudent(studentId: ID!): [Receipt!]!
   scholarship(id: ID!): Scholarship!
   scholarships: [Scholarship!]!
+
+  """Get complete financial summary for the entire school/tenant"""
+  schoolFinancialSummary: SchoolFinancialSummary!
   searchAvailableStudentsForParent(parentId: String!, searchTerm: String, tenantId: String!): [StudentSearchResponse!]!
   searchStudentByAdmission(admissionNumber: String!, tenantId: String!): StudentSearchResponse
   searchStudentsByManualInput(studentFullName: String, studentGrade: String, studentPhone: String, tenantId: String!): [StudentSearchResponse!]!
@@ -1853,6 +1856,24 @@ type SchoolConfigurationResponse {
   selectedLevels: [SelectedLevel!]!
   subjects: [SubjectInfo!]
   tenant: TenantInfo!
+}
+
+type SchoolFinancialSummary {
+  """Breakdown by grade level"""
+  gradeLevelSummaries: [GradeLevelStudentsSummary!]!
+  tenantId: ID!
+
+  """Total outstanding balance"""
+  totalBalance: Float!
+
+  """Total fees owed by all students"""
+  totalFeesOwed: Float!
+
+  """Total fees paid by all students"""
+  totalFeesPaid: Float!
+
+  """Total number of active students"""
+  totalStudents: Int!
 }
 
 type SchoolLevel {
