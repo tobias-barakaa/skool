@@ -9,7 +9,7 @@ import { InviteTeacherResponse } from './dtos/invite-teacher-response.dto';
 import { TeacherService } from './providers/teacher.service';
 import { PendingInvitation } from './dtos/pending-invitation.output';
 import { RevokeInvitationResponse } from './dtos/revoke-invitation.output';
-import { BadRequestException, ForbiddenException, SetMetadata } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, SetMetadata, UseFilters } from '@nestjs/common';
 import { ActiveUserData } from '../auth/interface/active-user.interface';
 import { setAuthCookies } from '../auth/utils/set-auth-cookies';
 import { MembershipRole } from '../user-tenant-membership/entities/user-tenant-membership.entity';
@@ -20,8 +20,10 @@ import { PendingInvitationResponse } from './dtos/pending-response';
 import { ClassTeacherAssignment } from './entities/class_teacher_assignments.entity';
 import { Teacher } from './entities/teacher.entity';
 import { AssignGradeLevelClassTeacherInput, AssignStreamClassTeacherInput, UnassignClassTeacherInput } from './dtos/assign/assign-classTeacher.dto';
+import { GraphQLExceptionsFilter } from '../common/filter/graphQLException.filter';
 
 @Resolver()
+@UseFilters(GraphQLExceptionsFilter)
 export class TeacherResolver {
   constructor(private teacherService: TeacherService) {}
 

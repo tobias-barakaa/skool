@@ -1,5 +1,4 @@
 import { Resolver, Query, Mutation, Args, Subscription, ID } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
 import { PubSub } from 'graphql-subscriptions';
 import { ChatService } from './chat.service';
 import { ChatMessage, ChatRoomsResponse, MessagesResponse } from './dtos/chat-response.dto';

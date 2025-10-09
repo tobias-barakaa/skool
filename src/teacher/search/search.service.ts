@@ -44,6 +44,7 @@ export class SearchService {
   }
 
   async getStudentsByTenant(tenantId: string): Promise<SearchStudentResult> {
+    console.log('kjf....................................')
     const students = await this.searchProvider.getStudentsByTenant(tenantId);
 
     return {

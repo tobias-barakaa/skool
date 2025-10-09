@@ -54,9 +54,10 @@ export class SearchProvider {
   }
 
   async getStudentsByTenant(tenantId: string): Promise<Student[]> {
-    return this.studentRepository
+    console.log('dkjfkdjfkdjfk.................................')
+    const students = await this.studentRepository
       .createQueryBuilder('student')
-      .leftJoinAndSelect('student.user', 'user')
+      .innerJoinAndSelect('student.user', 'user')
       .leftJoinAndSelect('student.grade', 'grade')
       .leftJoinAndSelect('grade.gradeLevel', 'gradeLevel')
       .leftJoinAndSelect('student.stream', 'stream')
@@ -65,6 +66,16 @@ export class SearchProvider {
       .andWhere('student.isActive = :isActive', { isActive: true })
       .orderBy('user.name', 'ASC')
       .getMany();
+  
+    // Safe transformation - handle nullable relations
+    return students.map(student => ({
+      ...student,
+      // Ensure nested objects exist before accessing properties
+      user: student.user || null,
+      grade: student.grade || null,
+      stream: student.stream || null,
+      // Add any other transformations here
+    })) as Student[];
   }
 
   async getTeachersByTenant(tenantId: string): Promise<Teacher[]> {

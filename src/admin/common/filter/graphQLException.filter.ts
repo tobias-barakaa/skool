@@ -1,4 +1,3 @@
-// src/common/filters/graphql-exceptions.filter.ts
 import {
   ArgumentsHost,
   Catch,

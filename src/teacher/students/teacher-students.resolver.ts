@@ -4,6 +4,8 @@ import { TeacherStudentsService } from './providers/teacher-students.service';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { TeacherStudentDto } from '../dtos/teacher-student.dto';
+import { GraphQLExceptionsFilter } from 'src/admin/common/filter/graphQLException.filter';
+import { UseFilters } from '@nestjs/common';
 
 @Resolver(() => Student)
 export class TeacherStudentsResolver {

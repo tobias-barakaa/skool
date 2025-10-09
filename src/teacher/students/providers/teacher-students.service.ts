@@ -18,9 +18,8 @@ export class TeacherStudentsService {
   // }
 
   async getStudentsByTenant(tenantId: string): Promise<TeacherStudentDto[]> {
-    const students =
-      await this.teacherStudentsProvider.findStudentsByTenant(tenantId);
-
+    const students = await this.teacherStudentsProvider.findStudentsByTenant(tenantId);
+  
     return students.map((student) => ({
       id: student.id,
       admission_number: student.admission_number,
@@ -30,7 +29,7 @@ export class TeacherStudentsService {
       totalFeesPaid: student.totalFeesPaid,
       createdAt: student.createdAt,
       updatedAt: student.updatedAt,
-      grade: student.grade
+      grade: student.grade && student.grade.gradeLevel
         ? ({
             id: student.grade.id,
             name: student.grade.gradeLevel.name,
