@@ -66,6 +66,20 @@ export class EmailSendFailedException extends BusinessException {
     );
     this.name = 'EmailSendFailedException';
   }
+}
+
+export class GradeLevelNotFoundException extends BusinessException {
+    constructor(missingIds: string[], tenantId: string) {
+      super(
+        `The selected grade level(s) are not available in your school`,
+        'GRADE_LEVEL_NOT_FOUND',
+        HttpStatus.BAD_REQUEST,
+        { missingGradeLevelIds: missingIds, tenantId }
+      );
+      this.name = 'GradeLevelNotFoundException';
+    }
+  }
+  
 
  
-}
+

@@ -1,4 +1,4 @@
-import {  BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {  BadRequestException, HttpStatus, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository, DataSource } from 'typeorm';
 import { Teacher } from '../entities/teacher.entity';
@@ -23,6 +23,7 @@ import { ClassTeacherProvider } from './class-teacher-assign.provider';
 import { ClassTeacherAssignment } from '../entities/class_teacher_assignments.entity';
 import { AssignGradeLevelClassTeacherInput, AssignStreamClassTeacherInput, UnassignClassTeacherInput } from '../dtos/assign/assign-classTeacher.dto';
 import { SchoolSetupGuardService } from 'src/admin/config/school-config.guard';
+import { BusinessException } from 'src/admin/common/exceptions/business.exception';
 
 @Injectable()
 export class TeacherService {
@@ -79,7 +80,6 @@ export class TeacherService {
         where: { id: currentUser.sub },
         select: ['id', 'name', 'email'],
       });
-      console.log('Inviter details:', inviter);
 
       if (!inviter) {
         throw new BadRequestException('Inviter not found');
@@ -104,7 +104,6 @@ export class TeacherService {
         () => this.createTeacherProfile(dto, tenantId),
       );
     } catch (error) {
-      this.logger.error(`Failed to invite teacher ${dto.email}:`, error);
       throw error;
     }
   }
@@ -335,6 +334,34 @@ export class TeacherService {
   }
 
 
+  // private async fetchTenantGradeLevels(
+  //   gradeLevelIds: string[] | undefined,
+  //   tenantId: string,
+  //   tenantGradeLevelRepo: Repository<TenantGradeLevel>,
+  // ): Promise<TenantGradeLevel[]> {
+  //   if (!gradeLevelIds || gradeLevelIds.length === 0) {
+  //     return [];
+  //   }
+  
+  //   const gradeLevels = await tenantGradeLevelRepo.find({
+  //     where: { 
+  //       id: In(gradeLevelIds), 
+  //       tenant: { id: tenantId }
+  //     },
+  //   });
+  
+  //   const foundIds = gradeLevels.map(gl => gl.id);
+  //   const missingIds = gradeLevelIds.filter(id => !foundIds.includes(id));
+    
+  //   if (missingIds.length > 0) {
+  //     throw new BadRequestException(
+  //       `Grade level(s) with ID(s) ${missingIds.join(', ')} not found in tenant ${tenantId}`
+  //     );
+  //   }
+  
+  //   return gradeLevels;
+  // }
+
   private async fetchTenantGradeLevels(
     gradeLevelIds: string[] | undefined,
     tenantId: string,
@@ -355,15 +382,19 @@ export class TeacherService {
     const missingIds = gradeLevelIds.filter(id => !foundIds.includes(id));
     
     if (missingIds.length > 0) {
-      throw new BadRequestException(
-        `Grade level(s) with ID(s) ${missingIds.join(', ')} not found in tenant ${tenantId}`
+      throw new BusinessException(
+        `Grade level(s) not found in your school`,
+        'GRADE_LEVEL_NOT_FOUND',
+        HttpStatus.BAD_REQUEST,
+        { 
+          missingGradeLevelIds: missingIds,
+          tenantId 
+        }
       );
     }
   
     return gradeLevels;
   }
-
-  
 
   private async fetchTenantStreams(
     streamIds: string[] | undefined,

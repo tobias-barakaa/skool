@@ -12,6 +12,7 @@ import { GqlExceptionFilter } from '@nestjs/graphql';
 import { GraphQLError } from 'graphql';
 import { BusinessException } from '../exceptions/business.exception';
 
+
 @Catch()
 export class GraphQLExceptionsFilter implements GqlExceptionFilter {
   private readonly logger = new Logger(GraphQLExceptionsFilter.name);
@@ -21,7 +22,6 @@ export class GraphQLExceptionsFilter implements GqlExceptionFilter {
     const operationName =
       gqlContext?.operation?.operationName || 'UnknownOperation';
 
-    // 🧠 Validation Error
     if (exception.name === 'ValidationError') {
       this.logger.warn(`[ValidationError] ${exception.message}`);
       return new GraphQLError('Input validation failed', {
@@ -33,7 +33,6 @@ export class GraphQLExceptionsFilter implements GqlExceptionFilter {
       });
     }
 
-    // 🧠 Business Exception
     if (exception instanceof BusinessException) {
       this.logger.warn(
         `[BusinessException] ${exception.name}: ${exception.message} | Metadata: ${JSON.stringify(
@@ -49,7 +48,6 @@ export class GraphQLExceptionsFilter implements GqlExceptionFilter {
       });
     }
 
-    // 🧠 Known NestJS exceptions
     if (
       exception instanceof ForbiddenException ||
       exception instanceof NotFoundException ||
@@ -65,7 +63,6 @@ export class GraphQLExceptionsFilter implements GqlExceptionFilter {
       });
     }
 
-    // ✅ Move this block *before* the return!
     if (exception?.code === 'ETIMEDOUT') {
       this.logger.error('[ETIMEDOUT] External connection timed out', exception);
       return new GraphQLError(
@@ -89,7 +86,6 @@ export class GraphQLExceptionsFilter implements GqlExceptionFilter {
       });
     }
 
-    // 🧠 Fallback for unknown errors
     const errorMessage = exception.message || 'Unknown error';
     const errorStack = exception.stack || 'No stack trace available';
 

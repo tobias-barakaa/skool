@@ -22,7 +22,10 @@ import { Teacher } from './entities/teacher.entity';
 import { AssignGradeLevelClassTeacherInput, AssignStreamClassTeacherInput, UnassignClassTeacherInput } from './dtos/assign/assign-classTeacher.dto';
 import { GraphQLExceptionsFilter } from '../common/filter/graphQLException.filter';
 
-@Resolver()
+
+
+
+@Resolver(() => Teacher)
 @UseFilters(GraphQLExceptionsFilter)
 export class TeacherResolver {
   constructor(private teacherService: TeacherService) {}
