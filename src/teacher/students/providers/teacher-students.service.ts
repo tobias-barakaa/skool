@@ -4,6 +4,7 @@ import { Student } from 'src/admin/student/entities/student.entity';
 import { TeacherStudentDto, TeacherStudentGradeDto } from 'src/teacher/dtos/teacher-student.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { TeacherStudentResponse } from 'src/teacher/dtos/Teacher-student-response.dto';
 
 @Injectable()
 export class TeacherStudentsService {
@@ -17,7 +18,7 @@ export class TeacherStudentsService {
   //   return await this.teacherStudentsProvider.findStudentsByTenant(tenantId);
   // }
 
-  async getStudentsByTenant(tenantId: string): Promise<TeacherStudentDto[]> {
+  async getStudentsByTenant(tenantId: string): Promise<TeacherStudentResponse[]> {
     const students = await this.teacherStudentsProvider.findStudentsByTenant(tenantId);
   
     return students.map((student) => ({
@@ -29,6 +30,7 @@ export class TeacherStudentsService {
       totalFeesPaid: student.totalFeesPaid,
       createdAt: student.createdAt,
       updatedAt: student.updatedAt,
+      
       grade: student.grade && student.grade.gradeLevel
         ? ({
             id: student.grade.id,
@@ -44,7 +46,13 @@ export class TeacherStudentsService {
         : null,
       grade_level_id: student.grade?.id || null,
       streamId: student.stream?.id || null,
-    }));
+
+      user: student.user && student.user.name ? ({
+        id: student.user.id,
+        name: student.user.name,
+        email: student.user.email,
+      }) : null,
+    })) as TeacherStudentResponse[];
   }
 
   async getStudentById(

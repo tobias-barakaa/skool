@@ -2,39 +2,40 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { GetChatRoomsArgs } from '../dtos/get-chat-rooms.args';
-import { ChatUser, ChatMessage, MessagesResponse, ChatRoom } from '../dtos/chat-response.dto';
+import { ChatUser, ChatMessageInput, MessagesResponse,  } from '../dtos/chat-response.dto';
 import { GetMessagesArgs } from '../dtos/get-messages.args';
 import { SendMessageToTeacherInput } from '../dtos/send-message.input';
+import { ChatRoomInput } from '../dtos/chat-room.dto';
+// import { ChatRoom } from '../dtos/chat-room.dto';
 // import { ChatRoom } from 'src/messaging/entities/chat-room.entity';
 
 @Injectable()
-export class ChatProvider {
+export class StudentChatProvider {
   constructor(private readonly dataSource: DataSource) {}
 
   async getStudentChatRooms(
     studentId: string,
     tenantId: string,
     args: GetChatRoomsArgs,
-  ): Promise<{ chatRooms: ChatRoom[]; total: number }> {
+  ): Promise<{ chatRooms: ChatRoomInput[]; total: number }> {
     const qr = this.dataSource.createQueryRunner();
     await qr.connect();
 
     try {
-      // Get student's user ID
       const studentQuery = `
         SELECT s.user_id, s.id as student_id
         FROM students s
         WHERE s.user_id = $1 AND s.tenant_id = $2
       `;
       const studentResult = await qr.query(studentQuery, [studentId, tenantId]);
-      
+
       if (!studentResult.length) {
         throw new Error('Student not found');
       }
 
       const studentUserId = studentResult[0].user_id;
 
-      // Get total count
+
       const countQuery = `
         SELECT COUNT(DISTINCT cr.id) as total
         FROM chat_rooms cr
@@ -44,7 +45,6 @@ export class ChatProvider {
       const countResult = await qr.query(countQuery, [studentUserId]);
       const total = parseInt(countResult[0].total);
 
-      // Get chat rooms with last message and unread count
       const chatRoomsQuery = `
         SELECT DISTINCT
           cr.id,
@@ -61,7 +61,7 @@ export class ChatProvider {
           lm_sender.first_name as last_message_sender_first_name,
           lm_sender.last_name as last_message_sender_last_name,
           lm_sender.email as last_message_sender_email,
-          CASE 
+          CASE
             WHEN EXISTS(SELECT 1 FROM students WHERE user_id = lm_sender.id) THEN 'STUDENT'
             ELSE 'TEACHER'
           END as last_message_sender_type,
@@ -69,17 +69,17 @@ export class ChatProvider {
         FROM chat_rooms cr
         JOIN chat_room_participants crp ON cr.id = crp.chat_room_id
         LEFT JOIN LATERAL (
-          SELECT cm.* 
-          FROM chat_messages cm 
-          WHERE cm.chat_room_id = cr.id 
-          ORDER BY cm.created_at DESC 
+          SELECT cm.*
+          FROM chat_messages cm
+          WHERE cm.chat_room_id = cr.id
+          ORDER BY cm.created_at DESC
           LIMIT 1
         ) lm ON true
         LEFT JOIN users lm_sender ON lm.sender_id = lm_sender.id
         LEFT JOIN LATERAL (
           SELECT COUNT(*) as unread_count
           FROM chat_messages cm2
-          WHERE cm2.chat_room_id = cr.id 
+          WHERE cm2.chat_room_id = cr.id
             AND cm2.sender_id != $1
             AND cm2.is_read = false
         ) unread ON true
@@ -94,10 +94,10 @@ export class ChatProvider {
         args.offset,
       ]);
 
-      const chatRooms: ChatRoom[] = [];
+      const chatRooms: ChatRoomInput[] = [];
 
       for (const row of chatRoomsResult) {
-        // Get participants for each chat room
+
         const participantsQuery = `
           SELECT
             u.id,
@@ -114,7 +114,7 @@ export class ChatProvider {
         `;
         const participantsResult = await qr.query(participantsQuery, [row.id]);
 
-        const participants: ChatUser[] = participantsResult.map(p => ({
+        const participants: ChatUser[] = participantsResult.map((p) => ({
           id: p.id,
           firstName: p.first_name,
           lastName: p.last_name,
@@ -122,34 +122,34 @@ export class ChatProvider {
           userType: p.user_type,
         }));
 
-        const chatRoom: ChatRoom = {
-            id: row.id,
-            name: row.name,
-            roomType: row.room_type,
-            createdAt: new Date(row.created_at),
-            updatedAt: new Date(row.updated_at),
-            participants,
-            unreadCount: parseInt(row.unread_count),
-            lastMessage: undefined 
+        const chatRoom: ChatRoomInput = {
+          id: row.id,
+          name: row.name,
+          roomType: row.room_type,
+          createdAt: new Date(row.created_at),
+          updatedAt: new Date(row.updated_at),
+          participants,
+          unreadCount: parseInt(row.unread_count),
+          lastMessage: undefined,
         };
 
         if (row.last_message_id) {
-            chatRoom.lastMessage = {
-                id: row.last_message_id,
-                message: row.last_message_text,
-                subject: row.last_message_subject,
-                imageUrl: row.last_message_image_url,
-                createdAt: new Date(row.last_message_created_at),
-                sender: {
-                    id: row.last_message_sender_id,
-                    firstName: row.last_message_sender_first_name,
-                    lastName: row.last_message_sender_last_name,
-                    email: row.last_message_sender_email,
-                    userType: row.last_message_sender_type,
-                },
-                chatRoom: chatRoom,
-                isRead: false, 
-            };
+          chatRoom.lastMessage = {
+            id: row.last_message_id,
+            message: row.last_message_text,
+            subject: row.last_message_subject,
+            imageUrl: row.last_message_image_url,
+            createdAt: new Date(row.last_message_created_at),
+            sender: {
+              id: row.last_message_sender_id,
+              firstName: row.last_message_sender_first_name,
+              lastName: row.last_message_sender_last_name,
+              email: row.last_message_sender_email,
+              userType: row.last_message_sender_type,
+            },
+            chatRoom: chatRoom,
+            isRead: false,
+          };
         }
 
         chatRooms.push(chatRoom);
@@ -170,14 +170,13 @@ export class ChatProvider {
     await qr.connect();
 
     try {
-      // Get student's user ID
       const studentQuery = `
         SELECT s.user_id
         FROM students s
         WHERE s.user_id = $1 AND s.tenant_id = $2
       `;
       const studentResult = await qr.query(studentQuery, [studentId, tenantId]);
-      
+
       if (!studentResult.length) {
         throw new Error('Student not found');
       }
@@ -185,7 +184,6 @@ export class ChatProvider {
       const studentUserId = studentResult[0].user_id;
       let chatRoomId = args.chatRoomId;
 
-      // If teacherId is provided but no chatRoomId, find or create the chat room
       if (args.teacherId && !chatRoomId) {
         const chatRoom = await this.findOrCreateChatRoom(
           [studentUserId, args.teacherId],
@@ -205,8 +203,11 @@ export class ChatProvider {
         FROM chat_room_participants crp
         WHERE crp.chat_room_id = $1 AND crp.user_id = $2
       `;
-      const accessResult = await qr.query(accessQuery, [chatRoomId, studentUserId]);
-      
+      const accessResult = await qr.query(accessQuery, [
+        chatRoomId,
+        studentUserId,
+      ]);
+
       if (!accessResult.length) {
         throw new Error('Access denied to this chat room');
       }
@@ -222,7 +223,7 @@ export class ChatProvider {
 
       // Get messages
       const messagesQuery = `
-        SELECT 
+        SELECT
           cm.id,
           cm.message,
           cm.subject,
@@ -233,7 +234,7 @@ export class ChatProvider {
           sender.first_name as sender_first_name,
           sender.last_name as sender_last_name,
           sender.email as sender_email,
-          CASE 
+          CASE
             WHEN EXISTS(SELECT 1 FROM students WHERE user_id = sender.id) THEN 'STUDENT'
             ELSE 'TEACHER'
           END as sender_type
@@ -252,7 +253,7 @@ export class ChatProvider {
 
       // Get chat room info
       const chatRoomQuery = `
-        SELECT 
+        SELECT
           cr.id,
           cr.name,
           cr.room_type,
@@ -266,12 +267,12 @@ export class ChatProvider {
 
       // Get participants
       const participantsQuery = `
-        SELECT 
+        SELECT
           u.id,
           u.first_name,
           u.last_name,
           u.email,
-          CASE 
+          CASE
             WHEN EXISTS(SELECT 1 FROM students WHERE user_id = u.id) THEN 'STUDENT'
             ELSE 'TEACHER'
           END as user_type
@@ -279,15 +280,17 @@ export class ChatProvider {
         JOIN users u ON crp.user_id = u.id
         WHERE crp.chat_room_id = $1
       `;
-      const participantsResult = await qr.query(participantsQuery, [chatRoomId]);
+      const participantsResult = await qr.query(participantsQuery, [
+        chatRoomId,
+      ]);
 
-      const chatRoom: ChatRoom = {
+      const chatRoom: ChatRoomInput = {
         id: chatRoomRow.id,
         name: chatRoomRow.name,
         roomType: chatRoomRow.room_type,
         createdAt: new Date(chatRoomRow.created_at),
         updatedAt: new Date(chatRoomRow.updated_at),
-        participants: participantsResult.map(p => ({
+        participants: participantsResult.map((p) => ({
           id: p.id,
           firstName: p.first_name,
           lastName: p.last_name,
@@ -296,7 +299,7 @@ export class ChatProvider {
         })),
       };
 
-      const messages: ChatMessage[] = messagesResult.map(row => ({
+      const messages: ChatMessageInput[] = messagesResult.map((row) => ({
         id: row.id,
         message: row.message,
         subject: row.subject,
@@ -336,7 +339,7 @@ export class ChatProvider {
     studentId: string,
     tenantId: string,
     input: SendMessageToTeacherInput,
-  ): Promise<ChatMessage> {
+  ): Promise<ChatMessageInput> {
     const qr = this.dataSource.createQueryRunner();
     await qr.connect();
     await qr.startTransaction();
@@ -349,7 +352,7 @@ export class ChatProvider {
         WHERE s.user_id = $1 AND s.tenant_id = $2
       `;
       const studentResult = await qr.query(studentQuery, [studentId, tenantId]);
-      
+
       if (!studentResult.length) {
         throw new Error('Student not found');
       }
@@ -363,8 +366,11 @@ export class ChatProvider {
         WHERE u.id = $1 AND u.tenant_id = $2
           AND EXISTS(SELECT 1 FROM teachers WHERE user_id = u.id)
       `;
-      const teacherResult = await qr.query(teacherQuery, [input.recipientId, tenantId]);
-      
+      const teacherResult = await qr.query(teacherQuery, [
+        input.recipientId,
+        tenantId,
+      ]);
+
       if (!teacherResult.length) {
         throw new Error('Teacher not found or not in same tenant');
       }
@@ -439,7 +445,7 @@ export class ChatProvider {
     participantIds: string[],
     roomType: string,
     roomName: string,
-  ): Promise<ChatRoom> {
+  ): Promise<ChatRoomInput> {
     const qr = this.dataSource.createQueryRunner();
     await qr.connect();
     await qr.startTransaction();
@@ -473,15 +479,15 @@ export class ChatProvider {
       if (existingRooms.length > 0) {
         const room = existingRooms[0];
         await qr.commitTransaction();
-        
+
         // Get participants
         const participantsQuery = `
-          SELECT 
+          SELECT
             u.id,
             u.first_name,
             u.last_name,
             u.email,
-            CASE 
+            CASE
               WHEN EXISTS(SELECT 1 FROM students WHERE user_id = u.id) THEN 'STUDENT'
               ELSE 'TEACHER'
             END as user_type
@@ -497,7 +503,7 @@ export class ChatProvider {
           roomType: room.room_type,
           createdAt: new Date(room.created_at),
           updatedAt: new Date(room.updated_at),
-          participants: participantsResult.map(p => ({
+          participants: participantsResult.map((p) => ({
             id: p.id,
             firstName: p.first_name,
             lastName: p.last_name,
@@ -535,15 +541,15 @@ export class ChatProvider {
       await qr.commitTransaction();
 
       const room = roomResult[0];
-      
+
       // Get participants
       const participantsQuery = `
-        SELECT 
+        SELECT
           u.id,
           u.first_name,
           u.last_name,
           u.email,
-          CASE 
+          CASE
             WHEN EXISTS(SELECT 1 FROM students WHERE user_id = u.id) THEN 'STUDENT'
             ELSE 'TEACHER'
           END as user_type
@@ -559,7 +565,7 @@ export class ChatProvider {
         roomType: room.room_type,
         createdAt: new Date(room.created_at),
         updatedAt: new Date(room.updated_at),
-        participants: participantsResult.map(p => ({
+        participants: participantsResult.map((p) => ({
           id: p.id,
           firstName: p.first_name,
           lastName: p.last_name,
@@ -609,4 +615,3 @@ export class ChatProvider {
     }
   }
 }
-  

@@ -279,53 +279,6 @@ export class StudentSummaryService {
 
 
 
-
-
-  // private mapToStudentSummary(
-  //   student: Student,
-  //   feeItems: any[],
-  // ): StudentSummary {
-  //   const feeItemSummaries: FeeItemSummary[] = feeItems.map((item) => ({
-  //     id: item.id,
-  //     feeBucketName: item.fee_bucket_name,
-  //     amount: parseFloat(item.amount),
-  //     isMandatory: item.isMandatory,
-  //     feeStructureName: item.fee_structure_name,
-  //     academicYearName: item.academic_year_name,
-  //     termName: item.term_name,
-  //   }));
-
-  //   const totalOwed = feeItemSummaries.reduce(
-  //     (sum, item) => sum + item.amount,
-  //     0,
-  //   );
-
-  //   return {
-  //     id: student.id,
-  //     admissionNumber: student.admission_number,
-  //     studentName: student.user.name,
-  //     email: student.user.email,
-  //     phone: student.phone,
-  //     gender: student.gender,
-  //     schoolType: student.schoolType || 'day',
-  //     gradeLevelName: student.grade.gradeLevel.name,
-  //     curriculumName: student.grade.curriculum.name,
-  //     streamName: student.stream?.name,
-  //     feeSummary: {
-  //       totalOwed,
-  //       totalPaid: student.totalFeesPaid,
-  //       balance: totalOwed - student.totalFeesPaid,
-  //       numberOfFeeItems: feeItemSummaries.length,
-  //       feeItems: feeItemSummaries,
-  //     },
-  //     isActive: student.isActive,
-  //     createdAt: student.createdAt,
-  //     updatedAt: student.updatedAt,
-  //   };
-  // }
-
-
-
   private async updateStudentFeesOwed(
     studentId: string,
     queryRunner?: QueryRunner,
@@ -354,31 +307,32 @@ export class StudentSummaryService {
     tenantId: string,
   ): Promise<any[]> {
     const query = `
-      SELECT 
-        sfi.id, 
-        sfi.amount, 
-        COALESCE(sfi."amountPaid", 0) as "amountPaid", 
-        sfi."isMandatory",
-        fb.name as fee_bucket_name,
-        fs.name as fee_structure_name,
-        ay.name as academic_year_name,
-        COALESCE(t.name, 'N/A') as term_name
-      FROM student_fee_items sfi
-      JOIN student_fee_assignments sfa ON sfi."studentFeeAssignmentId" = sfa.id
-      JOIN fee_structure_items fsi ON sfi."feeStructureItemId" = fsi.id
-      JOIN fee_buckets fb ON fsi."feeBucketId" = fb.id
-      JOIN fee_assignments fa ON sfa."feeAssignmentId" = fa.id
-      JOIN fee_structures fs ON fa."feeStructureId" = fs.id
-      JOIN academic_years ay ON fs."academicYearId" = ay.id
-      LEFT JOIN fee_structure_terms fst ON fst.fee_structure_id = fs.id    
-      LEFT JOIN terms t ON t.id = fst.term_id                              
-      WHERE sfa."studentId" = $1
-        AND sfi."tenantId" = $2
-        AND sfi."isActive" = true
-        AND sfa."isActive" = true
-      ORDER BY fb.name, fs.name;
+     SELECT DISTINCT ON (sfi.id)
+  sfi.id,
+  sfi.amount,
+  COALESCE(sfi."amountPaid", 0) as "amountPaid",
+  sfi."isMandatory",
+  fb.name as fee_bucket_name,
+  fs.name as fee_structure_name,
+  ay.name as academic_year_name,
+  t.name as term_name
+FROM student_fee_items sfi
+JOIN student_fee_assignments sfa ON sfi."studentFeeAssignmentId" = sfa.id
+JOIN fee_structure_items fsi ON sfi."feeStructureItemId" = fsi.id
+JOIN fee_buckets fb ON fsi."feeBucketId" = fb.id
+JOIN fee_assignments fa ON sfa."feeAssignmentId" = fa.id
+JOIN fee_structures fs ON fa."feeStructureId" = fs.id
+JOIN academic_years ay ON fs."academicYearId" = ay.id
+LEFT JOIN fee_structure_terms fst ON fst.fee_structure_id = fs.id
+LEFT JOIN terms t ON t.id = fst.term_id
+WHERE sfa."studentId" = $1
+  AND sfi."tenantId" = $2
+  AND sfi."isActive" = true
+  AND sfa."isActive" = true
+ORDER BY sfi.id;
+
     `;
-  
+
     return await this.dataSource.query(query, [studentId, tenantId]);
   }
 
@@ -432,173 +386,6 @@ export class StudentSummaryService {
 
 
 
-  // async getSchoolFinancialSummary(
-  //   user: ActiveUserData,
-  // ): Promise<SchoolFinancialSummary> {
-  //   const gradeLevelSummaries = await this.getStudentsSummaryByGradeLevel(user);
-
-  //   const totalStudents = gradeLevelSummaries.reduce(
-  //     (sum, gl) => sum + gl.totalStudents,
-  //     0,
-  //   );
-  //   const totalFeesOwed = gradeLevelSummaries.reduce(
-  //     (sum, gl) => sum + gl.totalFeesOwed,
-  //     0,
-  //   );
-  //   const totalFeesPaid = gradeLevelSummaries.reduce(
-  //     (sum, gl) => sum + gl.totalFeesPaid,
-  //     0,
-  //   );
-
-  //   return {
-  //     tenantId: user.tenantId,
-  //     totalStudents,
-  //     totalFeesOwed,
-  //     totalFeesPaid,
-  //     totalBalance: totalFeesOwed - totalFeesPaid,
-  //     gradeLevelSummaries,
-  //   };
-  // }
-
-
-
-  // private async getStudentFeeItemsByAcademicYear(
-  //   studentId: string,
-  //   tenantId: string,
-  //   academicYearId: string,
-  // ): Promise<any[]> {
-  //   const query = `
-  //     SELECT 
-  //       sfi.id, 
-  //       sfi.amount, 
-  //       COALESCE(sfi."amountPaid", 0) as "amountPaid", 
-  //       sfi."isMandatory",
-  //       fb.name as fee_bucket_name,
-  //       fs.name as fee_structure_name,
-  //       ay.name as academic_year_name,
-  //       COALESCE(fa.term_name, 'N/A') as term_name
-  //     FROM student_fee_items sfi
-  //     JOIN student_fee_assignments sfa ON sfi."studentFeeAssignmentId" = sfa.id
-  //     JOIN fee_structure_items fsi ON sfi."feeStructureItemId" = fsi.id
-  //     JOIN fee_buckets fb ON fsi."feeBucketId" = fb.id
-  //     JOIN fee_assignments fa ON sfa."feeAssignmentId" = fa.id
-  //     JOIN fee_structures fs ON fa."feeStructureId" = fs.id
-  //     JOIN academic_years ay ON fs."academicYearId" = ay.id
-  //     WHERE sfa."studentId" = $1
-  //       AND sfi."tenantId" = $2
-  //       AND ay.id = $3
-  //       AND sfi."isActive" = true
-  //       AND sfa."isActive" = true
-  //     ORDER BY fb.name, fs.name;
-  //   `;
-  
-  //   return await this.dataSource.query(query, [studentId, tenantId, academicYearId]);
-  // }
-
-  // async getFinancialSummaryByAcademicYear(
-  //   academicYearId: string,
-  //   user: ActiveUserData,
-  // ): Promise<AcademicYearFinancialSummary> {
-  //   const academicYear = await this.dataSource.query(
-  //     `SELECT id, name FROM academic_years WHERE id = $1 AND "tenantId" = $2`,
-  //     [academicYearId, user.tenantId],
-  //   );
-  
-  //   if (!academicYear || academicYear.length === 0) {
-  //     throw new NotFoundException(
-  //       `Academic year ${academicYearId} not found for this tenant`,
-  //     );
-  //   }
-  
-   
-
-
-  //   const students = await this.studentRepository
-  //   .createQueryBuilder('student')
-  //   .leftJoinAndSelect('student.user', 'user')
-  //   .leftJoinAndSelect('student.grade', 'grade')
-  //   .leftJoinAndSelect('grade.gradeLevel', 'grade_level')
-  //   .leftJoinAndSelect('grade.curriculum', 'curriculum')
-  //   .leftJoinAndSelect('student.stream', 'stream')
-  //   .where('student.tenant_id = :tenantId', { tenantId: user.tenantId })
-  //   .andWhere('student.isActive = true')
-  //   .orderBy('grade_level.sort_order', 'ASC')
-  //   .addOrderBy('student.createdAt', 'ASC')
-  //   .getMany();
-  
-
-
-  
-  //   const groupedByGrade = new Map<string, Student[]>();
-  //   students.forEach((student) => {
-  //     const gradeId = student.grade.id;
-  //     if (!groupedByGrade.has(gradeId)) {
-  //       groupedByGrade.set(gradeId, []);
-  //     }
-  //     groupedByGrade.get(gradeId)!.push(student);
-  //   });
-  
-  //   const gradeLevelSummaries: GradeLevelStudentsSummary[] = [];
-  
-  //   for (const [gradeId, gradeStudents] of groupedByGrade) {
-  //     const firstStudent = gradeStudents[0];
-  //     const studentSummaries = await Promise.all(
-  //       gradeStudents.map(async (student) => {
-  //         const feeItems = await this.getStudentFeeItemsByAcademicYear(
-  //           student.id,
-  //           user.tenantId,
-  //           academicYearId,
-  //         );
-  //         return this.mapToStudentSummary(student, feeItems);
-  //       }),
-  //     );
-  
-  //     const totalFeesOwed = studentSummaries.reduce(
-  //       (sum, s) => sum + s.feeSummary.totalOwed,
-  //       0,
-  //     );
-  //     const totalFeesPaid = studentSummaries.reduce(
-  //       (sum, s) => sum + s.feeSummary.totalPaid,
-  //       0,
-  //     );
-  
-  //     gradeLevelSummaries.push({
-  //       gradeLevelId: gradeId,
-  //       gradeLevelName: firstStudent.grade.gradeLevel.name,
-  //       curriculumName: firstStudent.grade.curriculum.name,
-  //       totalStudents: gradeStudents.length,
-  //       totalFeesOwed,
-  //       totalFeesPaid,
-  //       totalBalance: totalFeesOwed - totalFeesPaid,
-  //       students: studentSummaries,
-  //     });
-  //   }
-  
-  //   const totalStudents = gradeLevelSummaries.reduce(
-  //     (sum, gl) => sum + gl.totalStudents,
-  //     0,
-  //   );
-  //   const totalFeesOwed = gradeLevelSummaries.reduce(
-  //     (sum, gl) => sum + gl.totalFeesOwed,
-  //     0,
-  //   );
-  //   const totalFeesPaid = gradeLevelSummaries.reduce(
-  //     (sum, gl) => sum + gl.totalFeesPaid,
-  //     0,
-  //   );
-  
-  //   return {
-  //     tenantId: user.tenantId,
-  //     academicYearId,
-  //     academicYearName: academicYear[0].name,
-  //     totalStudents,
-  //     totalFeesOwed,
-  //     totalFeesPaid,
-  //     totalBalance: totalFeesOwed - totalFeesPaid,
-  //     gradeLevelSummaries,
-  //   };
-  // }
-
 
   async getFinancialSummaryByAcademicYear(
     academicYearId: string,
@@ -608,13 +395,13 @@ export class StudentSummaryService {
       `SELECT id, name FROM academic_years WHERE id = $1 AND "tenantId" = $2`,
       [academicYearId, user.tenantId],
     );
-  
+
     if (!academicYear || academicYear.length === 0) {
       throw new NotFoundException(
         `Academic year ${academicYearId} not found for this tenant`,
       );
     }
-  
+
     const students = await this.studentRepository
       .createQueryBuilder('student')
       .leftJoinAndSelect('student.user', 'user')
@@ -627,7 +414,7 @@ export class StudentSummaryService {
       .orderBy('grade.sortOrder', 'ASC')
       .addOrderBy('student.createdAt', 'ASC')
       .getMany();
-  
+
     const groupedByGrade = new Map<string, Student[]>();
     students.forEach((student) => {
       const gradeId = student.grade.id;
@@ -636,9 +423,9 @@ export class StudentSummaryService {
       }
       groupedByGrade.get(gradeId)!.push(student);
     });
-  
+
     const gradeLevelSummaries: GradeLevelStudentsSummary[] = [];
-  
+
     for (const [gradeId, gradeStudents] of groupedByGrade) {
       const firstStudent = gradeStudents[0];
       const studentSummaries = await Promise.all(
@@ -651,7 +438,7 @@ export class StudentSummaryService {
           return this.mapToStudentSummary(student, feeItems);
         }),
       );
-  
+
       const totalFeesOwed = studentSummaries.reduce(
         (sum, s) => sum + s.feeSummary.totalOwed,
         0,
@@ -660,7 +447,7 @@ export class StudentSummaryService {
         (sum, s) => sum + s.feeSummary.totalPaid,
         0,
       );
-  
+
       gradeLevelSummaries.push({
         gradeLevelId: gradeId,
         gradeLevelName: firstStudent.grade.gradeLevel.name,
@@ -672,7 +459,7 @@ export class StudentSummaryService {
         students: studentSummaries,
       });
     }
-  
+
     const totalStudents = gradeLevelSummaries.reduce(
       (sum, gl) => sum + gl.totalStudents,
       0,
@@ -685,7 +472,7 @@ export class StudentSummaryService {
       (sum, gl) => sum + gl.totalFeesPaid,
       0,
     );
-  
+
     return {
       tenantId: user.tenantId,
       academicYearId,
@@ -697,17 +484,17 @@ export class StudentSummaryService {
       gradeLevelSummaries,
     };
   }
-  
+
   private async getStudentFeeItemsByAcademicYear(
     studentId: string,
     tenantId: string,
     academicYearId: string,
   ): Promise<any[]> {
     const query = `
-    SELECT 
-      sfi.id, 
-      sfi.amount, 
-      COALESCE(sfi."amountPaid", 0) as "amountPaid", 
+    SELECT
+      sfi.id,
+      sfi.amount,
+      COALESCE(sfi."amountPaid", 0) as "amountPaid",
       sfi."isMandatory",
       fb.name as fee_bucket_name,
       fs.name as fee_structure_name,
@@ -736,6 +523,3 @@ export class StudentSummaryService {
 
 
 }
-
-
-

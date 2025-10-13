@@ -323,6 +323,17 @@ type ChatMessage {
   subject: String
 }
 
+type ChatMessageInput {
+  chatRoom: ChatRoomInput!
+  createdAt: DateTime!
+  id: ID!
+  imageUrl: String
+  isRead: Boolean!
+  message: String!
+  sender: ChatUser!
+  subject: String
+}
+
 type ChatRoom {
   createdAt: DateTime!
   id: ID!
@@ -331,6 +342,32 @@ type ChatRoom {
   participantIds: [String!]!
   type: String!
   updatedAt: DateTime!
+}
+
+type ChatRoomInput {
+  createdAt: DateTime!
+  id: ID!
+  lastMessage: ChatMessageInput
+  name: String!
+  participants: [ChatUser!]!
+  roomType: String!
+  unreadCount: Float
+  updatedAt: DateTime!
+}
+
+type ChatRoomsResponse {
+  chatRooms: [ChatRoomInput!]!
+  currentPage: Float!
+  total: Float!
+  totalPages: Float!
+}
+
+type ChatUser {
+  email: String!
+  firstName: String!
+  id: ID!
+  lastName: String!
+  userType: String!
 }
 
 type ClassTeacherAssignment {
@@ -1149,6 +1186,14 @@ enum MembershipStatus {
   SUSPENDED
 }
 
+type MessagesResponse {
+  chatRoom: ChatRoomInput!
+  currentPage: Float!
+  messages: [ChatMessageInput!]!
+  total: Float!
+  totalPages: Float!
+}
+
 type Mutation {
   acceptParentInvitation(acceptInvitationInput: AcceptInvitationInput!): AcceptParentInvitationResponse!
   acceptStaffInvitation(acceptInvitationInput: AcceptStaffInvitationInput!): AcceptStaffInvitationResponse!
@@ -1295,6 +1340,7 @@ type Mutation {
   sendMessageToAllStudents(input: BroadcastMessageInput!): [ChatMessage!]!
   sendMessageToParent(input: SendMessageInput!): ChatMessage!
   sendMessageToStudent(input: SendMessageInput!): ChatMessage!
+  sendMessageToTeacher(input: SendMessageToTeacherInput!): ChatMessageInput!
 
   """Mark an academic year as the current one"""
   setCurrentAcademicYear(id: ID!): AcademicYear!
@@ -1576,7 +1622,8 @@ type Query {
 
   """Get all students and teachers for current user tenant"""
   getBothStudentsAndTeachersByTenant: CombinedSearchResult!
-  getChatMessages(chatRoomId: String!, limit: Float = 50, offset: Float = 0): [ChatMessage!]!
+  getChatMessages(chatRoomId: ID, limit: Int = 20, offset: Int = 0, teacherId: ID): MessagesResponse!
+  getChatWithTeacher(limit: Float = 20, offset: Float = 0, teacherId: ID!): MessagesResponse!
 
   """Get a specific fee assignment by ID with all student details"""
   getFeeAssignmentById(feeAssignmentId: ID!): FeeAssignmentWithStudents!
@@ -1587,6 +1634,7 @@ type Query {
   getFeeAssignmentsByGradeLevels(input: GetFeeAssignmentsByGradeLevelsInput!): [FeeAssignmentWithStudents!]!
   getGradeLevelClassTeacher(gradeLevelId: String!): ClassTeacherAssignment
   getMyAssignmentss(limit: Float = 10, offset: Float = 0, status: AssignmentStatus, subjectId: ID): AssignmentsResponse!
+  getMyChatRooms(limit: Int = 10, offset: Int = 0): ChatRoomsResponse!
   getMyChats: [ChatRoom!]!
   getParentsByTenant(tenantId: String!): [Parent!]!
   getPendingInvitations(tenantId: String!): [PendingInvitation!]!
@@ -1732,7 +1780,7 @@ type Query {
   teacherGetPrimaryParentByStudentId(studentId: String!): Parent
   teacherGetStudentById(studentId: String!): Student
   teacherGetStudentParentRelationships: [ParentStudent!]!
-  teacherGetStudents: [TeacherStudentDto!]!
+  teacherGetStudents: [TeacherStudentResponse!]!
   teacherGetStudentsByGradeLevel(gradeLevelId: String!): [Student!]!
   teacherGetStudentsByStream(streamId: String!): [Student!]!
   teacherGetStudentsWithParents: [StudentWithParentsType!]!
@@ -1963,6 +2011,13 @@ input SendMessageInput {
   recipientId: String!
   recipientType: String!
   subject: String
+}
+
+input SendMessageToTeacherInput {
+  imageUrl: String
+  message: String!
+  recipientId: ID!
+  subject: String!
 }
 
 input SignInInput {
@@ -2387,7 +2442,13 @@ type TeacherOutput {
   name: String!
 }
 
-type TeacherStudentDto {
+type TeacherStudentGradeDto {
+  code: String!
+  id: ID!
+  name: String!
+}
+
+type TeacherStudentResponse {
   admission_number: String!
   createdAt: DateTime!
   feesOwed: Float!
@@ -2400,12 +2461,7 @@ type TeacherStudentDto {
   streamId: ID
   totalFeesPaid: Float!
   updatedAt: DateTime!
-}
-
-type TeacherStudentGradeDto {
-  code: String!
-  id: ID!
-  name: String!
+  user: User
 }
 
 type TeacherStudentStreamDto {

@@ -1,4 +1,5 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { ChatRoomInput } from './chat-room.dto';
 
 @ObjectType()
 export class ChatUser {
@@ -15,38 +16,13 @@ export class ChatUser {
   email: string;
 
   @Field()
-  userType: string; // 'TEACHER' | 'STUDENT'
+  userType: string; 
 }
 
-@ObjectType()
-export class ChatRoom {
-  @Field(() => ID)
-  id: string;
 
-  @Field()
-  name: string;
-
-  @Field()
-  roomType: string; // 'TEACHER_STUDENT'
-
-  @Field()
-  createdAt: Date;
-
-  @Field()
-  updatedAt: Date;
-
-  @Field(() => [ChatUser])
-  participants: ChatUser[];
-
-  @Field(() => ChatMessage, { nullable: true })
-  lastMessage?: ChatMessage;
-
-  @Field({ nullable: true })
-  unreadCount?: number;
-}
 
 @ObjectType()
-export class ChatMessage {
+export class ChatMessageInput {
   @Field(() => ID)
   id: string;
 
@@ -65,17 +41,19 @@ export class ChatMessage {
   @Field(() => ChatUser)
   sender: ChatUser;
 
-  @Field(() => ChatRoom)
-  chatRoom: ChatRoom;
+  @Field(() => ChatRoomInput)
+  chatRoom: ChatRoomInput;
 
   @Field()
   isRead: boolean;
 }
 
+
+
 @ObjectType()
 export class MessagesResponse {
-  @Field(() => [ChatMessage])
-  messages: ChatMessage[];
+  @Field(() => [ChatMessageInput])
+  messages: ChatMessageInput[];
 
   @Field()
   total: number;
@@ -86,14 +64,14 @@ export class MessagesResponse {
   @Field()
   currentPage: number;
 
-  @Field(() => ChatRoom)
-  chatRoom: ChatRoom;
+  @Field(() => ChatRoomInput)
+  chatRoom: ChatRoomInput;
 }
 
 @ObjectType()
 export class ChatRoomsResponse {
-  @Field(() => [ChatRoom])
-  chatRooms: ChatRoom[];
+  @Field(() => [ChatRoomInput])
+  chatRooms: ChatRoomInput[];
 
   @Field()
   total: number;

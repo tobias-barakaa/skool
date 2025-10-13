@@ -1,14 +1,16 @@
 import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
-import { ChatProvider } from './providers/chat.provider';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { GetChatRoomsArgs } from './dtos/get-chat-rooms.args';
-import { ChatMessage, ChatRoomsResponse, MessagesResponse } from './dtos/chat-response.dto';
+import { ChatMessageInput, ChatRoomsResponse, MessagesResponse } from './dtos/chat-response.dto';
 import { GetMessagesArgs } from './dtos/get-messages.args';
 import { SendMessageToTeacherInput } from './dtos/send-message.input';
+import { StudentChatProvider } from './providers/chat.provider';
+
+
 
 @Injectable()
-export class ChatService {
-  constructor(private readonly chatProvider: ChatProvider) {}
+export class StudentChatService {
+  constructor(private readonly chatProvider: StudentChatProvider) {}
 
   async getStudentChatRooms(
     student: ActiveUserData,
@@ -82,7 +84,7 @@ export class ChatService {
   async sendMessageToTeacher(
     student: ActiveUserData,
     input: SendMessageToTeacherInput,
-  ): Promise<ChatMessage> {
+  ): Promise<ChatMessageInput> {
     try {
       // Verify student exists
       const studentRecord = await this.chatProvider.getStudentById(

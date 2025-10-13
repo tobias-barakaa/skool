@@ -1,7 +1,7 @@
 import { Resolver, Query, Mutation, Args, Subscription, ID } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
-import { ChatService } from './chat.service';
-import { ChatMessage, ChatRoomsResponse, MessagesResponse } from './dtos/chat-response.dto';
+import {  StudentChatService } from './chat.service';
+import { ChatMessageInput, ChatRoomsResponse, MessagesResponse } from './dtos/chat-response.dto';
 import { GetChatRoomsArgs } from './dtos/get-chat-rooms.args';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
@@ -11,9 +11,9 @@ import { SendMessageToTeacherInput } from './dtos/send-message.input';
 
 const pubSub = new PubSub();
 
-@Resolver(() => ChatMessage)
-export class ChatResolver {
-  constructor(private readonly chatService: ChatService) {}
+@Resolver(() => ChatMessageInput)
+export class StudentChatResolver {
+  constructor(private readonly chatService: StudentChatService) {}
 
   @Query(() => ChatRoomsResponse)
   async getMyChatRooms(
@@ -80,11 +80,11 @@ export class ChatResolver {
     }
   }
 
-  @Mutation(() => ChatMessage)
+  @Mutation(() => ChatMessageInput)
   async sendMessageToTeacher(
     @Args('input') input: SendMessageToTeacherInput,
     @ActiveUser() currentUser: ActiveUserData,
-  ): Promise<ChatMessage> {
+  ): Promise<ChatMessageInput> {
     try {
       console.log('Sending message to teacher:', {
         input,
@@ -95,7 +95,7 @@ export class ChatResolver {
       const message = await this.chatService.sendMessageToTeacher(currentUser, input);
 
       // Publish message for real-time updates
-      pubSub.publish('messageAdded', { 
+      pubSub.publish('messageAdded', {
         messageAdded: message,
         chatRoomId: message.chatRoom.id,
       });
@@ -124,7 +124,7 @@ export class ChatResolver {
 //       // Send to all chat rooms where the current user is a participant
 //       const currentUserId = context.req?.user?.sub;
 //       if (!currentUserId) return false;
-      
+
 //       // This would need additional logic to check if user is participant
 //       return true;
 //     },

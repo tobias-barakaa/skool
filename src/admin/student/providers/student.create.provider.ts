@@ -36,7 +36,7 @@ export class UsersCreateStudentProvider {
     private studentRepository: Repository<Student>,
 
 
-    
+
   ) {}
 
 
@@ -46,7 +46,7 @@ export class UsersCreateStudentProvider {
   ): Promise<CreateStudentResponse> {
     const membership = await this.validateSchoolAdmin(currentUser);
     await this.schoolSetupGuardService.validateSchoolIsConfigured(membership.tenantId);
-    
+
     return await this.executeStudentCreation(createStudentInput, membership.tenantId, currentUser);
   }
 
@@ -198,7 +198,7 @@ export class UsersCreateStudentProvider {
   //   tenantGradeLevelId: string,
   //   tenantId: string
   // ): Promise<void> {
-    
+
   //   const activeFeeAssignments = await queryRunner.manager
   //     .getRepository(FeeAssignment)
   //     .createQueryBuilder('fa')
@@ -243,9 +243,9 @@ export class UsersCreateStudentProvider {
   //     const items = await queryRunner.manager
   //       .getRepository(FeeStructureItem)
   //       .find({
-  //         where: { 
-  //           tenantId, 
-  //           feeStructureId: feeAssignment.feeStructureId 
+  //         where: {
+  //           tenantId,
+  //           feeStructureId: feeAssignment.feeStructureId
   //         },
   //       });
 
@@ -292,7 +292,7 @@ export class UsersCreateStudentProvider {
     }
 
     const tenantGradeLevelIds = feeAssignment.gradeLevels.map(gl => gl.tenantGradeLevelId);
-    
+
     const unassignedStudents = await this.dataSource
       .getRepository(Student)
       .createQueryBuilder('student')
@@ -300,8 +300,8 @@ export class UsersCreateStudentProvider {
       .andWhere('student.grade_level_id IN (:...tenantGradeLevelIds)', { tenantGradeLevelIds })
       .andWhere('student.isActive = true')
       .andWhere(`student.id NOT IN (
-        SELECT sfa.studentId 
-        FROM student_fee_assignments sfa 
+        SELECT sfa.studentId
+        FROM student_fee_assignments sfa
         WHERE sfa.feeAssignmentId = :feeAssignmentId
       )`, { feeAssignmentId })
       .getMany();
@@ -310,7 +310,7 @@ export class UsersCreateStudentProvider {
       await this.assignApplicableFeesToStudent(
         this.dataSource.createQueryRunner(),
         student,
-        student.grade.id, 
+        student.grade.id,
         tenantId
       );
     }
@@ -319,8 +319,8 @@ export class UsersCreateStudentProvider {
 
 
 private async executeStudentCreation(
-  input: CreateStudentInput, 
-  tenantId: string, 
+  input: CreateStudentInput,
+  tenantId: string,
   currentUser: ActiveUserData
 ): Promise<CreateStudentResponse> {
   const queryRunner = this.dataSource.createQueryRunner();
@@ -329,9 +329,9 @@ private async executeStudentCreation(
 
   try {
     await this.validateStudentData(queryRunner, input, tenantId);
-    
+
     const tenantGradeLevel = await this.getValidatedGradeLevel(queryRunner, input.tenantGradeLevelId);
-    
+
     const generatedPassword = input.admission_number;
 
     const user = await this.createUserRecord(queryRunner, input, currentUser, generatedPassword);
@@ -340,18 +340,18 @@ private async executeStudentCreation(
     await this.assignApplicableFeesToStudent(
       queryRunner,
       student,
-      input.tenantGradeLevelId, 
+      input.tenantGradeLevelId,
       tenantId
     );
-    
+
     await this.assignApplicableFeesToStudent(queryRunner, student, tenantGradeLevel.id, tenantId);
-    
+
     await this.createStudentMembership(queryRunner, user.id, tenantId);
-    
+
     await queryRunner.commitTransaction();
-    
+
     this.logger.log(`Student created successfully with ID: ${student.id}`);
-    
+
     return {
       user,
       student,
@@ -365,15 +365,15 @@ private async executeStudentCreation(
     await queryRunner.release();
   }
 }
-  
+
 
 
 
 
 
 private async validateStudentData(
-  queryRunner: QueryRunner, 
-  input: CreateStudentInput, 
+  queryRunner: QueryRunner,
+  input: CreateStudentInput,
   tenantId: string
 ): Promise<void> {
   if (!this.isValidEmail(input.email)) {
@@ -404,7 +404,7 @@ private async validateStudentData(
     );
   }
 
-  
+
 
   const isValidGrade = await this.schoolSetupGuardService.validateGradeLevelBelongsToTenant(
     tenantId,
@@ -419,7 +419,7 @@ private async validateStudentData(
 }
 
 private async getValidatedGradeLevel(
-  queryRunner: QueryRunner, 
+  queryRunner: QueryRunner,
   tenantGradeLevelId: string
 ): Promise<TenantGradeLevel> {
   const tenantGradeLevel = await queryRunner.manager.findOne(TenantGradeLevel, {
@@ -440,18 +440,18 @@ private async getValidatedGradeLevel(
   return tenantGradeLevel;
 }
 
-private generateSecurePassword(): string {
-  const length = 12;
-  const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
-  let password = '';
-  
-  for (let i = 0; i < length; i++) {
-    const randomIndex = randomBytes(1)[0] % charset.length;
-    password += charset[randomIndex];
-  }
-  
-  return password;
-}
+// private generateSecurePassword(): string {
+//   const length = 12;
+//   const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+//   let password = '';
+
+//   for (let i = 0; i < length; i++) {
+//     const randomIndex = randomBytes(1)[0] % charset.length;
+//     password += charset[randomIndex];
+//   }
+
+//   return password;
+// }
 
 
 
@@ -604,5 +604,3 @@ async getStudentCountsByGradeLevel(user: ActiveUserData): Promise<any[]> {
     .getRawMany();
 }
 }
-
-

@@ -6,6 +6,7 @@ import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { TeacherStudentDto } from '../dtos/teacher-student.dto';
 import { GraphQLExceptionsFilter } from 'src/admin/common/filter/graphQLException.filter';
 import { UseFilters } from '@nestjs/common';
+import { TeacherStudentResponse } from '../dtos/Teacher-student-response.dto';
 
 @Resolver(() => Student)
 export class TeacherStudentsResolver {
@@ -22,10 +23,10 @@ export class TeacherStudentsResolver {
   //   );
   // }
 
-  @Query(() => [TeacherStudentDto], { name: 'teacherGetStudents' })
+  @Query(() => [TeacherStudentResponse], { name: 'teacherGetStudents' })
   async getStudents(
     @ActiveUser() userTenant: ActiveUserData,
-  ): Promise<TeacherStudentDto[]> {
+  ): Promise<TeacherStudentResponse[]> {
     return await this.teacherStudentsService.getStudentsByTenant(
       userTenant.tenantId,
     );
