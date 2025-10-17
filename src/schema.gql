@@ -1340,7 +1340,7 @@ type Mutation {
   sendMessageToAllStudents(input: BroadcastMessageInput!): [ChatMessage!]!
   sendMessageToParent(input: SendMessageInput!): ChatMessage!
   sendMessageToStudent(input: SendMessageInput!): ChatMessage!
-  sendMessageToTeacher(input: SendMessageToTeacherInput!): ChatMessageInput!
+  sendMessageToTeacher(input: SendMessageToTeacherInput!): ChatMessage!
 
   """Mark an academic year as the current one"""
   setCurrentAcademicYear(id: ID!): AcademicYear!
@@ -1636,6 +1636,7 @@ type Query {
   getMyAssignmentss(limit: Float = 10, offset: Float = 0, status: AssignmentStatus, subjectId: ID): AssignmentsResponse!
   getMyChatRooms(limit: Int = 10, offset: Int = 0): ChatRoomsResponse!
   getMyChats: [ChatRoom!]!
+  getMyMessages(chatRoomId: ID, limit: Int = 20, offset: Int = 0, teacherId: ID): MessagesResponse!
   getParentsByTenant(tenantId: String!): [Parent!]!
   getPendingInvitations(tenantId: String!): [PendingInvitation!]!
   getPendingParentInvitations(tenantId: String!): [PendingInvitation!]!

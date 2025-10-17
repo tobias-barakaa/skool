@@ -16,7 +16,7 @@ export class ChatUser {
   email: string;
 
   @Field()
-  userType: string; 
+  userType: string;
 }
 
 
@@ -82,3 +82,29 @@ export class ChatRoomsResponse {
   @Field()
   currentPage: number;
 }
+
+
+
+// @ObjectType()
+// export class ChatUser {
+//   @Field(() => ID)
+//   id: string; // This is user_id
+
+//   @Field(() => ID, { nullable: true })
+//   studentId?: string; // This is student.id (if user is a student)
+
+//   @Field(() => ID, { nullable: true })
+//   teacherId?: string; // This is teacher.id (if user is a teacher)
+
+//   @Field()
+//   firstName: string;
+
+//   @Field()
+//   lastName: string;
+
+//   @Field()
+//   email: string;
+
+//   @Field()
+//   userType: string; // 'STUDENT', 'TEACHER', 'PARENT'
+// }

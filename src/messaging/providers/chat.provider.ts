@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { ChatRoom } from '../entities/chat-room.entity';
 import { ChatMessage } from '../entities/chat-message.entity';
 import { SendMessageInput } from '../dtos/send-message.input';
@@ -22,7 +22,10 @@ export class ChatProvider {
 
     @InjectRepository(Parent)
     private parentRepository: Repository<Parent>,
+
+    private readonly dataSource: DataSource,
   ) {}
+
 
   async findOrCreateChatRoom(
     participantIds: string[],
@@ -125,13 +128,6 @@ export class ChatProvider {
       .execute();
   }
 
-  async getStudentById(studentId: string): Promise<Student | null> {
-    return this.studentRepository.findOne({
-      where: { id: studentId },
-      relations: ['user'],
-    });
-  }
-
   async getParentById(parentId: string): Promise<Parent | null> {
     return this.parentRepository.findOne({
       where: { id: parentId },
@@ -145,7 +141,7 @@ export class ChatProvider {
       relations: ['user'],
     });
   }
-  
+
   async getAllStudentsByGrade(gradeId: string): Promise<Student[]> {
     return this.studentRepository.find({
       where: { grade: { id: gradeId }, isActive: true },
@@ -169,4 +165,142 @@ export class ChatProvider {
 
     return parseInt(count) || 0;
   }
+
+  async getStudentByUserId(
+    userId: string,
+    tenantId: string,
+  ): Promise<Student | null> {
+    const studentRepository = this.dataSource.getRepository(Student);
+    return studentRepository.findOne({
+      where: {
+        user: { id: userId },
+        tenant: { id: tenantId },
+      },
+      relations: ['user'],
+    });
+  }
+
+  async getStudentById(studentId: string, tenantId: string): Promise<any> {
+    const qr = this.dataSource.createQueryRunner();
+    await qr.connect();
+
+    try {
+      const query = `
+        SELECT s.*, s.user_id, u.first_name, u.last_name, u.email
+        FROM students s
+        JOIN users u ON s.user_id = u.id
+        WHERE s.id = $1 AND s.tenant_id = $2
+      `;
+      const result = await qr.query(query, [studentId, tenantId]);
+      return result[0] || null;
+    } finally {
+      await qr.release();
+    }
+  }
+
+  async getTeacherByUserId(userId: string, tenantId: string): Promise<any> {
+    console.log('tumefika.....')
+    const qr = this.dataSource.createQueryRunner();
+    await qr.connect();
+
+    try {
+      const query = `
+        SELECT
+  t.*,
+  u.name AS user_name,
+  u.email
+FROM teachers t
+JOIN users u ON t.user_id = u.id
+JOIN user_tenant_memberships utm ON utm.user_id = u.id
+WHERE t.user_id = $1 AND utm.tenant_id = $2;
+
+      `;
+      const result = await qr.query(query, [userId, tenantId]);
+      console.log('hii ndo result', result[0])
+      return result[0] || null;
+    } finally {
+      await qr.release();
+    }
+  }
+
+  async getTeacherById(teacherId: string, tenantId: string): Promise<any> {
+    const qr = this.dataSource.createQueryRunner();
+    await qr.connect();
+
+    try {
+      const query = `
+        SELECT t.*, t.user_id, u.first_name, u.last_name, u.email
+        FROM teachers t
+        JOIN users u ON t.user_id = u.id
+        WHERE t.id = $1 AND t.tenant_id = $2
+      `;
+      const result = await qr.query(query, [teacherId, tenantId]);
+      return result[0] || null;
+    } finally {
+      await qr.release();
+    }
+  }
+  /////////////////////
+  // async getTeacherByUserId(userId: string, tenantId: string): Promise<any> {
+  //   const qr = this.dataSource.createQueryRunner();
+  //   await qr.connect();
+
+  //   try {
+  //     const query = `
+  //       SELECT t.*, u.first_name, u.last_name, u.email
+  //       FROM teachers t
+  //       JOIN users u ON t.user_id = u.id
+  //       WHERE t.user_id = $1 AND u.tenant_id = $2
+  //     `;
+  //     const result = await qr.query(query, [userId, tenantId]);
+  //     return result[0] || null;
+  //   } finally {
+  //     await qr.release();
+  //   }
+  // }
+
+  // async getStudentById(studentId: string, tenantId: string): Promise<any> {
+  //   const qr = this.dataSource.createQueryRunner();
+  //   await qr.connect();
+
+  //   try {
+  //     const query = `
+  //     SELECT
+  //       s.*,
+  //       u.name AS user_name,
+  //       u.email
+  //     FROM students s
+  //     JOIN users u ON s.user_id = u.id
+  //     WHERE s.id = $1 AND s.tenant_id = $2
+  //   `;
+
+  //     const result = await qr.query(query, [studentId, tenantId]);
+  //     return result[0] || null;
+  //   } finally {
+  //     await qr.release();
+  //   }
+  // }
+
+  ///
+
+  // async getStudentByUserId(
+  //     userId: string,
+  //     tenantId: string,
+  //   ): Promise<Student | null> {
+  //     const studentRepository = this.dataSource.getRepository(Student);
+  //     return studentRepository.findOne({
+  //       where: {
+  //         user: { id: userId },
+  //         tenant: { id: tenantId },
+  //       },
+  //       relations: ['user'],
+  //     });
+  //   }
+
+  // async getStudentById(studentId: string): Promise<Student | null> {
+  //   return this.studentRepository.findOne({
+  //     where: { id: studentId },
+  //     relations: ['user'],
+  //   });
+  // }
 }

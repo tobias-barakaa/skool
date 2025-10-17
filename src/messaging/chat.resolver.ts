@@ -26,18 +26,16 @@ export class ChatResolver {
     @Args('input') input: SendMessageInput,
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<ChatMessage> {
-    const teacherId = currentUser.sub;
-    const tenantId = currentUser.tenantId;
-
+    console.log('lalalalalalal')
+    // input.recipientId is STUDENT_ID (from students table)
+    // We need to convert it to user_id before creating the chat
     const message = await this.chatService.sendMessageToStudent(
-      teacherId,
-      tenantId,
-      input.recipientId,
+      currentUser.sub,
+      currentUser.tenantId,
       input,
     );
 
     pubSub.publish('messageAdded', { messageAdded: message });
-
     return message;
   }
 

@@ -7,14 +7,11 @@ import { ChatResolver } from "src/messaging/chat.resolver";
 import { StudentChatProvider } from "./chat/providers/chat.provider";
 import { StudentChatResolver } from "./chat/chat.resolver";
 import { StudentChatService } from "./chat/chat.service";
+import { MessagingModule } from "src/messaging/messaging.module";
 
 @Module({
-  providers: [
-    StudentChatResolver,
-    StudentChatProvider,
-    StudentChatService,
-  ],
+  providers: [StudentChatResolver, StudentChatProvider, StudentChatService],
   exports: [],
-  imports: [AssignmentModule, StudentSummaryModule]
+  imports: [AssignmentModule, StudentSummaryModule, MessagingModule],
 })
 export class StudentPortalModule {}

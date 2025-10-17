@@ -13,6 +13,7 @@ import { MembershipRole } from '../user-tenant-membership/entities/user-tenant-m
 import { TenantUserSummary } from './dtos/tenant-user-summary.output';
 import { SkipSchoolConfigCheck } from 'src/iam/guards/school-setup-guard-service';
 
+
 @Resolver(() => User)
 @UseFilters(GraphQLExceptionsFilter)
 export class UsersResolver {
@@ -68,7 +69,7 @@ export class UsersResolver {
 
     return {
       user,
-      membership, 
+      membership,
       tokens,
       subdomainUrl,
       tenant,

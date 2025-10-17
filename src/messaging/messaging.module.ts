@@ -32,6 +32,6 @@ import { ParentModule } from 'src/admin/parent/parent.module';
     SocketTestService,
     SocketTestResolver,
   ],
-  exports: [ChatService],
+  exports: [ChatService, RedisChatProvider],
 })
 export class MessagingModule {}

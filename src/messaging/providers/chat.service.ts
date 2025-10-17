@@ -1,9 +1,9 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { ChatProvider } from '../providers/chat.provider';
 import { RedisChatProvider } from '../providers/redis-chat.provider';
 import { ChatMessage } from '../entities/chat-message.entity';
 import { ChatRoom } from '../entities/chat-room.entity';
 import { BroadcastMessageInput, SendMessageInput } from '../dtos/send-message.input';
+import { ChatProvider } from './chat.provider';
 
 @Injectable()
 export class ChatService {
@@ -12,32 +12,75 @@ export class ChatService {
     private readonly redisChatProvider: RedisChatProvider,
   ) {}
 
+  // async sendMessageToStudent(
+  //   teacherId: string,
+  //   tenantId: string,
+  //   studentId: string,
+  //   messageData: SendMessageInput,
+  // ): Promise<ChatMessage> {
+  //   const student = await this.chatProvider.getStudentById(studentId);
+
+  //   if (!student) {
+  //     throw new NotFoundException('Student not found');
+  //   }
+
+  //   if (student.tenant_id !== tenantId) {
+  //     throw new ForbiddenException(
+  //       'Unauthorized: Student is in a different tenant',
+  //     );
+  //   }
+
+  //   const chatRoom = await this.chatProvider.findOrCreateChatRoom(
+  //     [teacherId, studentId],
+  //     'TEACHER_STUDENT',
+  //     `Teacher-Student Chat`,
+  //   );
+
+  //   const message = await this.chatProvider.createMessage(
+  //     teacherId,
+  //     'TEACHER',
+  //     chatRoom.id,
+  //     messageData,
+  //   );
+
+  //   await this.redisChatProvider.cacheMessage(message);
+
+  //   return message;
+  // }
+
+
   async sendMessageToStudent(
-    teacherId: string,
+    teacherUserId: string,
     tenantId: string,
-    studentId: string,
     messageData: SendMessageInput,
   ): Promise<ChatMessage> {
-    const student = await this.chatProvider.getStudentById(studentId);
+    // Verify teacher
+    const teacher = await this.chatProvider.getTeacherByUserId(teacherUserId, tenantId);
+    if (!teacher) {
+      throw new NotFoundException('Teacher not found');
+    }
 
+    // messageData.recipientId is STUDENT_ID, need to get their user_id
+    const student = await this.chatProvider.getStudentById(
+      messageData.recipientId,
+      tenantId,
+    );
     if (!student) {
       throw new NotFoundException('Student not found');
     }
 
-    if (student.tenant_id !== tenantId) {
-      throw new ForbiddenException(
-        'Unauthorized: Student is in a different tenant',
-      );
-    }
+    // Now use user_ids for chat operations
+    const studentUserId = student.user_id;
 
+    // Create or find chat room using user_ids
     const chatRoom = await this.chatProvider.findOrCreateChatRoom(
-      [teacherId, studentId],
+      [teacherUserId, studentUserId],
       'TEACHER_STUDENT',
-      `Teacher-Student Chat`,
+      'Teacher-Student Chat',
     );
 
     const message = await this.chatProvider.createMessage(
-      teacherId,
+      teacherUserId,
       'TEACHER',
       chatRoom.id,
       messageData,
@@ -47,6 +90,8 @@ export class ChatService {
 
     return message;
   }
+
+
 
   async sendMessageToAllStudents(
     teacherId: string,
@@ -61,13 +106,12 @@ export class ChatService {
       try {
         const studentInput: SendMessageInput = {
           ...input,
-          recipientId: student.id, // <- inject dynamically
+          recipientId: student.id,
         };
 
         const message = await this.sendMessageToStudent(
           teacherId,
           tenantId,
-          student.id,
           studentInput,
         );
 
