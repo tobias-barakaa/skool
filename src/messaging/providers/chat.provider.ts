@@ -26,7 +26,6 @@ export class ChatProvider {
     private readonly dataSource: DataSource,
   ) {}
 
-
   async findOrCreateChatRoom(
     participantIds: string[],
     type: string,
@@ -186,7 +185,7 @@ export class ChatProvider {
 
     try {
       const query = `
-        SELECT s.*, s.user_id, u.first_name, u.last_name, u.email
+        SELECT s.*, s.user_id, u.name AS user_name, u.email
         FROM students s
         JOIN users u ON s.user_id = u.id
         WHERE s.id = $1 AND s.tenant_id = $2
@@ -199,29 +198,26 @@ export class ChatProvider {
   }
 
   async getTeacherByUserId(userId: string, tenantId: string): Promise<any> {
-    console.log('tumefika.....')
     const qr = this.dataSource.createQueryRunner();
     await qr.connect();
-
     try {
       const query = `
-        SELECT
-  t.*,
-  u.name AS user_name,
-  u.email
-FROM teachers t
-JOIN users u ON t.user_id = u.id
-JOIN user_tenant_memberships utm ON utm.user_id = u.id
-WHERE t.user_id = $1 AND utm.tenant_id = $2;
-
-      `;
+      SELECT t.*, u.name AS user_name, u.email
+      FROM   teacher t
+      JOIN   users u ON u.id = t.user_id
+      JOIN   user_tenant_memberships utm
+             ON utm."userId" = u.id
+      WHERE  t.user_id = $1
+        AND  utm."tenantId" = $2;
+    `;
       const result = await qr.query(query, [userId, tenantId]);
-      console.log('hii ndo result', result[0])
-      return result[0] || null;
+      console.log('result', result);
+      return result[0] ?? null;
     } finally {
       await qr.release();
     }
   }
+
 
   async getTeacherById(teacherId: string, tenantId: string): Promise<any> {
     const qr = this.dataSource.createQueryRunner();
@@ -229,7 +225,7 @@ WHERE t.user_id = $1 AND utm.tenant_id = $2;
 
     try {
       const query = `
-        SELECT t.*, t.user_id, u.first_name, u.last_name, u.email
+        SELECT t.*, t.user_id, u.name AS user_name, u.email
         FROM teachers t
         JOIN users u ON t.user_id = u.id
         WHERE t.id = $1 AND t.tenant_id = $2
