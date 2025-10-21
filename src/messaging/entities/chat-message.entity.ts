@@ -22,7 +22,7 @@ export class ChatMessage {
 
   @Field()
   @Column()
-  senderType: string; // 'TEACHER', 'STUDENT', 'PARENT'
+  senderType: string; 
 
   @Field({ nullable: true })
   @Column({ nullable: true })

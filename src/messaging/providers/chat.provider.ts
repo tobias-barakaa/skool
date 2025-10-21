@@ -10,7 +10,7 @@ import { Parent } from 'src/admin/parent/entities/parent.entity';
 @Injectable()
 export class ChatProvider {
   private readonly logger = new Logger(ChatProvider.name);
-
+  
   constructor(
     @InjectRepository(ChatRoom)
     private chatRoomRepository: Repository<ChatRoom>,

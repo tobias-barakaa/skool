@@ -26,7 +26,7 @@ export class ChatRoom {
 
   @Field(() => [String])
   @Column('simple-array', { nullable: true })
-  participantIds: string[]; // Array of user IDs
+  participantIds: string[]; 
 
   @Field()
   @CreateDateColumn()

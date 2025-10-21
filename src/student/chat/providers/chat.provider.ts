@@ -24,85 +24,98 @@ export class StudentChatProvider {
   ): Promise<{ chatRooms: ChatRoomInput[]; total: number }> {
     const qr = this.dataSource.createQueryRunner();
     await qr.connect();
-
+  
     try {
-      // Verify user belongs to tenant
+      // Verify user exists in tenant
       const userCheck = await qr.query(
-        `SELECT 1 FROM users WHERE id = $1 AND tenant_id = $2`,
+        `SELECT u.*,
+          utm.role,
+          utm.status,
+          utm.permissions,
+          utm."tenantId"
+         FROM users u
+         JOIN user_tenant_memberships utm ON utm."userId" = u.id
+         WHERE u.id = $1 AND utm."tenantId" = $2`,
         [userId, tenantId],
       );
-
+  
       if (!userCheck.length) {
         throw new Error('User not found in tenant');
       }
-
-      // Count total rooms
+  
+      // Count total rooms where user is a participant
       const countQuery = `
-        SELECT COUNT(DISTINCT cr.id) as total
+        SELECT COUNT(*) as total
         FROM chat_rooms cr
-        JOIN chat_room_participants crp ON cr.id = crp.chat_room_id
-        WHERE crp.user_id = $1 AND cr.room_type = $2
+        WHERE $1 = ANY(string_to_array(cr."participantIds", ','))
+          AND cr.type = $2
       `;
       const countResult = await qr.query(countQuery, [userId, roomType]);
-      const total = parseInt(countResult[0].total);
-
+      const total = parseInt(countResult[0].total, 10);
+  
       // Fetch chat rooms with last message and unread count
       const chatRoomsQuery = `
         SELECT DISTINCT
           cr.id,
           cr.name,
-          cr.room_type,
-          cr.created_at,
-          cr.updated_at,
+          cr.type as room_type,
+          cr."createdAt" as created_at,
+          cr."updatedAt" as updated_at,
+          cr."participantIds",
           lm.id as last_message_id,
           lm.message as last_message_text,
           lm.subject as last_message_subject,
-          lm.image_url as last_message_image_url,
-          lm.created_at as last_message_created_at,
-          lm.sender_id as last_message_sender_id,
-          lm.sender_type as last_message_sender_type,
+          lm."imageUrl" as last_message_image_url,
+          lm."createdAt" as last_message_created_at,
+          lm."senderId" as last_message_sender_id,
+          lm."senderType" as last_message_sender_type,
           lm_sender.first_name as last_message_sender_first_name,
           lm_sender.last_name as last_message_sender_last_name,
           lm_sender.email as last_message_sender_email,
           COALESCE(unread.unread_count, 0) as unread_count
         FROM chat_rooms cr
-        JOIN chat_room_participants crp ON cr.id = crp.chat_room_id
         LEFT JOIN LATERAL (
           SELECT cm.*
           FROM chat_messages cm
-          WHERE cm.chat_room_id = cr.id
-          ORDER BY cm.created_at DESC
+          WHERE cm."chatRoomId" = cr.id
+          ORDER BY cm."createdAt" DESC
           LIMIT 1
         ) lm ON true
-        LEFT JOIN users lm_sender ON lm.sender_id = lm_sender.id
+        LEFT JOIN users lm_sender ON lm."senderId" = lm_sender.id
         LEFT JOIN LATERAL (
           SELECT COUNT(*) as unread_count
           FROM chat_messages cm2
-          WHERE cm2.chat_room_id = cr.id
-            AND cm2.sender_id != $1
-            AND cm2.is_read = false
+          WHERE cm2."chatRoomId" = cr.id
+            AND cm2."senderId" != $1
+            AND cm2."isRead" = false
         ) unread ON true
-        WHERE crp.user_id = $1 AND cr.room_type = $2
-        ORDER BY COALESCE(lm.created_at, cr.created_at) DESC
+        WHERE $1 = ANY(string_to_array(cr."participantIds", ','))
+          AND cr.type = $2
+        ORDER BY COALESCE(lm."createdAt", cr."createdAt") DESC
         LIMIT $3 OFFSET $4
       `;
-
+  
       const chatRoomsResult = await qr.query(chatRoomsQuery, [
         userId,
         roomType,
         args.limit,
         args.offset,
       ]);
-
+  
       const chatRooms: ChatRoomInput[] = [];
-
+  
       for (const row of chatRoomsResult) {
-        // Get all participants with their domain IDs (teacher_id or student_id)
+        // Parse participantIds from the simple-array column
+        const participantUserIds = row.participantIds
+          ? row.participantIds.split(',')
+          : [];
+  
+        // Get participant details
         const participantsQuery = `
           SELECT
             u.id as user_id,
-            u.first_name,
-            u.last_name,
+            u."firstName" as first_name,
+            u."lastName" as last_name,
             u.email,
             s.id as student_id,
             t.id as teacher_id,
@@ -111,17 +124,16 @@ export class StudentChatProvider {
               WHEN t.id IS NOT NULL THEN 'TEACHER'
               ELSE 'UNKNOWN'
             END as user_type
-          FROM chat_room_participants crp
-          JOIN users u ON crp.user_id = u.id
-          LEFT JOIN students s ON s.user_id = u.id AND s.tenant_id = $2
-          LEFT JOIN teachers t ON t.user_id = u.id AND t.tenant_id = $2
-          WHERE crp.chat_room_id = $1
+          FROM users u
+          LEFT JOIN students s ON s."userId" = u.id AND s."tenantId" = $1
+          LEFT JOIN teachers t ON t."userId" = u.id AND t."tenantId" = $1
+          WHERE u.id = ANY($2::uuid[])
         `;
         const participantsResult = await qr.query(participantsQuery, [
-          row.id,
           tenantId,
+          participantUserIds,
         ]);
-
+  
         const participants: ChatUser[] = participantsResult.map((p) => ({
           id: p.user_id,
           studentId: p.student_id,
@@ -131,7 +143,7 @@ export class StudentChatProvider {
           email: p.email,
           userType: p.user_type,
         }));
-
+  
         const chatRoom: ChatRoomInput = {
           id: row.id,
           name: row.name,
@@ -139,10 +151,10 @@ export class StudentChatProvider {
           createdAt: new Date(row.created_at),
           updatedAt: new Date(row.updated_at),
           participants,
-          unreadCount: parseInt(row.unread_count),
+          unreadCount: parseInt(row.unread_count, 10),
           lastMessage: undefined,
         };
-
+  
         if (row.last_message_id) {
           chatRoom.lastMessage = {
             id: row.last_message_id,
@@ -161,10 +173,10 @@ export class StudentChatProvider {
             isRead: false,
           };
         }
-
+  
         chatRooms.push(chatRoom);
       }
-
+  
       return { chatRooms, total };
     } finally {
       await qr.release();
@@ -715,7 +727,11 @@ export class StudentChatProvider {
     userId: string,
     tenantId: string,
   ): Promise<Student | null> {
+
+
     const studentRepository = this.dataSource.getRepository(Student);
+
+
     return studentRepository.findOne({
       where: {
         user: { id: userId },
@@ -723,6 +739,7 @@ export class StudentChatProvider {
       },
       relations: ['user'],
     });
+
   }
 
   async getStudentById(studentId: string, tenantId: string): Promise<any> {
