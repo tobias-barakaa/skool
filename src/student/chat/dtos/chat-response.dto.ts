@@ -1,5 +1,5 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
-import { ChatRoomInput } from './chat-room.dto';
+import { CreateChatRoomInput } from 'src/messaging/dtos/send-message.input';
 
 @ObjectType()
 export class ChatUser {
@@ -41,8 +41,8 @@ export class ChatMessageInput {
   @Field(() => ChatUser)
   sender: ChatUser;
 
-  @Field(() => ChatRoomInput)
-  chatRoom: ChatRoomInput;
+  @Field(() => CreateChatRoomInput)
+  chatRoom: CreateChatRoomInput;
 
   @Field()
   isRead: boolean;
@@ -64,14 +64,14 @@ export class MessagesResponse {
   @Field()
   currentPage: number;
 
-  @Field(() => ChatRoomInput)
-  chatRoom: ChatRoomInput;
+  @Field(() => CreateChatRoomInput)
+  chatRoom: CreateChatRoomInput;
 }
 
 @ObjectType()
 export class ChatRoomsResponse {
-  @Field(() => [ChatRoomInput])
-  chatRooms: ChatRoomInput[];
+  @Field(() => [CreateChatRoomInput])
+  chatRooms: CreateChatRoomInput[];
 
   @Field()
   total: number;

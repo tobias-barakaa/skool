@@ -323,8 +323,8 @@ type ChatMessage {
   subject: String
 }
 
-type ChatMessageInput {
-  chatRoom: ChatRoomInput!
+type ChatMessageDto {
+  chatRoom: ChatRoomDto!
   createdAt: DateTime!
   id: ID!
   imageUrl: String
@@ -344,19 +344,19 @@ type ChatRoom {
   updatedAt: DateTime!
 }
 
-type ChatRoomInput {
+type ChatRoomDto {
   createdAt: DateTime!
   id: ID!
-  lastMessage: ChatMessageInput
+  lastMessage: ChatMessageDto
   name: String!
   participants: [ChatUser!]!
-  roomType: String!
+  type: String!
   unreadCount: Float
   updatedAt: DateTime!
 }
 
 type ChatRoomsResponse {
-  chatRooms: [ChatRoomInput!]!
+  chatRooms: [ChatRoomDto!]!
   currentPage: Float!
   total: Float!
   totalPages: Float!
@@ -364,9 +364,8 @@ type ChatRoomsResponse {
 
 type ChatUser {
   email: String!
-  firstName: String!
   id: ID!
-  lastName: String!
+  name: String!
   userType: String!
 }
 
@@ -1187,9 +1186,9 @@ enum MembershipStatus {
 }
 
 type MessagesResponse {
-  chatRoom: ChatRoomInput!
+  chatRoom: ChatRoomDto!
   currentPage: Float!
-  messages: [ChatMessageInput!]!
+  messages: [ChatMessageDto!]!
   total: Float!
   totalPages: Float!
 }
@@ -1309,7 +1308,9 @@ type Mutation {
 
   """Mark attendance for students in a specific grade"""
   markAttendance(markAttendanceInput: CreateAttendanceInput!): [Attendance!]!
-  markChatAsRead(chatRoomId: String!): Boolean!
+
+  """Mark all messages in a chat room as read"""
+  markChatAsRead(chatRoomId: ID!): Boolean!
 
   """
   Refresh search cache for current user tenant (placeholder for future caching)
@@ -1340,6 +1341,8 @@ type Mutation {
   sendMessageToAllStudents(input: BroadcastMessageInput!): [ChatMessage!]!
   sendMessageToParent(input: SendMessageInput!): ChatMessage!
   sendMessageToStudent(input: SendMessageInput!): ChatMessage!
+
+  """Send a message to a teacher"""
   sendMessageToTeacher(input: SendMessageToTeacherInput!): ChatMessage!
 
   """Mark an academic year as the current one"""
@@ -1622,7 +1625,11 @@ type Query {
 
   """Get all students and teachers for current user tenant"""
   getBothStudentsAndTeachersByTenant: CombinedSearchResult!
+
+  """Get messages from a chat room or with a specific teacher"""
   getChatMessages(chatRoomId: ID, limit: Int = 20, offset: Int = 0, teacherId: ID): MessagesResponse!
+
+  """Get chat messages with a specific teacher"""
   getChatWithTeacher(limit: Float = 20, offset: Float = 0, teacherId: ID!): MessagesResponse!
 
   """Get a specific fee assignment by ID with all student details"""
@@ -1634,9 +1641,10 @@ type Query {
   getFeeAssignmentsByGradeLevels(input: GetFeeAssignmentsByGradeLevelsInput!): [FeeAssignmentWithStudents!]!
   getGradeLevelClassTeacher(gradeLevelId: String!): ClassTeacherAssignment
   getMyAssignmentss(limit: Float = 10, offset: Float = 0, status: AssignmentStatus, subjectId: ID): AssignmentsResponse!
+
+  """Get all chat rooms for the authenticated student"""
   getMyChatRooms(limit: Int = 10, offset: Int = 0): ChatRoomsResponse!
   getMyChats: [ChatRoom!]!
-  getMyMessages(chatRoomId: ID, limit: Int = 20, offset: Int = 0, teacherId: ID): MessagesResponse!
   getParentsByTenant(tenantId: String!): [Parent!]!
   getPendingInvitations(tenantId: String!): [PendingInvitation!]!
   getPendingParentInvitations(tenantId: String!): [PendingInvitation!]!
@@ -2018,7 +2026,7 @@ input SendMessageToTeacherInput {
   imageUrl: String
   message: String!
   recipientId: ID!
-  subject: String!
+  subject: String
 }
 
 input SignInInput {
