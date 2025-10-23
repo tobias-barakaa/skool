@@ -57,3 +57,46 @@ export class CreateChatRoomInput {
   @IsNotEmpty()
   participantIds: string[];
 }
+
+import { ObjectType } from '@nestjs/graphql';
+
+@ObjectType()
+export class TypingIndicator {
+  @Field()
+  userId: string;
+
+  @Field()
+  roomId: string;
+
+  @Field()
+  isTyping: boolean;
+}
+
+
+// import {IsString, IsIn, MaxLength } from 'class-validator';
+
+// @InputType()
+// export class BroadcastMessageInput {
+//   @Field()
+//   @IsNotEmpty()
+//   @IsString()
+//   @IsIn(['STUDENT', 'PARENT'], { message: 'recipientType must be STUDENT or PARENT' })
+//   recipientType: string; // target audience of the broadcast
+
+//   @Field({ nullable: true })
+//   @IsOptional()
+//   @IsString()
+//   @MaxLength(150, { message: 'Subject should not exceed 150 characters' })
+//   subject?: string;
+
+//   @Field()
+//   @IsNotEmpty()
+//   @IsString()
+//   @MaxLength(2000, { message: 'Message should not exceed 2000 characters' })
+//   message: string;
+
+//   @Field({ nullable: true })
+//   @IsOptional()
+//   @IsString()
+//   imageUrl?: string;
+// }

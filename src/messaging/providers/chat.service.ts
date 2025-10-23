@@ -1,256 +1,426 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { RedisChatProvider } from '../providers/redis-chat.provider';
-import { ChatMessage } from '../entities/chat-message.entity';
+import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, In, DataSource } from 'typeorm';
 import { ChatRoom } from '../entities/chat-room.entity';
+import { ChatMessage } from '../entities/chat-message.entity';
+import { RedisChatProvider } from './redis-chat.provider';
+import { Student } from 'src/admin/student/entities/student.entity';
+import { Teacher } from 'src/admin/teacher/entities/teacher.entity';
+import { ParentStudent } from 'src/admin/parent/entities/parent-student.entity';
+import { Parent } from 'src/admin/parent/entities/parent.entity';
 import { BroadcastMessageInput, SendMessageInput } from '../dtos/send-message.input';
-import { ChatProvider } from './chat.provider';
 
 @Injectable()
 export class ChatService {
+  private readonly logger = new Logger(ChatService.name);
+
   constructor(
-    private readonly chatProvider: ChatProvider,
+    @InjectRepository(ChatRoom)
+    private readonly chatRoomRepository: Repository<ChatRoom>,
+    @InjectRepository(ChatMessage)
+    private readonly chatMessageRepository: Repository<ChatMessage>,
+    @InjectRepository(Student)
+    private readonly studentRepository: Repository<Student>,
+    @InjectRepository(Parent)
+    private readonly parentRepository: Repository<Parent>,
+    @InjectRepository(Teacher)
+    private readonly teacherRepository: Repository<Teacher>,
+    @InjectRepository(ParentStudent)
+    private readonly parentStudentRepository: Repository<ParentStudent>,
     private readonly redisChatProvider: RedisChatProvider,
+    private readonly dataSource: DataSource,
   ) {}
 
-  // async sendMessageToStudent(
-  //   teacherId: string,
-  //   tenantId: string,
-  //   studentId: string,
-  //   messageData: SendMessageInput,
-  // ): Promise<ChatMessage> {
-  //   const student = await this.chatProvider.getStudentById(studentId);
-
-  //   if (!student) {
-  //     throw new NotFoundException('Student not found');
-  //   }
-
-  //   if (student.tenant_id !== tenantId) {
-  //     throw new ForbiddenException(
-  //       'Unauthorized: Student is in a different tenant',
-  //     );
-  //   }
-
-  //   const chatRoom = await this.chatProvider.findOrCreateChatRoom(
-  //     [teacherId, studentId],
-  //     'TEACHER_STUDENT',
-  //     `Teacher-Student Chat`,
-  //   );
-
-  //   const message = await this.chatProvider.createMessage(
-  //     teacherId,
-  //     'TEACHER',
-  //     chatRoom.id,
-  //     messageData,
-  //   );
-
-  //   await this.redisChatProvider.cacheMessage(message);
-
-  //   return message;
-  // }
-
-
+  /**
+   * Send message from teacher to a specific student
+   */
   async sendMessageToStudent(
     teacherUserId: string,
     tenantId: string,
-    messageData: SendMessageInput,
+    input: SendMessageInput,
   ): Promise<ChatMessage> {
-    // Verify teacher
-    const teacher = await this.chatProvider.getTeacherByUserId(teacherUserId, tenantId);
+    // Get teacher by user_id
+    const teacher = await this.teacherRepository.findOne({
+      where: { user: { id: teacherUserId }, tenantId },
+    });
+
     if (!teacher) {
       throw new NotFoundException('Teacher not found');
     }
 
-    // messageData.recipientId is STUDENT_ID, need to get their user_id
-    const student = await this.chatProvider.getStudentById(
-      messageData.recipientId,
-      tenantId,
-    );
+    // Get student and their user_id
+    const student = await this.studentRepository.findOne({
+      where: { id: input.recipientId, tenant_id: tenantId },
+      relations: ['user'],
+    });
+
     if (!student) {
       throw new NotFoundException('Student not found');
     }
 
-    // Now use user_ids for chat operations
-    const studentUserId = student.user_id;
-
-    // Create or find chat room using user_ids
-    const chatRoom = await this.chatProvider.findOrCreateChatRoom(
-      [teacherUserId, studentUserId],
-      'TEACHER_STUDENT',
-      'Teacher-Student Chat',
+    // Create or get chat room between teacher and student
+    const chatRoom = await this.getOrCreateChatRoom(
+      `teacher-student-${teacher.id}-${student.id}`,
+      'DIRECT',
+      [teacherUserId, student.user_id],
+      tenantId,
     );
 
-    const message = await this.chatProvider.createMessage(
-      teacherUserId,
-      'TEACHER',
-      chatRoom.id,
-      messageData,
-    );
+    // Create message
+    const message = this.chatMessageRepository.create({
+      senderId: teacherUserId,
+      senderType: 'TEACHER',
+      subject: input.subject,
+      message: input.message,
+      imageUrl: input.imageUrl,
+      chatRoomId: chatRoom.id,
+      isRead: false,
+    });
 
-    await this.redisChatProvider.cacheMessage(message);
+    const savedMessage = await this.chatMessageRepository.save(message);
 
-    return message;
+    // Cache in Redis
+    await this.redisChatProvider.cacheMessage(savedMessage);
+
+    // Track unread count
+    await this.redisChatProvider.incrementUnreadCount(student.user_id, chatRoom.id);
+
+    return savedMessage;
   }
 
+  /**
+   * Send message from teacher to a specific parent
+   */
+  async sendMessageToParent(
+    teacherUserId: string,
+    tenantId: string,
+    input: SendMessageInput,
+  ): Promise<ChatMessage> {
+    const teacher = await this.teacherRepository.findOne({
+      where: { user: { id: teacherUserId }, tenantId },
+    });
 
+    if (!teacher) {
+      throw new NotFoundException('Teacher not found');
+    }
 
-  async sendMessageToAllStudents(
-    teacherId: string,
+    // Get parent and their user_id
+    const parent = await this.parentRepository.findOne({
+      where: { id: input.recipientId, tenantId },
+      relations: ['user'],
+    });
+
+    if (!parent || !parent.user) {
+      throw new NotFoundException('Parent not found or not linked to user');
+    }
+
+    const chatRoom = await this.getOrCreateChatRoom(
+      `teacher-parent-${teacher.id}-${parent.id}`,
+      'DIRECT',
+      [teacherUserId, parent.user.id],
+      tenantId,
+    );
+
+    const message = this.chatMessageRepository.create({
+      senderId: teacherUserId,
+      senderType: 'TEACHER',
+      subject: input.subject,
+      message: input.message,
+      imageUrl: input.imageUrl,
+      chatRoomId: chatRoom.id,
+      isRead: false,
+    });
+
+    const savedMessage = await this.chatMessageRepository.save(message);
+    await this.redisChatProvider.cacheMessage(savedMessage);
+    await this.redisChatProvider.incrementUnreadCount(parent.user.id, chatRoom.id);
+
+    return savedMessage;
+  }
+
+  /**
+   * Broadcast message to all students in tenant
+   */
+  async broadcastToAllStudents(
+    teacherUserId: string,
     tenantId: string,
     input: BroadcastMessageInput,
   ): Promise<ChatMessage[]> {
-    const students = await this.chatProvider.getAllStudentsByTenant(tenantId);
+    const teacher = await this.teacherRepository.findOne({
+      where: { user: { id: teacherUserId }, tenantId },
+    });
+
+    if (!teacher) {
+      throw new NotFoundException('Teacher not found');
+    }
+
+    const students = await this.studentRepository.find({
+      where: { tenant_id: tenantId, isActive: true },
+      relations: ['user'],
+    });
+
+    if (students.length === 0) {
+      throw new BadRequestException('No active students found');
+    }
 
     const messages: ChatMessage[] = [];
 
     for (const student of students) {
       try {
-        const studentInput: SendMessageInput = {
-          ...input,
-          recipientId: student.id,
-        };
-
-        const message = await this.sendMessageToStudent(
-          teacherId,
+        const chatRoom = await this.getOrCreateChatRoom(
+          `teacher-student-${teacher.id}-${student.id}`,
+          'DIRECT',
+          [teacherUserId, student.user_id],
           tenantId,
-          studentInput,
         );
 
-        if (message) {
-          messages.push(message);
-        }
+        const message = this.chatMessageRepository.create({
+          senderId: teacherUserId,
+          senderType: 'TEACHER',
+          subject: input.subject,
+          message: input.message,
+          imageUrl: input.imageUrl,
+          chatRoomId: chatRoom.id,
+          isRead: false,
+        });
+
+        const savedMessage = await this.chatMessageRepository.save(message);
+        await this.redisChatProvider.cacheMessage(savedMessage);
+        await this.redisChatProvider.incrementUnreadCount(student.user_id, chatRoom.id);
+        
+        messages.push(savedMessage);
       } catch (error) {
-        console.warn(`Skipping student ${student.id}: ${error.message}`);
-        continue;
+        this.logger.error(`Failed to send message to student ${student.id}:`, error);
       }
     }
 
     return messages;
   }
 
-  async sendMessageToParent(
-    teacherId: string,
+  /**
+   * Broadcast message to all parents in tenant
+   */
+  async broadcastToAllParents(
+    teacherUserId: string,
     tenantId: string,
-    parentId: string,
-    messageData: SendMessageInput,
-  ): Promise<ChatMessage> {
-    // Create or find chat room between teacher and parent
-
-    const parent = await this.chatProvider.getParentById(parentId);
-
-    if (!parent) {
-      throw new NotFoundException('Student not found');
-    }
-
-    if (parent.tenantId !== tenantId) {
-      throw new ForbiddenException(
-        'Unauthorized: Student is in a different tenant',
-      );
-    }
-    const chatRoom = await this.chatProvider.findOrCreateChatRoom(
-      [teacherId, parentId],
-      'TEACHER_PARENT',
-      `Teacher-Parent Chat`,
-    );
-
-    // Create the message
-    const message = await this.chatProvider.createMessage(
-      teacherId,
-      'TEACHER',
-      chatRoom.id,
-      messageData,
-    );
-
-    // Cache in Redis
-    await this.redisChatProvider.cacheMessage(message);
-
-    return message;
-  }
-
-  async sendMessageToAllParents(
-    teacherId: string,
-    tenantId: string,
-    input: BroadcastMessageInput, // This does NOT contain recipientId
+    input: BroadcastMessageInput,
   ): Promise<ChatMessage[]> {
-    const parents = await this.chatProvider.getAllParentsByTenant(tenantId);
+    const teacher = await this.teacherRepository.findOne({
+      where: { user: { id: teacherUserId }, tenantId },
+    });
+
+    if (!teacher) {
+      throw new NotFoundException('Teacher not found');
+    }
+
+    const parents = await this.parentRepository.find({
+      where: { tenantId, isActive: true },
+      relations: ['user'],
+    });
+
+    if (parents.length === 0) {
+      throw new BadRequestException('No active parents found');
+    }
 
     const messages: ChatMessage[] = [];
 
     for (const parent of parents) {
-      try {
-        const parentInput: SendMessageInput = {
-          ...input,
-          recipientId: parent.id, // Inject recipientId dynamically
-        };
+      if (!parent.user) continue;
 
-        const message = await this.sendMessageToParent(
-          teacherId,
+      try {
+        const chatRoom = await this.getOrCreateChatRoom(
+          `teacher-parent-${teacher.id}-${parent.id}`,
+          'DIRECT',
+          [teacherUserId, parent.user.id],
           tenantId,
-          parent.id,
-          parentInput,
         );
 
-        if (message) {
-          messages.push(message);
-        }
+        const message = this.chatMessageRepository.create({
+          senderId: teacherUserId,
+          senderType: 'TEACHER',
+          subject: input.subject,
+          message: input.message,
+          imageUrl: input.imageUrl,
+          chatRoomId: chatRoom.id,
+          isRead: false,
+        });
+
+        const savedMessage = await this.chatMessageRepository.save(message);
+        await this.redisChatProvider.cacheMessage(savedMessage);
+        await this.redisChatProvider.incrementUnreadCount(parent.user.id, chatRoom.id);
+        
+        messages.push(savedMessage);
       } catch (error) {
-        console.warn(`Skipping parent ${parent.id}: ${error.message}`);
-        continue;
+        this.logger.error(`Failed to send message to parent ${parent.id}:`, error);
       }
     }
 
     return messages;
   }
 
-  async sendMessageToGrade(
-    teacherId: string,
-    gradeId: string,
-    studentIds: string[],
-    messageData: SendMessageInput,
-  ): Promise<ChatMessage> {
-    // Create group chat room for the grade
-    const participantIds = [teacherId, ...studentIds];
-    const chatRoom = await this.chatProvider.findOrCreateChatRoom(
-      participantIds,
-      'GRADE_GROUP',
-      `Grade Group Chat`,
-    );
-
-    // Create the message
-    const message = await this.chatProvider.createMessage(
-      teacherId,
-      'TEACHER',
-      chatRoom.id,
-      messageData,
-    );
-
-    // Cache in Redis
-    await this.redisChatProvider.cacheMessage(message);
-
-    return message;
-  }
-
+  /**
+   * Get chat history for a specific room
+   */
   async getChatHistory(
     userId: string,
     chatRoomId: string,
-    limit?: number,
-    offset?: number,
+    limit: number = 50,
+    offset: number = 0,
   ): Promise<ChatMessage[]> {
-    return await this.chatProvider.getChatRoomMessages(
-      chatRoomId,
-      limit,
-      offset,
+    // Check if user is participant
+    const room = await this.chatRoomRepository.findOne({
+      where: { id: chatRoomId },
+    });
+
+    if (!room || !room.participantIds.includes(userId)) {
+      throw new NotFoundException('Chat room not found or access denied');
+    }
+
+    // Try cache first
+    const cachedMessages = await this.redisChatProvider.getRecentMessages(chatRoomId);
+    
+    if (cachedMessages.length > 0 && offset === 0) {
+      return cachedMessages.slice(0, limit);
+    }
+
+    // Fetch from database
+    const messages = await this.chatMessageRepository.find({
+      where: { chatRoomId },
+      order: { createdAt: 'DESC' },
+      take: limit,
+      skip: offset,
+      relations: ['chatRoom'],
+    });
+
+    return messages;
+  }
+
+  /**
+   * Mark messages as read
+   */
+  async markMessagesAsRead(
+    userId: string,
+    chatRoomId: string,
+  ): Promise<boolean> {
+    const room = await this.chatRoomRepository.findOne({
+      where: { id: chatRoomId },
+    });
+
+    if (!room || !room.participantIds.includes(userId)) {
+      throw new NotFoundException('Chat room not found or access denied');
+    }
+
+    await this.chatMessageRepository.update(
+      { chatRoomId, isRead: false, senderId: In([...room.participantIds.filter(id => id !== userId)]) },
+      { isRead: true },
     );
+
+    // Clear unread count in Redis
+    await this.redisChatProvider.clearUnreadCount(userId, chatRoomId);
+
+    return true;
   }
 
-  async getUserChats(userId: string): Promise<ChatRoom[]> {
-    return await this.chatProvider.getUserChatRooms(userId);
-  }
-
-  async markAsRead(chatRoomId: string, userId: string): Promise<void> {
-    await this.chatProvider.markMessagesAsRead(chatRoomId, userId);
-  }
-
+  /**
+   * Get unread message count for user
+   */
   async getUnreadCount(userId: string): Promise<number> {
-    return await this.chatProvider.getUnreadMessageCount(userId);
+    return await this.redisChatProvider.getTotalUnreadCount(userId);
+  }
+
+  /**
+   * Get all chat rooms for a user
+   */
+  async getUserChatRooms(userId: string): Promise<ChatRoom[]> {
+    const rooms = await this.chatRoomRepository
+      .createQueryBuilder('room')
+      .where(':userId = ANY(room.participantIds)', { userId })
+      .orderBy('room.updatedAt', 'DESC')
+      .getMany();
+
+    return rooms;
+  }
+
+  /**
+   * Get or create chat room
+   */
+  private async getOrCreateChatRoom(
+    name: string,
+    type: string,
+    participantIds: string[],
+    tenantId: string,
+  ): Promise<ChatRoom> {
+    let room = await this.chatRoomRepository.findOne({
+      where: { name },
+    });
+
+    if (!room) {
+      room = this.chatRoomRepository.create({
+        name,
+        type,
+        participantIds,
+      });
+      room = await this.chatRoomRepository.save(room);
+    }
+
+    return room;
+  }
+
+  /**
+   * Send message from parent to teacher about their child
+   */
+  async sendMessageFromParentToTeacher(
+    parentUserId: string,
+    tenantId: string,
+    input: SendMessageInput & { studentId: string },
+  ): Promise<ChatMessage> {
+    const parent = await this.parentRepository.findOne({
+      where: { user: { id: parentUserId }, tenantId },
+    });
+
+    if (!parent) {
+      throw new NotFoundException('Parent not found');
+    }
+
+    // Verify parent-student relationship
+    const relationship = await this.parentStudentRepository.findOne({
+      where: { parentId: parent.id, studentId: input.studentId, tenantId },
+    });
+
+    if (!relationship) {
+      throw new BadRequestException('You are not linked to this student');
+    }
+
+    const teacher = await this.teacherRepository.findOne({
+      where: { id: input.recipientId, tenantId },
+      relations: ['user'],
+    });
+
+    if (!teacher || !teacher.user) {
+      throw new NotFoundException('Teacher not found');
+    }
+
+    const chatRoom = await this.getOrCreateChatRoom(
+      `parent-teacher-${parent.id}-${teacher.id}`,
+      'DIRECT',
+      [parentUserId, teacher.user.id],
+      tenantId,
+    );
+
+    const message = this.chatMessageRepository.create({
+      senderId: parentUserId,
+      senderType: 'PARENT',
+      subject: input.subject,
+      message: input.message,
+      imageUrl: input.imageUrl,
+      chatRoomId: chatRoom.id,
+      isRead: false,
+    });
+
+    const savedMessage = await this.chatMessageRepository.save(message);
+    await this.redisChatProvider.cacheMessage(savedMessage);
+    await this.redisChatProvider.incrementUnreadCount(teacher.user.id, chatRoom.id);
+
+    return savedMessage;
   }
 }

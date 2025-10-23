@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ChatRoom } from './entities/chat-room.entity';
 import { ChatMessage } from './entities/chat-message.entity';
-import { ChatProvider } from './providers/chat.provider';
 import { RedisChatProvider } from './providers/redis-chat.provider';
 import { ChatGateway } from './gateways/chat.gateway';
 import { SocketTestService } from './test/socket-test.service';
@@ -12,6 +11,10 @@ import { ChatService } from './providers/chat.service';
 import { ChatResolver } from './chat.resolver';
 import { StudentModule } from 'src/admin/student/student.module';
 import { ParentModule } from 'src/admin/parent/parent.module';
+import { PubSubModule } from './providers/pubsub.provider';
+import { PubSub } from 'graphql-subscriptions';
+import { TeacherModule } from 'src/admin/teacher/teacher.module';
+
 
 @Module({
   imports: [
@@ -22,16 +25,21 @@ import { ParentModule } from 'src/admin/parent/parent.module';
     }),
     StudentModule,
     ParentModule,
+    TeacherModule,
   ],
   providers: [
-    ChatProvider,
     RedisChatProvider,
     ChatService,
     ChatResolver,
     ChatGateway,
     SocketTestService,
     SocketTestResolver,
+    PubSubModule,
+    {
+      provide: 'PUB_SUB',
+      useValue: new PubSub(),
+    },
   ],
-  exports: [ChatService, RedisChatProvider],
+  exports: [ChatService, RedisChatProvider, { provide: 'PUB_SUB', useValue: new PubSub() }],
 })
 export class MessagingModule {}

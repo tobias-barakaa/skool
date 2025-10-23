@@ -1,302 +1,275 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
-import { ChatRoom } from '../entities/chat-room.entity';
-import { ChatMessage } from '../entities/chat-message.entity';
-import { SendMessageInput } from '../dtos/send-message.input';
-import { Student } from 'src/admin/student/entities/student.entity';
-import { Parent } from 'src/admin/parent/entities/parent.entity';
+// import { Resolver, Mutation, Query, Args, Subscription, Int, ID } from '@nestjs/graphql';
+// import { UseGuards } from '@nestjs/common';
+// import { PubSub } from 'graphql-subscriptions';
+// import { ChatMessage } from '../entities/chat-message.entity';
+// import { ChatRoom } from '../entities/chat-room.entity';
+// import { ChatService } from './chat.service';
+// import { SendMessageInput } from '../dtos/send-message.input';
+// import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
+// import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 
-@Injectable()
-export class ChatProvider {
-  private readonly logger = new Logger(ChatProvider.name);
-  
-  constructor(
-    @InjectRepository(ChatRoom)
-    private chatRoomRepository: Repository<ChatRoom>,
-    @InjectRepository(ChatMessage)
-    private chatMessageRepository: Repository<ChatMessage>,
+// const pubSub = new PubSub();
 
-    @InjectRepository(Student)
-    private studentRepository: Repository<Student>,
+// @Resolver(() => ChatMessage)
+// export class ChatResolver {
+//   constructor(private readonly chatService: ChatService) {}
 
-    @InjectRepository(Parent)
-    private parentRepository: Repository<Parent>,
+//   /**
+//    * Send message from teacher to a specific student
+//    */
+//   @Mutation(() => ChatMessage, {
+//     description: 'Send a message from teacher to a specific student',
+//   })
+//   async sendMessageToStudent(
+//     @Args('input') input: SendMessageInput,
+//     @ActiveUser() currentUser: ActiveUserData,
+//   ): Promise<ChatMessage> {
+//     const message = await this.chatService.sendMessageToStudent(
+//       currentUser.sub,
+//       currentUser.tenantId,
+//       input,
+//     );
 
-    private readonly dataSource: DataSource,
-  ) {}
+//     // Publish to subscriptions
+//     pubSub.publish('messageAdded', { messageAdded: message });
+//     pubSub.publish(`messageAddedToRoom_${message.chatRoomId}`, {
+//       messageAddedToRoom: message,
+//     });
 
-  async findOrCreateChatRoom(
-    participantIds: string[],
-    type: string,
-    name?: string,
-  ): Promise<ChatRoom> {
-    const sortedIds = participantIds.sort();
+//     return message;
+//   }
 
-    const existingRoom = await this.chatRoomRepository
-      .createQueryBuilder('room')
-      .where('room.type = :type', { type })
-      .andWhere('room.participantIds = :participantIds', {
-        participantIds: sortedIds.join(','),
-      })
-      .getOne();
+//   /**
+//    * Send message from teacher to a specific parent
+//    */
+//   @Mutation(() => ChatMessage, {
+//     description: 'Send a message from teacher to a specific parent',
+//   })
+//   async sendMessageToParent(
+//     @Args('input') input: SendMessageInput,
+//     @ActiveUser() currentUser: ActiveUserData,
+//   ): Promise<ChatMessage> {
+//     const message = await this.chatService.sendMessageToParent(
+//       currentUser.sub,
+//       currentUser.tenantId,
+//       input,
+//     );
 
-    if (existingRoom) {
-      return existingRoom;
-    }
+//     pubSub.publish('messageAdded', { messageAdded: message });
+//     pubSub.publish(`messageAddedToRoom_${message.chatRoomId}`, {
+//       messageAddedToRoom: message,
+//     });
 
-    // Create new room
-    const chatRoom = this.chatRoomRepository.create({
-      name: name || `Chat ${Date.now()}`,
-      type,
-      participantIds: sortedIds,
-    });
+//     return message;
+//   }
 
-    return await this.chatRoomRepository.save(chatRoom);
-  }
+//   /**
+//    * Broadcast message to all students
+//    */
+//   @Mutation(() => [ChatMessage], {
+//     description: 'Broadcast a message from teacher to all active students',
+//   })
+//   async broadcastToAllStudents(
+//     @Args('input') input: BroadcastMessageInput,
+//     @ActiveUser() currentUser: ActiveUserData,
+//   ): Promise<ChatMessage[]> {
+//     const messages = await this.chatService.broadcastToAllStudents(
+//       currentUser.sub,
+//       currentUser.tenantId,
+//       input,
+//     );
 
-  async getAllStudentsByTenant(tenantId: string): Promise<Student[]> {
-    return await this.studentRepository.find({
-      where: { tenant: { id: tenantId }, isActive: true },
-      relations: ['user'], // to get `userId`
-    });
-  }
+//     // Publish each message
+//     messages.forEach((message) => {
+//       pubSub.publish('messageAdded', { messageAdded: message });
+//       pubSub.publish(`messageAddedToRoom_${message.chatRoomId}`, {
+//         messageAddedToRoom: message,
+//       });
+//     });
 
-  async createMessage(
-    senderId: string,
-    senderType: string,
-    chatRoomId: string,
-    messageData: Partial<SendMessageInput>,
-  ): Promise<ChatMessage> {
-    const message = this.chatMessageRepository.create({
-      senderId,
-      senderType,
-      chatRoomId,
-      subject: messageData.subject,
-      message: messageData.message,
-      imageUrl: messageData.imageUrl,
-    });
+//     return messages;
+//   }
 
-    const savedMessage = await this.chatMessageRepository.save(message);
+//   /**
+//    * Broadcast message to all parents
+//    */
+//   @Mutation(() => [ChatMessage], {
+//     description: 'Broadcast a message from teacher to all active parents',
+//   })
+//   async broadcastToAllParents(
+//     @Args('input') input: BroadcastMessageInput,
+//     @ActiveUser() currentUser: ActiveUserData,
+//   ): Promise<ChatMessage[]> {
+//     const messages = await this.chatService.broadcastToAllParents(
+//       currentUser.sub,
+//       currentUser.tenantId,
+//       input,
+//     );
 
-    const foundMessage = await this.chatMessageRepository.findOne({
-      where: { id: savedMessage.id },
-      relations: ['chatRoom'],
-    });
+//     messages.forEach((message) => {
+//       pubSub.publish('messageAdded', { messageAdded: message });
+//       pubSub.publish(`messageAddedToRoom_${message.chatRoomId}`, {
+//         messageAddedToRoom: message,
+//       });
+//     });
 
-    if (!foundMessage) {
-      throw new Error(`Message with ID ${savedMessage.id} not found`);
-    }
+//     return messages;
+//   }
 
-    return foundMessage;
-  }
+//   /**
+//    * Send reply in an existing chat
+//    */
+//   @Mutation(() => ChatMessage, {
+//     description: 'Send a reply in an existing chat room (student/parent/teacher)',
+//   })
+//   async sendReply(
+//     @Args('input') input: SendReplyInput,
+//     @ActiveUser() currentUser: ActiveUserData,
+//   ): Promise<ChatMessage> {
+//     const message = await this.chatService.sendReply(
+//       currentUser.sub,
+//       input.chatRoomId,
+//       input.message,
+//       input.imageUrl,
+//     );
 
-  async getChatRoomMessages(
-    chatRoomId: string,
-    limit: number = 50,
-    offset: number = 0,
-  ): Promise<ChatMessage[]> {
-    return await this.chatMessageRepository.find({
-      where: { chatRoomId },
-      order: { createdAt: 'DESC' },
-      take: limit,
-      skip: offset,
-      relations: ['chatRoom'],
-    });
-  }
+//     pubSub.publish('messageAdded', { messageAdded: message });
+//     pubSub.publish(`messageAddedToRoom_${message.chatRoomId}`, {
+//       messageAddedToRoom: message,
+//     });
 
-  async getUserChatRooms(userId: string): Promise<ChatRoom[]> {
-    return await this.chatRoomRepository
-      .createQueryBuilder('room')
-      .where(":userId = ANY(string_to_array(room.participantIds, ','))", {
-        userId,
-      })
-      .leftJoinAndSelect('room.messages', 'message')
-      .orderBy('room.updatedAt', 'DESC')
-      .getMany();
-  }
+//     return message;
+//   }
 
-  async markMessagesAsRead(chatRoomId: string, userId: string): Promise<void> {
-    await this.chatMessageRepository
-      .createQueryBuilder()
-      .update(ChatMessage)
-      .set({ isRead: true })
-      .where('chatRoomId = :chatRoomId', { chatRoomId })
-      .andWhere('senderId != :userId', { userId })
-      .andWhere('isRead = false')
-      .execute();
-  }
+//   /**
+//    * Send message to all parents of a specific student
+//    */
+//   @Mutation(() => [ChatMessage], {
+//     description: "Send message to all parents of a specific student",
+//   })
+//   async sendMessageToStudentParents(
+//     @Args('studentId', { type: () => ID }) studentId: string,
+//     @Args('subject', { nullable: true }) subject: string,
+//     @Args('message') message: string,
+//     @Args('imageUrl', { nullable: true }) imageUrl: string,
+//     @ActiveUser() currentUser: ActiveUserData,
+//   ): Promise<ChatMessage[]> {
+//     const messages = await this.chatService.sendMessageToStudentParents(
+//       currentUser.sub,
+//       currentUser.tenantId,
+//       studentId,
+//       { subject, message, imageUrl },
+//     );
 
-  async getParentById(parentId: string): Promise<Parent | null> {
-    return this.parentRepository.findOne({
-      where: { id: parentId },
-      relations: ['user'],
-    });
-  }
+//     messages.forEach((msg) => {
+//       pubSub.publish('messageAdded', { messageAdded: msg });
+//       pubSub.publish(`messageAddedToRoom_${msg.chatRoomId}`, {
+//         messageAddedToRoom: msg,
+//       });
+//     });
 
-  async getAllParentsByTenant(tenantId: string): Promise<Parent[]> {
-    return this.parentRepository.find({
-      where: { tenantId },
-      relations: ['user'],
-    });
-  }
+//     return messages;
+//   }
 
-  async getAllStudentsByGrade(gradeId: string): Promise<Student[]> {
-    return this.studentRepository.find({
-      where: { grade: { id: gradeId }, isActive: true },
-      relations: ['user'],
-    });
-  }
+//   /**
+//    * Mark messages in a room as read
+//    */
+//   @Mutation(() => Boolean, {
+//     description: 'Mark all unread messages in a chat room as read',
+//   })
+//   async markMessagesAsRead(
+//     @Args('chatRoomId', { type: () => ID }) chatRoomId: string,
+//     @ActiveUser() currentUser: ActiveUserData,
+//   ): Promise<boolean> {
+//     return this.chatService.markMessagesAsRead(currentUser.sub, chatRoomId);
+//   }
 
-  async getUnreadMessageCount(userId: string): Promise<number> {
-    const rooms = await this.getUserChatRooms(userId);
-    const roomIds = rooms.map((room) => room.id);
+//   /**
+//    * Get chat history for a room
+//    */
+//   @Query(() => [ChatMessage], {
+//     description: 'Get chat history for a specific chat room',
+//   })
+//   async getChatHistory(
+//     @Args('chatRoomId', { type: () => ID }) chatRoomId: string,
+//     @Args('limit', { type: () => Int, defaultValue: 50 }) limit: number,
+//     @Args('offset', { type: () => Int, defaultValue: 0 }) offset: number,
+//     @ActiveUser() currentUser: ActiveUserData,
+//   ): Promise<ChatMessage[]> {
+//     return this.chatService.getChatHistory(
+//       currentUser.sub,
+//       chatRoomId,
+//       limit,
+//       offset,
+//     );
+//   }
 
-    if (roomIds.length === 0) return 0;
+//   /**
+//    * Get unread message count
+//    */
+//   @Query(() => Int, {
+//     description: 'Get unread message count for current user',
+//   })
+//   async getUnreadCount(
+//     @Args('chatRoomId', { type: () => ID, nullable: true }) chatRoomId: string,
+//     @ActiveUser() currentUser: ActiveUserData,
+//   ): Promise<number> {
+//     return this.chatService.getUnreadCount(currentUser.sub, chatRoomId);
+//   }
 
-    const { count } = await this.chatMessageRepository
-      .createQueryBuilder('message')
-      .select('COUNT(*)', 'count')
-      .where('message.chatRoomId IN (:...roomIds)', { roomIds })
-      .andWhere('message.senderId != :userId', { userId })
-      .andWhere('message.isRead = false')
-      .getRawOne();
+//   /**
+//    * Get all chat rooms for current user
+//    */
+//   @Query(() => [ChatRoom], {
+//     description: 'Get all chat rooms for the current user',
+//   })
+//   async getUserChatRooms(
+//     @ActiveUser() currentUser: ActiveUserData,
+//   ): Promise<ChatRoom[]> {
+//     return this.chatService.getUserChatRooms(
+//       currentUser.sub,
+//       currentUser.tenantId,
+//     );
+//   }
 
-    return parseInt(count) || 0;
-  }
+//   /**
+//    * Get a specific chat room by ID
+//    */
+//   @Query(() => ChatRoom, {
+//     description: 'Get a specific chat room by ID',
+//     nullable: true,
+//   })
+//   async getChatRoom(
+//     @Args('chatRoomId', { type: () => ID }) chatRoomId: string,
+//     @ActiveUser() currentUser: ActiveUserData,
+//   ): Promise<ChatRoom | null> {
+//     const rooms = await this.chatService.getUserChatRooms(
+//       currentUser.sub,
+//       currentUser.tenantId,
+//     );
+//     return rooms.find(room => room.id === chatRoomId) || null;
+//   }
 
-  async getStudentByUserId(
-    userId: string,
-    tenantId: string,
-  ): Promise<Student | null> {
-    const studentRepository = this.dataSource.getRepository(Student);
-    return studentRepository.findOne({
-      where: {
-        user: { id: userId },
-        tenant: { id: tenantId },
-      },
-      relations: ['user'],
-    });
-  }
+//   /**
+//    * Subscription for new messages
+//    */
+//   @Subscription(() => ChatMessage, {
+//     description: 'Subscribe to all new messages',
+//   })
+//   messageAdded() {
+//     return pubSub.asyncIterator('messageAdded');
+//   }
 
-  async getStudentById(studentId: string, tenantId: string): Promise<any> {
-    const qr = this.dataSource.createQueryRunner();
-    await qr.connect();
-
-    try {
-      const query = `
-        SELECT s.*, s.user_id, u.name AS user_name, u.email
-        FROM students s
-        JOIN users u ON s.user_id = u.id
-        WHERE s.id = $1 AND s.tenant_id = $2
-      `;
-      const result = await qr.query(query, [studentId, tenantId]);
-      return result[0] || null;
-    } finally {
-      await qr.release();
-    }
-  }
-
-  async getTeacherByUserId(userId: string, tenantId: string): Promise<any> {
-    const qr = this.dataSource.createQueryRunner();
-    await qr.connect();
-    try {
-      const query = `
-      SELECT t.*, u.name AS user_name, u.email
-      FROM   teacher t
-      JOIN   users u ON u.id = t.user_id
-      JOIN   user_tenant_memberships utm
-             ON utm."userId" = u.id
-      WHERE  t.user_id = $1
-        AND  utm."tenantId" = $2;
-    `;
-      const result = await qr.query(query, [userId, tenantId]);
-      console.log('result', result);
-      return result[0] ?? null;
-    } finally {
-      await qr.release();
-    }
-  }
-
-
-  async getTeacherById(teacherId: string, tenantId: string): Promise<any> {
-    const qr = this.dataSource.createQueryRunner();
-    await qr.connect();
-
-    try {
-      const query = `
-        SELECT t.*, t.user_id, u.name AS user_name, u.email
-        FROM teachers t
-        JOIN users u ON t.user_id = u.id
-        WHERE t.id = $1 AND t.tenant_id = $2
-      `;
-      const result = await qr.query(query, [teacherId, tenantId]);
-      return result[0] || null;
-    } finally {
-      await qr.release();
-    }
-  }
-  /////////////////////
-  // async getTeacherByUserId(userId: string, tenantId: string): Promise<any> {
-  //   const qr = this.dataSource.createQueryRunner();
-  //   await qr.connect();
-
-  //   try {
-  //     const query = `
-  //       SELECT t.*, u.first_name, u.last_name, u.email
-  //       FROM teachers t
-  //       JOIN users u ON t.user_id = u.id
-  //       WHERE t.user_id = $1 AND u.tenant_id = $2
-  //     `;
-  //     const result = await qr.query(query, [userId, tenantId]);
-  //     return result[0] || null;
-  //   } finally {
-  //     await qr.release();
-  //   }
-  // }
-
-  // async getStudentById(studentId: string, tenantId: string): Promise<any> {
-  //   const qr = this.dataSource.createQueryRunner();
-  //   await qr.connect();
-
-  //   try {
-  //     const query = `
-  //     SELECT
-  //       s.*,
-  //       u.name AS user_name,
-  //       u.email
-  //     FROM students s
-  //     JOIN users u ON s.user_id = u.id
-  //     WHERE s.id = $1 AND s.tenant_id = $2
-  //   `;
-
-  //     const result = await qr.query(query, [studentId, tenantId]);
-  //     return result[0] || null;
-  //   } finally {
-  //     await qr.release();
-  //   }
-  // }
-
-  ///
-
-  // async getStudentByUserId(
-  //     userId: string,
-  //     tenantId: string,
-  //   ): Promise<Student | null> {
-  //     const studentRepository = this.dataSource.getRepository(Student);
-  //     return studentRepository.findOne({
-  //       where: {
-  //         user: { id: userId },
-  //         tenant: { id: tenantId },
-  //       },
-  //       relations: ['user'],
-  //     });
-  //   }
-
-  // async getStudentById(studentId: string): Promise<Student | null> {
-  //   return this.studentRepository.findOne({
-  //     where: { id: studentId },
-  //     relations: ['user'],
-  //   });
-  // }
-}
+//   /**
+//    * Subscription for messages in a specific room
+//    */
+//   @Subscription(() => ChatMessage, {
+//     description: 'Subscribe to new messages in a specific chat room',
+//     resolve: (payload) => payload.messageAddedToRoom,
+//   })
+//   messageAddedToRoom(
+//     @Args('chatRoomId', { type: () => ID }) chatRoomId: string,
+//   ) {
+//     return pubSub.asyncIterator(`messageAddedToRoom_${chatRoomId}`);
+//   }
+// }

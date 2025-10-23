@@ -323,17 +323,6 @@ type ChatMessage {
   subject: String
 }
 
-type ChatMessageDto {
-  chatRoom: ChatRoomDto!
-  createdAt: DateTime!
-  id: ID!
-  imageUrl: String
-  isRead: Boolean!
-  message: String!
-  sender: ChatUser!
-  subject: String
-}
-
 type ChatRoom {
   createdAt: DateTime!
   id: ID!
@@ -342,31 +331,6 @@ type ChatRoom {
   participantIds: [String!]!
   type: String!
   updatedAt: DateTime!
-}
-
-type ChatRoomDto {
-  createdAt: DateTime!
-  id: ID!
-  lastMessage: ChatMessageDto
-  name: String!
-  participants: [ChatUser!]!
-  type: String!
-  unreadCount: Float
-  updatedAt: DateTime!
-}
-
-type ChatRoomsResponse {
-  chatRooms: [ChatRoomDto!]!
-  currentPage: Float!
-  total: Float!
-  totalPages: Float!
-}
-
-type ChatUser {
-  email: String!
-  id: ID!
-  name: String!
-  userType: String!
 }
 
 type ClassTeacherAssignment {
@@ -1185,14 +1149,6 @@ enum MembershipStatus {
   SUSPENDED
 }
 
-type MessagesResponse {
-  chatRoom: ChatRoomDto!
-  currentPage: Float!
-  messages: [ChatMessageDto!]!
-  total: Float!
-  totalPages: Float!
-}
-
 type Mutation {
   acceptParentInvitation(acceptInvitationInput: AcceptInvitationInput!): AcceptParentInvitationResponse!
   acceptStaffInvitation(acceptInvitationInput: AcceptStaffInvitationInput!): AcceptStaffInvitationResponse!
@@ -1205,6 +1161,12 @@ type Mutation {
   assignStudentToHostel(input: CreateHostelAssignmentInput!): HostelAssignment!
   assignStudentToRoute(input: AssignTransportInput!): TransportAssignment!
   assignStudentsToRoute(input: BulkTransportAssignmentInput!): [TransportAssignment!]!
+
+  """Broadcast a message to all parents in the school"""
+  broadcastToAllParents(input: BroadcastMessageInput!): [ChatMessage!]!
+
+  """Broadcast a message to all students in the school"""
+  broadcastToAllStudents(input: BroadcastMessageInput!): [ChatMessage!]!
   bulkAssignStudentsToRoute(input: BulkTransportAssignmentInput!): [TransportAssignment!]!
 
   """
@@ -1310,7 +1272,7 @@ type Mutation {
   markAttendance(markAttendanceInput: CreateAttendanceInput!): [Attendance!]!
 
   """Mark all messages in a chat room as read"""
-  markChatAsRead(chatRoomId: ID!): Boolean!
+  markMessagesAsRead(chatRoomId: String!): Boolean!
 
   """
   Refresh search cache for current user tenant (placeholder for future caching)
@@ -1337,13 +1299,15 @@ type Mutation {
 
   """Search teachers and cache results for performance"""
   searchAndCacheTeachers(input: SearchStudentInput!): SearchTeacherResult!
-  sendMessageToAllParents(input: BroadcastMessageInput!): [ChatMessage!]!
-  sendMessageToAllStudents(input: BroadcastMessageInput!): [ChatMessage!]!
-  sendMessageToParent(input: SendMessageInput!): ChatMessage!
-  sendMessageToStudent(input: SendMessageInput!): ChatMessage!
 
-  """Send a message to a teacher"""
-  sendMessageToTeacher(input: SendMessageToTeacherInput!): ChatMessage!
+  """Send a message from parent to teacher about their child"""
+  sendMessageFromParentToTeacher(input: SendMessageFromParentToTeacherInput!): ChatMessage!
+
+  """Send a message from teacher to a specific parent"""
+  sendMessageToParent(input: SendMessageInput!): ChatMessage!
+
+  """Send a message from teacher to a specific student"""
+  sendMessageToStudent(input: SendMessageInput!): ChatMessage!
 
   """Mark an academic year as the current one"""
   setCurrentAcademicYear(id: ID!): AcademicYear!
@@ -1626,11 +1590,8 @@ type Query {
   """Get all students and teachers for current user tenant"""
   getBothStudentsAndTeachersByTenant: CombinedSearchResult!
 
-  """Get messages from a chat room or with a specific teacher"""
-  getChatMessages(chatRoomId: ID, limit: Int = 20, offset: Int = 0, teacherId: ID): MessagesResponse!
-
-  """Get chat messages with a specific teacher"""
-  getChatWithTeacher(limit: Float = 20, offset: Float = 0, teacherId: ID!): MessagesResponse!
+  """Get chat history for a specific room with pagination"""
+  getChatHistory(chatRoomId: String!, limit: Int! = 50, offset: Int! = 0): [ChatMessage!]!
 
   """Get a specific fee assignment by ID with all student details"""
   getFeeAssignmentById(feeAssignmentId: ID!): FeeAssignmentWithStudents!
@@ -1641,10 +1602,6 @@ type Query {
   getFeeAssignmentsByGradeLevels(input: GetFeeAssignmentsByGradeLevelsInput!): [FeeAssignmentWithStudents!]!
   getGradeLevelClassTeacher(gradeLevelId: String!): ClassTeacherAssignment
   getMyAssignmentss(limit: Float = 10, offset: Float = 0, status: AssignmentStatus, subjectId: ID): AssignmentsResponse!
-
-  """Get all chat rooms for the authenticated student"""
-  getMyChatRooms(limit: Int = 10, offset: Int = 0): ChatRoomsResponse!
-  getMyChats: [ChatRoom!]!
   getParentsByTenant(tenantId: String!): [Parent!]!
   getPendingInvitations(tenantId: String!): [PendingInvitation!]!
   getPendingParentInvitations(tenantId: String!): [PendingInvitation!]!
@@ -1674,7 +1631,21 @@ type Query {
   getTenantStatistics: String!
   getTenantStreams(tenantGradeLevelId: String): [TenantStream!]!
   getTenantSubjects(curriculumId: String): [TenantSubject!]!
-  getUnreadMessageCount: Float!
+
+  """Get unread message count for a specific room"""
+  getUnreadCountForRoom(chatRoomId: String!): Int!
+
+  """Get total unread message count for the current user"""
+  getUnreadMessageCount: Int!
+
+  """Get all room IDs that have unread messages for the current user"""
+  getUnreadRooms: [String!]!
+
+  """Get all chat rooms for the current user"""
+  getUserChatRooms: [ChatRoom!]!
+
+  """Get user last seen timestamp"""
+  getUserLastSeen(userId: String!): String
   gradeLevelsForSchoolType: [TenantGradeLevel!]!
   gradeLevelsWithStreams: [GradeLevelWithStreamsOutput!]!
   hostel(id: String!): Hostel!
@@ -1688,6 +1659,9 @@ type Query {
 
   """Get all invoices for a specific student"""
   invoicesByStudent(studentId: ID!): [Invoice!]!
+
+  """Check if a specific user is currently online"""
+  isUserOnline(userId: String!): Boolean!
 
   """Get ledger entries for a student"""
   ledgerEntries(dateRange: DateRangeInput, studentId: ID!): [LedgerEntry!]!
@@ -2014,18 +1988,20 @@ type SelectedLevel {
   subjects: [SubjectInfo!]!
 }
 
+input SendMessageFromParentToTeacherInput {
+  imageUrl: String
+  message: String!
+  recipientId: String!
+  recipientType: String!
+  studentId: String!
+  subject: String
+}
+
 input SendMessageInput {
   imageUrl: String
   message: String!
   recipientId: String!
   recipientType: String!
-  subject: String
-}
-
-input SendMessageToTeacherInput {
-  imageUrl: String
-  message: String!
-  recipientId: ID!
   subject: String
 }
 
@@ -2398,7 +2374,11 @@ enum SubjectTypeEnum {
 }
 
 type Subscription {
+  """Subscribe to new messages in real-time"""
   messageAdded: ChatMessage!
+
+  """Subscribe to typing indicators for a room"""
+  userTyping(roomId: String!): TypingIndicator!
 }
 
 type Teacher {
@@ -2672,6 +2652,12 @@ type TransportService {
   isAssigned: Boolean!
   pickupPoint: String
   route: TransportRoute
+}
+
+type TypingIndicator {
+  isTyping: Boolean!
+  roomId: String!
+  userId: String!
 }
 
 input UnassignClassTeacherInput {
