@@ -1,20 +1,22 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import { ChatRoomDto } from '../dtos/chat-room.dto';
-import { ChatMessageDto } from '../dtos/chat-message.dto';
-import { ChatUser } from '../dtos/chat-user.dto';
+import { ChatRoomInput } from '../dtos/chat-room.dto';
+import { ChatMessageInput, ChatUser } from '../dtos/chat-response.dto';
 import { GetChatRoomsArgs } from '../dtos/get-chat-rooms.args';
 import { GetMessagesArgs } from '../dtos/get-messages.args';
 import { SendMessageToTeacherInput } from '../dtos/send-message.input';
-import { MessagesResponse } from '../dtos/messages-response.dto';
 
 @Injectable()
 export class StudentChatProvider {
-  private readonly logger = new Logger(StudentChatProvider.name);
-
   constructor(private readonly dataSource: DataSource) {}
 
-  async getStudentByUserId(userId: string, tenantId: string): Promise<any> {
+  /**
+   * Get student by user_id
+   */
+  async getStudentByUserId(
+    userId: string,
+    tenantId: string,
+  ): Promise<any> {
     const qr = this.dataSource.createQueryRunner();
     await qr.connect();
     try {
@@ -31,6 +33,9 @@ export class StudentChatProvider {
     }
   }
 
+  /**
+   * Get teacher by teacher.id (not user_id)
+   */
   async getTeacherById(teacherId: string, tenantId: string): Promise<any> {
     const qr = this.dataSource.createQueryRunner();
     await qr.connect();
@@ -39,8 +44,7 @@ export class StudentChatProvider {
         SELECT t.*, t.user_id, u.name AS user_name, u.email
         FROM teacher t
         JOIN users u ON t.user_id = u.id
-        JOIN user_tenant_memberships utm ON utm."userId" = u.id
-        WHERE t.id = $1 AND utm."tenantId" = $2
+        WHERE t.id = $1 AND t.tenant_id = $2
       `;
       const result = await qr.query(query, [teacherId, tenantId]);
       return result[0] || null;
@@ -49,66 +53,86 @@ export class StudentChatProvider {
     }
   }
 
+  /**
+   * Get chat rooms for a student using the simple-array participantIds structure
+   */
   async getChatRoomsByUserId(
     userId: string,
     tenantId: string,
     roomType: string,
     args: GetChatRoomsArgs,
-  ): Promise<{ chatRooms: ChatRoomDto[]; total: number }> {
+  ): Promise<{ chatRooms: ChatRoomInput[]; total: number }> {
     const qr = this.dataSource.createQueryRunner();
     await qr.connect();
 
     try {
-      // Count total rooms
+      // Verify user exists in tenant
+      const userCheck = await qr.query(
+        `SELECT u.*,
+          utm.role,
+          utm.status,
+          utm.permissions,
+          utm."tenantId"
+         FROM users u
+         JOIN user_tenant_memberships utm ON utm."userId" = u.id
+         WHERE u.id = $1 AND utm."tenantId" = $2`,
+        [userId, tenantId],
+      );
+
+      if (!userCheck.length) {
+        throw new Error('User not found in tenant');
+      }
+
+      // Count total rooms where user is a participant (using simple-array)
       const countQuery = `
         SELECT COUNT(*) as total
-FROM chat_rooms cr
-WHERE $1::text = ANY(string_to_array(cr."participantIds", ','))
-  AND cr.type = $2
-
+        FROM chat_rooms cr
+        WHERE $1 = ANY(string_to_array(cr."participantIds", ','))
+          AND cr.type = $2
       `;
       const countResult = await qr.query(countQuery, [userId, roomType]);
       const total = parseInt(countResult[0].total, 10);
 
-      // Fetch chat rooms with details
+      // Fetch chat rooms with last message and unread count
       const chatRoomsQuery = `
- SELECT DISTINCT
-  cr.id,
-  cr.name,
-  cr.type,
-  cr."createdAt" as created_at,
-  cr."updatedAt" as updated_at,
-  cr."participantIds" as participant_ids,
-  lm.id as last_message_id,
-  lm.message as last_message_text,
-  lm.subject as last_message_subject,
-  lm."imageUrl" as last_message_image_url,
-  lm."createdAt" as last_message_created_at,
-  lm."senderId" as last_message_sender_id,
-  lm."senderType" as last_message_sender_type,
-  lm."isRead" as last_message_is_read,
-  COALESCE(unread.unread_count, 0) as unread_count,
-  COALESCE(lm."createdAt", cr."createdAt") as sort_date
-FROM chat_rooms cr
-  LEFT JOIN LATERAL (
-    SELECT cm.*
-    FROM chat_messages cm
-    WHERE cm."chatRoomId" = cr.id
-    ORDER BY cm."createdAt" DESC
-    LIMIT 1
-  ) lm ON true
-  LEFT JOIN LATERAL (
-    SELECT COUNT(*) as unread_count
-    FROM chat_messages cm2
-    WHERE cm2."chatRoomId" = cr.id
-      AND cm2."senderId" != $1
-      AND cm2."isRead" = false
-  ) unread ON true
-  WHERE $1::text = ANY(string_to_array(cr."participantIds", ','))
-    AND cr.type = $2
-  ORDER BY COALESCE(lm."createdAt", cr."createdAt") DESC
-  LIMIT $3 OFFSET $4
-`;
+        SELECT DISTINCT
+          cr.id,
+          cr.name,
+          cr.type as room_type,
+          cr."createdAt" as created_at,
+          cr."updatedAt" as updated_at,
+          cr."participantIds",
+          lm.id as last_message_id,
+          lm.message as last_message_text,
+          lm.subject as last_message_subject,
+          lm."imageUrl" as last_message_image_url,
+          lm."createdAt" as last_message_created_at,
+          lm."senderId" as last_message_sender_id,
+          lm."senderType" as last_message_sender_type,
+          lm_sender.name as last_message_sender_name,
+          lm_sender.email as last_message_sender_email,
+          COALESCE(unread.unread_count, 0) as unread_count
+        FROM chat_rooms cr
+        LEFT JOIN LATERAL (
+          SELECT cm.*
+          FROM chat_messages cm
+          WHERE cm."chatRoomId" = cr.id
+          ORDER BY cm."createdAt" DESC
+          LIMIT 1
+        ) lm ON true
+        LEFT JOIN users lm_sender ON lm."senderId" = lm_sender.id
+        LEFT JOIN LATERAL (
+          SELECT COUNT(*) as unread_count
+          FROM chat_messages cm2
+          WHERE cm2."chatRoomId" = cr.id
+            AND cm2."senderId" != $1
+            AND cm2."isRead" = false
+        ) unread ON true
+        WHERE $1 = ANY(string_to_array(cr."participantIds", ','))
+          AND cr.type = $2
+        ORDER BY COALESCE(lm."createdAt", cr."createdAt") DESC
+        LIMIT $3 OFFSET $4
+      `;
 
       const chatRoomsResult = await qr.query(chatRoomsQuery, [
         userId,
@@ -117,45 +141,54 @@ FROM chat_rooms cr
         args.offset,
       ]);
 
-      const chatRooms: ChatRoomDto[] = [];
+      const chatRooms: ChatRoomInput[] = [];
 
       for (const row of chatRoomsResult) {
-        const participantUserIds = row.participant_ids
-          ? row.participant_ids.split(',')
+        // Parse participantIds from the simple-array column
+        const participantUserIds = row.participantIds
+          ? row.participantIds.split(',')
           : [];
 
         // Get participant details
         const participantsQuery = `
-  SELECT
-    u.id,
-    u.name,
-    u.email,
-   CASE
-  WHEN EXISTS(SELECT 1 FROM students WHERE user_id = u.id AND tenant_id = $1) THEN 'STUDENT'
-  WHEN EXISTS(SELECT 1 FROM teacher WHERE user_id = u.id) THEN 'TEACHER'
-  WHEN EXISTS(SELECT 1 FROM parents WHERE user_id = u.id AND tenant_id = $1) THEN 'PARENT'
-  ELSE 'UNKNOWN'
-END as user_type
-
-  FROM users u
-  WHERE u.id = ANY($2::uuid[])
-`;
+          SELECT
+            u.id as user_id,
+            u.name as user_name,
+            u.email,
+            s.id as student_id,
+            t.id as teacher_id,
+            CASE
+              WHEN s.id IS NOT NULL THEN 'STUDENT'
+              WHEN t.id IS NOT NULL THEN 'TEACHER'
+              ELSE 'UNKNOWN'
+            END as user_type
+          FROM users u
+          LEFT JOIN students s ON s.user_id = u.id AND s.tenant_id = $1
+          LEFT JOIN teacher t ON t.user_id = u.id AND t.tenant_id = $1
+          WHERE u.id = ANY($2::uuid[])
+        `;
         const participantsResult = await qr.query(participantsQuery, [
           tenantId,
           participantUserIds,
         ]);
 
-        const participants: ChatUser[] = participantsResult.map((p) => ({
-          id: p.id,
-          name: p.name,
-          email: p.email,
-          userType: p.user_type,
-        }));
+        const participants: ChatUser[] = participantsResult.map((p) => {
+          const nameParts = (p.user_name || '').split(' ');
+          return {
+            id: p.user_id,
+            studentId: p.student_id,
+            teacherId: p.teacher_id,
+            firstName: nameParts[0] || '',
+            lastName: nameParts.slice(1).join(' ') || '',
+            email: p.email,
+            userType: p.user_type,
+          };
+        });
 
-        const chatRoom: ChatRoomDto = {
+        const chatRoom: ChatRoomInput = {
           id: row.id,
           name: row.name,
-          type: row.type,
+          roomType: row.room_type,
           createdAt: new Date(row.created_at),
           updatedAt: new Date(row.updated_at),
           participants,
@@ -164,23 +197,7 @@ END as user_type
         };
 
         if (row.last_message_id) {
-          // Get sender details
-          const senderQuery = `
-            SELECT u.id, u.name, u.email,
-  CASE
-    WHEN EXISTS(SELECT 1 FROM students WHERE user_id = u.id) THEN 'STUDENT'
-    WHEN EXISTS(SELECT 1 FROM teacher WHERE user_id = u.id) THEN 'TEACHER'
-    WHEN EXISTS(SELECT 1 FROM parents WHERE user_id = u.id) THEN 'PARENT'
-    ELSE 'UNKNOWN'
-  END as user_type
-            FROM users u
-            WHERE u.id = $1
-          `;
-          const senderResult = await qr.query(senderQuery, [
-            row.last_message_sender_id,
-          ]);
-          const sender = senderResult[0];
-
+          const senderNameParts = (row.last_message_sender_name || '').split(' ');
           chatRoom.lastMessage = {
             id: row.last_message_id,
             message: row.last_message_text,
@@ -188,13 +205,14 @@ END as user_type
             imageUrl: row.last_message_image_url,
             createdAt: new Date(row.last_message_created_at),
             sender: {
-              id: sender.id,
-              name: sender.name,
-              email: sender.email,
-              userType: sender.user_type,
+              id: row.last_message_sender_id,
+              firstName: senderNameParts[0] || '',
+              lastName: senderNameParts.slice(1).join(' ') || '',
+              email: row.last_message_sender_email,
+              userType: row.last_message_sender_type,
             },
             chatRoom: chatRoom,
-            isRead: row.last_message_is_read,
+            isRead: false,
           };
         }
 
@@ -207,11 +225,14 @@ END as user_type
     }
   }
 
+  /**
+   * Get messages for a chat room or teacher
+   */
   async getMessages(
     userId: string,
     tenantId: string,
     args: GetMessagesArgs,
-  ): Promise<MessagesResponse> {
+  ): Promise<{ messages: ChatMessageInput[]; total: number; chatRoom: ChatRoomInput }> {
     const qr = this.dataSource.createQueryRunner();
     await qr.connect();
 
@@ -237,48 +258,36 @@ END as user_type
         `;
         const roomResult = await qr.query(findRoomQuery, [sortedIds.join(',')]);
 
-        if (roomResult.length > 0) {
-          chatRoomId = roomResult[0].id;
-        } else {
-          // No messages yet, return empty
-          const emptyChatRoom: ChatRoomDto = {
-            id: '',
-            name: 'Teacher-Student Chat',
-            type: 'TEACHER_STUDENT',
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            participants: [],
-            unreadCount: 0,
-          };
-
+        if (roomResult.length === 0) {
+          // Return empty response if no chat room exists yet
           return {
             messages: [],
             total: 0,
-            totalPages: 0,
-            currentPage: 1,
-            chatRoom: emptyChatRoom,
+            chatRoom: null as any,
           };
         }
+
+        chatRoomId = roomResult[0].id;
       }
 
       if (!chatRoomId) {
-        throw new Error('Chat room ID or teacher ID is required');
+        throw new Error('Either chatRoomId or teacherId must be provided');
       }
 
-      // Verify user is participant
+      // Verify user is participant in this chat room
       const verifyQuery = `
-        SELECT cr.*
-        FROM chat_rooms cr
-        WHERE cr.id = $1
-          AND $2 = ANY(string_to_array(cr."participantIds", ','))
+        SELECT id, name, type, "participantIds", "createdAt", "updatedAt"
+        FROM chat_rooms
+        WHERE id = $1
+          AND $2 = ANY(string_to_array("participantIds", ','))
       `;
-      const verifyResult = await qr.query(verifyQuery, [chatRoomId, userId]);
+      const roomResult = await qr.query(verifyQuery, [chatRoomId, userId]);
 
-      if (!verifyResult.length) {
-        throw new Error('Unauthorized: Not a participant in this chat room');
+      if (roomResult.length === 0) {
+        throw new Error('Chat room not found or access denied');
       }
 
-      const chatRoomRow = verifyResult[0];
+      const room = roomResult[0];
 
       // Count total messages
       const countQuery = `
@@ -295,14 +304,13 @@ END as user_type
           cm.id,
           cm.message,
           cm.subject,
-          cm."imageUrl" as image_url,
-          cm."createdAt" as created_at,
-          cm."senderId" as sender_id,
-          cm."senderType" as sender_type,
-          cm."isRead" as is_read,
-          u.id as user_id,
-          u.name as user_name,
-          u.email as user_email
+          cm."imageUrl",
+          cm."createdAt",
+          cm."isRead",
+          cm."senderId",
+          cm."senderType",
+          u.name as sender_name,
+          u.email as sender_email
         FROM chat_messages cm
         JOIN users u ON cm."senderId" = u.id
         WHERE cm."chatRoomId" = $1
@@ -312,105 +320,102 @@ END as user_type
 
       const messagesResult = await qr.query(messagesQuery, [
         chatRoomId,
-        args.limit,
-        args.offset,
+        args.limit || 20,
+        args.offset || 0,
       ]);
 
-      // Get chat room participants
-      const participantUserIds = chatRoomRow.participantIds
-        ? chatRoomRow.participantIds.split(',')
-        : [];
-
+      // Get participants for chat room
+      const participantIds = room.participantIds.split(',');
       const participantsQuery = `
         SELECT
           u.id,
           u.name,
           u.email,
           CASE
-            WHEN EXISTS(SELECT 1 FROM students WHERE user_id = u.id AND tenant_id = $1) THEN 'STUDENT'
+            WHEN EXISTS(SELECT 1 FROM students WHERE user_id = u.id) THEN 'STUDENT'
             WHEN EXISTS(SELECT 1 FROM teacher WHERE user_id = u.id) THEN 'TEACHER'
-            WHEN EXISTS(SELECT 1 FROM parents WHERE user_id = u.id AND "tenantId" = $1) THEN 'PARENT'
             ELSE 'UNKNOWN'
           END as user_type
         FROM users u
-        WHERE u.id = ANY($2::uuid[])
+        WHERE u.id = ANY($1::uuid[])
       `;
-      const participantsResult = await qr.query(participantsQuery, [
-        tenantId,
-        participantUserIds,
-      ]);
+      const participantsResult = await qr.query(participantsQuery, [participantIds]);
 
-      const participants: ChatUser[] = participantsResult.map((p) => ({
-        id: p.id,
-        name: p.name,
-        email: p.email,
-        userType: p.user_type,
-      }));
-
-      const chatRoom: ChatRoomDto = {
-        id: chatRoomRow.id,
-        name: chatRoomRow.name,
-        type: chatRoomRow.type,
-        createdAt: new Date(chatRoomRow.createdAt),
-        updatedAt: new Date(chatRoomRow.updatedAt),
-        participants,
-      };
-
-      const messages: ChatMessageDto[] = messagesResult.map((m) => {
-        const sender: ChatUser = {
-          id: m.user_id,
-          name: m.user_name,
-          email: m.user_email,
-          userType: m.sender_type,
-        };
-
+      const participants: ChatUser[] = participantsResult.map((p) => {
+        const nameParts = (p.name || '').split(' ');
         return {
-          id: m.id,
-          message: m.message,
-          subject: m.subject,
-          imageUrl: m.image_url,
-          createdAt: new Date(m.created_at),
-          sender,
-          chatRoom,
-          isRead: m.is_read,
+          id: p.id,
+          firstName: nameParts[0] || '',
+          lastName: nameParts.slice(1).join(' ') || '',
+          email: p.email,
+          userType: p.user_type,
         };
       });
 
-      const limit = args.limit || 20;
-      const currentPage = Math.floor((args.offset || 0) / limit) + 1;
-      const totalPages = Math.ceil(total / limit);
-
-      return {
-        messages,
-        total,
-        totalPages,
-        currentPage,
-        chatRoom,
+      const chatRoom: ChatRoomInput = {
+        id: room.id,
+        name: room.name,
+        roomType: room.type,
+        createdAt: new Date(room.createdAt),
+        updatedAt: new Date(room.updatedAt),
+        participants,
       };
+
+      const messages: ChatMessageInput[] = messagesResult.map((msg) => {
+        const senderNameParts = (msg.sender_name || '').split(' ');
+        return {
+          id: msg.id,
+          message: msg.message,
+          subject: msg.subject,
+          imageUrl: msg.imageUrl,
+          createdAt: new Date(msg.createdAt),
+          isRead: msg.isRead,
+          sender: {
+            id: msg.senderId,
+            firstName: senderNameParts[0] || '',
+            lastName: senderNameParts.slice(1).join(' ') || '',
+            email: msg.sender_email,
+            userType: msg.senderType,
+          },
+          chatRoom,
+        };
+      });
+
+      return { messages, total, chatRoom };
     } finally {
       await qr.release();
     }
   }
 
+  /**
+   * Find or create chat room (using simple-array participantIds)
+   */
   async findOrCreateChatRoom(
-    participantIds: string[],
-    type: string,
-    name?: string,
-  ): Promise<ChatRoomDto> {
+    participantUserIds: string[],
+    roomType: string,
+    roomName: string,
+  ): Promise<ChatRoomInput> {
     const qr = this.dataSource.createQueryRunner();
     await qr.connect();
 
     try {
-      const sortedIds = participantIds.sort();
-      const participantIdsStr = sortedIds.join(',');
+      // Sort IDs for consistent comparison
+      const sortedIds = participantUserIds.sort();
+      const participantIdsString = sortedIds.join(',');
 
-      // Try to find existing room
-      const findQuery = `
-        SELECT * FROM chat_rooms
-        WHERE type = $1 AND "participantIds" = $2
+      // Try to find existing chat room
+      const findRoomQuery = `
+        SELECT id, name, type as room_type, "createdAt" as created_at, "updatedAt" as updated_at, "participantIds"
+        FROM chat_rooms
+        WHERE type = $1
+          AND "participantIds" = $2
         LIMIT 1
       `;
-      const existingRooms = await qr.query(findQuery, [type, participantIdsStr]);
+
+      const existingRooms = await qr.query(findRoomQuery, [
+        roomType,
+        participantIdsString,
+      ]);
 
       if (existingRooms.length > 0) {
         const room = existingRooms[0];
@@ -424,7 +429,6 @@ END as user_type
             CASE
               WHEN EXISTS(SELECT 1 FROM students WHERE user_id = u.id) THEN 'STUDENT'
               WHEN EXISTS(SELECT 1 FROM teacher WHERE user_id = u.id) THEN 'TEACHER'
-              WHEN EXISTS(SELECT 1 FROM parents WHERE user_id = u.id) THEN 'PARENT'
               ELSE 'UNKNOWN'
             END as user_type
           FROM users u
@@ -432,34 +436,45 @@ END as user_type
         `;
         const participantsResult = await qr.query(participantsQuery, [sortedIds]);
 
+        const participants: ChatUser[] = participantsResult.map((p) => {
+          const nameParts = (p.name || '').split(' ');
+          return {
+            id: p.id,
+            firstName: nameParts[0] || '',
+            lastName: nameParts.slice(1).join(' ') || '',
+            email: p.email,
+            userType: p.user_type,
+          };
+        });
+
         return {
           id: room.id,
           name: room.name,
-          type: room.type,
-          createdAt: new Date(room.createdAt),
-          updatedAt: new Date(room.updatedAt),
-          participants: participantsResult.map((p: any) => ({
-            id: p.id,
-            name: p.name,
-            email: p.email,
-            userType: p.user_type,
-          })),
+          roomType: room.room_type,
+          createdAt: new Date(room.created_at),
+          updatedAt: new Date(room.updated_at),
+          participants,
         };
       }
 
-      // Create new room
-      const createQuery = `
-        INSERT INTO chat_rooms (name, type, "participantIds", "createdAt", "updatedAt")
-        VALUES ($1, $2, $3, NOW(), NOW())
+      // Create new chat room
+      const roomId = require('uuid').v4();
+      const createRoomQuery = `
+        INSERT INTO chat_rooms (id, name, type, "participantIds", "createdAt", "updatedAt")
+        VALUES ($1, $2, $3, $4, $5, $5)
         RETURNING *
       `;
-      const createResult = await qr.query(createQuery, [
-        name || `Chat ${Date.now()}`,
-        type,
-        participantIdsStr,
+
+      const now = new Date();
+      const roomResult = await qr.query(createRoomQuery, [
+        roomId,
+        roomName,
+        roomType,
+        participantIdsString,
+        now,
       ]);
 
-      const room = createResult[0];
+      const room = roomResult[0];
 
       // Get participants
       const participantsQuery = `
@@ -470,7 +485,6 @@ END as user_type
           CASE
             WHEN EXISTS(SELECT 1 FROM students WHERE user_id = u.id) THEN 'STUDENT'
             WHEN EXISTS(SELECT 1 FROM teacher WHERE user_id = u.id) THEN 'TEACHER'
-            WHEN EXISTS(SELECT 1 FROM parents WHERE user_id = u.id) THEN 'PARENT'
             ELSE 'UNKNOWN'
           END as user_type
         FROM users u
@@ -478,24 +492,33 @@ END as user_type
       `;
       const participantsResult = await qr.query(participantsQuery, [sortedIds]);
 
+      const participants: ChatUser[] = participantsResult.map((p) => {
+        const nameParts = (p.name || '').split(' ');
+        return {
+          id: p.id,
+          firstName: nameParts[0] || '',
+          lastName: nameParts.slice(1).join(' ') || '',
+          email: p.email,
+          userType: p.user_type,
+        };
+      });
+
       return {
         id: room.id,
         name: room.name,
-        type: room.type,
+        roomType: room.type,
         createdAt: new Date(room.createdAt),
         updatedAt: new Date(room.updatedAt),
-        participants: participantsResult.map((p: any) => ({
-          id: p.id,
-          name: p.name,
-          email: p.email,
-          userType: p.user_type,
-        })),
+        participants,
       };
     } finally {
       await qr.release();
     }
   }
 
+  /**
+   * Create a message
+   */
   async createMessage(
     senderId: string,
     senderType: string,
@@ -506,41 +529,34 @@ END as user_type
     await qr.connect();
 
     try {
-      const insertQuery = `
+      const messageId = require('uuid').v4();
+      const insertMessageQuery = `
         INSERT INTO chat_messages (
-          "senderId", "senderType", "chatRoomId", subject, message, "imageUrl", "isRead", "createdAt"
-        ) VALUES ($1, $2, $3, $4, $5, $6, false, NOW())
+          id, "chatRoomId", "senderId", "senderType", message, subject, "imageUrl", "createdAt", "isRead"
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
         RETURNING *
       `;
 
-      const result = await qr.query(insertQuery, [
+      const now = new Date();
+      const messageResult = await qr.query(insertMessageQuery, [
+        messageId,
+        chatRoomId,
         senderId,
         senderType,
-        chatRoomId,
-        messageData.subject,
         messageData.message,
+        messageData.subject,
         messageData.imageUrl,
+        now,
+        false,
       ]);
 
-      return result[0];
-    } finally {
-      await qr.release();
-    }
-  }
+      // Update chat room's updatedAt
+      await qr.query(
+        `UPDATE chat_rooms SET "updatedAt" = $1 WHERE id = $2`,
+        [now, chatRoomId],
+      );
 
-  async markMessagesAsRead(chatRoomId: string, userId: string): Promise<void> {
-    const qr = this.dataSource.createQueryRunner();
-    await qr.connect();
-
-    try {
-      const updateQuery = `
-        UPDATE chat_messages
-        SET "isRead" = true
-        WHERE "chatRoomId" = $1
-          AND "senderId" != $2
-          AND "isRead" = false
-      `;
-      await qr.query(updateQuery, [chatRoomId, userId]);
+      return messageResult[0];
     } finally {
       await qr.release();
     }
