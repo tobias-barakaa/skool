@@ -40,6 +40,7 @@ import { TeacherModule } from 'src/admin/teacher/teacher.module';
       useValue: new PubSub(),
     },
   ],
-  exports: [ChatService, RedisChatProvider, { provide: 'PUB_SUB', useValue: new PubSub() }],
+  exports: [ChatService, RedisChatProvider,   TypeOrmModule,       // ✅ export repositories to other modules
+    { provide: 'PUB_SUB', useValue: new PubSub() }],
 })
 export class MessagingModule {}

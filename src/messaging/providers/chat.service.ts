@@ -31,6 +31,7 @@ export class ChatService {
     private readonly dataSource: DataSource,
   ) {}
 
+  
   /**
    * Send message from teacher to a specific student
    */
@@ -43,6 +44,8 @@ export class ChatService {
     const teacher = await this.teacherRepository.findOne({
       where: { user: { id: teacherUserId }, tenantId },
     });
+
+    // console.log(teacher, 'this is teacher.....')
 
     if (!teacher) {
       throw new NotFoundException('Teacher not found');
@@ -79,13 +82,23 @@ export class ChatService {
 
     const savedMessage = await this.chatMessageRepository.save(message);
 
-    // Cache in Redis
-    await this.redisChatProvider.cacheMessage(savedMessage);
 
-    // Track unread count
-    await this.redisChatProvider.incrementUnreadCount(student.user_id, chatRoom.id);
+// Reload with relations
+const found = await this.chatMessageRepository.findOne({
+  where: { id: savedMessage.id },
+  relations: ['chatRoom'],
+});
 
-    return savedMessage;
+const messageWithRoom: ChatMessage = found ?? Object.assign(savedMessage, { chatRoom });
+
+// Cache in Redis
+await this.redisChatProvider.cacheMessage(messageWithRoom);
+
+// Track unread count
+await this.redisChatProvider.incrementUnreadCount(student.user_id, chatRoom.id);
+
+return messageWithRoom;
+
   }
 
   /**
@@ -258,42 +271,51 @@ export class ChatService {
     return messages;
   }
 
-  /**
-   * Get chat history for a specific room
-   */
+
   async getChatHistory(
     userId: string,
     chatRoomId: string,
     limit: number = 50,
     offset: number = 0,
   ): Promise<ChatMessage[]> {
-    // Check if user is participant
+    // 1. Verify that the user is a participant
     const room = await this.chatRoomRepository.findOne({
       where: { id: chatRoomId },
     });
-
+  
     if (!room || !room.participantIds.includes(userId)) {
       throw new NotFoundException('Chat room not found or access denied');
     }
-
-    // Try cache first
-    const cachedMessages = await this.redisChatProvider.getRecentMessages(chatRoomId);
-    
-    if (cachedMessages.length > 0 && offset === 0) {
-      return cachedMessages.slice(0, limit);
+  
+    // 2. Try cache first (only when we want the first page)
+    if (offset === 0) {
+      const cachedMessages = await this.redisChatProvider.getRecentMessages(chatRoomId);
+      if (cachedMessages.length > 0) {
+        return cachedMessages.slice(0, limit).map(msg => ({
+          ...msg,
+          createdAt: msg.createdAt ? new Date(msg.createdAt) : new Date(),
+          chatRoom: room, // <-- guarantees non-nullable field
+        }));
+      }
     }
-
-    // Fetch from database
+  
+    // 3. Fallback to database
     const messages = await this.chatMessageRepository.find({
       where: { chatRoomId },
       order: { createdAt: 'DESC' },
       take: limit,
       skip: offset,
-      relations: ['chatRoom'],
+      relations: ['chatRoom'], // TypeORM will populate chatRoom
     });
-
-    return messages;
+  
+    // 4. Ensure createdAt is a Date instance
+    return messages.map(msg => ({
+      ...msg,
+      createdAt: msg.createdAt instanceof Date ? msg.createdAt : new Date(msg.createdAt),
+    }));
   }
+
+
 
   /**
    * Mark messages as read
@@ -332,14 +354,23 @@ export class ChatService {
    * Get all chat rooms for a user
    */
   async getUserChatRooms(userId: string): Promise<ChatRoom[]> {
-    const rooms = await this.chatRoomRepository
-      .createQueryBuilder('room')
-      .where(':userId = ANY(room.participantIds)', { userId })
-      .orderBy('room.updatedAt', 'DESC')
-      .getMany();
+    // const rooms = await this.chatRoomRepository
+    //   .createQueryBuilder('room')
+    //   .where(':userId = ANY(room.participantIds)', { userId })
+    //   .orderBy('room.updatedAt', 'DESC')
+    //   .getMany();
+
+      const rooms = await this.chatRoomRepository
+  .createQueryBuilder('room')
+  .where("room.participantIds LIKE :userIdPattern", { userIdPattern: `%${userId}%` })
+  .orderBy('room.updatedAt', 'DESC')
+  .getMany();
 
     return rooms;
   }
+
+  
+  
 
   /**
    * Get or create chat room

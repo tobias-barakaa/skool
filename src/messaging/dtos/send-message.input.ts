@@ -1,5 +1,5 @@
 import { InputType, Field } from '@nestjs/graphql';
-import { IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
+import { IsIn, IsNotEmpty, IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
 
 @InputType()
 export class SendMessageInput {
@@ -26,18 +26,45 @@ export class SendMessageInput {
 }
 
 
+// @InputType()
+// export class BroadcastMessageInput {
+//   @Field()
+//   recipientType: string; // 'STUDENT', 'PARENT'
+
+//   @Field({ nullable: true })
+//   subject?: string;
+
+//   @Field()
+//   message: string;
+
+//   @Field({ nullable: true })
+//   imageUrl?: string;
+// }
+
+
 @InputType()
 export class BroadcastMessageInput {
   @Field()
-  recipientType: string; // 'STUDENT', 'PARENT'
+  @IsNotEmpty()
+  @IsString()
+  @IsIn(['STUDENT', 'PARENT'], { message: 'recipientType must be STUDENT or PARENT' })
+  recipientType: string; 
 
   @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  @MaxLength(150, { message: 'Subject should not exceed 150 characters' })
   subject?: string;
 
   @Field()
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(2000, { message: 'Message should not exceed 2000 characters' })
   message: string;
 
   @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
   imageUrl?: string;
 }
 
@@ -100,3 +127,4 @@ export class TypingIndicator {
 //   @IsString()
 //   imageUrl?: string;
 // }
+

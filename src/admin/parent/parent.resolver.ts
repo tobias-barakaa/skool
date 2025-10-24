@@ -23,7 +23,6 @@ import { ParentDto } from './dtos/parent.dto';
 
 @Resolver()
 @Roles(
-  MembershipRole.SUPER_ADMIN,
   MembershipRole.SCHOOL_ADMIN,
 )
 export class ParentResolver {
@@ -105,6 +104,8 @@ async getAllParents(
   }
 
 
+
+  @Roles(MembershipRole.SCHOOL_ADMIN)
   @Mutation(() => InviteParentResponse)
   async inviteParent(
     @Args('createParentDto') createParentDto: CreateParentInvitationDto,
@@ -117,6 +118,7 @@ async getAllParents(
         'Cannot invite parents for a different tenant',
       );
     }
+    console.log(tenantId, 'inviteParent tenantId');
 
 
     return await this.parentService.inviteParent(

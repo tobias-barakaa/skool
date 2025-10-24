@@ -1309,12 +1309,23 @@ type Mutation {
   """Send a message from teacher to a specific student"""
   sendMessageToStudent(input: SendMessageInput!): ChatMessage!
 
+  """Send a message from student to a specific teacher"""
+  sendMessageToTeacher(input: SendMessageFromStudentToTeacherInput!): ChatMessage!
+
   """Mark an academic year as the current one"""
   setCurrentAcademicYear(id: ID!): AcademicYear!
 
   """Mark a term as the current one for its academic year"""
   setCurrentTerm(id: ID!): Term!
   signIn(signInInput: SignInInput!): AuthResponse!
+
+  """
+  Mark all messages in a chat room as read (student marks teacher messages as read)
+  """
+  studentMarkMessagesAsRead(chatRoomId: String!): Boolean!
+
+  """Set typing indicator for student in a chat room"""
+  studentSetTyping(chatRoomId: String!, isTyping: Boolean!): Boolean!
   submitAssignment(input: CreateAssignmentSubmissionInput!): AssignmentSubmission!
 
   """Activate or deactivate an optional fee item for a student"""
@@ -1593,6 +1604,11 @@ type Query {
   """Get chat history for a specific room with pagination"""
   getChatHistory(chatRoomId: String!, limit: Int! = 50, offset: Int! = 0): [ChatMessage!]!
 
+  """
+  Get chat room with a specific teacher (returns null if no conversation exists)
+  """
+  getChatRoomWithTeacher(teacherId: String!): ChatRoom
+
   """Get a specific fee assignment by ID with all student details"""
   getFeeAssignmentById(feeAssignmentId: ID!): FeeAssignmentWithStudents!
 
@@ -1614,12 +1630,35 @@ type Query {
 
   """Get all streams for current user tenant"""
   getStreamsByTenant: [Stream!]!
+
+  """
+  Get chat history for a specific room - includes ALL messages (sent by student AND received from teacher)
+  """
+  getStudentChatHistory(chatRoomId: String!, limit: Int! = 50, offset: Int! = 0): [ChatMessage!]!
+
+  """Get all chat rooms for the current student"""
+  getStudentChatRooms: [ChatRoom!]!
+
+  """Get all teachers that the student has chat conversations with"""
+  getStudentTeachers: [Teacher!]!
+
+  """Get unread message count for a specific room"""
+  getStudentUnreadCountForRoom(chatRoomId: String!): Int!
+
+  """Get total unread message count for the current student"""
+  getStudentUnreadMessageCount: Int!
+
+  """Get all room IDs that have unread messages for the current student"""
+  getStudentUnreadRooms: [String!]!
   getStudentsByGrade(gradeId: String!): [Student!]!
 
   """Get all students for current user tenant"""
   getStudentsByTenant: SearchStudentResult!
   getStudentsForParent(parentId: String!, tenantId: String!): [StudentSearchResponse!]!
   getTeacher: Teacher!
+
+  """Get teacher last seen timestamp (ISO format)"""
+  getTeacherLastSeen(teacherUserId: String!): String
 
   """Get all teachers for current user tenant"""
   getTeachersByTenant: SearchTeacherResult!
@@ -1659,6 +1698,9 @@ type Query {
 
   """Get all invoices for a specific student"""
   invoicesByStudent(studentId: ID!): [Invoice!]!
+
+  """Check if a specific teacher is currently online"""
+  isTeacherOnline(teacherUserId: String!): Boolean!
 
   """Check if a specific user is currently online"""
   isUserOnline(userId: String!): Boolean!
@@ -1989,6 +2031,15 @@ type SelectedLevel {
 }
 
 input SendMessageFromParentToTeacherInput {
+  imageUrl: String
+  message: String!
+  recipientId: String!
+  recipientType: String!
+  studentId: String!
+  subject: String
+}
+
+input SendMessageFromStudentToTeacherInput {
   imageUrl: String
   message: String!
   recipientId: String!
@@ -2376,6 +2427,14 @@ enum SubjectTypeEnum {
 type Subscription {
   """Subscribe to new messages in real-time"""
   messageAdded: ChatMessage!
+
+  """
+  Subscribe to new messages in real-time (receives messages FROM teachers instantly)
+  """
+  studentMessageAdded: ChatMessage!
+
+  """Subscribe to typing indicators for a room (see when teacher is typing)"""
+  studentUserTyping(roomId: String!): TypingIndicator!
 
   """Subscribe to typing indicators for a room"""
   userTyping(roomId: String!): TypingIndicator!
