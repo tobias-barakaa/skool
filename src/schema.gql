@@ -2550,6 +2550,7 @@ type TenantSubject {
   id: ID!
   isActive: Boolean!
   isCompulsory: Boolean!
+  name: String!
   passingMarks: Float
   subject: Subject
   subjectType: String!
