@@ -22,6 +22,8 @@ export class TenantGradeLevel {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+
+
   @Field(() => Tenant)
   @ManyToOne(() => Tenant, { onDelete: 'CASCADE' })
   @JoinColumn()

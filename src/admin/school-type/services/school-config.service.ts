@@ -124,6 +124,7 @@ export class SchoolConfigService {
               tenant: { id: tenant.id },
               curriculum: { id: curriculum.id },
               subject: { id: cs.subject.id },
+              name: cs.subject.name, 
               subjectType: cs.subjectType as 'core' | 'elective',
               isCompulsory: cs.isCompulsory,
               totalMarks: cs.totalMarks,

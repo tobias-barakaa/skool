@@ -14,6 +14,10 @@ export class TenantSubject {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Field(() => String)
+  @Column({ nullable: false })
+  name: string;
+
   @ManyToOne(() => Tenant, { onDelete: 'CASCADE' })
   @JoinColumn()
   tenant: Tenant;
