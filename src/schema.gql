@@ -522,6 +522,16 @@ input CreateTeacherInvitationDto {
   tenantSubjectIds: [ID!]
 }
 
+input CreateTeacherNoteDto {
+  content: String!
+  grade_level_id: ID
+  is_ai_generated: Boolean = false
+  links: [String!]
+  subject_id: ID
+  title: String!
+  visibility: NoteVisibility!
+}
+
 input CreateTenantStreamInput {
   capacity: Int
   description: String
@@ -797,6 +807,13 @@ input FilterInput {
   streamIds: [ID!]
   tenantGradeLevelIds: [ID!]
   tenantSubjectIds: [ID!]
+}
+
+input FilterTeacherNotesDto {
+  grade_level_id: ID
+  is_ai_generated: Boolean
+  subject_id: ID
+  visibility: NoteVisibility
 }
 
 type FilteredResult {
@@ -1145,6 +1162,7 @@ type Mutation {
   createScholarship(input: CreateScholarshipInput!): Scholarship!
   createStream(input: CreateStreamInput!): StreamType!
   createStudent(createStudentInput: CreateStudentInput!): CreateStudentResponse!
+  createTeacherNote(createTeacherNoteDto: CreateTeacherNoteDto!): TeacherNote!
   createTenantStreamFromScratch(input: CreateTenantStreamInput!): TenantStream!
 
   """Create a new term within an academic year"""
@@ -1190,6 +1208,7 @@ type Mutation {
 
   """Delete a message sent by the current teacher"""
   deleteTeacherMessage(messageId: String!): Boolean!
+  deleteTeacherNote(id: String!): Boolean!
   deleteTenantStream(tenantStreamId: String!): Boolean!
   deleteTenantSubject(tenantSubjectId: String!): Boolean!
 
@@ -1306,6 +1325,7 @@ type Mutation {
   updateStream(input: UpdateStreamInput!): StreamType!
   updateStudentMarks(inputs: [EnterStudentMarksInput!]!): [AssessmentMark!]!
   updateStudentScholarship(input: UpdateStudentScholarshipInput!): StudentScholarship!
+  updateTeacherNote(updateTeacherNoteDto: UpdateTeacherNoteDto!): TeacherNote!
   updateTenantStream(input: UpdateTenantStreamInput!, tenantStreamId: String!): TenantStream!
 
   """Update a term"""
@@ -1316,6 +1336,13 @@ type Mutation {
 
   """Void/cancel a payment (soft delete)"""
   voidPayment(id: ID!, reason: String!): Boolean!
+}
+
+"""Visibility level of the note"""
+enum NoteVisibility {
+  GRADE
+  PRIVATE
+  SCHOOL
 }
 
 type Option {
@@ -1563,6 +1590,7 @@ type Query {
   getFeeAssignmentsByGradeLevels(input: GetFeeAssignmentsByGradeLevelsInput!): [FeeAssignmentWithStudents!]!
   getGradeLevelClassTeacher(gradeLevelId: String!): ClassTeacherAssignment
   getMessageById(id: String!): ChatMessage
+  getMyTeacherNotes(filters: FilterTeacherNotesDto): [TeacherNote!]!
 
   """Get a single test by ID for the logged-in student"""
   getMyTestById(id: ID!): Test!
@@ -1586,12 +1614,14 @@ type Query {
   getPendingTeacherInvitation(email: String!): PendingInvitationResponse
   getPendingTeacherInvitations: [PendingInvitationResponse!]
   getSchoolConfiguration: SchoolConfigurationResponse!
+  getSchoolTeacherNotes: [TeacherNote!]!
   getSocketClients: [String!]!
   getStaffById(id: ID!): StaffDto!
   getStreamClassTeacher(streamId: String!): ClassTeacherAssignment
 
   """Get all streams for current user tenant"""
   getStreamsByTenant: [Stream!]!
+  getStudentAccessibleNotes(filters: FilterTeacherNotesDto): [TeacherNote!]!
 
   """
   Get chat history for a specific room - includes ALL messages (sent by student AND received from teacher)
@@ -1600,6 +1630,10 @@ type Query {
 
   """Get all chat rooms for the current student"""
   getStudentChatRooms: [ChatRoom!]!
+  getStudentGradeNotes: [TeacherNote!]!
+  getStudentNoteById(id: String!): TeacherNote!
+  getStudentNotesBySubject(subjectId: String!): [TeacherNote!]!
+  getStudentSchoolNotes: [TeacherNote!]!
 
   """Get all teachers that the student has chat conversations with"""
   getStudentTeachers: [Teacher!]!
@@ -1621,6 +1655,7 @@ type Query {
 
   """Get teacher last seen timestamp (ISO format)"""
   getTeacherLastSeen(teacherUserId: String!): String
+  getTeacherNoteById(id: String!): TeacherNote!
 
   """Get all teachers for current user tenant"""
   getTeachersByTenant: SearchTeacherResult!
@@ -2447,6 +2482,25 @@ type TeacherDto {
   userId: String
 }
 
+type TeacherNote {
+  content: String!
+  created_at: DateTime!
+  gradeLevel: TenantGradeLevel
+  grade_level_id: ID
+  id: ID!
+  is_ai_generated: Boolean!
+  links: [String!]
+  subject: TenantSubject
+  subject_id: ID
+  teacher: User!
+  teacher_id: ID!
+  tenant: Tenant!
+  tenant_id: ID!
+  title: String!
+  updated_at: DateTime!
+  visibility: NoteVisibility!
+}
+
 type TeacherOutput {
   id: String!
   name: String!
@@ -2818,6 +2872,17 @@ input UpdateStudentScholarshipInput {
   academicYear: String
   id: String!
   status: String
+}
+
+input UpdateTeacherNoteDto {
+  content: String
+  grade_level_id: ID
+  id: ID!
+  is_ai_generated: Boolean = false
+  links: [String!]
+  subject_id: ID
+  title: String
+  visibility: NoteVisibility
 }
 
 input UpdateTenantStreamInput {

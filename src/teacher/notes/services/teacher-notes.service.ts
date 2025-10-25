@@ -29,9 +29,19 @@ export class TeacherNotesService {
       tenant_id: user.tenantId,
       teacher_id: user.sub,
     });
-
-    return await this.teacherNoteRepository.save(note);
+  
+    const saved = await this.teacherNoteRepository.save(note);
+  
+    const reloaded = await this.teacherNoteRepository.findOne({
+      where: { id: saved.id },
+      relations: ['teacher', 'subject', 'gradeLevel'],
+    });
+    if (!reloaded) {
+      throw new NotFoundException(`Failed to reload created note with ID ${saved.id}`);
+    }
+    return reloaded;
   }
+  
 
   /**
    * Get all notes created by the logged-in teacher
@@ -45,32 +55,36 @@ export class TeacherNotesService {
   ): Promise<TeacherNote[]> {
     const query = this.teacherNoteRepository
       .createQueryBuilder('note')
+      .leftJoinAndSelect('note.teacher', 'teacher')
+      .leftJoinAndSelect('note.subject', 'subject')
+      .leftJoinAndSelect('note.gradeLevel', 'gradeLevel')
       .where('note.tenant_id = :tenantId', { tenantId: user.tenantId })
       .andWhere('note.teacher_id = :teacherId', { teacherId: user.sub })
       .orderBy('note.created_at', 'DESC');
-
+  
     if (filters?.subject_id) {
       query.andWhere('note.subject_id = :subjectId', { subjectId: filters.subject_id });
     }
-
+  
     if (filters?.grade_level_id) {
-      query.andWhere('note.grade_level_id = :gradeLevelId', { 
-        gradeLevelId: filters.grade_level_id 
+      query.andWhere('note.grade_level_id = :gradeLevelId', {
+        gradeLevelId: filters.grade_level_id,
       });
     }
-
+  
     if (filters?.visibility) {
       query.andWhere('note.visibility = :visibility', { visibility: filters.visibility });
     }
-
+  
     if (filters?.is_ai_generated !== undefined) {
-      query.andWhere('note.is_ai_generated = :isAiGenerated', { 
-        isAiGenerated: filters.is_ai_generated 
+      query.andWhere('note.is_ai_generated = :isAiGenerated', {
+        isAiGenerated: filters.is_ai_generated,
       });
     }
-
+  
     return await query.getMany();
   }
+  
 
   /**
    * Get a specific note by ID (must be owned by teacher)
@@ -140,3 +154,4 @@ export class TeacherNotesService {
     });
   }
 }
+

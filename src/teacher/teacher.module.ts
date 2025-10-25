@@ -6,6 +6,7 @@ import { TeacherStudentsModule } from './students/students.module';
 import { TeacherParentsModule } from './parents/parents.module';
 import { MarksheetModule } from './marksheet/marksheet-module';
 import { SearchModule } from './search/search.module';
+import { TeacherNotesModule } from './notes/teacher-notes.module';
 
 
 @Module({
@@ -16,6 +17,7 @@ import { SearchModule } from './search/search.module';
     TeacherStudentsModule,
     MarksheetModule,
     SearchModule,
+    TeacherNotesModule
   ],
   exports: [TestModule],
   providers: [],

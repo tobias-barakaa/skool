@@ -16,30 +16,27 @@ export class TeacherNotesResolver {
   constructor(private readonly teacherNotesService: TeacherNotesService) {}
 
   /**
-   * Create a new teacher note
-   * @mutation createTeacherNote
-   * @param {CreateTeacherNoteDto} createTeacherNoteDto - Note creation data
-   * @returns {TeacherNote} Created note
-   * 
-   * @example
-   * mutation {
-   *   createTeacherNote(createTeacherNoteDto: {
-   *     title: "Introduction to Algebra"
-   *     content: "Key concepts: variables, expressions..."
-   *     links: ["https://youtube.com/watch?v=xyz"]
-   *     subject_id: "uuid-here"
-   *     grade_level_id: "uuid-here"
-   *     visibility: GRADE
-   *     is_ai_generated: false
-   *   }) {
-   *     id
-   *     title
-   *     content
-   *     visibility
-   *     created_at
-   *   }
-   * }
-   */
+     * Create a new teacher note
+     * @mutation createTeacherNote
+     * @returns {TeacherNote} Created note
+     * @example mutation {
+      createTeacherNote(createTeacherNoteDto: {
+        title: "Introduction to Algebra"
+        content: "Key concepts: variables, expressions..."
+        links: ["https://youtube.com/watch?v=xyz"]
+        subject_id: "uuid-here"
+        grade_level_id: "uuid-here"
+        visibility: GRADE
+        is_ai_generated: false
+      }) {
+        id
+        title
+        content
+        visibility
+        created_at
+      }
+    }
+     */
   @Mutation(() => TeacherNote)
   async createTeacherNote(
     @Args('createTeacherNoteDto') dto: CreateTeacherNoteDto,
@@ -104,24 +101,21 @@ export class TeacherNotesResolver {
   }
 
   /**
-   * Update a teacher note
-   * @mutation updateTeacherNote
-   * @param {UpdateTeacherNoteDto} updateTeacherNoteDto - Update data
-   * @returns {TeacherNote} Updated note
-   * 
-   * @example
-   * mutation {
-   *   updateTeacherNote(updateTeacherNoteDto: {
-   *     id: "note-uuid"
-   *     title: "Updated Title"
-   *     visibility: SCHOOL
-   *   }) {
-   *     id
-   *     title
-   *     updated_at
-   *   }
-   * }
-   */
+     * Update a teacher note
+     * @mutation updateTeacherNote
+     * @returns {TeacherNote} Updated note
+     * @example mutation {
+      updateTeacherNote(updateTeacherNoteDto: {
+        id: "note-uuid"
+        title: "Updated Title"
+        visibility: SCHOOL
+      }) {
+        id
+        title
+        updated_at
+      }
+    }
+     */
   @Mutation(() => TeacherNote)
   async updateTeacherNote(
     @Args('updateTeacherNoteDto') dto: UpdateTeacherNoteDto,
