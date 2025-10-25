@@ -12,8 +12,8 @@ export class SendMessageFromStudentToTeacherInput {
   @IsNotEmpty()
   recipientType: string; // Always "TEACHER"
 
-  @Field()
-  @IsNotEmpty()
+  @Field({ nullable: true })
+  @IsOptional()
   @IsUUID()
   studentId: string; // Child/student reference
 

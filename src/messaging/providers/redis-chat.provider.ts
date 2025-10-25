@@ -121,7 +121,25 @@ async getUnreadRooms(userId: string): Promise<string[]> {
   return rooms;
 }
 
+async removeCachedMessage(messageId: string): Promise<void> {
+  const keyPattern = `chat:messages:*`;
+  const keys = await this.redis.keys(keyPattern);
 
+  for (const key of keys) {
+    const messages = JSON.parse(await this.redis.get(key) || '[]');
+    const filtered = messages.filter((msg) => msg.id !== messageId);
+    await this.redis.set(key, JSON.stringify(filtered));
+  }
+}
+
+async markMessageDeleted(messageId: string, roomId: string): Promise<void> {
+  const key = `chat:messages:${roomId}`;
+  const cached = JSON.parse(await this.redis.get(key) || '[]');
+  const updated = cached.map((msg) =>
+    msg.id === messageId ? { ...msg, deleted: true } : msg,
+  );
+  await this.redis.set(key, JSON.stringify(updated));
+}
 
 
 

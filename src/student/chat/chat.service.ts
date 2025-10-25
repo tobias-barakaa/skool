@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, Logger, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { Student } from 'src/admin/student/entities/student.entity';
@@ -27,43 +27,40 @@ export class StudentChatService {
   /**
    * Send message from student to a specific teacher
    */
+
   async sendMessageToTeacher(
     studentUserId: string,
     tenantId: string,
     input: SendMessageFromStudentToTeacherInput,
   ): Promise<ChatMessage> {
-    // Get student by user_id
     const student = await this.studentRepository.findOne({
       where: { user: { id: studentUserId }, tenant_id: tenantId },
       relations: ['user'],
     });
-
+  
     if (!student) {
       throw new NotFoundException('Student not found');
     }
-
-    // Get teacher and their user_id
+  
     const teacher = await this.teacherRepository.findOne({
       where: { id: input.recipientId, tenantId },
       relations: ['user'],
     });
-
+  
     if (!teacher || !teacher.user) {
       throw new NotFoundException('Teacher not found or not linked to user');
     }
-
-    // Create or get chat room between student and teacher
-    // Use same naming convention as teacher side for consistency
+  
     const chatRoom = await this.getOrCreateChatRoom(
       `teacher-student-${teacher.id}-${student.id}`,
       'DIRECT',
-      [teacher.user.id, studentUserId],
+      [teacher.user.id, student.user.id],
       tenantId,
     );
-
-    // Create message
+  
+    // 4️⃣ Create message
     const message = this.chatMessageRepository.create({
-      senderId: studentUserId,
+      senderId: studentUserId,      
       senderType: 'STUDENT',
       subject: input.subject,
       message: input.message,
@@ -71,25 +68,139 @@ export class StudentChatService {
       chatRoomId: chatRoom.id,
       isRead: false,
     });
-
+  
     const savedMessage = await this.chatMessageRepository.save(message);
-
-    // Reload with relations
+  
+    // 5️⃣ Reload with chat room relation
     const found = await this.chatMessageRepository.findOne({
       where: { id: savedMessage.id },
       relations: ['chatRoom'],
     });
-
+  
     const messageWithRoom: ChatMessage = found ?? Object.assign(savedMessage, { chatRoom });
-
-    // Cache in Redis
+  
+    // 6️⃣ Cache + unread count
     await this.redisChatProvider.cacheMessage(messageWithRoom);
-
-    // Track unread count for teacher
     await this.redisChatProvider.incrementUnreadCount(teacher.user.id, chatRoom.id);
-
+  
     return messageWithRoom;
   }
+  
+
+
+  async deleteMessage(
+    userId: string,
+    tenantId: string,
+    messageId: string,
+    options?: { hard?: boolean },
+  ): Promise<boolean> {
+    // 1️⃣ Find message with room
+    const message = await this.chatMessageRepository.findOne({
+      where: { id: messageId },
+      relations: ['chatRoom'],
+    });
+  
+    if (!message) {
+      throw new NotFoundException('Message not found');
+    }
+  
+    // 2️⃣ Check that the current user is allowed to delete it
+    if (message.senderId !== userId) {
+      throw new ForbiddenException('You can only delete your own messages');
+    }
+  
+    // 3️⃣ Optionally hard delete
+    if (options?.hard) {
+      await this.chatMessageRepository.delete({ id: messageId });
+  
+      // Clean Redis cache
+      await this.redisChatProvider.removeCachedMessage(messageId);
+      return true;
+    }
+  
+    // 4️⃣ Otherwise mark as deleted (soft delete)
+    await this.chatMessageRepository.update(
+      { id: messageId },
+      { deleted: true },
+    );
+  
+    // Optionally remove from Redis visible list
+    await this.redisChatProvider.markMessageDeleted(messageId, message.chatRoomId);
+  
+    return true;
+  }
+
+  // async sendMessageToTeacher(
+  //   studentUserId: string,
+  //   tenantId: string,
+  //   input: SendMessageFromStudentToTeacherInput,
+  // ): Promise<ChatMessage> {
+  //   // Get student by user_id
+  //   const student = await this.studentRepository.findOne({
+  //     where: { user: { id: studentUserId }, tenant_id: tenantId },
+  //     relations: ['user'],
+  //   });
+
+  //   if (!student) {
+  //     throw new NotFoundException('Student not found');
+  //   }
+
+  //   // Get teacher and their user_id
+  //   // const teacher = await this.teacherRepository.findOne({
+  //   //   where: { id: input.recipientId, tenantId },
+  //   //   relations: ['user'],
+  //   // });
+
+  //   const teacher = await this.teacherRepository.findOne({
+  //     where: { user: { id: input.recipientId }, tenantId },
+  //     relations: ['user'],
+  //   });
+    
+ 
+    
+
+  //   if (!teacher || !teacher.user) {
+  //     throw new NotFoundException('Teacher not found or not linked to user');
+  //   }
+
+  //   // Create or get chat room between student and teacher
+  //   // Use same naming convention as teacher side for consistency
+  //   const chatRoom = await this.getOrCreateChatRoom(
+  //     `teacher-student-${teacher.id}-${student.id}`,
+  //     'DIRECT',
+  //     [teacher.user.id, studentUserId],
+  //     tenantId,
+  //   );
+
+  //   // Create message
+  //   const message = this.chatMessageRepository.create({
+  //     senderId: studentUserId,
+  //     senderType: 'STUDENT',
+  //     subject: input.subject,
+  //     message: input.message,
+  //     imageUrl: input.imageUrl,
+  //     chatRoomId: chatRoom.id,
+  //     isRead: false,
+  //   });
+
+  //   const savedMessage = await this.chatMessageRepository.save(message);
+
+  //   // Reload with relations
+  //   const found = await this.chatMessageRepository.findOne({
+  //     where: { id: savedMessage.id },
+  //     relations: ['chatRoom'],
+  //   });
+
+  //   const messageWithRoom: ChatMessage = found ?? Object.assign(savedMessage, { chatRoom });
+
+  //   // Cache in Redis
+  //   await this.redisChatProvider.cacheMessage(messageWithRoom);
+
+  //   // Track unread count for teacher
+  //   await this.redisChatProvider.incrementUnreadCount(teacher.user.id, chatRoom.id);
+
+  //   return messageWithRoom;
+  // }
 
   /**
    * Get chat history for a specific room (student perspective)
@@ -178,16 +289,81 @@ export class StudentChatService {
   /**
    * Get all chat rooms for a student
    */
+  // async getStudentChatRooms(studentUserId: string): Promise<ChatRoom[]> {
+  //   const rooms = await this.chatRoomRepository
+  //     .createQueryBuilder('room')
+  //     .where("room.participantIds LIKE :userIdPattern", { 
+  //       userIdPattern: `%${studentUserId}%` 
+  //     })
+  //     .orderBy('room.updatedAt', 'DESC')
+  //     .getMany();
+
+  //   return rooms;
+  // }
+
+  // async getStudentChatRooms(studentUserId: string): Promise<ChatRoom[]> {
+  //   const rooms = await this.chatRoomRepository
+  //     .createQueryBuilder('room')
+  //     .leftJoinAndSelect('room.messages', 'message') // Eager load messages
+  //     .where("room.participantIds LIKE :userIdPattern", { userIdPattern: `%${studentUserId}%` })
+  //     .orderBy('room.updatedAt', 'DESC')
+  //     .addOrderBy('message.createdAt', 'ASC') // Order messages within each room
+  //     .getMany();
+
+  //   // The messages relationship will now be populated for each room.
+  //   // However, if you want only the *last* message for a preview,
+  //   // or a limited number of messages, the logic needs to be more complex.
+  //   // For now, this will load ALL messages for ALL rooms.
+
+  //   // A more efficient approach for a "last message preview" or initial load might involve:
+  //   // 1. Fetching rooms as above (without messages relation).
+  //   // 2. For each room, separately fetch the *last* message or a few recent messages.
+  //   //    This can be done with a subquery or by calling getChatHistory for each room.
+  //   // For simplicity, let's proceed with loading all for demonstration.
+
+  //   return rooms;
+  // }
+
+
+
   async getStudentChatRooms(studentUserId: string): Promise<ChatRoom[]> {
     const rooms = await this.chatRoomRepository
       .createQueryBuilder('room')
-      .where("room.participantIds LIKE :userIdPattern", { 
-        userIdPattern: `%${studentUserId}%` 
+      .leftJoinAndSelect('room.messages', 'message', 'message.deleted = false')
+      .where('room.participantIds LIKE :userIdPattern', {
+        userIdPattern: `%${studentUserId}%`,
       })
       .orderBy('room.updatedAt', 'DESC')
+      .addOrderBy('message.createdAt', 'ASC') 
       .getMany();
+  
+    return rooms.filter(room => room.messages.length > 0);
+  }
 
-    return rooms;
+
+  async getMessageById(
+    messageId: string,
+    currentUserId?: string,
+  ): Promise<ChatMessage> {
+    const message = await this.chatMessageRepository.findOne({
+      where: { id: messageId },
+      relations: ['chatRoom'], // load chatRoom so we can check participants
+    });
+
+    if (!message) {
+      throw new NotFoundException('Message not found');
+    }
+
+    // If caller provided a user id, ensure they are a participant of the room
+    if (currentUserId) {
+      const participantIds = message.chatRoom?.participantIds ?? [];
+      // participantIds may be stored as string[] or JSONB - adapt if yours differs
+      if (!participantIds.includes(currentUserId)) {
+        throw new ForbiddenException('You are not a participant of this chat room');
+      }
+    }
+
+    return message;
   }
 
   /**
@@ -201,6 +377,7 @@ export class StudentChatService {
     const student = await this.studentRepository.findOne({
       where: { user: { id: studentUserId }, tenant_id: tenantId },
     });
+    console.log(student, 'this is the stende yohh')
 
     if (!student) {
       throw new NotFoundException('Student not found');

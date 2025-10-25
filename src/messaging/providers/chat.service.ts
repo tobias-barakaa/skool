@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, Logger, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In, DataSource } from 'typeorm';
 import { ChatRoom } from '../entities/chat-room.entity';
@@ -45,7 +45,7 @@ export class ChatService {
       where: { user: { id: teacherUserId }, tenantId },
     });
 
-    // console.log(teacher, 'this is teacher.....')
+    console.log(teacher, 'this is teacher.....')
 
     if (!teacher) {
       throw new NotFoundException('Teacher not found');
@@ -151,6 +151,50 @@ return messageWithRoom;
     return savedMessage;
   }
 
+
+
+  async deleteMessage(
+    userId: string,
+    tenantId: string,
+    messageId: string,
+    options?: { hard?: boolean },
+  ): Promise<boolean> {
+    // 1️⃣ Find message with room
+    const message = await this.chatMessageRepository.findOne({
+      where: { id: messageId },
+      relations: ['chatRoom'],
+    });
+  
+    if (!message) {
+      throw new NotFoundException('Message not found');
+    }
+  
+    // 2️⃣ Check that the current user is allowed to delete it
+    if (message.senderId !== userId) {
+      throw new ForbiddenException('You can only delete your own messages');
+    }
+  
+    // 3️⃣ Optionally hard delete
+    if (options?.hard) {
+      await this.chatMessageRepository.delete({ id: messageId });
+  
+      // Clean Redis cache
+      await this.redisChatProvider.removeCachedMessage(messageId);
+      return true;
+    }
+  
+    // 4️⃣ Otherwise mark as deleted (soft delete)
+    await this.chatMessageRepository.update(
+      { id: messageId },
+      { deleted: true },
+    );
+  
+    // Optionally remove from Redis visible list
+    await this.redisChatProvider.markMessageDeleted(messageId, message.chatRoomId);
+  
+    return true;
+  }
+      
   /**
    * Broadcast message to all students in tenant
    */
@@ -353,21 +397,23 @@ return messageWithRoom;
   /**
    * Get all chat rooms for a user
    */
-  async getUserChatRooms(userId: string): Promise<ChatRoom[]> {
-    // const rooms = await this.chatRoomRepository
-    //   .createQueryBuilder('room')
-    //   .where(':userId = ANY(room.participantIds)', { userId })
-    //   .orderBy('room.updatedAt', 'DESC')
-    //   .getMany();
+ // File: student-chat.service.ts or similar
+async getUserChatRooms(userId: string): Promise<ChatRoom[]> {
+  const rooms = await this.chatRoomRepository
+    .createQueryBuilder('room')
+    .leftJoinAndSelect('room.messages', 'message', 'message.deleted = false') // <-- ADD THIS LINE
+    .where('room.participantIds LIKE :userIdPattern', {
+      userIdPattern: `%${userId}%`,
+    })
+    .orderBy('room.updatedAt', 'DESC')
+    .addOrderBy('message.createdAt', 'ASC') // <-- ADD THIS LINE for message ordering
+    .getMany();
 
-      const rooms = await this.chatRoomRepository
-  .createQueryBuilder('room')
-  .where("room.participantIds LIKE :userIdPattern", { userIdPattern: `%${userId}%` })
-  .orderBy('room.updatedAt', 'DESC')
-  .getMany();
-
-    return rooms;
-  }
+  // Optional: Filter rooms with no messages, depending on your business logic.
+  // The student's side had this: return rooms.filter(room => room.messages.length > 0);
+  // If you want teachers to see rooms even without messages, return rooms directly.
+  return rooms;
+}
 
   
   

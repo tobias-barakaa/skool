@@ -59,6 +59,22 @@ export class ChatResolver {
     return message;
   }
 
+
+  @Mutation(() => Boolean, {
+    description: 'Delete a message sent by the current teacher',
+  })
+  async deleteTeacherMessage(
+    @Args('messageId') messageId: string,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise<boolean> {
+    return await this.chatService.deleteMessage(
+      currentUser.sub,       // teacher's userId
+      currentUser.tenantId,
+      messageId,
+    );
+  }
+  
+
   /**
    * Send message from teacher to a specific parent
    * 
@@ -295,14 +311,15 @@ rents in the school
    *   }
    * }
    */
-  @Query(() => [ChatRoom], {
-    description: 'Get all chat rooms for the current user',
-  })
-  async getUserChatRooms(
-    @ActiveUser() currentUser: ActiveUserData,
-  ): Promise<ChatRoom[]> {
-    return await this.chatService.getUserChatRooms(currentUser.sub);
-  }
+ // File: chat.resolver.ts or similar
+@Query(() => [ChatRoom], {
+  description: 'Get all chat rooms for the current user',
+})
+async getUserChatRooms(
+  @ActiveUser() currentUser: ActiveUserData,
+): Promise<ChatRoom[]> {
+  return await this.chatService.getUserChatRooms(currentUser.sub); // This now calls the updated service
+}
 
   /**
    * Get total unread message count for the current user

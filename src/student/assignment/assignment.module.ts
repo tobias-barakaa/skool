@@ -1,14 +1,13 @@
 import { Module } from '@nestjs/common';
-import { AssignmentService } from './assignment.service';
-import { AssignmentResolver } from './assignment.resolver';
-import { AssignmentProvider } from './providers/assignment.provider';
+import { StudentTestResolver } from './resolvers/student-test.resolver';
+import { StudentTestProvider } from './providers/student-test.provider';
 
 @Module({
   providers: [
-    AssignmentService,
-    AssignmentResolver,
-    AssignmentProvider,
+    StudentTestProvider,
+    StudentTestResolver
+
   ],
-  exports: [AssignmentService],
+  exports: [],
 })
 export class AssignmentModule {}

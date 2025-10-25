@@ -51,23 +51,24 @@ export class StudentChatResolver {
    * }
    */
   @Mutation(() => ChatMessage, {
+    nullable: true, // optional if you want to suppress schema errors
     description: 'Send a message from student to a specific teacher',
   })
-  async sendMessageToTeacher(
+  async studentSendMessageToTeacher(
     @Args('input', { type: () => SendMessageFromStudentToTeacherInput })
     input: SendMessageFromStudentToTeacherInput,
     @ActiveUser() currentUser: ActiveUserData,
-  ): Promise<ChatMessage> {
+  ): Promise<ChatMessage | null> {
     const message = await this.studentChatService.sendMessageToTeacher(
       currentUser.sub,
       currentUser.tenantId,
       input,
     );
-
+  
+    if (!message) return null; 
     this.pubSub.publish('messageAdded', { messageAdded: message });
     return message;
   }
-
   /**
    * MARK MESSAGES AS READ
    * Mark all unread messages in a chat room as read
@@ -281,6 +282,31 @@ export class StudentChatResolver {
     return await this.studentChatService.getStudentChatRooms(currentUser.sub);
   }
 
+
+  @Query(() => ChatMessage, { name: 'getMessageById', nullable: true })
+  async getMessageById(
+    @Args('id') id: string,
+    @ActiveUser() currentUser?: ActiveUserData, // optional: will be undefined if called internally
+  ): Promise<ChatMessage> {
+    // pass currentUser.sub to service so permission check runs
+    const userId = currentUser?.sub;
+    return await this.studentChatService.getMessageById(id, userId);
+  }
+
+  @Mutation(() => Boolean, {
+    description: 'Delete a message sent by the current student',
+  })
+  async deleteStudentMessage(
+    @Args('messageId') messageId: string,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise<boolean> {
+    return await this.studentChatService.deleteMessage(
+      currentUser.sub,       
+      currentUser.tenantId,
+      messageId,
+    );
+  }
+  
   /**
    * GET TOTAL UNREAD MESSAGE COUNT
    * Get total number of unread messages across all conversations

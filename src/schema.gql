@@ -174,59 +174,6 @@ input AssignTransportInput {
   studentId: ID!
 }
 
-type Assignment {
-  createdAt: DateTime!
-  description: String!
-  dueDate: DateTime!
-  id: ID!
-  resourceUrl: String
-  status: AssignmentStatus!
-  subject: AssignmentSubject!
-  submission: AssignmentSubmission
-  teacher: AssignmentTeacher!
-  title: String!
-  totalMarks: Int!
-  updatedAt: DateTime!
-}
-
-"""Status of the student assignment"""
-enum AssignmentStatus {
-  GRADED
-  OVERDUE
-  PENDING
-  SUBMITTED
-}
-
-type AssignmentSubject {
-  id: ID!
-  name: String!
-}
-
-type AssignmentSubmission {
-  comments: String
-  feedback: String
-  fileUrl: String
-  grade: Float
-  gradedAt: DateTime
-  id: ID!
-  submissionText: String
-  submittedAt: DateTime!
-}
-
-type AssignmentTeacher {
-  email: String!
-  firstName: String!
-  id: ID!
-  lastName: String!
-}
-
-type AssignmentsResponse {
-  assignments: [Assignment!]!
-  currentPage: Int!
-  total: Int!
-  totalPages: Int!
-}
-
 type Attendance {
   createdAt: DateTime!
   date: String!
@@ -314,6 +261,7 @@ type ChatMessage {
   chatRoom: ChatRoom!
   chatRoomId: String!
   createdAt: DateTime!
+  deleted: Boolean!
   id: ID!
   imageUrl: String
   isRead: Boolean!
@@ -376,13 +324,6 @@ input CreateAssessmentInput {
   term: Float!
   title: String
   type: AssessType!
-}
-
-input CreateAssignmentSubmissionInput {
-  assignmentId: ID!
-  comments: String
-  fileUrl: String
-  submissionText: String
 }
 
 input CreateAttendanceInput {
@@ -1242,7 +1183,13 @@ type Mutation {
   deletePayment(id: ID!): Boolean!
   deleteStaff(id: ID!): Boolean!
   deleteStream(id: ID!): Boolean!
+
+  """Delete a message sent by the current student"""
+  deleteStudentMessage(messageId: String!): Boolean!
   deleteTeacher(id: String!, tenantId: String!): String!
+
+  """Delete a message sent by the current teacher"""
+  deleteTeacherMessage(messageId: String!): Boolean!
   deleteTenantStream(tenantStreamId: String!): Boolean!
   deleteTenantSubject(tenantSubjectId: String!): Boolean!
 
@@ -1309,9 +1256,6 @@ type Mutation {
   """Send a message from teacher to a specific student"""
   sendMessageToStudent(input: SendMessageInput!): ChatMessage!
 
-  """Send a message from student to a specific teacher"""
-  sendMessageToTeacher(input: SendMessageFromStudentToTeacherInput!): ChatMessage!
-
   """Mark an academic year as the current one"""
   setCurrentAcademicYear(id: ID!): AcademicYear!
 
@@ -1324,9 +1268,11 @@ type Mutation {
   """
   studentMarkMessagesAsRead(chatRoomId: String!): Boolean!
 
+  """Send a message from student to a specific teacher"""
+  studentSendMessageToTeacher(input: SendMessageFromStudentToTeacherInput!): ChatMessage
+
   """Set typing indicator for student in a chat room"""
   studentSetTyping(chatRoomId: String!, isTyping: Boolean!): Boolean!
-  submitAssignment(input: CreateAssignmentSubmissionInput!): AssignmentSubmission!
 
   """Activate or deactivate an optional fee item for a student"""
   toggleStudentFeeItem(isActive: Boolean!, studentFeeItemId: ID!): StudentFeeItem!
@@ -1594,7 +1540,6 @@ type Query {
   Get all fee assignments for the current tenant with complete student and grade level data
   """
   getAllTenantFeeAssignments: TenantFeeAssignmentSummary!
-  getAssignment(id: ID!): Assignment!
   getAssignmentsByRoute(routeId: String!): [TransportAssignment!]!
   getAttendanceByDate(date: String!, gradeId: String!): [Attendance!]!
 
@@ -1617,7 +1562,24 @@ type Query {
   """
   getFeeAssignmentsByGradeLevels(input: GetFeeAssignmentsByGradeLevelsInput!): [FeeAssignmentWithStudents!]!
   getGradeLevelClassTeacher(gradeLevelId: String!): ClassTeacherAssignment
-  getMyAssignmentss(limit: Float = 10, offset: Float = 0, status: AssignmentStatus, subjectId: ID): AssignmentsResponse!
+  getMessageById(id: String!): ChatMessage
+
+  """Get a single test by ID for the logged-in student"""
+  getMyTestById(id: ID!): Test!
+
+  """Get test counts by status for the logged-in student"""
+  getMyTestCounts: TestCountsOutput!
+
+  """
+  Get all tests/assignments for the logged-in student based on their grade level
+  """
+  getMyTests: [Test!]!
+
+  """Get tests filtered by status for the logged-in student"""
+  getMyTestsByStatus(status: String!): [Test!]!
+
+  """Get upcoming tests (within next 7 days) for the logged-in student"""
+  getMyUpcomingTests: [Test!]!
   getParentsByTenant(tenantId: String!): [Parent!]!
   getPendingInvitations(tenantId: String!): [PendingInvitation!]!
   getPendingParentInvitations(tenantId: String!): [PendingInvitation!]!
@@ -2044,7 +2006,7 @@ input SendMessageFromStudentToTeacherInput {
   message: String!
   recipientId: String!
   recipientType: String!
-  studentId: String!
+  studentId: String
   subject: String
 }
 
@@ -2665,6 +2627,20 @@ type Test {
   title: String!
   totalMarks: Float!
   updatedAt: DateTime!
+}
+
+type TestCountsOutput {
+  """Number of tests that are currently active"""
+  active: Int!
+
+  """Number of tests that have been completed"""
+  completed: Int!
+
+  """Number of tests that are pending"""
+  pending: Int!
+
+  """Total number of tests available to the student"""
+  total: Int!
 }
 
 type TokenPair {

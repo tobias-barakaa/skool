@@ -44,6 +44,10 @@ export class ChatMessage {
   @Column({ default: false })
   isRead: boolean;
 
+@Field({ defaultValue: false })
+@Column({ default: false })
+deleted: boolean;
+
   @Field()
   @CreateDateColumn()
   createdAt: Date;

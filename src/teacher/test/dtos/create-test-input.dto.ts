@@ -1,4 +1,3 @@
-// src/tests/dto/create-test.input.ts
 import { Field, GraphQLISODateTime, ID, InputType, Int } from '@nestjs/graphql';
 import {
   IsArray,
