@@ -12,7 +12,7 @@ import { StudentNotesService } from '../services/student-notes.service';
 
 
 @Resolver(() => TeacherNote)
-@Roles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
+@Roles(MembershipRole.STUDENT, MembershipRole.SCHOOL_ADMIN)
 export class StudentNotesResolver {
   constructor(private readonly studentNotesService: StudentNotesService) {}
 

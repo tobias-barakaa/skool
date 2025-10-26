@@ -143,6 +143,63 @@ async markMessageDeleted(messageId: string, roomId: string): Promise<void> {
 
 
 
+/**
+ * Decrement unread count for a user in a specific room
+ */
+async decrementUnreadCount(userId: string, chatRoomId: string): Promise<void> {
+  const key = `unread:${userId}:${chatRoomId}`;
+  const count = await this.redis.get(key);
+  
+  if (count && parseInt(count) > 0) {
+    await this.redis.decr(key);
+  }
+}
+
+/**
+ * Mark a message as deleted in Redis cache
+ */
+// async markMessageDeleted(messageId: string, chatRoomId: string): Promise<void> {
+//   const cacheKey = `chat:room:${chatRoomId}:messages`;
+  
+//   // Get cached messages
+//   const cached = await this.redis.get(cacheKey);
+//   if (cached) {
+//     const messages = JSON.parse(cached);
+//     const updated = messages.filter((msg: any) => msg.id !== messageId);
+    
+//     if (updated.length !== messages.length) {
+//       await this.redis.setex(
+//         cacheKey,
+//         3600,
+//         JSON.stringify(updated),
+//       );
+//     }
+//   }
+// }
+
+/**
+ * Remove a cached message completely
+ */
+// async removeCachedMessage(messageId: string): Promise<void> {
+//   // This would require storing message-to-room mapping
+//   // For simplicity, we'll just invalidate room caches on hard delete
+//   const pattern = 'chat:room:*:messages';
+//   const keys = await this.redis.keys(pattern);
+  
+//   for (const key of keys) {
+//     const cached = await this.redis.get(key);
+//     if (cached) {
+//       const messages = JSON.parse(cached);
+//       const updated = messages.filter((msg: any) => msg.id !== messageId);
+      
+//       if (updated.length !== messages.length) {
+//         await this.redis.setex(key, 3600, JSON.stringify(updated));
+//       }
+//     }
+//   }
+// }
+
+
 
 }
 

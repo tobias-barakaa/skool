@@ -215,6 +215,14 @@ input BroadcastMessageInput {
   subject: String
 }
 
+input BroadcastToGradeLevelsInput {
+  gradeLevelIds: [String!]!
+  imageUrl: String
+  message: String!
+  recipientType: String!
+  subject: String
+}
+
 """
 Input for bulk toggling fee items by fee structure item and grade levels
 """
@@ -1123,8 +1131,20 @@ type Mutation {
   """Broadcast a message to all parents in the school"""
   broadcastToAllParents(input: BroadcastMessageInput!): [ChatMessage!]!
 
+  """Broadcast message to all parents in the entire school"""
+  broadcastToAllSchoolParents(input: BroadcastMessageInput!): [ChatMessage!]!
+
   """Broadcast a message to all students in the school"""
   broadcastToAllStudents(input: BroadcastMessageInput!): [ChatMessage!]!
+
+  """Broadcast message to all students in the entire school"""
+  broadcastToEntireSchool(input: BroadcastMessageInput!): [ChatMessage!]!
+
+  """Broadcast message to parents of students in specific grade levels"""
+  broadcastToGradeLevelParents(input: BroadcastToGradeLevelsInput!): [ChatMessage!]!
+
+  """Broadcast message to students in specific grade levels"""
+  broadcastToGradeLevels(input: BroadcastToGradeLevelsInput!): [ChatMessage!]!
   bulkAssignStudentsToRoute(input: BulkTransportAssignmentInput!): [TransportAssignment!]!
 
   """
@@ -1236,6 +1256,9 @@ type Mutation {
 
   """Mark attendance for students in a specific grade"""
   markAttendance(markAttendanceInput: CreateAttendanceInput!): [Attendance!]!
+
+  """Mark a single message as read"""
+  markMessageAsRead(messageId: String!): Boolean!
 
   """Mark all messages in a chat room as read"""
   markMessagesAsRead(chatRoomId: String!): Boolean!
@@ -1613,8 +1636,12 @@ type Query {
   getPendingParentInvitations(tenantId: String!): [PendingInvitation!]!
   getPendingTeacherInvitation(email: String!): PendingInvitationResponse
   getPendingTeacherInvitations: [PendingInvitationResponse!]
+
+  """Get all read messages for the current user"""
+  getReadMessages(limit: Int! = 50): [ChatMessage!]!
   getSchoolConfiguration: SchoolConfigurationResponse!
   getSchoolTeacherNotes: [TeacherNote!]!
+  getSchoolTeacherNotesGrade: [TeacherNote!]!
   getSocketClients: [String!]!
   getStaffById(id: ID!): StaffDto!
   getStreamClassTeacher(streamId: String!): ClassTeacherAssignment
@@ -1673,6 +1700,9 @@ type Query {
 
   """Get total unread message count for the current user"""
   getUnreadMessageCount: Int!
+
+  """Get all unread messages for the current user"""
+  getUnreadMessages: [ChatMessage!]!
 
   """Get all room IDs that have unread messages for the current user"""
   getUnreadRooms: [String!]!

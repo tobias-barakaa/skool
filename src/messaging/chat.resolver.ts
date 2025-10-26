@@ -4,7 +4,7 @@ import { PubSub, PubSubEngine } from 'graphql-subscriptions';
 import { ChatService } from './providers/chat.service';
 import { RedisChatProvider } from './providers/redis-chat.provider';
 import { ChatMessage } from './entities/chat-message.entity';
-import { BroadcastMessageInput, SendMessageInput, TypingIndicator } from './dtos/send-message.input';
+import { BroadcastMessageInput, BroadcastToGradeLevelsInput, SendMessageInput, TypingIndicator } from './dtos/send-message.input';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { ChatRoom } from './entities/chat-room.entity';
@@ -456,5 +456,256 @@ async getUserChatRooms(
   })
   userTyping(@Args('roomId') roomId: string) {
     return this.pubSub.asyncIterator(`typing:${roomId}`);
-  }
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * Broadcast to entire school (all students)
+ * 
+ * mutation {
+ *   broadcastToEntireSchool(input: {
+ *     recipientType: "STUDENT"
+ *     subject: "School Closure"
+ *     message: "School will be closed tomorrow"
+ *   }) {
+ *     id
+ *     message
+ *     createdAt
+ *   }
+ * }
+ */
+@Mutation(() => [ChatMessage], {
+  description: 'Broadcast message to all students in the entire school',
+})
+async broadcastToEntireSchool(
+  @Args('input') input: BroadcastMessageInput,
+  @ActiveUser() currentUser: ActiveUserData,
+): Promise<ChatMessage[]> {
+  const messages = await this.chatService.broadcastToEntireSchool(
+    currentUser.sub,
+    currentUser.tenantId,
+    input,
+  );
+
+  messages.forEach((message) => {
+    this.pubSub.publish('messageAdded', { messageAdded: message });
+  });
+
+  return messages;
+}
+
+/**
+ * Broadcast to entire school parents
+ * 
+ * mutation {
+ *   broadcastToAllSchoolParents(input: {
+ *     recipientType: "PARENT"
+ *     subject: "Parent Meeting"
+ *     message: "Annual meeting next Friday"
+ *   }) {
+ *     id
+ *     message
+ *     createdAt
+ *   }
+ * }
+ */
+@Mutation(() => [ChatMessage], {
+  description: 'Broadcast message to all parents in the entire school',
+})
+async broadcastToAllSchoolParents(
+  @Args('input') input: BroadcastMessageInput,
+  @ActiveUser() currentUser: ActiveUserData,
+): Promise<ChatMessage[]> {
+  const messages = await this.chatService.broadcastToAllSchoolParents(
+    currentUser.sub,
+    currentUser.tenantId,
+    input,
+  );
+
+  messages.forEach((message) => {
+    this.pubSub.publish('messageAdded', { messageAdded: message });
+  });
+
+  return messages;
+}
+
+/**
+ * Broadcast to specific grade levels (students)
+ * 
+ * mutation {
+ *   broadcastToGradeLevels(input: {
+ *     recipientType: "STUDENT"
+ *     subject: "Grade 10 Exam Schedule"
+ *     message: "Exams start next Monday"
+ *     gradeLevelIds: ["grade-uuid-1", "grade-uuid-2"]
+ *   }) {
+ *     id
+ *     message
+ *     createdAt
+ *   }
+ * }
+ */
+@Mutation(() => [ChatMessage], {
+  description: 'Broadcast message to students in specific grade levels',
+})
+async broadcastToGradeLevels(
+  @Args('input') input: BroadcastToGradeLevelsInput,
+  @ActiveUser() currentUser: ActiveUserData,
+): Promise<ChatMessage[]> {
+  const messages = await this.chatService.broadcastToGradeLevels(
+    currentUser.sub,
+    currentUser.tenantId,
+    input,
+  );
+
+  messages.forEach((message) => {
+    this.pubSub.publish('messageAdded', { messageAdded: message });
+  });
+
+  return messages;
+}
+
+/**
+ * Broadcast to parents of specific grade levels
+ * 
+ * mutation {
+ *   broadcastToGradeLevelParents(input: {
+ *     recipientType: "PARENT"
+ *     subject: "Grade 10 Parent Meeting"
+ *     message: "Meeting scheduled for Friday"
+ *     gradeLevelIds: ["grade-uuid-1"]
+ *   }) {
+ *     id
+ *     message
+ *     createdAt
+ *   }
+ * }
+ */
+@Mutation(() => [ChatMessage], {
+  description: 'Broadcast message to parents of students in specific grade levels',
+})
+async broadcastToGradeLevelParents(
+  @Args('input') input: BroadcastToGradeLevelsInput,
+  @ActiveUser() currentUser: ActiveUserData,
+): Promise<ChatMessage[]> {
+  const messages = await this.chatService.broadcastToGradeLevelParents(
+    currentUser.sub,
+    currentUser.tenantId,
+    input,
+  );
+
+  messages.forEach((message) => {
+    this.pubSub.publish('messageAdded', { messageAdded: message });
+  });
+
+  return messages;
+}
+
+/**
+ * Get unread messages for current user
+ * 
+ * query {
+ *   getUnreadMessages {
+ *     id
+ *     message
+ *     subject
+ *     senderId
+ *     senderType
+ *     createdAt
+ *     isRead
+ *     chatRoom {
+ *       id
+ *       name
+ *     }
+ *   }
+ * }
+ */
+@Query(() => [ChatMessage], {
+  description: 'Get all unread messages for the current user',
+})
+async getUnreadMessages(
+  @ActiveUser() currentUser: ActiveUserData,
+): Promise<ChatMessage[]> {
+  return await this.chatService.getUnreadMessages(currentUser.sub);
+}
+
+/**
+ * Get read messages for current user
+ * 
+ * query {
+ *   getReadMessages(limit: 50) {
+ *     id
+ *     message
+ *     subject
+ *     createdAt
+ *   }
+ * }
+ */
+@Query(() => [ChatMessage], {
+  description: 'Get all read messages for the current user',
+})
+async getReadMessages(
+  @Args('limit', { type: () => Int, defaultValue: 50 }) limit: number,
+  @ActiveUser() currentUser: ActiveUserData,
+): Promise<ChatMessage[]> {
+  return await this.chatService.getReadMessages(currentUser.sub, limit);
+}
+
+/**
+ * Mark single message as read
+ * 
+ * mutation {
+ *   markMessageAsRead(messageId: "msg-uuid")
+ * }
+ */
+@Mutation(() => Boolean, {
+  description: 'Mark a single message as read',
+})
+async markMessageAsRead(
+  @Args('messageId') messageId: string,
+  @ActiveUser() currentUser: ActiveUserData,
+): Promise<boolean> {
+  return await this.chatService.markMessageAsRead(
+    currentUser.sub,
+    messageId,
+  );
+}
+
+
+
+
+
+
+
+
+
 }

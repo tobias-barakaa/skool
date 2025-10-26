@@ -100,6 +100,30 @@ export class TypingIndicator {
 }
 
 
+@InputType()
+export class BroadcastToGradeLevelsInput {
+  @Field()
+  @IsNotEmpty()
+  recipientType: string; // 'STUDENT' or 'PARENT'
+
+  @Field({ nullable: true })
+  @IsOptional()
+  subject?: string;
+
+  @Field()
+  @IsNotEmpty()
+  message: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  imageUrl?: string;
+
+  @Field(() => [String])
+  @IsNotEmpty()
+  gradeLevelIds: string[]; // Array of TenantGradeLevel IDs
+}
+
+
 // import {IsString, IsIn, MaxLength } from 'class-validator';
 
 // @InputType()

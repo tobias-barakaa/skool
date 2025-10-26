@@ -153,5 +153,24 @@ export class TeacherNotesService {
       },
     });
   }
+
+
+   async getSchoolNotesGrade(user: ActiveUserData): Promise<TeacherNote[]> {
+    return await this.teacherNoteRepository.find({
+      where: {
+        tenant_id: user.tenantId,
+        visibility: NoteVisibility.GRADE,
+      },
+      order: {
+        created_at: 'DESC',
+      },
+    });
+  }
 }
+
+
+
+
+
+    
 

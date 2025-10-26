@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException, Logger, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In, DataSource } from 'typeorm';
+import { Repository, In, DataSource, Not } from 'typeorm';
 import { ChatRoom } from '../entities/chat-room.entity';
 import { ChatMessage } from '../entities/chat-message.entity';
 import { RedisChatProvider } from './redis-chat.provider';
@@ -8,7 +8,7 @@ import { Student } from 'src/admin/student/entities/student.entity';
 import { Teacher } from 'src/admin/teacher/entities/teacher.entity';
 import { ParentStudent } from 'src/admin/parent/entities/parent-student.entity';
 import { Parent } from 'src/admin/parent/entities/parent.entity';
-import { BroadcastMessageInput, SendMessageInput } from '../dtos/send-message.input';
+import { BroadcastMessageInput, BroadcastToGradeLevelsInput, SendMessageInput } from '../dtos/send-message.input';
 
 @Injectable()
 export class ChatService {
@@ -500,4 +500,390 @@ async getUserChatRooms(userId: string): Promise<ChatRoom[]> {
 
     return savedMessage;
   }
+
+
+
+
+  async broadcastToEntireSchool(
+    teacherUserId: string,
+    tenantId: string,
+    input: BroadcastMessageInput,
+  ): Promise<ChatMessage[]> {
+    const teacher = await this.teacherRepository.findOne({
+      where: { user: { id: teacherUserId }, tenantId },
+    });
+  
+    if (!teacher) {
+      throw new NotFoundException('Teacher not found');
+    }
+  
+    // Get ALL students in the tenant regardless of grade
+    const students = await this.studentRepository.find({
+      where: { tenant_id: tenantId, isActive: true },
+      relations: ['user'],
+    });
+  
+    if (students.length === 0) {
+      throw new BadRequestException('No active students found in school');
+    }
+  
+    const messages: ChatMessage[] = [];
+  
+    for (const student of students) {
+      try {
+        const chatRoom = await this.getOrCreateChatRoom(
+          `teacher-student-${teacher.id}-${student.id}`,
+          'DIRECT',
+          [teacherUserId, student.user_id],
+          tenantId,
+        );
+  
+        const message = this.chatMessageRepository.create({
+          senderId: teacherUserId,
+          senderType: 'TEACHER',
+          subject: input.subject,
+          message: input.message,
+          imageUrl: input.imageUrl,
+          chatRoomId: chatRoom.id,
+          isRead: false,
+        });
+  
+        const savedMessage = await this.chatMessageRepository.save(message);
+        await this.redisChatProvider.cacheMessage(savedMessage);
+        await this.redisChatProvider.incrementUnreadCount(student.user_id, chatRoom.id);
+        
+        messages.push(savedMessage);
+      } catch (error) {
+        this.logger.error(`Failed to send message to student ${student.id}:`, error);
+      }
+    }
+  
+    this.logger.log(`Broadcast sent to ${messages.length} students in entire school`);
+    return messages;
+  }
+  
+  /**
+   * Broadcast to all school parents
+   */
+  async broadcastToAllSchoolParents(
+    teacherUserId: string,
+    tenantId: string,
+    input: BroadcastMessageInput,
+  ): Promise<ChatMessage[]> {
+    const teacher = await this.teacherRepository.findOne({
+      where: { user: { id: teacherUserId }, tenantId },
+    });
+  
+    if (!teacher) {
+      throw new NotFoundException('Teacher not found');
+    }
+  
+    // Get ALL parents in the tenant
+    const parents = await this.parentRepository.find({
+      where: { tenantId, isActive: true },
+      relations: ['user'],
+    });
+  
+    if (parents.length === 0) {
+      throw new BadRequestException('No active parents found in school');
+    }
+  
+    const messages: ChatMessage[] = [];
+  
+    for (const parent of parents) {
+      if (!parent.user) continue;
+  
+      try {
+        const chatRoom = await this.getOrCreateChatRoom(
+          `teacher-parent-${teacher.id}-${parent.id}`,
+          'DIRECT',
+          [teacherUserId, parent.user.id],
+          tenantId,
+        );
+  
+        const message = this.chatMessageRepository.create({
+          senderId: teacherUserId,
+          senderType: 'TEACHER',
+          subject: input.subject,
+          message: input.message,
+          imageUrl: input.imageUrl,
+          chatRoomId: chatRoom.id,
+          isRead: false,
+        });
+  
+        const savedMessage = await this.chatMessageRepository.save(message);
+        await this.redisChatProvider.cacheMessage(savedMessage);
+        await this.redisChatProvider.incrementUnreadCount(parent.user.id, chatRoom.id);
+        
+        messages.push(savedMessage);
+      } catch (error) {
+        this.logger.error(`Failed to send message to parent ${parent.id}:`, error);
+      }
+    }
+  
+    this.logger.log(`Broadcast sent to ${messages.length} parents in entire school`);
+    return messages;
+  }
+  
+  /**
+   * Broadcast to specific grade levels (students)
+   */
+  async broadcastToGradeLevels(
+    teacherUserId: string,
+    tenantId: string,
+    input: BroadcastToGradeLevelsInput,
+  ): Promise<ChatMessage[]> {
+    const teacher = await this.teacherRepository.findOne({
+      where: { user: { id: teacherUserId }, tenantId },
+    });
+  
+    if (!teacher) {
+      throw new NotFoundException('Teacher not found');
+    }
+  
+    // Get students in specified grade levels
+    const students = await this.studentRepository
+      .createQueryBuilder('student')
+      .leftJoinAndSelect('student.user', 'user')
+      .leftJoinAndSelect('student.grade', 'grade')
+      .where('student.tenant_id = :tenantId', { tenantId })
+      .andWhere('student.isActive = :isActive', { isActive: true })
+      .andWhere('grade.id IN (:...gradeLevelIds)', { 
+        gradeLevelIds: input.gradeLevelIds 
+      })
+      .getMany();
+  
+    if (students.length === 0) {
+      throw new BadRequestException('No active students found in specified grade levels');
+    }
+  
+    const messages: ChatMessage[] = [];
+  
+    for (const student of students) {
+      try {
+        const chatRoom = await this.getOrCreateChatRoom(
+          `teacher-student-${teacher.id}-${student.id}`,
+          'DIRECT',
+          [teacherUserId, student.user_id],
+          tenantId,
+        );
+  
+        const message = this.chatMessageRepository.create({
+          senderId: teacherUserId,
+          senderType: 'TEACHER',
+          subject: input.subject,
+          message: input.message,
+          imageUrl: input.imageUrl,
+          chatRoomId: chatRoom.id,
+          isRead: false,
+        });
+  
+        const savedMessage = await this.chatMessageRepository.save(message);
+        await this.redisChatProvider.cacheMessage(savedMessage);
+        await this.redisChatProvider.incrementUnreadCount(student.user_id, chatRoom.id);
+        
+        messages.push(savedMessage);
+      } catch (error) {
+        this.logger.error(`Failed to send message to student ${student.id}:`, error);
+      }
+    }
+  
+    this.logger.log(`Broadcast sent to ${messages.length} students in grade levels`);
+    return messages;
+  }
+  
+  /**
+   * Broadcast to parents of specific grade levels
+   */
+  async broadcastToGradeLevelParents(
+    teacherUserId: string,
+    tenantId: string,
+    input: BroadcastToGradeLevelsInput,
+  ): Promise<ChatMessage[]> {
+    const teacher = await this.teacherRepository.findOne({
+      where: { user: { id: teacherUserId }, tenantId },
+    });
+  
+    if (!teacher) {
+      throw new NotFoundException('Teacher not found');
+    }
+  
+    // Get students in specified grade levels, then their parents
+    const students = await this.studentRepository
+      .createQueryBuilder('student')
+      .leftJoinAndSelect('student.grade', 'grade')
+      .where('student.tenant_id = :tenantId', { tenantId })
+      .andWhere('student.isActive = :isActive', { isActive: true })
+      .andWhere('grade.id IN (:...gradeLevelIds)', { 
+        gradeLevelIds: input.gradeLevelIds 
+      })
+      .getMany();
+  
+    if (students.length === 0) {
+      throw new BadRequestException('No students found in specified grade levels');
+    }
+  
+    // Get parent-student relationships for these students
+    const studentIds = students.map(s => s.id);
+    const parentStudentRelations = await this.parentStudentRepository.find({
+      where: { 
+        studentId: In(studentIds),
+        tenantId 
+      },
+      relations: ['parent', 'parent.user'],
+    });
+  
+    // Get unique parents
+    const uniqueParents = new Map<string, Parent>();
+    parentStudentRelations.forEach(rel => {
+      if (rel.parent && rel.parent.user && rel.parent.isActive) {
+        uniqueParents.set(rel.parent.id, rel.parent);
+      }
+    });
+  
+    if (uniqueParents.size === 0) {
+      throw new BadRequestException('No active parents found for specified grade levels');
+    }
+  
+    const messages: ChatMessage[] = [];
+  
+    for (const parent of uniqueParents.values()) {
+      try {
+        const parentUserId = parent.user?.id;
+        if (!parentUserId) {
+          this.logger.warn(`Parent ${parent.id} has no linked user, skipping`);
+          continue;
+        }
+
+        const chatRoom = await this.getOrCreateChatRoom(
+          `teacher-parent-${teacher.id}-${parent.id}`,
+          'DIRECT',
+          [teacherUserId, parentUserId],
+          tenantId,
+        );
+  
+        const message = this.chatMessageRepository.create({
+          senderId: teacherUserId,
+          senderType: 'TEACHER',
+          subject: input.subject,
+          message: input.message,
+          imageUrl: input.imageUrl,
+          chatRoomId: chatRoom.id,
+          isRead: false,
+        });
+  
+        const savedMessage = await this.chatMessageRepository.save(message);
+        await this.redisChatProvider.cacheMessage(savedMessage);
+        await this.redisChatProvider.incrementUnreadCount(parentUserId, chatRoom.id);
+        
+        messages.push(savedMessage);
+      } catch (error) {
+        this.logger.error(`Failed to send message to parent ${parent.id}:`, error);
+      }
+    }
+  
+    this.logger.log(`Broadcast sent to ${messages.length} parents in grade levels`);
+    return messages;
+  }
+  
+  /**
+   * Get all unread messages for a user
+   */
+  async getUnreadMessages(userId: string): Promise<ChatMessage[]> {
+    // Get all chat rooms where user is a participant
+    const rooms = await this.chatRoomRepository
+      .createQueryBuilder('room')
+      .where('room.participantIds LIKE :userIdPattern', {
+        userIdPattern: `%${userId}%`,
+      })
+      .getMany();
+  
+    const roomIds = rooms.map(r => r.id);
+  
+    if (roomIds.length === 0) {
+      return [];
+    }
+  
+    // Get unread messages from these rooms
+    const unreadMessages = await this.chatMessageRepository.find({
+      where: {
+        chatRoomId: In(roomIds),
+        isRead: false,
+        deleted: false,
+        senderId: Not(userId), // Don't include own messages
+      },
+      relations: ['chatRoom'],
+      order: { createdAt: 'DESC' },
+    });
+  
+    return unreadMessages;
+  }
+  
+  /**
+   * Get all read messages for a user
+   */
+  async getReadMessages(userId: string, limit: number = 50): Promise<ChatMessage[]> {
+    const rooms = await this.chatRoomRepository
+      .createQueryBuilder('room')
+      .where('room.participantIds LIKE :userIdPattern', {
+        userIdPattern: `%${userId}%`,
+      })
+      .getMany();
+  
+    const roomIds = rooms.map(r => r.id);
+  
+    if (roomIds.length === 0) {
+      return [];
+    }
+  
+    const readMessages = await this.chatMessageRepository.find({
+      where: {
+        chatRoomId: In(roomIds),
+        isRead: true,
+        deleted: false,
+        senderId: Not(userId),
+      },
+      relations: ['chatRoom'],
+      order: { createdAt: 'DESC' },
+      take: limit,
+    });
+  
+    return readMessages;
+  }
+  
+  /**
+   * Mark a single message as read
+   */
+  async markMessageAsRead(userId: string, messageId: string): Promise<boolean> {
+    const message = await this.chatMessageRepository.findOne({
+      where: { id: messageId },
+      relations: ['chatRoom'],
+    });
+  
+    if (!message) {
+      throw new NotFoundException('Message not found');
+    }
+  
+    // Verify user is a participant in the chat room
+    if (!message.chatRoom.participantIds.includes(userId)) {
+      throw new ForbiddenException('You do not have access to this message');
+    }
+  
+    // Don't mark own messages as read
+    if (message.senderId === userId) {
+      return true;
+    }
+  
+    await this.chatMessageRepository.update(
+      { id: messageId },
+      { isRead: true }
+    );
+  
+    // Decrement unread count in Redis
+    await this.redisChatProvider.decrementUnreadCount(userId, message.chatRoomId);
+  
+    return true;
+  }
+  
 }
+

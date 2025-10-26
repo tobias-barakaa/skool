@@ -164,4 +164,13 @@ export class TeacherNotesResolver {
   ): Promise<TeacherNote[]> {
     return this.teacherNotesService.getSchoolNotes(user);
   }
+
+
+  @Query(() => [TeacherNote])
+  async getSchoolTeacherNotesGrade(
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<TeacherNote[]> {
+    return this.teacherNotesService.getSchoolNotesGrade(user);
+  }
 }
+

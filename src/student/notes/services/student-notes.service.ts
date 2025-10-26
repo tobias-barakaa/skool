@@ -54,9 +54,12 @@ export class StudentNotesService {
     filters?: FilterTeacherNotesDto,
   ): Promise<TeacherNote[]> {
     const student = await this.getStudentByUserId(user.sub, user.tenantId);
-
+  
     const query = this.teacherNoteRepository
       .createQueryBuilder('note')
+      .leftJoinAndSelect('note.teacher', 'teacher')
+      .leftJoinAndSelect('note.subject', 'subject')
+      .leftJoinAndSelect('note.gradeLevel', 'gradeLevel')
       .where('note.tenant_id = :tenantId', { tenantId: user.tenantId })
       .andWhere(
         '(note.visibility = :schoolVisibility OR ' +
@@ -68,28 +71,26 @@ export class StudentNotesService {
         },
       )
       .orderBy('note.created_at', 'DESC');
-
+  
     if (filters?.subject_id) {
-      query.andWhere('note.subject_id = :subjectId', { 
-        subjectId: filters.subject_id 
-      });
+      query.andWhere('note.subject_id = :subjectId', { subjectId: filters.subject_id });
     }
-
+  
     if (filters?.grade_level_id) {
-      query.andWhere('note.grade_level_id = :gradeLevelId', { 
-        gradeLevelId: filters.grade_level_id 
+      query.andWhere('note.grade_level_id = :gradeLevelId', {
+        gradeLevelId: filters.grade_level_id,
       });
     }
-
+  
     if (filters?.is_ai_generated !== undefined) {
-      query.andWhere('note.is_ai_generated = :isAiGenerated', { 
-        isAiGenerated: filters.is_ai_generated 
+      query.andWhere('note.is_ai_generated = :isAiGenerated', {
+        isAiGenerated: filters.is_ai_generated,
       });
     }
-
+  
     return await query.getMany();
   }
-
+  
   /**
    * Get notes by subject for a student
    * @param user - Active user data (student)
@@ -102,23 +103,26 @@ export class StudentNotesService {
   ): Promise<TeacherNote[]> {
     const student = await this.getStudentByUserId(user.sub, user.tenantId);
 
-    return await this.teacherNoteRepository
-      .createQueryBuilder('note')
-      .where('note.tenant_id = :tenantId', { tenantId: user.tenantId })
-      .andWhere('note.subject_id = :subjectId', { subjectId })
-      .andWhere(
-        '(note.visibility = :schoolVisibility OR ' +
-        '(note.visibility = :gradeVisibility AND note.grade_level_id = :gradeLevelId))',
-        {
-          schoolVisibility: NoteVisibility.SCHOOL,
-          gradeVisibility: NoteVisibility.GRADE,
-          gradeLevelId: student.grade.id,
-        },
-      )
-      .orderBy('note.created_at', 'DESC')
-      .getMany();
-  }
+  return await this.teacherNoteRepository
+  .createQueryBuilder('note')
+  .leftJoinAndSelect('note.teacher', 'teacher')
+  .leftJoinAndSelect('note.subject', 'subject')
+  .leftJoinAndSelect('note.gradeLevel', 'gradeLevel')
+  .where('note.tenant_id = :tenantId', { tenantId: user.tenantId })
+  .andWhere('note.subject_id = :subjectId', { subjectId })
+  .andWhere(
+    '(note.visibility = :schoolVisibility OR ' +
+    '(note.visibility = :gradeVisibility AND note.grade_level_id = :gradeLevelId))',
+    {
+      schoolVisibility: NoteVisibility.SCHOOL,
+      gradeVisibility: NoteVisibility.GRADE,
+      gradeLevelId: student.grade.id,
+    },
+  )
+  .orderBy('note.created_at', 'DESC')
+  .getMany();
 
+}
   /**
    * Get notes for student's grade level
    * @param user - Active user data (student)
@@ -167,6 +171,10 @@ export class StudentNotesService {
 
     const note = await this.teacherNoteRepository
       .createQueryBuilder('note')
+  .leftJoinAndSelect('note.teacher', 'teacher')
+  .leftJoinAndSelect('note.subject', 'subject')
+  .leftJoinAndSelect('note.gradeLevel', 'gradeLevel')
+
       .where('note.id = :id', { id })
       .andWhere('note.tenant_id = :tenantId', { tenantId: user.tenantId })
       .andWhere(
@@ -187,3 +195,6 @@ export class StudentNotesService {
     return note;
   }
 }
+
+
+

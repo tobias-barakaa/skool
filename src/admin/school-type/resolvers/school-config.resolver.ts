@@ -45,7 +45,7 @@ export class SchoolConfigResolver {
     return await this.schoolConfigService.getSchoolConfiguration(user);
   }
 
-  @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.SUPER_ADMIN)
+  @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.SUPER_ADMIN, MembershipRole.TEACHER)
   @Query(() => [TenantGradeLevel], { name: 'gradeLevelsForSchoolType' })
   async gradeLevelsForSchoolType(
     @ActiveUser() user: ActiveUserData,
@@ -55,6 +55,4 @@ export class SchoolConfigResolver {
     );
   }
 }
-
-
 
