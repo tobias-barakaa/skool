@@ -38,13 +38,13 @@ export class CreateParentInvitationDto {
   @IsString()
   phone?: string;
 
-  @Field(() => ParentLinkingMethod)
-  @IsEnum(ParentLinkingMethod)
-  linkingMethod: ParentLinkingMethod;
+  // @Field(() => ParentLinkingMethod)
+  // @IsEnum(ParentLinkingMethod)
+  // linkingMethod: ParentLinkingMethod;
 
-  @Field(() => [String])
-  @IsArray()
-  @ArrayNotEmpty()
-  @IsUUID(4, { each: true })
-  studentIds: string[];
+  // @Field(() => [String])
+  // @IsArray()
+  // @ArrayNotEmpty()
+  // @IsUUID(4, { each: true })
+  // studentIds: string[];
 }

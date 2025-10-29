@@ -434,10 +434,8 @@ input CreateOptionInput {
 
 input CreateParentInvitationDto {
   email: String!
-  linkingMethod: ParentLinkingMethod!
   name: String!
   phone: String
-  studentIds: [String!]!
 }
 
 input CreatePaymentInput {
@@ -1438,13 +1436,6 @@ type ParentInfo {
   parentId: ID!
   phone: String!
   relationship: String!
-}
-
-"""How the parent is linked to a student"""
-enum ParentLinkingMethod {
-  MANUAL_INPUT
-  SEARCH_BY_ADMISSION
-  SEARCH_BY_NAME
 }
 
 type ParentStudent {
