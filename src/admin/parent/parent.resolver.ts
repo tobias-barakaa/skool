@@ -20,6 +20,7 @@ import { MembershipRole } from '../user-tenant-membership/entities/user-tenant-m
 import { Roles } from 'src/iam/decorators/roles.decorator';
 import { SkipTenantValidation } from '../auth/decorator/skip-tenant-validation.decorator';
 import { ParentDto } from './dtos/parent.dto';
+import { AcceptInvitationResponse } from '../teacher/dtos/accept-teacher-invitation-response.dto';
 
 @Resolver()
 @Roles(
@@ -58,10 +59,15 @@ async getAllParents(
   return this.parentService.getAllParents(currentUser.tenantId);
 }
 
-  @Mutation(() => AcceptParentInvitationResponse)
-  @Auth(AuthType.None)
-  @SkipTenantValidation()
-  @SetMetadata('isPublic', true)
+  // @Mutation(() => AcceptParentInvitationResponse)
+  // @Auth(AuthType.None)
+  // @SkipTenantValidation()
+  // @SetMetadata('isPublic', true)
+    @SkipTenantValidation()
+    @SetMetadata('isPublic', true)
+    // @Mutation(() => AcceptParentInvitationResponse)
+    @Mutation(() => AcceptParentInvitationResponse, { name: 'acceptTeacherInvitation' })
+    @Auth(AuthType.None)
   async acceptParentInvitation(
     @Args('acceptInvitationInput') input: AcceptInvitationInput,
     @Context() context: GraphQLExecutionContext,
