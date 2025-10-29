@@ -1133,7 +1133,7 @@ enum MembershipStatus {
 }
 
 type Mutation {
-  AcceptParentInvitationResponse(acceptInvitationInput: AcceptInvitationInput!): AcceptParentInvitationResponse!
+  acceptParentInvitation(acceptInvitationInput: AcceptInvitationInput!): AcceptParentInvitationResponse!
   acceptStaffInvitation(acceptInvitationInput: AcceptStaffInvitationInput!): AcceptStaffInvitationResponse!
   acceptTeacherInvitation(acceptInvitationInput: AcceptInvitationInput!): AcceptInvitationResponse!
   activateTenantSubject(tenantSubjectId: String!): Boolean!

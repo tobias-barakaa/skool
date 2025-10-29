@@ -23,12 +23,13 @@ import { ParentDto } from './dtos/parent.dto';
 import { AcceptInvitationResponse } from '../teacher/dtos/accept-teacher-invitation-response.dto';
 
 @Resolver()
-@Roles(
-  MembershipRole.SCHOOL_ADMIN,
-)
 export class ParentResolver {
   constructor(private parentService: ParentService) {}
 
+
+  @Roles(
+    MembershipRole.SCHOOL_ADMIN,
+  )
   @Query(() => [StudentSearchResponse])
   async searchStudentsByName(
     @Args('name') name: string,
@@ -40,6 +41,10 @@ export class ParentResolver {
     return await this.parentService.searchStudentsByName(name, tenantId);
   }
 
+
+  @Roles(
+    MembershipRole.SCHOOL_ADMIN,
+  )
   @Query(() => StudentSearchResponse, { nullable: true })
   async searchStudentByAdmission(
     @Args('admissionNumber') admissionNumber: string,
@@ -52,6 +57,10 @@ export class ParentResolver {
     );
   }
 
+
+  @Roles(
+    MembershipRole.SCHOOL_ADMIN,
+  )
   @Query(() => [ParentDto])
 async getAllParents(
   @ActiveUser() currentUser: ActiveUserData,
@@ -95,6 +104,10 @@ async getAllParents(
     };
   }
 
+
+  @Roles(
+    MembershipRole.SCHOOL_ADMIN,
+  )
   @Query(() => [StudentSearchResponse])
   async searchStudentsByManualInput(
     @Args('tenantId') tenantId: string,
@@ -109,6 +122,7 @@ async getAllParents(
       tenantId,
     );
   }
+
 
 
 
@@ -129,6 +143,10 @@ async getAllParents(
     );
   }
 
+
+  @Roles(
+    MembershipRole.SCHOOL_ADMIN,
+  )
   @Mutation(() => String)
   async addStudentsToParent(
     @Args('parentId') parentId: string,
@@ -146,6 +164,10 @@ async getAllParents(
   }
 
   // New query to get all students for a parent
+
+  @Roles(
+    MembershipRole.SCHOOL_ADMIN,
+  )
   @Query(() => [StudentSearchResponse])
   async getStudentsForParent(
     @Args('parentId') parentId: string,
@@ -154,6 +176,11 @@ async getAllParents(
     return await this.parentService.getStudentsForParent(parentId, tenantId);
   }
 
+
+
+  @Roles(
+    MembershipRole.SCHOOL_ADMIN,
+  )
   @Query(() => [Parent])
   async getParentsByTenant(@Args('tenantId') tenantId: string) {
     return this.parentService.getParentsByTenant(tenantId);
