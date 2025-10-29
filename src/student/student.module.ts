@@ -10,10 +10,13 @@ import { StudentChatResolver } from "./chat/chat.resolver";
 import { StudentModule } from "src/admin/student/student.module";
 import { TeacherModule } from "src/admin/teacher/teacher.module";
 import { StudentNotesModule } from "./notes/student-notes.module";
+import { StudentAttendanceModule } from "./attendance/student.attendance.module";
+import { StudentMarksheetModule } from "./marksheet/student-marksheet.module";
 
 @Module({
   providers: [StudentChatService, StudentChatResolver],
   exports: [],
-  imports: [AssignmentModule, StudentSummaryModule, MessagingModule, StudentModule, TeacherModule, StudentNotesModule],
+  imports: [AssignmentModule, 
+    StudentSummaryModule, MessagingModule, StudentModule, TeacherModule, StudentNotesModule, StudentAttendanceModule, StudentMarksheetModule],
 })
 export class StudentPortalModule {}

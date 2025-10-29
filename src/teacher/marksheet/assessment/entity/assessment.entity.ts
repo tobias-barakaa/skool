@@ -99,3 +99,4 @@ export class Assessment {
   @UpdateDateColumn()
   updatedAt: Date;
 }
+

@@ -505,9 +505,7 @@ export class StudentChatResolver {
   @Subscription(() => ChatMessage, {
     description: 'Subscribe to new messages in real-time (receives messages FROM teachers instantly)',
   })
-  studentMessageAdded() {
-    return this.pubSub.asyncIterator('messageAdded');
-  }
+  
 
   /**
    * SUBSCRIBE TO TYPING INDICATORS (REAL-TIME)
@@ -529,4 +527,160 @@ export class StudentChatResolver {
   studentUserTyping(@Args('roomId') roomId: string) {
     return this.pubSub.asyncIterator(`typing:${roomId}`);
   }
+
+
+
+
+  
+  @Query(() => [ChatMessage], {
+    description: 'Get all unread messages for the current student',
+  })
+  async getStudentUnreadMessages(
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise<ChatMessage[]> {
+    return await this.studentChatService.getUnreadMessages(currentUser.sub);
+  }
+ 
+  /**
+   * Get read messages for student
+   * 
+   * query {
+   *   getStudentReadMessages(limit: 50) {
+   *     id
+   *     message
+   *     subject
+   *     createdAt
+   *     isRead
+   *   }
+   * }
+   */
+  @Query(() => [ChatMessage], {
+    description: 'Get all read messages for the current student',
+  })
+  async getStudentReadMessages(
+    @Args('limit', { type: () => Int, defaultValue: 50 }) limit: number,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise<ChatMessage[]> {
+    return await this.studentChatService.getReadMessages(currentUser.sub, limit);
+  }
+
+ 
+
+  /**
+   * Get unread count for student
+   * 
+   * query {
+   *   getStudentUnreadCount
+   * }
+   */
+  @Query(() => Int, {
+    description: 'Get total unread message count for the current student',
+  })
+  async getStudentUnreadCount(
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise<number> {
+    return await this.studentChatService.getUnreadCount(currentUser.sub);
+  }
+
+  /**
+   * Get unread count for a specific room
+   * 
+   * query {
+   *   getStudentUnreadCountForRoom(chatRoomId: "room-uuid")
+   * }
+   */
+ 
+
+
+  /**
+   * Mark messages as read for student
+   * 
+   * mutation {
+   *   markStudentMessagesAsRead(chatRoomId: "room-uuid")
+   * }
+   */
+  @Mutation(() => Boolean, {
+    description: 'Mark all messages in a chat room as read (student)',
+  })
+  async markStudentMessagesAsRead(
+    @Args('chatRoomId') chatRoomId: string,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise<boolean> {
+    return await this.studentChatService.markMessagesAsRead(
+      currentUser.sub,
+      chatRoomId,
+    );
+  }
+  
+  /**
+   * Mark single message as read (student)
+   * 
+   * mutation {
+   *   markStudentMessageAsRead(messageId: "msg-uuid")
+   * }
+   */
+  @Mutation(() => Boolean, {
+    description: 'Mark a single message as read (student)',
+  })
+  async markStudentMessageAsRead(
+    @Args('messageId') messageId: string,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise<boolean> {
+    return await this.studentChatService.markMessageAsRead(
+      currentUser.sub,
+      messageId,
+    );
+  }
+
+  /**
+   * Delete student message
+   * 
+   * mutation {
+   *   deleteStudentMessage(messageId: "msg-uuid")
+   * }
+   */
+  // @Mutation(() => Boolean, {
+  //   description: 'Delete a message sent by the current student',
+  // })
+  // async deleteStudentMessage(
+  //   @Args('messageId') messageId: string,
+  //   @ActiveUser() currentUser: ActiveUserData,
+  // ): Promise<boolean> {
+  //   return await this.studentChatService.deleteMessage(
+  //     currentUser.sub,
+  //     messageId,
+  //   );
+  // }
+
+  // ==================== SUBSCRIPTIONS ====================
+
+  /**
+   * Subscribe to new messages (student)
+   * 
+   * subscription {
+   *   studentMessageAdded {
+   *     id
+   *     message
+   *     subject
+   *     senderId
+   *     senderType
+   *     createdAt
+   *     chatRoom {
+   *       id
+   *       name
+   *     }
+   *   }
+   * }
+   */
+  @Subscription(() => ChatMessage, {
+    description: 'Subscribe to new messages in real-time (student)',
+  })
+  studentMessageAdded() {
+    return this.pubSub.asyncIterator('messageAdded');
+  }
+
+
+
+
+
 }

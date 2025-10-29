@@ -7,8 +7,11 @@ import { TeacherStudentDto } from '../dtos/teacher-student.dto';
 import { GraphQLExceptionsFilter } from 'src/admin/common/filter/graphQLException.filter';
 import { UseFilters } from '@nestjs/common';
 import { TeacherStudentResponse } from '../dtos/Teacher-student-response.dto';
+import { Roles } from 'src/iam/decorators/roles.decorator';
+import { MembershipRole } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
 
 @Resolver(() => Student)
+@Roles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
 export class TeacherStudentsResolver {
   constructor(
     private readonly teacherStudentsService: TeacherStudentsService,

@@ -6,9 +6,12 @@ import { ParentStudent } from 'src/admin/parent/entities/parent-student.entity';
 import { StudentWithParentsType } from 'src/teacher/students/dtos/student-with-parents.dto';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
+import { Roles } from 'src/iam/decorators/roles.decorator';
+import { MembershipRole } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
 
 @Resolver(() => Parent)
 // @UseGuards(TeacherAuthGuard, TenantGuard)
+@Roles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
 export class TeacherParentsResolver {
   constructor(private readonly teacherParentsService: TeacherParentsService) {}
 

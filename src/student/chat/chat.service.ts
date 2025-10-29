@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException, Logger, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
+import { Repository, In, Not } from 'typeorm';
 import { Student } from 'src/admin/student/entities/student.entity';
 import { Teacher } from 'src/admin/teacher/entities/teacher.entity';
 import { ChatRoom } from 'src/messaging/entities/chat-room.entity';
@@ -460,4 +460,133 @@ export class StudentChatService {
 
     return room;
   }
+
+
+
+
+
+
+  /**
+   * Get unread messages for student
+   */
+  async getUnreadMessages(userId: string): Promise<ChatMessage[]> {
+    const rooms = await this.chatRoomRepository
+      .createQueryBuilder('room')
+      .where('room.participantIds LIKE :userIdPattern', {
+        userIdPattern: `%${userId}%`,
+      })
+      .getMany();
+
+    const roomIds = rooms.map(r => r.id);
+
+    if (roomIds.length === 0) {
+      return [];
+    }
+
+    const unreadMessages = await this.chatMessageRepository.find({
+      where: {
+        chatRoomId: In(roomIds),
+        isRead: false,
+        deleted: false,
+        senderId: Not(userId), // Don't include own messages
+      },
+      relations: ['chatRoom'],
+      order: { createdAt: 'DESC' },
+    });
+
+    return unreadMessages;
+  }
+
+  /**
+   * Get read messages for student
+   */
+  async getReadMessages(userId: string, limit: number = 50): Promise<ChatMessage[]> {
+    const rooms = await this.chatRoomRepository
+      .createQueryBuilder('room')
+      .where('room.participantIds LIKE :userIdPattern', {
+        userIdPattern: `%${userId}%`,
+      })
+      .getMany();
+
+    const roomIds = rooms.map(r => r.id);
+
+    if (roomIds.length === 0) {
+      return [];
+    }
+
+    const readMessages = await this.chatMessageRepository.find({
+      where: {
+        chatRoomId: In(roomIds),
+        isRead: true,
+        deleted: false,
+        senderId: Not(userId),
+      },
+      relations: ['chatRoom'],
+      order: { createdAt: 'DESC' },
+      take: limit,
+    });
+
+    return readMessages;
+  }
+
+  /**
+   * Get unread count for student
+   */
+  
+
+  /**
+   * Get unread count for specific room
+   */
+  async getUnreadCountForRoom(userId: string, chatRoomId: string): Promise<number> {
+    return await this.redisChatProvider.getUnreadCount(userId, chatRoomId);
+  }
+
+  /**
+   * Send message from student to teacher
+   */
+  
+
+  /**
+   * Mark single message as read
+   */
+  async markMessageAsRead(userId: string, messageId: string): Promise<boolean> {
+    const message = await this.chatMessageRepository.findOne({
+      where: { id: messageId },
+      relations: ['chatRoom'],
+    });
+
+    if (!message) {
+      throw new NotFoundException('Message not found');
+    }
+
+    if (!message.chatRoom.participantIds.includes(userId)) {
+      throw new ForbiddenException('You do not have access to this message');
+    }
+
+    // Don't mark own messages as read
+    if (message.senderId === userId) {
+      return true;
+    }
+
+    await this.chatMessageRepository.update(
+      { id: messageId },
+      { isRead: true }
+    );
+
+    // Decrement unread count in Redis
+    await this.redisChatProvider.decrementUnreadCount(userId, message.chatRoomId);
+
+    return true;
+  }
+
+  /**
+   * Delete student's own message
+   */
+ 
+
+  /**
+   * Get or create chat room
+   */
+
+
 }

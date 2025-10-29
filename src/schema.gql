@@ -192,11 +192,27 @@ input AttendanceInput {
   studentId: String!
 }
 
+type AttendanceRecordSummary {
+  date: String!
+  remark: String
+  status: String!
+}
+
 enum AttendanceStatus {
   ABSENT
   LATE
   PRESENT
   SUSPENDED
+}
+
+type AttendanceSummaryResponse {
+  absentDays: Float!
+  lateDays: Float!
+  percentage: Float!
+  presentDays: Float!
+  records: [AttendanceRecordSummary!]!
+  suspendedDays: Float!
+  totalDays: Float!
 }
 
 type AuthResponse {
@@ -868,6 +884,13 @@ input GetFeeAssignmentsByGradeLevelsInput {
   tenantGradeLevelIds: [ID!]!
 }
 
+input GetStudentMarksFilterDto {
+  academicYear: String
+  assessmentType: String
+  tenantSubjectId: String
+  term: Int
+}
+
 type Grade {
   academicYear: String!
   assessmentName: String!
@@ -1263,6 +1286,12 @@ type Mutation {
   """Mark all messages in a chat room as read"""
   markMessagesAsRead(chatRoomId: String!): Boolean!
 
+  """Mark a single message as read (student)"""
+  markStudentMessageAsRead(messageId: String!): Boolean!
+
+  """Mark all messages in a chat room as read (student)"""
+  markStudentMessagesAsRead(chatRoomId: String!): Boolean!
+
   """
   Refresh search cache for current user tenant (placeholder for future caching)
   """
@@ -1613,6 +1642,7 @@ type Query {
   getFeeAssignmentsByGradeLevels(input: GetFeeAssignmentsByGradeLevelsInput!): [FeeAssignmentWithStudents!]!
   getGradeLevelClassTeacher(gradeLevelId: String!): ClassTeacherAssignment
   getMessageById(id: String!): ChatMessage
+  getMyAttendanceSummary: AttendanceSummaryResponse!
   getMyTeacherNotes(filters: FilterTeacherNotesDto): [TeacherNote!]!
 
   """Get a single test by ID for the logged-in student"""
@@ -1660,16 +1690,25 @@ type Query {
   getStudentGradeNotes: [TeacherNote!]!
   getStudentNoteById(id: String!): TeacherNote!
   getStudentNotesBySubject(subjectId: String!): [TeacherNote!]!
+
+  """Get all read messages for the current student"""
+  getStudentReadMessages(limit: Int! = 50): [ChatMessage!]!
   getStudentSchoolNotes: [TeacherNote!]!
 
   """Get all teachers that the student has chat conversations with"""
   getStudentTeachers: [Teacher!]!
+
+  """Get total unread message count for the current student"""
+  getStudentUnreadCount: Int!
 
   """Get unread message count for a specific room"""
   getStudentUnreadCountForRoom(chatRoomId: String!): Int!
 
   """Get total unread message count for the current student"""
   getStudentUnreadMessageCount: Int!
+
+  """Get all unread messages for the current student"""
+  getStudentUnreadMessages: [ChatMessage!]!
 
   """Get all room IDs that have unread messages for the current student"""
   getStudentUnreadRooms: [String!]!
@@ -1807,9 +1846,21 @@ type Query {
   """Get complete ledger for a student"""
   studentLedger(dateRange: DateRangeInput, studentId: ID!): StudentLedger!
 
+  """Get all marks for a student with optional filters"""
+  studentMarks(filter: GetStudentMarksFilterDto, studentId: String!): [StudentMarkDetail!]!
+
   """Get student profile by ID (only accessible by the student themselves)"""
   studentProfileById(studentId: ID!): Student!
+
+  """Get student ranking within their grade level"""
+  studentRanking(academicYear: String!, studentId: String!, term: Float!): StudentRanking!
+
+  """Get comprehensive report card for a student"""
+  studentReportCard(academicYear: String!, studentId: String!): StudentReportCard!
   studentScholarships(studentId: String!): [StudentScholarship!]!
+
+  """Get detailed performance for a specific subject"""
+  studentSubjectPerformance(academicYear: String!, studentId: String!, subjectId: String!): SubjectPerformance!
 
   """
   Get comprehensive summary for a single student including all fee details
@@ -2330,9 +2381,48 @@ type StudentLoginInfo {
   name: String!
 }
 
+type StudentMarkDetail {
+  academicYear: String
+  createdAt: DateTime!
+  cutoff: Float
+  date: DateTime
+  gradeLevel: String!
+  id: ID!
+  isPassed: Boolean!
+  maxScore: Float!
+  percentage: Float!
+  score: Float!
+  status: String!
+  subject: String!
+  term: Int!
+  title: String!
+  type: String!
+}
+
 input StudentMarkInput {
   assessmentId: ID!
   score: Float!
+}
+
+type StudentRanking {
+  classAverage: Float!
+  percentile: String!
+  rank: Int!
+  studentAverage: Float!
+  topScore: Float!
+  totalStudents: Int!
+}
+
+type StudentReportCard {
+  admissionNumber: String!
+  allSubjects: [SubjectPerformance!]!
+  gradeLevel: String!
+  overallAverage: Float!
+  overallGrade: String!
+  studentId: ID!
+  studentName: String!
+  termPerformances: [TermPerformance!]!
+  totalAssessments: Int!
 }
 
 type StudentScholarship {
@@ -2431,6 +2521,18 @@ type SubjectOutput {
   name: String!
 }
 
+type SubjectPerformance {
+  assessmentsCount: Int!
+  average: Float!
+  grade: String!
+  marks: [StudentMarkDetail!]!
+  maxPossibleScore: Float!
+  percentage: Float!
+  subjectId: ID!
+  subjectName: String!
+  totalScore: Float!
+}
+
 """The type of the subject"""
 enum SubjectType {
   ACADEMIC
@@ -2455,13 +2557,13 @@ type Subscription {
   """Subscribe to new messages in real-time"""
   messageAdded: ChatMessage!
 
+  """Subscribe to new messages in real-time (student)"""
+  studentMessageAdded: ChatMessage!
+
   """
   Subscribe to new messages in real-time (receives messages FROM teachers instantly)
   """
-  studentMessageAdded: ChatMessage!
-
-  """Subscribe to typing indicators for a room (see when teacher is typing)"""
-  studentUserTyping(roomId: String!): TypingIndicator!
+  studentUserTyping(roomId: String!): ChatMessage!
 
   """Subscribe to typing indicators for a room"""
   userTyping(roomId: String!): TypingIndicator!
@@ -2692,6 +2794,20 @@ type Term {
 type TermAssessmentWithStudentsDto {
   assessments: [Assessment!]!
   students: [Student!]!
+}
+
+type TermPerformance {
+  academicYear: String!
+  average: Float!
+  failedAssessments: Int!
+  grade: String!
+  maxPossibleScore: Float!
+  passedAssessments: Int!
+  percentage: Float!
+  subjects: [SubjectPerformance!]!
+  term: Int!
+  totalAssessments: Int!
+  totalScore: Float!
 }
 
 type Test {
