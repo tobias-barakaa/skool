@@ -5,6 +5,9 @@ import {
   IsOptional,
   IsString,
   IsEnum,
+  IsUUID,
+  IsArray,
+  ArrayNotEmpty,
 } from 'class-validator';
 
 export enum ParentLinkingMethod {
@@ -13,10 +16,9 @@ export enum ParentLinkingMethod {
   MANUAL_INPUT = 'MANUAL_INPUT',
 }
 
-
 registerEnumType(ParentLinkingMethod, {
   name: 'ParentLinkingMethod',
-  description: 'The method used by the parent to link to a student',
+  description: 'How the parent is linked to a student',
 });
 
 @InputType()
@@ -40,29 +42,9 @@ export class CreateParentInvitationDto {
   @IsEnum(ParentLinkingMethod)
   linkingMethod: ParentLinkingMethod;
 
-  
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  studentName?: string;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  admissionNumber?: string;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  studentFullName?: string;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  studentGrade?: string;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsString()
-  studentPhone?: string;
+  @Field(() => [String])
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsUUID(4, { each: true })
+  studentIds: string[];
 }

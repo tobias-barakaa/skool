@@ -199,13 +199,10 @@ export class ParentService {
   async inviteParent(
   createParentDto: CreateParentInvitationDto,
   currentUser: ActiveUserData,
-  tenantId: string,
   studentIds: string[],
 ): Promise<InviteParentResponse> {
-  if (tenantId !== currentUser.tenantId) {
-    throw new ForbiddenException('Tenant ID mismatch');
-  }
 
+  
   const membership = await this.membershipRepository.findOne({
     where: {
       user: { id: currentUser.sub },
@@ -268,7 +265,7 @@ export class ParentService {
     const existingMembership = await this.membershipRepository.findOne({
       where: {
         user: { id: existingUser.id },
-        tenant: { id: tenantId },
+        tenant: { id: currentUser.tenantId },
       },
     });
 
@@ -283,7 +280,7 @@ export class ParentService {
   const recentInvitation = await this.invitationRepository.findOne({
     where: {
       email: createParentDto.email,
-      tenant: { id: tenantId },
+      tenant: { id: currentUser.tenantId },
       status: InvitationStatus.PENDING,
       createdAt: MoreThan(tenMinutesAgo),
     },
@@ -301,7 +298,7 @@ export class ParentService {
   await this.invitationRepository.update(
     {
       email: createParentDto.email,
-      tenant: { id: tenantId },
+      tenant: { id: currentUser.tenantId },
       status: InvitationStatus.PENDING,
       expiresAt: LessThan(new Date()),
     },
@@ -311,7 +308,7 @@ export class ParentService {
   );
 
   const tenant = await this.tenantRepository.findOne({
-    where: { id: tenantId },
+    where: { id: currentUser.tenantId },
   });
 
   const token = crypto.randomBytes(32).toString('hex');
@@ -354,7 +351,7 @@ export class ParentService {
       name: createParentDto.name,
       phone: createParentDto.phone,
       isActive: false,
-      tenantId: tenantId,
+      tenantId: currentUser.tenantId,
     });
 
     await this.parentRepository.save(parent);
@@ -373,7 +370,7 @@ export class ParentService {
       const parentStudent = this.parentStudentRepository.create({
         parent: { id: parent.id },
         student: { id: studentId },
-        tenantId: tenantId,
+        tenantId: currentUser.tenantId,
       });
       parentStudentRelations.push(parentStudent);
     }
@@ -389,7 +386,7 @@ export class ParentService {
       createParentDto.name,
       currentUser.subdomain,
       token,
-      tenantId,
+      currentUser.tenantId,
       studentsData,
     );
   } catch (error) {

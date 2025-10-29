@@ -433,15 +433,11 @@ input CreateOptionInput {
 }
 
 input CreateParentInvitationDto {
-  admissionNumber: String
   email: String!
   linkingMethod: ParentLinkingMethod!
   name: String!
   phone: String
-  studentFullName: String
-  studentGrade: String
-  studentName: String
-  studentPhone: String
+  studentIds: [String!]!
 }
 
 input CreatePaymentInput {
@@ -1273,7 +1269,7 @@ type Mutation {
 
   """Generate PDF receipt for a payment"""
   generateReceiptPDF(paymentId: ID!): String!
-  inviteParent(createParentDto: CreateParentInvitationDto!, studentIds: [String!]!, tenantId: String!): InviteParentResponse!
+  inviteParent(createParentDto: CreateParentInvitationDto!, studentIds: [String!]!): InviteParentResponse!
   inviteStaff(createStaffDto: CreateStaffInvitationDto!): InviteStaffResponse!
   inviteTeacher(createTeacherDto: CreateTeacherInvitationDto!): InviteTeacherResponse!
 
@@ -1444,7 +1440,7 @@ type ParentInfo {
   relationship: String!
 }
 
-"""The method used by the parent to link to a student"""
+"""How the parent is linked to a student"""
 enum ParentLinkingMethod {
   MANUAL_INPUT
   SEARCH_BY_ADMISSION

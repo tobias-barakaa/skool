@@ -109,22 +109,15 @@ async getAllParents(
   @Mutation(() => InviteParentResponse)
   async inviteParent(
     @Args('createParentDto') createParentDto: CreateParentInvitationDto,
-    @Args('tenantId') tenantId: string,
     @Args('studentIds', { type: () => [String] }) studentIds: string[],
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<InviteParentResponse> {
-    if (tenantId !== currentUser.tenantId) {
-      throw new ForbiddenException(
-        'Cannot invite parents for a different tenant',
-      );
-    }
-    console.log(tenantId, 'inviteParent tenantId');
+   
 
 
     return await this.parentService.inviteParent(
       createParentDto,
       currentUser,
-      currentUser.tenantId,
       studentIds,
     );
   }
