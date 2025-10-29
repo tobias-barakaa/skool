@@ -1133,9 +1133,8 @@ enum MembershipStatus {
 }
 
 type Mutation {
-  acceptParentInvitation(acceptInvitationInput: AcceptInvitationInput!): AcceptParentInvitationResponse!
   acceptStaffInvitation(acceptInvitationInput: AcceptStaffInvitationInput!): AcceptStaffInvitationResponse!
-  acceptTeacherInvitation(acceptInvitationInput: AcceptInvitationInput!): AcceptInvitationResponse!
+  acceptTeacherInvitation(acceptInvitationInput: AcceptInvitationInput!): AcceptParentInvitationResponse!
   activateTenantSubject(tenantSubjectId: String!): Boolean!
   addStudentsToParent(parentId: String!, studentIds: [String!]!, tenantId: String!): String!
   assignClassTeacher(input: AssignStreamClassTeacherInput!): ClassTeacherAssignment!

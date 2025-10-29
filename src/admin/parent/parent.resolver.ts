@@ -66,7 +66,7 @@ async getAllParents(
     @SkipTenantValidation()
     @SetMetadata('isPublic', true)
     // @Mutation(() => AcceptParentInvitationResponse)
-    @Mutation(() => AcceptParentInvitationResponse, { name: 'acceptTeacherInvitation' })
+    @Mutation(() => AcceptParentInvitationResponse, { name: 'AcceptParentInvitationResponse' })
     @Auth(AuthType.None)
   async acceptParentInvitation(
     @Args('acceptInvitationInput') input: AcceptInvitationInput,
