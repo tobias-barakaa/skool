@@ -735,6 +735,16 @@ type FeeBucket {
   updatedAt: DateTime!
 }
 
+type FeeItemBreakdownDto {
+  amount: Float!
+  amountPaid: Float!
+  balance: Float!
+  bucketName: String!
+  id: ID!
+  isMandatory: Boolean!
+  itemName: String!
+}
+
 type FeeItemSummary {
   academicYearName: String!
   amount: Float!
@@ -1384,6 +1394,18 @@ type Mutation {
   voidPayment(id: ID!, reason: String!): Boolean!
 }
 
+type MyChildDto {
+  admissionNumber: String!
+  gender: String!
+  grade: TenantGradeLevel!
+  id: ID!
+  isActive: Boolean!
+  isPrimary: Boolean!
+  name: String!
+  phone: String!
+  relationship: String!
+}
+
 """Visibility level of the note"""
 enum NoteVisibility {
   GRADE
@@ -1509,6 +1531,16 @@ type PendingInvitationResponse {
   name: String
   status: InvitationStatus!
   userData: JSON
+}
+
+type PerformanceMarkDto {
+  academicYear: String!
+  assessmentType: String!
+  date: DateTime!
+  id: ID!
+  maxScore: Float!
+  score: Float!
+  term: Int!
 }
 
 type Query {
@@ -1774,6 +1806,12 @@ type Query {
   myAcademicProfile: StudentAcademicProfile!
   myAssignMents: [Test!]!
 
+  """Get all children for the logged-in parent"""
+  myChildren: [MyChildDto!]!
+
+  """Get the logged-in parent profile"""
+  myParentProfile: Parent!
+
   """
   Get the complete student profile for the currently authenticated student
   """
@@ -1961,6 +1999,26 @@ input RemoveTransportAssignmentInput {
 
   """Student ID to remove from transport route"""
   studentId: ID!
+}
+
+type ReportCardStudentInfoDto {
+  admissionNumber: String!
+  grade: String!
+  name: String!
+  stream: String
+}
+
+type ReportCardSubjectDto {
+  average: Float!
+  scores: [ReportCardSubjectScoreDto!]!
+  subject: String!
+  total: Float!
+}
+
+type ReportCardSubjectScoreDto {
+  maxScore: Float!
+  score: Float!
+  type: String!
 }
 
 input ResetPasswordInput {

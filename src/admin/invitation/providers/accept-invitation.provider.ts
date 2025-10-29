@@ -79,12 +79,8 @@ export class AcceptInvitationProvider {
     const membership = await this.createMembership(user, invitation);
 
     // Handle teacher-specific logic
-    if (invitation.type === InvitationType.TEACHER) {
-      if (customTeacherLinkFn) {
-        await customTeacherLinkFn(user, invitation);
-      } else {
-        await this.linkTeacherToUser(user.id, invitation);
-      }
+    if (customTeacherLinkFn) {
+      await customTeacherLinkFn(user, invitation);
     }
 
     // Mark invitation as accepted
