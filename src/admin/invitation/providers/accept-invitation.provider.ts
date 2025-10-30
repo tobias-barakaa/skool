@@ -232,7 +232,7 @@ export class AcceptInvitationProvider {
         joinedAt: new Date(),
       });
 
-      const savedMembership = await this.membershipRepository.save(membership);
+      const savedMembership = await this.membershipRepository.save(membership)
 
       this.logger.log(
         `Created membership for user ${user.id} in tenant ${invitation.tenant.id} with role ${invitation.role}`,
