@@ -6,7 +6,6 @@ import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { AttendanceSummaryDto, ChildProfileDto, FeeBalanceDto, MyChildDto, ReportCardDto, SubjectPerformanceDto } from '../dtos/parent-portal.dto';
 import { Attendance } from 'src/teacher/attendance/entities/attendance.entity';
-import { Payment } from 'src/admin/finance/payment/entities/payment.entity';
 
 @Resolver()
 export class ParentPortalResolver {
@@ -26,54 +25,77 @@ export class ParentPortalResolver {
   }
 
   // Get child profile
-//   @Query(() => ChildProfileDto, { description: 'Get detailed profile of a specific child' })
-//   async childProfile(
-//     @Args('studentId', { type: () => ID }) studentId: string,
-//     @ActiveUser() user: ActiveUserData,
-//   ): Promise<ChildProfileDto> {
-//     return this.parentPortalService.getChildProfile(studentId, user);
-//   }
+  @Query(() => ChildProfileDto, { description: 'Get detailed profile of a specific child' })
+  async childProfile(
+    @Args('studentId', { type: () => ID }) studentId: string,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<ChildProfileDto> {
+    const profile = await this.parentPortalService.getChildProfile(studentId, user);
 
-//   // Get attendance summary
-//   @Query(() => AttendanceSummaryDto, { description: 'Get attendance summary for a child' })
-//   async childAttendanceSummary(
-//     @Args('studentId', { type: () => ID }) studentId: string,
-//     @Args('startDate') startDate: string,
-//     @Args('endDate') endDate: string,
-//     @ActiveUser() user: ActiveUserData,
-//   ): Promise<AttendanceSummaryDto> {
-//     return this.parentPortalService.getChildAttendanceSummary(
-//       studentId,
-//       startDate,
-//       endDate,
-//       user,
-//     );
-//   }
+    const normalizedStream = profile.stream
+      ? {
+          // tenantGradeLevel is required on TenantStream; prefer explicit fields if present, otherwise fall back to profile.grade
+          tenantGradeLevel: (profile.stream as any).tenantGradeLevel ?? (profile.grade as any) ?? undefined,
+          // stream (the stream name/identifier) prefer explicit fields commonly present on Stream entities
+          stream: (profile.stream as any).stream ?? (profile.stream as any).name ?? (profile.stream as any).id ?? undefined,
+        }
+      : undefined;
 
-//   // Get attendance details
-//   @Query(() => [Attendance], { description: 'Get detailed attendance records for a child' })
-//   async childAttendanceDetails(
-//     @Args('studentId', { type: () => ID }) studentId: string,
-//     @Args('startDate') startDate: string,
-//     @Args('endDate') endDate: string,
-//     @ActiveUser() user: ActiveUserData,
-//   ): Promise<Attendance[]> {
-//     return this.parentPortalService.getChildAttendanceDetails(
-//       studentId,
-//       startDate,
-//       endDate,
-//       user,
-//     );
-//   }
+    const result: ChildProfileDto = {
+      ...profile,
+      stream: normalizedStream as any,
+    };
 
-//   // Get fee balance
-//   @Query(() => FeeBalanceDto, { description: 'Get fee balance and breakdown for a child' })
-//   async childFeeBalance(
-//     @Args('studentId', { type: () => ID }) studentId: string,
-//     @ActiveUser() user: ActiveUserData,
-//   ): Promise<FeeBalanceDto> {
-//     return this.parentPortalService.getChildFeeBalance(studentId, user);
-//   }
+    return result;
+  }
+
+  
+  // Get attendance summary
+  @Query(() => AttendanceSummaryDto, { description: 'Get attendance summary for a child' })
+  async childAttendanceSummary(
+    @Args('studentId', { type: () => ID }) studentId: string,
+    @Args('startDate') startDate: string,
+    @Args('endDate') endDate: string,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<AttendanceSummaryDto> {
+    return this.parentPortalService.getChildAttendanceSummary(
+      studentId,
+      startDate,
+      endDate,
+      user,
+    );
+  }
+
+
+
+  // Get attendance details
+  @Query(() => [Attendance], { description: 'Get detailed attendance records for a child' })
+  async childAttendanceDetails(
+    @Args('studentId', { type: () => ID }) studentId: string,
+    @Args('startDate') startDate: string,
+    @Args('endDate') endDate: string,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<Attendance[]> {
+    return this.parentPortalService.getChildAttendanceDetails(
+      studentId,
+      startDate,
+      endDate,
+      user,
+    );
+  }
+
+
+  
+  
+
+  // Get fee balance
+  @Query(() => FeeBalanceDto, { description: 'Get fee balance and breakdown for a child' })
+  async childFeeBalance(
+    @Args('studentId', { type: () => ID }) studentId: string,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<FeeBalanceDto> {
+    return this.parentPortalService.getChildFeeBalance(studentId, user);
+  }
 
 //   // Get payment history
 //   @Query(() => [Payment], { description: 'Get payment history for a child' })

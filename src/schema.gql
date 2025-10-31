@@ -205,6 +205,15 @@ enum AttendanceStatus {
   SUSPENDED
 }
 
+type AttendanceSummaryDto {
+  absent: Int!
+  attendanceRate: String!
+  late: Int!
+  present: Int!
+  suspended: Int!
+  totalDays: Int!
+}
+
 type AttendanceSummaryResponse {
   absentDays: Float!
   lateDays: Float!
@@ -303,6 +312,21 @@ type ChatRoom {
   participantIds: [String!]!
   type: String!
   updatedAt: DateTime!
+}
+
+type ChildProfileDto {
+  admissionNumber: String!
+  createdAt: DateTime!
+  feesOwed: Float!
+  gender: String!
+  grade: TenantGradeLevel!
+  id: ID!
+  isActive: Boolean!
+  name: String!
+  phone: String!
+  schoolType: String
+  stream: TenantStream
+  totalFeesPaid: Float!
 }
 
 type ClassTeacherAssignment {
@@ -711,6 +735,14 @@ type FeeAssignmentWithStudents {
   totalStudents: Int!
 }
 
+type FeeBalanceDto {
+  feesOwed: Float!
+  items: [FeeItemBreakdownDto!]!
+  studentId: ID!
+  totalDue: Float!
+  totalPaid: Float!
+}
+
 """Represents a fee category/bucket like Tuition, Transport, etc."""
 type FeeBucket {
   """The date and time when the fee bucket was created"""
@@ -742,7 +774,7 @@ type FeeItemBreakdownDto {
   bucketName: String!
   id: ID!
   isMandatory: Boolean!
-  itemName: String!
+  itemName: String
 }
 
 type FeeItemSummary {
@@ -1563,6 +1595,18 @@ type Query {
 
   """Get all students assigned to a specific fee assignment"""
   assignedStudents(feeAssignmentId: ID!): [StudentFeeAssignment!]!
+
+  """Get detailed attendance records for a child"""
+  childAttendanceDetails(endDate: String!, startDate: String!, studentId: ID!): [Attendance!]!
+
+  """Get attendance summary for a child"""
+  childAttendanceSummary(endDate: String!, startDate: String!, studentId: ID!): AttendanceSummaryDto!
+
+  """Get fee balance and breakdown for a child"""
+  childFeeBalance(studentId: ID!): FeeBalanceDto!
+
+  """Get detailed profile of a specific child"""
+  childProfile(studentId: ID!): ChildProfileDto!
 
   """Get comprehensive summary of all fee structures with breakdowns"""
   comprehensiveFeeStructureSummary: ComprehensiveFeeStructureSummary!

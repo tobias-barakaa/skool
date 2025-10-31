@@ -119,6 +119,7 @@ export class AttendanceDetailDto {
   createdAt: Date;
 }
 
+
 // Fee Item Breakdown DTO
 @ObjectType()
 export class FeeItemBreakdownDto {
@@ -128,8 +129,8 @@ export class FeeItemBreakdownDto {
   @Field()
   bucketName: string;
 
-  @Field()
-  itemName: string;
+  @Field({ nullable: true })
+  itemName?: string;
 
   @Field(() => Float)
   amount: number;

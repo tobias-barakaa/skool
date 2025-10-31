@@ -64,129 +64,164 @@ export class ParentPortalService {
     }));
   }
 
+  // Helper method to verify parent-student relationship
+  private async verifyParentStudentRelationship(
+    userId: string,
+    studentId: string,
+    tenantId: string,
+  ): Promise<void> {
+    const parent = await this.parentRepo.findOne({
+      where: { userId, tenantId, isActive: true },
+    });
+
+    if (!parent) {
+      throw new NotFoundException('Parent profile not found');
+    }
+
+    const relationship = await this.parentStudentRepo.findOne({
+      where: { parentId: parent.id, studentId, tenantId },
+    });
+
+    if (!relationship) {
+      throw new ForbiddenException('You do not have access to this student');
+    }
+  }
+
   // Get child profile
-//   async getChildProfile(studentId: string, user: ActiveUserData) {
-//     await this.verifyParentStudentRelationship(user.sub, studentId, user.tenantId);
+  async getChildProfile(studentId: string, user: ActiveUserData) {
+    await this.verifyParentStudentRelationship(user.sub, studentId, user.tenantId);
 
-//     const student = await this.studentRepo.findOne({
-//       where: { id: studentId, tenant_id: user.tenantId },
-//       relations: ['user', 'grade', 'stream', 'tenant'],
-//     });
+    const student = await this.studentRepo.findOne({
+      where: { id: studentId, tenant_id: user.tenantId },
+      relations: ['user', 'grade', 'stream', 'tenant'],
+    });
 
-//     if (!student) {
-//       throw new NotFoundException('Student not found');
-//     }
+    if (!student) {
+      throw new NotFoundException('Student not found');
+    }
 
-//     return {
-//       id: student.id,
-//       name: student.user.name,
-//       admissionNumber: student.admission_number,
-//       phone: student.phone,
-//       gender: student.gender,
-//       grade: student.grade,
-//       stream: student.stream,
-//       schoolType: student.schoolType,
-//       feesOwed: student.feesOwed,
-//       totalFeesPaid: student.totalFeesPaid,
-//       isActive: student.isActive,
-//       createdAt: student.createdAt,
-//     };
-//   }
+    return {
+      id: student.id,
+      name: student.user.name,
+      admissionNumber: student.admission_number,
+      phone: student.phone,
+      gender: student.gender,
+      grade: student.grade,
+      stream: student.stream,
+      schoolType: student.schoolType,
+      feesOwed: student.feesOwed,
+      totalFeesPaid: student.totalFeesPaid,
+      isActive: student.isActive,
+      createdAt: student.createdAt,
+    };
+  }
 
   // Get attendance summary for a child
-//   async getChildAttendanceSummary(
-//     studentId: string,
-//     startDate: string,
-//     endDate: string,
-//     user: ActiveUserData,
-//   ) {
-//     await this.verifyParentStudentRelationship(user.sub, studentId, user.tenantId);
+  async getChildAttendanceSummary(
+    studentId: string,
+    startDate: string,
+    endDate: string,
+    user: ActiveUserData,
+  ) {
+    await this.verifyParentStudentRelationship(user.sub, studentId, user.tenantId);
 
-//     const attendances = await this.attendanceRepo.find({
-//       where: {
-//         studentId,
-//         tenantId: user.tenantId,
-//         date: Between(startDate, endDate),
-//       },
-//     });
+    const attendances = await this.attendanceRepo.find({
+      where: {
+        studentId,
+        tenantId: user.tenantId,
+        date: Between(startDate, endDate),
+      },
+    });
 
-//     const summary = {
-//       totalDays: attendances.length,
-//       present: attendances.filter(a => a.status === AttendanceStatus.PRESENT).length,
-//       absent: attendances.filter(a => a.status === AttendanceStatus.ABSENT).length,
-//       late: attendances.filter(a => a.status === AttendanceStatus.LATE).length,
-//       suspended: attendances.filter(a => a.status === AttendanceStatus.SUSPENDED).length,
-//     };
+    const summary = {
+      totalDays: attendances.length,
+      present: attendances.filter(a => a.status === AttendanceStatus.PRESENT).length,
+      absent: attendances.filter(a => a.status === AttendanceStatus.ABSENT).length,
+      late: attendances.filter(a => a.status === AttendanceStatus.LATE).length,
+      suspended: attendances.filter(a => a.status === AttendanceStatus.SUSPENDED).length,
+    };
 
-//     return {
-//       ...summary,
-//       attendanceRate: summary.totalDays > 0 
-//         ? ((summary.present + summary.late) / summary.totalDays * 100).toFixed(2) 
-//         : '0',
-//     };
-//   }
+    return {
+      ...summary,
+      attendanceRate: summary.totalDays > 0 
+        ? ((summary.present + summary.late) / summary.totalDays * 100).toFixed(2) 
+        : '0',
+    };
+  }
 
   // Get detailed attendance records
-//   async getChildAttendanceDetails(
-//     studentId: string,
-//     startDate: string,
-//     endDate: string,
-//     user: ActiveUserData,
-//   ) {
-//     await this.verifyParentStudentRelationship(user.sub, studentId, user.tenantId);
+  async getChildAttendanceDetails(
+    studentId: string,
+    startDate: string,
+    endDate: string,
+    user: ActiveUserData,
+  ) {
+    await this.verifyParentStudentRelationship(user.sub, studentId, user.tenantId);
 
-//     return this.attendanceRepo.find({
-//       where: {
-//         studentId,
-//         tenantId: user.tenantId,
-//         date: Between(startDate, endDate),
-//       },
-//       relations: ['teacher', 'teacher.user'],
-//       order: { date: 'DESC' },
-//     });
-//   }
+    return this.attendanceRepo.find({
+      where: {
+        studentId,
+        tenantId: user.tenantId,
+        date: Between(startDate, endDate),
+      },
+      relations: ['teacher', 'teacher.user'],
+      order: { date: 'DESC' },
+    });
+  }
 
   // Get fee balance and details
-//   async getChildFeeBalance(studentId: string, user: ActiveUserData) {
-//     await this.verifyParentStudentRelationship(user.sub, studentId, user.tenantId);
+  async getChildFeeBalance(studentId: string, user: ActiveUserData) {
+    await this.verifyParentStudentRelationship(user.sub, studentId, user.tenantId);
 
-//     const student = await this.studentRepo.findOne({
-//       where: { id: studentId, tenant_id: user.tenantId },
-//     });
+    const student = await this.studentRepo.findOne({
+      where: { id: studentId, tenant_id: user.tenantId },
+    });
 
-//     const feeAssignments = await this.studentFeeAssignmentRepo.find({
-//       where: { studentId, tenantId: user.tenantId, isActive: true },
-//       relations: ['feeAssignment', 'feeAssignment.feeStructure', 'feeItems', 'feeItems.feeStructureItem', 'feeItems.feeStructureItem.feeBucket'],
-//     });
+    if (!student) {
+      throw new NotFoundException('Student not found');
+    }
 
-//     let totalDue = 0;
-//     const itemsBreakdown = [];
+    const feeAssignments = await this.studentFeeAssignmentRepo.find({
+      where: { studentId, tenantId: user.tenantId, isActive: true },
+      relations: ['feeAssignment', 'feeAssignment.feeStructure', 'feeItems', 'feeItems.feeStructureItem', 'feeItems.feeStructureItem.feeBucket'],
+    });
 
-//     for (const assignment of feeAssignments) {
-//       for (const item of assignment.feeItems) {
-//         const balance = item.amount - item.amountPaid;
-//         totalDue += balance;
+    let totalDue = 0;
+    const itemsBreakdown: Array<{
+      id: string;
+      bucketName: string;
+      itemName: any;
+      amount: number;
+      amountPaid: number;
+      balance: number;
+      isMandatory: boolean;
+    }> = [];
+
+    for (const assignment of feeAssignments) {
+      for (const item of assignment.feeItems) {
+        const balance = item.amount - item.amountPaid;
+        totalDue += balance;
         
-//         itemsBreakdown.push({
-//           id: item.id,
-//           bucketName: item.feeStructureItem.feeBucket.name,
-//           itemName: item.feeStructureItem.name,
-//           amount: item.amount,
-//           amountPaid: item.amountPaid,
-//           balance,
-//           isMandatory: item.isMandatory,
-//         });
-//       }
-//     }
+        itemsBreakdown.push({
+          id: item.id,
+          bucketName: item.feeStructureItem.feeBucket.name,
+          itemName: (item.feeStructureItem as any).name ?? (item.feeStructureItem as any).title ?? null,
+          amount: item.amount,
+          amountPaid: item.amountPaid,
+          balance,
+          isMandatory: item.isMandatory,
+        });
+      }
+    }
 
-//     return {
-//       studentId,
-//       totalDue,
-//       totalPaid: student.totalFeesPaid,
-//       feesOwed: student.feesOwed,
-//       items: itemsBreakdown,
-//     };
-//   }
+    return {
+      studentId,
+      totalDue,
+      totalPaid: student.totalFeesPaid,
+      feesOwed: student.feesOwed,
+      items: itemsBreakdown,
+    };
+  }
 
 //   // Get payment history
 //   async getChildPaymentHistory(studentId: string, user: ActiveUserData) {
