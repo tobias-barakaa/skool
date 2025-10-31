@@ -122,19 +122,22 @@ export class ParentPortalResolver {
 //     );
 //   }
 
-//   // Get report card
-//   @Query(() => ReportCardDto, { description: 'Get report card for a child for a specific term' })
-//   async childReportCard(
-//     @Args('studentId', { type: () => ID }) studentId: string,
-//     @Args('term', { type: () => Number }) term: number,
-//     @Args('academicYear') academicYear: string,
-//     @ActiveUser() user: ActiveUserData,
-//   ): Promise<ReportCardDto> {
-//     return this.parentPortalService.getChildReportCard(
-//       studentId,
-//       term,
-//       academicYear,
-//       user,
-//     );
-//   }
+  // Get report card
+  @Query(() => ReportCardDto, { description: 'Get report card for a child for a specific term' })
+  async childReportCard(
+    @Args('studentId', { type: () => ID }) studentId: string,
+    @Args('term', { type: () => Number }) term: number,
+    @Args('academicYear') academicYear: string,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<ReportCardDto> {
+    const report = await this.parentPortalService.getChildReportCard(
+      studentId,
+      term,
+      academicYear,
+      user,
+    );
+
+    // ensure subjects is typed as the DTO expected by the resolver
+    return report as unknown as ReportCardDto;
+  }
 }

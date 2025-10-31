@@ -1276,6 +1276,9 @@ type Mutation {
   """
   deleteFeeStructureItemsByStructure(feeStructureId: ID!): Float!
 
+  """Delete a message sent by the current parent"""
+  deleteParentMessage(messageId: String!): Boolean!
+
   """Permanently delete a payment (admin only)"""
   deletePayment(id: ID!): Boolean!
   deleteStaff(id: ID!): Boolean!
@@ -1362,6 +1365,9 @@ type Mutation {
 
   """Send a message from teacher to a specific student"""
   sendMessageToStudent(input: SendMessageInput!): ChatMessage!
+
+  """Send a message from parent to teacher about their child"""
+  sendMessageToTeacher(input: SendMessageFromParentInput!): ChatMessage!
 
   """Mark an academic year as the current one"""
   setCurrentAcademicYear(id: ID!): AcademicYear!
@@ -1608,6 +1614,9 @@ type Query {
   """Get detailed profile of a specific child"""
   childProfile(studentId: ID!): ChildProfileDto!
 
+  """Get report card for a child for a specific term"""
+  childReportCard(academicYear: String!, studentId: ID!, term: Float!): ReportCardDto!
+
   """Get comprehensive summary of all fee structures with breakdowns"""
   comprehensiveFeeStructureSummary: ComprehensiveFeeStructureSummary!
   deactivatedTenantSubjects: [TenantSubject!]!
@@ -1724,13 +1733,16 @@ type Query {
 
   """Get upcoming tests (within next 7 days) for the logged-in student"""
   getMyUpcomingTests: [Test!]!
+
+  """Get all chat rooms for the current parent"""
+  getParentChatRooms: [ChatRoom!]!
   getParentsByTenant(tenantId: String!): [Parent!]!
   getPendingInvitations(tenantId: String!): [PendingInvitation!]!
   getPendingParentInvitations(tenantId: String!): [PendingInvitation!]!
   getPendingTeacherInvitation(email: String!): PendingInvitationResponse
   getPendingTeacherInvitations: [PendingInvitationResponse!]
 
-  """Get all read messages for the current user"""
+  """Get all read messages for the current parent"""
   getReadMessages(limit: Int! = 50): [ChatMessage!]!
   getSchoolConfiguration: SchoolConfigurationResponse!
   getSchoolTeacherNotes: [TeacherNote!]!
@@ -1791,6 +1803,11 @@ type Query {
   getTeachersByTenants: [TeacherDto!]!
 
   """
+  Get list of teachers for a specific student (parent can see who to message)
+  """
+  getTeachersForStudent(studentId: String!): [Teacher!]!
+
+  """
   Get statistics for current user tenant (student count, teacher count, etc.)
   """
   getTenantStatistics: String!
@@ -1800,13 +1817,13 @@ type Query {
   """Get unread message count for a specific room"""
   getUnreadCountForRoom(chatRoomId: String!): Int!
 
-  """Get total unread message count for the current user"""
+  """Get total unread message count for the current parent"""
   getUnreadMessageCount: Int!
 
-  """Get all unread messages for the current user"""
+  """Get all unread messages for the current parent"""
   getUnreadMessages: [ChatMessage!]!
 
-  """Get all room IDs that have unread messages for the current user"""
+  """Get all room IDs that have unread messages for the current parent"""
   getUnreadRooms: [String!]!
 
   """Get all chat rooms for the current user"""
@@ -2045,6 +2062,15 @@ input RemoveTransportAssignmentInput {
   studentId: ID!
 }
 
+type ReportCardDto {
+  academicYear: String!
+  overallAverage: Float!
+  student: ReportCardStudentInfoDto!
+  subjects: [ReportCardSubjectDto!]!
+  term: Int!
+  totalSubjects: Int!
+}
+
 type ReportCardStudentInfoDto {
   admissionNumber: String!
   grade: String!
@@ -2195,6 +2221,23 @@ type SelectedLevel {
   id: ID!
   name: String!
   subjects: [SubjectInfo!]!
+}
+
+input SendMessageFromParentInput {
+  """Optional image URL"""
+  imageUrl: String
+
+  """Message content"""
+  message: String!
+
+  """Teacher ID to send message to"""
+  recipientId: ID!
+
+  """Student ID (child) this message is about"""
+  studentId: ID!
+
+  """Message subject"""
+  subject: String
 }
 
 input SendMessageFromParentToTeacherInput {

@@ -11,6 +11,11 @@ import { Attendance } from 'src/teacher/attendance/entities/attendance.entity';
 import { AssessmentMark } from 'src/teacher/marksheet/entities/assessment_marks-entity';
 import { ParentPortalService } from './services/parent-portal.service';
 import { ParentPortalResolver } from './resolvers/parent-portal.resolver';
+import { ParentChatResolver } from './chat/ParentChatResolver';
+import { ParentChatService } from './chat/ParentChatService';
+import { PubSubModule } from 'src/messaging/providers/pubsub.provider';
+import { MessagingModule } from 'src/messaging/messaging.module';
+import { TeacherModule } from 'src/admin/teacher/teacher.module';
 
 @Module({
   imports: [
@@ -22,10 +27,13 @@ import { ParentPortalResolver } from './resolvers/parent-portal.resolver';
       StudentFeeAssignment,
       StudentFeeItem,
       Payment,
-      AssessmentMark,
+      AssessmentMark
     ]),
+    MessagingModule,
+    TeacherModule
+
   ],
-  providers: [ParentPortalService, ParentPortalResolver],
-  exports: [ParentPortalService],
+  providers: [ParentPortalService, ParentPortalResolver, ParentChatResolver, ParentChatService],
+  exports: [ParentPortalService, ParentChatService],
 })
 export class ParentModule {}

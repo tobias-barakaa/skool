@@ -293,71 +293,82 @@ export class ParentPortalService {
 //   }
 
 //   // Get report card data
-//   async getChildReportCard(
-//     studentId: string,
-//     term: number,
-//     academicYear: string,
-//     user: ActiveUserData,
-//   ) {
-//     await this.verifyParentStudentRelationship(user.sub, studentId, user.tenantId);
+  async getChildReportCard(
+    studentId: string,
+    term: number,
+    academicYear: string,
+    user: ActiveUserData,
+  ) {
+    await this.verifyParentStudentRelationship(user.sub, studentId, user.tenantId);
 
-//     const student = await this.studentRepo.findOne({
-//       where: { id: studentId, tenant_id: user.tenantId },
-//       relations: ['user', 'grade', 'stream'],
-//     });
+    const student = await this.studentRepo.findOne({
+      where: { id: studentId, tenant_id: user.tenantId },
+      relations: ['user', 'grade', 'stream'],
+    });
 
-//     const marks = await this.assessmentMarkRepo
-//       .createQueryBuilder('mark')
-//       .leftJoinAndSelect('mark.assessment', 'assessment')
-//       .leftJoinAndSelect('assessment.subject', 'subject')
-//       .leftJoinAndSelect('assessment.assessmentType', 'assessmentType')
-//       .where('mark.studentId = :studentId', { studentId })
-//       .andWhere('assessment.term = :term', { term })
-//       .andWhere('assessment.academicYear = :academicYear', { academicYear })
-//       .getMany();
+    if (!student) {
+      throw new NotFoundException('Student not found');
+    }
 
-//     const subjectResults = marks.reduce((acc, mark) => {
-//       const subjectId = mark.assessment.subject.id;
-//       if (!acc[subjectId]) {
-//         acc[subjectId] = {
-//           subject: mark.assessment.subject.name,
-//           scores: [],
-//           total: 0,
-//           average: 0,
-//         };
-//       }
-//       acc[subjectId].scores.push({
-//         type: mark.assessment.assessmentType.name,
-//         score: mark.score,
-//         maxScore: mark.assessment.maxScore,
-//       });
-//       return acc;
-//     }, {});
+    const marks = await this.assessmentMarkRepo
+  .createQueryBuilder('mark')
+  .leftJoinAndSelect('mark.assessment', 'assessment')
+  .leftJoinAndSelect('assessment.curriculumSubject', 'curriculumSubject')
+  .leftJoinAndSelect('curriculumSubject.subject', 'subject')
+  .leftJoinAndSelect('assessment.assessmentType', 'assessmentType')
+  .where('mark.studentId = :studentId', { studentId })
+  .andWhere('assessment.term = :term', { term })
+  .andWhere('assessment.academicYear = :academicYear', { academicYear })
+  .getMany();
 
-//     // Calculate totals and averages
-//     Object.values(subjectResults).forEach((result: any) => {
-//       result.total = result.scores.reduce((sum, s) => sum + s.score, 0);
-//       result.average = result.scores.length > 0 ? result.total / result.scores.length : 0;
-//     });
 
-//     const overallAverage = Object.values(subjectResults).length > 0
-//       ? Object.values(subjectResults).reduce((sum: number, r: any) => sum + r.average, 0) / Object.values(subjectResults).length
-//       : 0;
+    const subjectResults = marks.reduce((acc, mark) => {
+      const assessment = mark.assessment as any;
+      // const subject = assessment.subject;
+    const subject = assessment.curriculumSubject.subject;
 
-//     return {
-//       student: {
-//         name: student.user.name,
-//         admissionNumber: student.admission_number,
-//         grade: student.grade.gradeLevel.name,
-//         stream: student.stream?.name,
-//       },
-//       term,
-//       academicYear,
-//       subjects: Object.values(subjectResults),
-//       overallAverage,
-//       totalSubjects: Object.keys(subjectResults).length,
-//     };
-//   }
+      const subjectId = subject.id;
+      if (!acc[subjectId]) {
+        acc[subjectId] = {
+          subject: subject.name,
+          scores: [],
+          total: 0,
+          average: 0,
+        };
+      }
+      acc[subjectId].scores.push({
+        type: assessment.assessmentType.name,
+        score: mark.score,
+        maxScore: assessment.maxScore,
+      });
+      return acc;
+    }, {});
+
+    // Calculate totals and averages
+    Object.values(subjectResults).forEach((result: any) => {
+      result.total = result.scores.reduce((sum, s) => sum + s.score, 0);
+      result.average = result.scores.length > 0 ? result.total / result.scores.length : 0;
+    });
+
+    const subjectResultsArray = Object.values(subjectResults) as Array<{ average: number }>;
+    const overallAverage = subjectResultsArray.length > 0
+      ? subjectResultsArray.reduce((sum, r) => sum + (r.average ?? 0), 0) / subjectResultsArray.length
+      : 0;
+
+    return {
+      student: {
+        name: student.user.name,
+        admissionNumber: student.admission_number,
+        grade: student.grade.gradeLevel.name,
+        stream: student.stream?.name,
+      },
+      term,
+      academicYear,
+      subjects: Object.values(subjectResults),
+      overallAverage,
+      totalSubjects: Object.keys(subjectResults).length,
+    };
+  }
 
 //   // Helper method to verify parent-student relationship
 //   private async verifyParentStudentRelationship(
