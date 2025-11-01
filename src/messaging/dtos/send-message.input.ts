@@ -26,6 +26,36 @@ export class SendMessageInput {
 }
 
 
+@InputType()
+export class SendMessageFromTeacherToParentInput {
+  @Field()
+  @IsNotEmpty()
+  @IsUUID()
+  recipientId: string;
+
+  @Field()
+  @IsNotEmpty()
+  recipientType: string; // 'STUDENT', 'PARENT'
+
+  @Field({ nullable: true })
+  @IsOptional()
+  subject?: string;
+
+  @Field()
+  @IsNotEmpty()
+  message: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  imageUrl?: string;
+
+  @Field()
+  @IsNotEmpty()
+  @IsUUID()
+  studentId: string;
+}
+
+
 // @InputType()
 // export class BroadcastMessageInput {
 //   @Field()

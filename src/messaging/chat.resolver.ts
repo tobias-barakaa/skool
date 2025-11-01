@@ -4,7 +4,7 @@ import { PubSub, PubSubEngine } from 'graphql-subscriptions';
 import { ChatService } from './providers/chat.service';
 import { RedisChatProvider } from './providers/redis-chat.provider';
 import { ChatMessage } from './entities/chat-message.entity';
-import { BroadcastMessageInput, BroadcastToGradeLevelsInput, SendMessageInput, TypingIndicator } from './dtos/send-message.input';
+import { BroadcastMessageInput, BroadcastToGradeLevelsInput, SendMessageFromTeacherToParentInput, SendMessageInput, TypingIndicator } from './dtos/send-message.input';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { ChatRoom } from './entities/chat-room.entity';
@@ -96,7 +96,7 @@ export class ChatResolver {
     description: 'Send a message from teacher to a specific parent',
   })
   async sendMessageToParent(
-    @Args('input') input: SendMessageInput,
+    @Args('input') input: SendMessageFromTeacherToParentInput,
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<ChatMessage> {
     const message = await this.chatService.sendMessageToParent(

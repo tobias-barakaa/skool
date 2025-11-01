@@ -8,7 +8,7 @@ import { Student } from 'src/admin/student/entities/student.entity';
 import { Teacher } from 'src/admin/teacher/entities/teacher.entity';
 import { ParentStudent } from 'src/admin/parent/entities/parent-student.entity';
 import { Parent } from 'src/admin/parent/entities/parent.entity';
-import { BroadcastMessageInput, BroadcastToGradeLevelsInput, SendMessageInput } from '../dtos/send-message.input';
+import { BroadcastMessageInput, BroadcastToGradeLevelsInput, SendMessageFromTeacherToParentInput, SendMessageInput } from '../dtos/send-message.input';
 
 @Injectable()
 export class ChatService {
@@ -107,17 +107,19 @@ return messageWithRoom;
   async sendMessageToParent(
     teacherUserId: string,
     tenantId: string,
-    input: SendMessageInput,
+    input: SendMessageFromTeacherToParentInput,
   ): Promise<ChatMessage> {
+    // Get teacher by user_id
     const teacher = await this.teacherRepository.findOne({
       where: { user: { id: teacherUserId }, tenantId },
+      relations: ['user'],
     });
 
     if (!teacher) {
       throw new NotFoundException('Teacher not found');
     }
 
-    // Get parent and their user_id
+    // Get parent by ID
     const parent = await this.parentRepository.findOne({
       where: { id: input.recipientId, tenantId },
       relations: ['user'],
@@ -127,13 +129,28 @@ return messageWithRoom;
       throw new NotFoundException('Parent not found or not linked to user');
     }
 
+    // Verify teacher actually teaches this parent's child (optional but good)
+    const relationship = await this.parentStudentRepository.findOne({
+      where: { parentId: parent.id, studentId: input.studentId, tenantId },
+    });
+
+    if (!relationship) {
+      throw new BadRequestException('This parent is not linked to the selected student');
+    }
+
+    // Generate consistent room name
+    const participants = [teacher.id, parent.id].sort((a, b) => a.localeCompare(b));
+    const roomName = `teacher-parent-${participants[0]}-${participants[1]}`;
+
+    // Create or fetch chatroom
     const chatRoom = await this.getOrCreateChatRoom(
-      `teacher-parent-${teacher.id}-${parent.id}`,
+      roomName,
       'DIRECT',
       [teacherUserId, parent.user.id],
       tenantId,
     );
 
+    // Create message
     const message = this.chatMessageRepository.create({
       senderId: teacherUserId,
       senderType: 'TEACHER',
@@ -145,11 +162,21 @@ return messageWithRoom;
     });
 
     const savedMessage = await this.chatMessageRepository.save(message);
-    await this.redisChatProvider.cacheMessage(savedMessage);
+
+    const found = await this.chatMessageRepository.findOne({
+      where: { id: savedMessage.id },
+      relations: ['chatRoom'],
+    });
+
+    const messageWithRoom = found ?? Object.assign(savedMessage, { chatRoom });
+
+    // Cache and increment unread count for parent
+    await this.redisChatProvider.cacheMessage(messageWithRoom);
     await this.redisChatProvider.incrementUnreadCount(parent.user.id, chatRoom.id);
 
-    return savedMessage;
+    return messageWithRoom;
   }
+
 
 
 
