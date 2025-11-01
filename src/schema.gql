@@ -1699,10 +1699,6 @@ type Query {
 
   """Get chat history for a specific room with pagination"""
   getChatHistory(chatRoomId: String!, limit: Int! = 50, offset: Int! = 0): [ChatMessage!]!
-
-  """
-  Get chat room with a specific teacher (returns null if no conversation exists)
-  """
   getChatRoomWithTeacher(teacherId: String!): ChatRoom
 
   """Get a specific fee assignment by ID with all student details"""

@@ -190,6 +190,7 @@ async assignGradeLevelClassTeacher(
 async getTeacher(
   @ActiveUser() currentUser: ActiveUserData,
 ): Promise<Teacher> {
+  console.log('teacherrss...............................')
   return this.teacherService.getTeacherForCurrentUser(currentUser);
 }
   

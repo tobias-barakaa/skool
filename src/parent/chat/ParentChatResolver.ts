@@ -9,8 +9,11 @@ import { SendMessageFromParentInput } from './dtos/ParentChatDto';
 import { ParentChatService } from './ParentChatService';
 import { RedisChatProvider } from 'src/messaging/providers/redis-chat.provider';
 import { TypingIndicator } from 'src/messaging/dtos/send-message.input';
+import { Roles } from 'src/iam/decorators/roles.decorator';
+import { MembershipRole } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
 
 @Resolver()
+@Roles(MembershipRole.PARENT)
 export class ParentChatResolver {
   constructor(
     @Inject('PUB_SUB') private readonly pubSub,
@@ -57,14 +60,14 @@ export class ParentChatResolver {
     return message;
   }
 
-  /**
-   * Delete a message sent by the current parent
-   * 
-   * Example:
-   * mutation {
-   *   deleteParentMessage(messageId: "msg-uuid")
-   * }
-   */
+  
+    // Delete a message sent by the current parent
+    
+    // Example:
+    // mutation {
+    //   deleteParentMessage(messageId: "msg-uuid")
+    // }
+  
   @Mutation(() => Boolean, {
     description: 'Delete a message sent by the current parent',
   })
@@ -123,26 +126,26 @@ export class ParentChatResolver {
 
   // ==================== QUERIES ====================
 
-  /**
-   * Get chat history for a specific room
-   * 
-   * Example:
-   * query {
-   *   getChatHistory(chatRoomId: "room-uuid", limit: 50, offset: 0) {
-   *     id
-   *     message
-   *     subject
-   *     senderId
-   *     senderType
-   *     isRead
-   *     createdAt
-   *     chatRoom {
-   *       id
-   *       name
-   *     }
-   *   }
-   * }
-   */
+  
+    // Get chat history for a specific room
+    
+    // Example:
+    // query {
+    //   getChatHistory(chatRoomId: "room-uuid", limit: 50, offset: 0) {
+    //     id
+    //     message
+    //     subject
+    //     senderId
+    //     senderType
+    //     isRead
+    //     createdAt
+    //     chatRoom {
+    //       id
+    //       name
+    //     }
+    //   }
+    // }
+  
   @Query(() => [ChatMessage], {
     description: 'Get chat history for a specific room with pagination',
   })
@@ -160,26 +163,26 @@ export class ParentChatResolver {
     );
   }
 
-  /**
-   * Get all chat rooms for the current parent
-   * 
-   * Example:
-   * query {
-   *   getParentChatRooms {
-   *     id
-   *     name
-   *     type
-   *     participantIds
-   *     createdAt
-   *     updatedAt
-   *     messages {
-   *       id
-   *       message
-   *       createdAt
-   *     }
-   *   }
-   * }
-   */
+  
+    // Get all chat rooms for the current parent
+    
+    // Example:
+    // query {
+    //   getParentChatRooms {
+    //     id
+    //     name
+    //     type
+    //     participantIds
+    //     createdAt
+    //     updatedAt
+    //     messages {
+    //       id
+    //       message
+    //       createdAt
+    //     }
+    //   }
+    // }
+  
   @Query(() => [ChatRoom], {
     description: 'Get all chat rooms for the current parent',
   })
@@ -356,6 +359,37 @@ export class ParentChatResolver {
     return timestamp ? new Date(timestamp).toISOString() : null;
   }
 
+
+   /**
+   * Get chat room with a specific teacher
+   * 
+   * Example:
+   * query {
+   *   getChatRoomWithTeacher(teacherId: "teacher-uuid") {
+   *     id
+   *     name
+   *     type
+   *     participantIds
+   *     messages {
+   *       id
+   *       message
+   *       createdAt
+   *     }
+   *   }
+   * }
+   */
+   @Query(() => ChatRoom, { nullable: true })
+   async getChatRoomWithTeacher(
+     @Args('teacherId') teacherId: string,
+     @ActiveUser() currentUser: ActiveUserData,
+   ): Promise<ChatRoom | null> {
+     return await this.parentChatService.getChatRoomWithTeacher(
+       currentUser.sub,
+       teacherId,
+       currentUser.tenantId,
+     );
+   }
+
   // ==================== SUBSCRIPTIONS ====================
 
   /**
@@ -402,4 +436,5 @@ export class ParentChatResolver {
   userTyping(@Args('roomId') roomId: string) {
     return this.pubSub.asyncIterator(`typing:${roomId}`);
   }
+
 }

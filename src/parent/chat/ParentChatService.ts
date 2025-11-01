@@ -70,13 +70,25 @@ export class ParentChatService {
       throw new NotFoundException('Teacher not found or not linked to user');
     }
 
-    // Create or get chat room between parent and teacher
-    const chatRoom = await this.getOrCreateChatRoom(
-      `parent-teacher-${parent.id}-${teacher.id}`,
-      'DIRECT',
-      [parentUserId, teacher.user.id],
-      tenantId,
-    );
+    const participants = [parent.id, teacher.id].sort((a, b) => a.localeCompare(b));
+const roomName = `teacher-parent-${participants[0]}-${participants[1]}`;
+
+const chatRoom = await this.getOrCreateChatRoom(
+  roomName,
+  'DIRECT',
+  [parentUserId, teacher.user.id],
+  tenantId,
+);
+
+    // // Create or get chat room between parent and teacher
+    // const chatRoom = await this.getOrCreateChatRoom(
+    //   `parent-teacher-${parent.id}-${teacher.id}`,
+    //   'DIRECT',
+    //   [parentUserId, teacher.user.id],
+    //   tenantId,
+    // );
+
+    
 
     // Create message
     const message = this.chatMessageRepository.create({
@@ -419,6 +431,43 @@ export class ParentChatService {
       });
       room = await this.chatRoomRepository.save(room);
     }
+
+    return room;
+  }
+
+
+
+  async getChatRoomWithTeacher(
+    parentUserId: string,
+    teacherId: string,
+    tenantId: string,
+  ): Promise<ChatRoom | null> {
+    const parent = await this.parentRepository.findOne({
+      where: { user: { id: parentUserId }, tenantId },
+    });
+
+    if (!parent) {
+      throw new NotFoundException('Parent not found');
+    }
+
+    const teacher = await this.teacherRepository.findOne({
+      where: { id: teacherId, tenantId },
+    });
+
+    if (!teacher) {
+      throw new NotFoundException('Teacher not found');
+    }
+
+    // const roomName = `teacher-parent-${teacher.id}-${parent.id}`;
+
+    const participants = [teacher.id, parent.id].sort((a, b) => a.localeCompare(b));
+const roomName = `teacher-parent-${participants[0]}-${participants[1]}`;
+
+    
+    const room = await this.chatRoomRepository.findOne({
+      where: { name: roomName },
+      relations: ['messages'],
+    });
 
     return room;
   }
