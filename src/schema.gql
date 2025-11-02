@@ -2258,7 +2258,6 @@ input SendMessageFromTeacherToParentInput {
   imageUrl: String
   message: String!
   recipientId: String!
-  recipientType: String!
   studentId: String!
   subject: String
 }

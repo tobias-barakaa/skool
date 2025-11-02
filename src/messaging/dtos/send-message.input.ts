@@ -33,9 +33,6 @@ export class SendMessageFromTeacherToParentInput {
   @IsUUID()
   recipientId: string;
 
-  @Field()
-  @IsNotEmpty()
-  recipientType: string; // 'STUDENT', 'PARENT'
 
   @Field({ nullable: true })
   @IsOptional()

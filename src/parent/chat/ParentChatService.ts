@@ -172,6 +172,7 @@ const chatRoom = await this.getOrCreateChatRoom(
    * Get all chat rooms for a parent
    */
   async getUserChatRooms(parentUserId: string): Promise<ChatRoom[]> {
+    
     const rooms = await this.chatRoomRepository
       .createQueryBuilder('room')
       .leftJoinAndSelect('room.messages', 'message', 'message.deleted = false')
@@ -183,6 +184,14 @@ const chatRoom = await this.getOrCreateChatRoom(
       .getMany();
 
     return rooms.filter(room => room.messages.length > 0);
+  }
+
+  async getParentIdByUserId(userId: string): Promise<string | null> {
+    const parent = await this.parentRepository.findOne({
+      where: { userId },
+      select: ['id'],
+    });
+    return parent?.id || null;
   }
 
   /**
