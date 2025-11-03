@@ -71,13 +71,15 @@ export class AuthResolver {
       domain: '.squl.co.ke',
     });
 
-    context.res.cookie('tenant_id', tenant.id, {
-      httpOnly: true,
-      sameSite: 'None',
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 1000 * 60 * 60 * 24 * 30,
-      domain: '.squl.co.ke',
-    });
+    if (tenant && tenant.id !== undefined && tenant.id !== null) {
+      context.res.cookie('tenant_id', String(tenant.id), {
+        httpOnly: true,
+        sameSite: 'None',
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 1000 * 60 * 60 * 24 * 30,
+        domain: '.squl.co.ke',
+      });
+    }
 
     return result;
   }

@@ -30,8 +30,11 @@ export class AuthResponse {
   @Field(() => User)
   user: User;
 
+  // @Field(() => UserTenantMembership, { nullable: true })
+  // membership?: UserTenantMembership;
+
   @Field(() => UserTenantMembership, { nullable: true })
-  membership?: UserTenantMembership;
+  membership?: UserTenantMembership | null;
 
   @Field(() => [UserTenantMembership], { nullable: true })
   allMemberships?: UserTenantMembership[];
@@ -42,6 +45,9 @@ export class AuthResponse {
   @Field(() => TokenResponse)
   tokens: TokenResponse;
 
-  @Field(() => Tenant)
-  tenant: Tenant;
+  // @Field(() => Tenant)
+  // tenant: Tenant;
+
+  @Field(() => Tenant, { nullable: true })
+  tenant?: Tenant | null;
 }

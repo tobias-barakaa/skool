@@ -4,5 +4,7 @@ export interface ActiveUserData {
     tenantId: string;
     subdomain: string;
     membershipId: string;
+    isGlobalAdmin?: boolean
+    globalRole? : boolean
   }
   

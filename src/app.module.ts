@@ -32,6 +32,7 @@ import { SuperAdminModule } from './super_admin/super_admin.module';
 import { StudentPortalModule } from './student/student.module';
 import { SchoolConfiguredGuard } from './iam/guards/school-config.guard';
 import { ParentModule } from './parent/parent.module';
+import { GlobalAdminGuard } from './admin/auth/guards/global-admin.guard';
 
 const ENV = process.env.NODE_ENV;
 
@@ -139,6 +140,10 @@ const ENV = process.env.NODE_ENV;
     {
       provide: APP_INTERCEPTOR,
       useClass: DataResponseInterceptor,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: GlobalAdminGuard,
     },
     AccessTokenGuard,
   ],

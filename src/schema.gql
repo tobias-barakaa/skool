@@ -228,7 +228,7 @@ type AuthResponse {
   allMemberships: [UserTenantMembership!]
   membership: UserTenantMembership
   subdomainUrl: String!
-  tenant: Tenant!
+  tenant: Tenant
   tokens: TokenResponse!
   user: User!
 }
@@ -1386,6 +1386,7 @@ type Mutation {
 
   """Set typing indicator for student in a chat room"""
   studentSetTyping(chatRoomId: String!, isTyping: Boolean!): Boolean!
+  superAdminSignup(input: SuperAdminSignupInput!): SuperAdminAuthResponse!
 
   """Activate or deactivate an optional fee item for a student"""
   toggleStudentFeeItem(isActive: Boolean!, studentFeeItemId: ID!): StudentFeeItem!
@@ -2703,6 +2704,19 @@ type Subscription {
 
   """Subscribe to typing indicators for a room"""
   userTyping(roomId: String!): TypingIndicator!
+}
+
+type SuperAdminAuthResponse {
+  accessToken: String!
+  refreshToken: String!
+  role: String!
+  user: User!
+}
+
+input SuperAdminSignupInput {
+  email: String!
+  name: String!
+  password: String!
 }
 
 type Teacher {

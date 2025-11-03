@@ -204,7 +204,7 @@ rents in the school
     );
   }
   
-  i
+  
 
   /**
    * Send message from parent to teacher

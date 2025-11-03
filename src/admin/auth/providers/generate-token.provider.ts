@@ -13,14 +13,8 @@ export class GenerateTokenProvider {
   constructor(
     private readonly hashingProvider: HashingProvider,
 
-    /**
-     * Inject jwtService
-     */
     private readonly jwtService: JwtService,
 
-    /**
-     * Inject jwtconfiguration
-     */
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
   ) {}
@@ -49,29 +43,6 @@ export class GenerateTokenProvider {
     );
   }
 
-  // public async generateTokens(user: User, membership?: UserTenantMembership, tenant?: Tenant) {
-  //   const tenantContext: Partial<ActiveUserData> = {
-  //     email: user.email,
-  //     tenantId: tenant?.id,
-  //     subdomain: tenant?.subdomain,
-  //     membershipId: membership?.id,
-  //   };
-
-  //   const [accessToken, refreshToken] = await Promise.all([
-  //     this.signToken<Partial<ActiveUserData>>(
-  //       user.id,
-  //       this.jwtConfiguration.accessTokenTtl,
-  //       tenantContext
-  //     ),
-  //     this.signToken(
-  //       user.id,
-  //       this.jwtConfiguration.refreshTokenTtl,
-  //       tenantContext
-  //     ),
-  //   ]);
-
-  //   return { accessToken, refreshToken };
-  // }
 
   public async generateTokens(
     user: User,
@@ -89,6 +60,7 @@ export class GenerateTokenProvider {
       tenantId: tenant.id,
       subdomain: tenant.subdomain,
       membershipId: membership.id,
+      isGlobalAdmin: user.isGlobalAdmin ?? false,
     };
 
     const [accessToken, refreshToken] = await Promise.all([
@@ -109,4 +81,41 @@ export class GenerateTokenProvider {
       refreshToken,
     };
   }
+
+
+
+
+  public async generateSuperAdminTokens(user: User) {
+    const superAdminContext: Partial<ActiveUserData> & { role?: string } = {
+      email: user.email,
+  
+      isGlobalAdmin: true,
+  
+      tenantId: undefined,
+      membershipId: undefined,
+      subdomain: "global-admin",
+  
+      role: "SUPER_ADMIN",
+    };
+  
+    const [accessToken, refreshToken] = await Promise.all([
+      this.signToken<Partial<ActiveUserData>>(
+        user.id,
+        this.jwtConfiguration.accessTokenTtl,
+        superAdminContext,
+      ),
+      this.signToken(
+        user.id,
+        this.jwtConfiguration.refreshTokenTtl,
+        superAdminContext,
+      ),
+    ]);
+  
+    return {
+      accessToken,
+      refreshToken,
+    };
+  }
+  
+  
 }

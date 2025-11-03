@@ -5,6 +5,13 @@ import { UserTenantMembership } from "src/admin/user-tenant-membership/entities/
 import { Test } from "src/teacher/test/entities/test.entity";
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
+
+export enum GlobalRole {
+  SUPER_ADMIN = 'SUPER_ADMIN',
+  STAFF = 'STAFF',
+  NONE = 'NONE',
+}
+
 @ObjectType()
 @Entity('users')
 export class User {
@@ -42,6 +49,9 @@ export class User {
   @OneToMany(() => Test, (test) => test.teacher)
   @Field(() => [Test], { nullable: true })
   tests: Test[];
+
+  @Column({ type: 'enum', enum: GlobalRole, default: GlobalRole.NONE })
+  globalRole: GlobalRole;
 
   @CreateDateColumn()
   @Field(() => Date)

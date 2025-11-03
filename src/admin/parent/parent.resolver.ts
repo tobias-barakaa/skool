@@ -25,7 +25,8 @@ import { AcceptInvitationResponse } from '../teacher/dtos/accept-teacher-invitat
 @Resolver()
 export class ParentResolver {
   constructor(private parentService: ParentService) {}
-
+  
+ 
 
   @Roles(
     MembershipRole.SCHOOL_ADMIN,

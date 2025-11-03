@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { AuthResponse, SignInInput } from '../dtos/signin-input.dto';
 import { User } from 'src/admin/users/entities/user.entity';
 import { Tenant } from 'src/admin/tenants/entities/tenant.entity';
-import { MembershipStatus, UserTenantMembership } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
+import { MembershipRole, MembershipStatus, UserTenantMembership } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
 
 @Injectable()
 export class SignInProvider {
@@ -29,47 +29,55 @@ export class SignInProvider {
       where: { email: signInInput.email },
       relations: ['memberships', 'memberships.tenant'],
     });
-
+  
     if (!user) throw new UnauthorizedException('Invalid credentials');
-
+  
     const isPasswordValid = await this.hashingProvider.comparePassword(
       signInInput.password,
       user.password,
     );
-
-    if (!isPasswordValid)
-      throw new UnauthorizedException('Invalid credentials');
-
+    if (!isPasswordValid) throw new UnauthorizedException('Invalid credentials');
+  
+    if (user.isGlobalAdmin) {
+      const tokens = await this.generateTokensProvider.generateSuperAdminTokens(user);
+  
+      return {
+        user,
+        membership: ({ role: MembershipRole.SUPER_ADMIN, status: MembershipStatus.ACTIVE } as unknown) as UserTenantMembership,
+        allMemberships: [],
+        tokens,
+        tenant: null,
+        subdomainUrl: "global-admin.squl.co.ke",
+      };
+    }
+  
     const activeMemberships = user.memberships.filter(
       (m) => m.status === MembershipStatus.ACTIVE,
     );
-
+  
     if (activeMemberships.length === 0) {
       throw new UnauthorizedException('No active school memberships found');
     }
-
-    // Optionally pick the first one as default
+  
     const defaultMembership = activeMemberships[0];
     const tenant = defaultMembership.tenant;
-
+  
     const tokens = await this.generateTokensProvider.generateTokens(
       user,
       defaultMembership,
       tenant,
     );
-
+  
     return {
       user,
-      membership: {
-        ...defaultMembership,
-        role: defaultMembership.role, // explicitly expose role
-      },
+      membership: defaultMembership,
       allMemberships: activeMemberships,
       tokens,
       tenant,
       subdomainUrl: `${tenant.subdomain}.squl.co.ke`,
     };
   }
+  
 
   // async signIn(signInInput: SignInInput, subdomain: string): Promise<AuthResponse> {
   //   console.log(signInInput, 'this is the sign in input..::', subdomain)

@@ -33,8 +33,12 @@ export class TenantRoleGuard implements CanActivate {
     const gqlContext = GqlExecutionContext.create(context);
     const user: ActiveUserData = gqlContext.getContext().req.user;
 
-    if (!user || !user.sub || !user.tenantId) {
-      return false; 
+    // if (!user || !user.sub || !user.tenantId) {
+    //   return false; 
+    // }
+
+    if (user.globalRole === 'SUPER_ADMIN') {
+      return true;
     }
 
     const membership = await this.membershipRepo.findOne({
