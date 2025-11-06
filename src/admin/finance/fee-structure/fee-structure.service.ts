@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource, In } from 'typeorm';
+import { Repository, DataSource, In, Not } from 'typeorm';
 import { FeeStructure } from './entities/fee-structure.entity';
 import { FeeStructureItem } from '../fee-structure-item/entities/fee-structure-item.entity';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
@@ -83,6 +83,10 @@ export class FeeStructureService {
       throw new ConflictException(
         'Fee structure already exists for this academic year and name',
       );
+    }
+
+    if(!user.tenantId) {
+      throw new NotFoundException('Tenant ID is missing from the active user');
     }
 
     await this.validateCoreEntities(input, user.tenantId);
@@ -516,7 +520,9 @@ async findAll(user: ActiveUserData): Promise<FeeStructure[]> {
       if (input.isActive !== undefined) updateData.isActive = input.isActive;
   
       await mgr.update(FeeStructure, id, updateData);
-  
+      if(!user.tenantId) {
+        throw new NotFoundException('Tenant ID is missing from the active user');
+      }
       if (input.gradeLevelIds && input.gradeLevelIds.length > 0) {
         const newGradeLevels = await this.validateGradeLevels(
           input.gradeLevelIds,

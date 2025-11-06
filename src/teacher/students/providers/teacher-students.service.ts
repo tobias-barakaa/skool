@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { TeacherStudentsProvider } from '../providers/teacher-students.provider';
 import { Student } from 'src/admin/student/entities/student.entity';
 import { TeacherStudentDto, TeacherStudentGradeDto } from 'src/teacher/dtos/teacher-student.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TeacherStudentResponse } from 'src/teacher/dtos/Teacher-student-response.dto';
+import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 
 @Injectable()
 export class TeacherStudentsService {
@@ -18,8 +19,15 @@ export class TeacherStudentsService {
   //   return await this.teacherStudentsProvider.findStudentsByTenant(tenantId);
   // }
 
-  async getStudentsByTenant(tenantId: string): Promise<TeacherStudentResponse[]> {
-    const students = await this.teacherStudentsProvider.findStudentsByTenant(tenantId);
+  private getTenantId(user: ActiveUserData): string {
+      if (!user.tenantId) {
+        throw new UnauthorizedException('Tenant ID is missing from the active user');
+      }
+      return user.tenantId;
+    }
+
+  async getStudentsByTenant(currentUser: ActiveUserData): Promise<TeacherStudentResponse[]> {
+    const students = await this.teacherStudentsProvider.findStudentsByTenant(this.getTenantId(currentUser));
   
     return students.map((student) => ({
       id: student.id,
@@ -57,8 +65,9 @@ export class TeacherStudentsService {
 
   async getStudentById(
     studentId: string,
-    tenantId: string,
+    currentUser: ActiveUserData,
   ): Promise<Student | null> {
+    const tenantId = this.getTenantId(currentUser);
     return await this.teacherStudentsProvider.findStudentById(
       studentId,
       tenantId,
@@ -77,8 +86,9 @@ export class TeacherStudentsService {
 
   async getStudentsByStream(
     streamId: string,
-    tenantId: string,
+    currentUser: ActiveUserData,
   ): Promise<Student[]> {
+    const tenantId = this.getTenantId(currentUser);
     return await this.teacherStudentsProvider.findStudentsByStream(
       streamId,
       tenantId,
@@ -88,8 +98,9 @@ export class TeacherStudentsService {
 
   async getStudentsByGradeLevel(
     gradeLevelId: string,
-    tenantId: string,
+    currentUser: ActiveUserData,
   ): Promise<Student[]> {
+    const tenantId = this.getTenantId(currentUser);
     return await this.studentRepository.find({
       where: {
         tenant_id: tenantId,

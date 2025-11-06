@@ -14,20 +14,18 @@ export class ScholarshipsResolver {
   constructor(private readonly scholarshipsService: ScholarshipsService) {}
 
  
-
-
   @Mutation(() => Scholarship)
 createScholarship(
   @ActiveUser() user: ActiveUserData,  
   @Args('input') input: CreateScholarshipInput,
 ) {
-  return this.scholarshipsService.create(input, user.tenantId);
+  return this.scholarshipsService.create(input, user);
 }
 
   
 @Query(() => [Scholarship])
 async scholarships(@ActiveUser() user: ActiveUserData) {
-  return this.scholarshipsService.findAll(user.tenantId);
+  return this.scholarshipsService.findAll(user);
 }
 
 
@@ -42,7 +40,7 @@ async scholarships(@ActiveUser() user: ActiveUserData) {
     @Args('input') input: UpdateScholarshipInput,
     @ActiveUser() user: ActiveUserData,
   ) {
-    return this.scholarshipsService.update(input, user.tenantId);
+    return this.scholarshipsService.update(input, user);
   }
   
 
@@ -58,7 +56,7 @@ async assignScholarship(
   @Args('input') input: AssignScholarshipInput,
   @ActiveUser() user: ActiveUserData,
 ) {
-  return this.scholarshipsService.assignScholarship(input, user.tenantId);
+  return this.scholarshipsService.assignScholarship(input, user);
 }
 
 @Query(() => [StudentScholarship])
@@ -66,14 +64,14 @@ async studentScholarships(
   @Args('studentId', { type: () => String }) studentId: string,
   @ActiveUser() user: ActiveUserData,
 ) {
-  return this.scholarshipsService.findAssignmentsByStudent(studentId, user.tenantId);
+  return this.scholarshipsService.findAssignmentsByStudent(studentId, user);
 }
 
 
 
 @Query(() => [StudentScholarship])
 async allStudentScholarships(@ActiveUser() user: ActiveUserData) {
-  return this.scholarshipsService.findAllAssignments(user.tenantId);
+  return this.scholarshipsService.findAllAssignments(user);
 }
 
 @Mutation(() => StudentScholarship)
@@ -81,7 +79,7 @@ async updateStudentScholarship(
   @Args('input') input: UpdateStudentScholarshipInput,
   @ActiveUser() user: ActiveUserData,
 ) {
-  return this.scholarshipsService.updateAssignment(input, user.tenantId);
+  return this.scholarshipsService.updateAssignment(input, user);
 }
 
 
@@ -92,7 +90,7 @@ async removeStudentScholarship(
   @Args('id') id: string,
   @ActiveUser() user: ActiveUserData,
 ) {
-  return this.scholarshipsService.removeAssignment(id, user.tenantId);
+  return this.scholarshipsService.removeAssignment(id, user);
 }
 
 }

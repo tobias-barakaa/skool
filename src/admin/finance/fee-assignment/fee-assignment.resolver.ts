@@ -12,10 +12,18 @@ import { BulkToggleStudentFeeItemsInput } from './dtos/bulk-toggle-student-fee-i
 import { FeeAssignmentWithStudents, GetFeeAssignmentsByGradeLevelsInput, TenantFeeAssignmentSummary } from './dtos/fee-summary.dto';
 import GraphQLJSON from 'graphql-type-json';
 import { StudentFeeSummary } from './dtos/student-fee-summary.dto';
+import { UnauthorizedException } from '@nestjs/common';
 
 @Resolver(() => FeeAssignment)
 export class FeeAssignmentResolver {
   constructor(private readonly feeAssignmentService: FeeAssignmentService) {}
+
+    private getTenantId(user: ActiveUserData): string {
+        if (!user.tenantId) {
+          throw new UnauthorizedException('Tenant ID is missing from the active user');
+        }
+        return user.tenantId;
+      }
 
   @Mutation(() => FeeAssignment, {
     description: 'Create a new fee assignment and assign it to students in specified grade levels'
@@ -34,8 +42,8 @@ export class FeeAssignmentResolver {
   async feeAssignments(
     @ActiveUser() user: ActiveUserData,
   ): Promise<FeeAssignment[]> {
-    const tenantId = user.tenantId;
-    return this.feeAssignmentService.findAll(tenantId);
+    // const tenantId = user.tenantId;
+    return this.feeAssignmentService.findAll(this.getTenantId(user));
   }
 
   @Query(() => FeeAssignment, {
@@ -46,7 +54,7 @@ export class FeeAssignmentResolver {
     @ActiveUser() user: ActiveUserData,
   ): Promise<FeeAssignment> {
     const tenantId = user.tenantId;
-    return this.feeAssignmentService.findOne(id, tenantId);
+    return this.feeAssignmentService.findOne(id, this.getTenantId(user));
   }
 
   @Mutation(() => FeeAssignment, {
@@ -58,7 +66,7 @@ export class FeeAssignmentResolver {
     @ActiveUser() user: ActiveUserData,
   ): Promise<FeeAssignment> {
     const tenantId = user.tenantId;
-    return this.feeAssignmentService.update(id, updateFeeAssignmentInput, tenantId);
+    return this.feeAssignmentService.update(id, updateFeeAssignmentInput, this.getTenantId(user));
   }
 
   @Mutation(() => Boolean, {
@@ -69,7 +77,7 @@ export class FeeAssignmentResolver {
     @ActiveUser() user: ActiveUserData,
   ): Promise<boolean> {
     const tenantId = user.tenantId;
-    return this.feeAssignmentService.remove(id, tenantId);
+    return this.feeAssignmentService.remove(id, this.getTenantId(user));
   }
 
   @Query(() => [StudentFeeAssignment], {
@@ -80,7 +88,7 @@ export class FeeAssignmentResolver {
     @ActiveUser() user: ActiveUserData,
   ): Promise<StudentFeeAssignment[]> {
     const tenantId = user.tenantId;
-    return this.feeAssignmentService.getStudentFeeAssignments(studentId, tenantId);
+    return this.feeAssignmentService.getStudentFeeAssignments(studentId, this.getTenantId(user));
   }
 
   @Query(() => [StudentFeeAssignment], {
@@ -91,7 +99,7 @@ export class FeeAssignmentResolver {
     @ActiveUser() user: ActiveUserData,
   ): Promise<StudentFeeAssignment[]> {
     const tenantId = user.tenantId;
-    return this.feeAssignmentService.getAssignedStudents(feeAssignmentId, tenantId);
+    return this.feeAssignmentService.getAssignedStudents(feeAssignmentId, this.getTenantId(user));
   }
 
   @Mutation(() => StudentFeeItem, {
@@ -103,7 +111,7 @@ export class FeeAssignmentResolver {
     @ActiveUser() user: ActiveUserData,
   ): Promise<StudentFeeItem> {
     const tenantId = user.tenantId;
-    return this.feeAssignmentService.toggleStudentFeeItem(studentFeeItemId, isActive, tenantId);
+    return this.feeAssignmentService.toggleStudentFeeItem(studentFeeItemId, isActive, this.getTenantId(user));
   }
 
 
@@ -128,7 +136,7 @@ export class FeeAssignmentResolver {
     @ActiveUser() user: ActiveUserData,
   ): Promise<StudentFeeItem[]> {
     const tenantId = user.tenantId;
-    return this.feeAssignmentService.getStudentFeeItems(studentId, tenantId);
+    return this.feeAssignmentService.getStudentFeeItems(studentId, this.getTenantId(user));
   }
 
   @Query(() => StudentFeeSummary, { nullable: true })
@@ -136,7 +144,7 @@ async studentFeeSummary(
   @Args('studentId', { type: () => ID }) studentId: string,
   @ActiveUser() user: ActiveUserData,
 ): Promise<StudentFeeSummary | null> {
-  return this.feeAssignmentService.getStudentFeeSummary(studentId, user.tenantId);
+  return this.feeAssignmentService.getStudentFeeSummary(studentId, this.getTenantId(user));
 }
 
   @Mutation(() => [StudentFeeItem], {
@@ -147,7 +155,7 @@ async studentFeeSummary(
     @ActiveUser() user: ActiveUserData,
   ): Promise<StudentFeeItem[]> {
     const tenantId = user.tenantId;
-    return this.feeAssignmentService.bulkToggleStudentFeeItems(bulkToggleInput, tenantId);
+    return this.feeAssignmentService.bulkToggleStudentFeeItems(bulkToggleInput, this.getTenantId(user));
   }
 
 
@@ -159,7 +167,7 @@ async studentFeeSummary(
     @ActiveUser() user: ActiveUserData,
   ): Promise<StudentFeeItem[]> {
     const tenantId = user.tenantId;
-    return this.feeAssignmentService.getTenantFeeItems(tenantId);
+    return this.feeAssignmentService.getTenantFeeItems(this.getTenantId(user));
   }
   
 
@@ -176,7 +184,7 @@ async studentFeeSummary(
       feeStructureItemId,
       gradeLevelIds,
       isActive,
-      tenantId
+      this.getTenantId(user)
     );
   }
 

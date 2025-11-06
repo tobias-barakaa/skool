@@ -18,12 +18,12 @@ export class HostelResolver {
     @Args('input') input: CreateHostelInput,
     @ActiveUser() user: ActiveUserData,
   ) {
-    return this.hostelService.create(input, user.tenantId);
+    return this.hostelService.create(input, user);
   }
 
 @Query(() => [Hostel])
 findAllHostels(@ActiveUser() user: ActiveUserData) {
-  return this.hostelService.findAll(user.tenantId);
+  return this.hostelService.findAll(user);
 }
 
   @Query(() => Hostel)
@@ -48,7 +48,7 @@ findAllHostels(@ActiveUser() user: ActiveUserData) {
     @Args('input') input: CreateHostelAssignmentInput,
     @ActiveUser() user: ActiveUserData,
   ) {
-    return this.hostelService.assignStudent(input, user.tenantId);
+    return this.hostelService.assignStudent(input, user);
   }
 
   @Mutation(() => HostelAssignment)
@@ -68,6 +68,6 @@ findAllHostels(@ActiveUser() user: ActiveUserData) {
     @Args('hostelId') hostelId: string,
     @ActiveUser() user: ActiveUserData,
   ) {
-    return this.hostelService.getAssignmentsByHostel(hostelId, user.tenantId);
+    return this.hostelService.getAssignmentsByHostel(hostelId, user);
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { SearchProvider } from './providers/search.provider';
 import {
   SearchStudentInput,
@@ -8,15 +8,24 @@ import {
   CombinedSearchResult,
   FilteredResult,
 } from './dto/search.dto';
+import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 
 @Injectable()
 export class SearchService {
   constructor(private readonly searchProvider: SearchProvider) {}
 
+  private getTenantId(user: ActiveUserData): string {
+      if (!user.tenantId) {
+        throw new UnauthorizedException('Tenant ID is missing from the active user');
+      }
+      return user.tenantId;
+    }
+
   async searchStudentByName(
     input: SearchStudentInput,
-    tenantId: string,
+    currentUser: ActiveUserData,
   ): Promise<SearchStudentResult> {
+    const tenantId = this.getTenantId(currentUser);
     const students = await this.searchProvider.searchStudentByName(
       input.name,
       tenantId,
@@ -30,11 +39,11 @@ export class SearchService {
 
   async searchTeacherByName(
     input: SearchStudentInput,
-    tenantId: string,
+    currentUser: ActiveUserData,
   ): Promise<SearchTeacherResult> {
     const teachers = await this.searchProvider.searchTeacherByName(
       input.name,
-      tenantId,
+      this.getTenantId(currentUser),
     );
 
     return {
@@ -43,7 +52,8 @@ export class SearchService {
     };
   }
 
-  async getStudentsByTenant(tenantId: string): Promise<SearchStudentResult> {
+  async getStudentsByTenant(currentUser: ActiveUserData): Promise<SearchStudentResult> {
+    const tenantId = this.getTenantId(currentUser);
     console.log('kjf....................................')
     const students = await this.searchProvider.getStudentsByTenant(tenantId);
 
@@ -53,7 +63,8 @@ export class SearchService {
     };
   }
 
-  async getTeachersByTenant(tenantId: string): Promise<SearchTeacherResult> {
+  async getTeachersByTenant(currentUser: ActiveUserData): Promise<SearchTeacherResult> {
+    const tenantId = this.getTenantId(currentUser);
     const teachers = await this.searchProvider.getTeachersByTenant(tenantId);
 
     return {
@@ -63,8 +74,9 @@ export class SearchService {
   }
 
   async getBothStudentsAndTeachersByTenant(
-    tenantId: string,
+    currentUser: ActiveUserData,
   ): Promise<CombinedSearchResult> {
+    const tenantId = this.getTenantId(currentUser);
     const { students, teachers } =
       await this.searchProvider.getBothStudentsAndTeachersByTenant(tenantId);
 
@@ -79,8 +91,9 @@ export class SearchService {
 
   async filterByGradeLevelAndSubjects(
     input: FilterInput,
-    tenantId: string,
+    currentUser: ActiveUserData,
   ): Promise<FilteredResult> {
+    const tenantId = this.getTenantId(currentUser);
     const { students, teachers } =
       await this.searchProvider.filterByGradeLevelAndSubjects(
         tenantId,
@@ -96,12 +109,13 @@ export class SearchService {
     };
   }
 
-  async getTenantStatistics(tenantId: string): Promise<{
+  async getTenantStatistics(currentUser: ActiveUserData): Promise<{
     studentCount: number;
     teacherCount: number;
     streamCount: number;
     totalCount: number;
   }> {
+    const tenantId = this.getTenantId(currentUser);
     const [studentCount, teacherCount, streamCount] = await Promise.all([
       this.searchProvider.countStudentsByTenant(tenantId),
       this.searchProvider.countTeachersByTenant(tenantId),
@@ -116,7 +130,8 @@ export class SearchService {
     };
   }
 
-  async getStreamsByTenant(tenantId: string) {
+  async getStreamsByTenant(currentUser: ActiveUserData) {
+    const tenantId = this.getTenantId(currentUser);
     return this.searchProvider.getStreamsByTenant(tenantId);
   }
 }

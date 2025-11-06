@@ -40,6 +40,10 @@ export class TenantAccessGuard implements CanActivate {
       throw new UnauthorizedException('Authentication required');
     }
 
+    if (!user.tenantId) {
+      throw new UnauthorizedException('Authentication required');
+    }
+
     if (user.tenantId !== tenantIdFromCookie) {
       throw new ForbiddenException('Tenant mismatch');
     }

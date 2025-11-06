@@ -51,8 +51,7 @@ export class ParentChatResolver {
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<ChatMessage> {
     const message = await this.parentChatService.sendMessageToTeacher(
-      currentUser.sub,
-      currentUser.tenantId,
+      currentUser,
       { ...input, recipientType: 'TEACHER' },
     );
 
@@ -76,8 +75,7 @@ export class ParentChatResolver {
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<boolean> {
     return await this.parentChatService.deleteMessage(
-      currentUser.sub,
-      currentUser.tenantId,
+      currentUser,
       messageId,
     );
   }
@@ -320,9 +318,8 @@ export class ParentChatResolver {
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<Teacher[]> {
     return await this.parentChatService.getTeachersForStudent(
-      currentUser.sub,
+      currentUser,
       studentId,
-      currentUser.tenantId,
     );
   }
 
@@ -384,9 +381,8 @@ export class ParentChatResolver {
      @ActiveUser() currentUser: ActiveUserData,
    ): Promise<ChatRoom | null> {
      return await this.parentChatService.getChatRoomWithTeacher(
-       currentUser.sub,
+       currentUser,
        teacherId,
-       currentUser.tenantId,
      );
    }
 

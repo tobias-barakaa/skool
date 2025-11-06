@@ -1,5 +1,5 @@
 import { Resolver, Query, Mutation, Args, ID, Float } from '@nestjs/graphql';
-import { UseGuards, Request } from '@nestjs/common';
+import { UseGuards, Request, UnauthorizedException } from '@nestjs/common';
 import { FeeStructureItem } from './entities/fee-structure-item.entity';
 import { FeeStructureItemService } from './fee-structure-item.service';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
@@ -12,6 +12,13 @@ import { MembershipRole } from 'src/admin/user-tenant-membership/entities/user-t
 @Roles(MembershipRole.SCHOOL_ADMIN)
 export class FeeStructureItemResolver {
   constructor(private readonly feeStructureItemService: FeeStructureItemService) {}
+
+  private getTenantId(user: ActiveUserData): string {
+          if (!user.tenantId) {
+            throw new UnauthorizedException('Tenant ID is missing from the active user');
+          }
+          return user.tenantId;
+        }
 
   // @Mutation(() => FeeStructureItem, { description: 'Create a new fee structure item' })
   // async createFeeStructureItem(
@@ -30,8 +37,7 @@ export class FeeStructureItemResolver {
   async findAll(
     @ActiveUser() user: ActiveUserData
 ): Promise<FeeStructureItem[]> {
-    const tenantId = user.tenantId
-    return this.feeStructureItemService.findAll(tenantId);
+    return this.feeStructureItemService.findAll(this.getTenantId(user));
   }
 
   @Query(() => FeeStructureItem, { 
@@ -42,8 +48,7 @@ export class FeeStructureItemResolver {
     @Args('id', { type: () => ID }) id: string,
     @ActiveUser() user: ActiveUserData,
   ): Promise<FeeStructureItem> {
-    const tenantId = user.tenantId
-    return this.feeStructureItemService.findOne(id, tenantId);
+    return this.feeStructureItemService.findOne(id, this.getTenantId(user));
   }
 
   @Query(() => [FeeStructureItem], { 
@@ -54,8 +59,7 @@ export class FeeStructureItemResolver {
     @Args('feeStructureId', { type: () => ID }) feeStructureId: string,
     @ActiveUser() user: ActiveUserData,
   ): Promise<FeeStructureItem[]> {
-    const tenantId = user.tenantId
-    return this.feeStructureItemService.findByStructure(feeStructureId, tenantId);
+    return this.feeStructureItemService.findByStructure(feeStructureId, this.getTenantId(user));
   }
 
   @Query(() => [FeeStructureItem], { 
@@ -67,7 +71,7 @@ export class FeeStructureItemResolver {
     @ActiveUser() user: ActiveUserData,
   ): Promise<FeeStructureItem[]> {
     const tenantId = user.tenantId;
-    return this.feeStructureItemService.findMandatoryItems(feeStructureId, tenantId);
+    return this.feeStructureItemService.findMandatoryItems(feeStructureId, this.getTenantId(user));
   }
 
   @Query(() => [FeeStructureItem], { 
@@ -79,7 +83,7 @@ export class FeeStructureItemResolver {
     @ActiveUser() user: ActiveUserData,
   ): Promise<FeeStructureItem[]> {
     const tenantId = user.tenantId;
-    return this.feeStructureItemService.findOptionalItems(feeStructureId, tenantId);
+    return this.feeStructureItemService.findOptionalItems(feeStructureId, this.getTenantId(user));
   }
 
   @Query(() => Float, { 
@@ -90,8 +94,7 @@ export class FeeStructureItemResolver {
     @Args('feeStructureId', { type: () => ID }) feeStructureId: string,
     @ActiveUser() user: ActiveUserData,
   ): Promise<number> {
-    const tenantId = user.tenantId;
-    return this.feeStructureItemService.getTotalAmount(feeStructureId, tenantId);
+    return this.feeStructureItemService.getTotalAmount(feeStructureId, this.getTenantId(user));
   }
 
   @Query(() => Float, { 
@@ -103,7 +106,7 @@ export class FeeStructureItemResolver {
     @ActiveUser() user: ActiveUserData,
   ): Promise<number> {
     const tenantId = user.tenantId;
-    return this.feeStructureItemService.getMandatoryTotal(feeStructureId, tenantId);
+    return this.feeStructureItemService.getMandatoryTotal(feeStructureId, this.getTenantId(user));
   }
 
   @Mutation(() => Boolean, {
@@ -116,7 +119,7 @@ export class FeeStructureItemResolver {
     @Args('id', { type: () => ID }) id: string,
     @ActiveUser() user: ActiveUserData,
   ): Promise<boolean> {
-    return this.feeStructureItemService.remove(id, user.tenantId);
+    return this.feeStructureItemService.remove(id, this.getTenantId(user));
   }
 
   @Query(() => Float, { 
@@ -128,7 +131,7 @@ export class FeeStructureItemResolver {
     @ActiveUser() user: ActiveUserData,
   ): Promise<number> {
     const tenantId = user.tenantId;
-    return this.feeStructureItemService.getOptionalTotal(feeStructureId, tenantId);
+    return this.feeStructureItemService.getOptionalTotal(feeStructureId, this.getTenantId(user));
   }
 
   // @Mutation(() => FeeStructureItem, { description: 'Update a fee structure item' })
@@ -154,7 +157,7 @@ export class FeeStructureItemResolver {
     @Args('input') input: UpdateFeeStructureItemInput,
     @ActiveUser() user: ActiveUserData,
   ): Promise<FeeStructureItem> {
-    return this.feeStructureItemService.update(id, user.tenantId, input);
+    return this.feeStructureItemService.update(id, this.getTenantId(user), input);
   }
 
   // @Mutation(() => Boolean, { description: 'Delete a fee structure item' })
@@ -197,7 +200,7 @@ export class FeeStructureItemResolver {
     @ActiveUser() user: ActiveUserData,
   ): Promise<number> {
     const tenantId = user.tenantId;
-    return this.feeStructureItemService.removeByStructure(feeStructureId, tenantId);
+    return this.feeStructureItemService.removeByStructure(feeStructureId, this.getTenantId(user));
   }
 
   

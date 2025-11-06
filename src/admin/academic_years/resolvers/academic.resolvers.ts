@@ -1,14 +1,21 @@
 import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
+import { UnauthorizedException } from '@nestjs/common';
 import { AcademicYear } from '../entities/academic_years.entity';
 import { AcademicYearService } from '../services/academic.service';
 import { CreateAcademicYearInput } from '../dtos/create-academic-year.dto';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { UpdateAcademicYearInput } from '../dtos/update-academic-year.dto';
-
 @Resolver(() => AcademicYear)
 export class AcademicYearResolver {
   constructor(private readonly service: AcademicYearService) {}
+
+  private getTenantId(user: ActiveUserData): string {
+    if (!user.tenantId) {
+      throw new UnauthorizedException('Tenant ID is missing from the active user');
+    }
+    return user.tenantId;
+  }
 
   @Mutation(() => AcademicYear, {
     description: 'Create a new academic year for the tenant'
@@ -21,7 +28,8 @@ export class AcademicYearResolver {
     }) input: CreateAcademicYearInput,
     @ActiveUser() user: ActiveUserData, 
   ): Promise<AcademicYear> {
-    const academicYear = await this.service.create(input, user.tenantId);
+    const tenantId = this.getTenantId(user);
+    const academicYear = await this.service.create(input, tenantId);
     
     return {
       ...academicYear,
@@ -35,7 +43,7 @@ export class AcademicYearResolver {
   async academicYears(
     @ActiveUser() user: ActiveUserData
   ): Promise<AcademicYear[]> {
-    return this.service.findAll(user.tenantId);
+    return this.service.findAll(this.getTenantId(user));
   }
 
 
@@ -47,7 +55,7 @@ async updateAcademicYear(
   @Args('input') input: UpdateAcademicYearInput,
   @ActiveUser() user: ActiveUserData,
 ): Promise<AcademicYear> {
-  return this.service.update(id, input, user.tenantId);
+  return this.service.update(id, input, this.getTenantId(user));
 }
 
 @Mutation(() => Boolean, { description: 'Delete an academic year' })
@@ -55,7 +63,7 @@ async deleteAcademicYear(
   @Args('id', { type: () => ID }) id: string,
   @ActiveUser() user: ActiveUserData,
 ): Promise<boolean> {
-  return this.service.remove(id, user.tenantId);
+  return this.service.remove(id, this.getTenantId(user));
 }
 
 @Mutation(() => AcademicYear, { description: 'Mark an academic year as the current one' })
@@ -63,7 +71,7 @@ async setCurrentAcademicYear(
   @Args('id', { type: () => ID }) id: string,
   @ActiveUser() user: ActiveUserData,
 ): Promise<AcademicYear> {
-  return this.service.setCurrent(id, user.tenantId);
+  return this.service.setCurrent(id, this.getTenantId(user));
 }
 
   @Query(() => AcademicYear, {
@@ -73,7 +81,6 @@ async setCurrentAcademicYear(
     @Args('id', { type: () => ID }) id: string,
     @ActiveUser() user: ActiveUserData
   ): Promise<AcademicYear> {
-    return this.service.findById(id, user.tenantId);
+    return this.service.findById(id, this.getTenantId(user));
   }
 }
-

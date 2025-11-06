@@ -5,6 +5,7 @@ import { Assessment } from '../entity/assessment.entity';
 import { AssessmentFilterInput } from '../dto/assessment-filter.input';
 import { AssessmentReadProvider } from './assessment-read.provider';
 import { AssessType } from '../enums/assesment-type.enum';
+import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 
 @Injectable()
 export class AssessmentService {
@@ -21,18 +22,18 @@ export class AssessmentService {
   }
 
   async getAllAssessments(
-    tenantId: string,
+    user:ActiveUserData,
     filter?: AssessmentFilterInput,
   ): Promise<Assessment[]> {
-    return this.assessmentReadProvider.getAll(tenantId, filter);
+    return this.assessmentReadProvider.getAll(user, filter);
   }
 
-  async deleteCA(id: string, tenantId: string): Promise<boolean> {
-    return this.assessmentReadProvider.deleteAssessment(id, tenantId, AssessType.CA);
+  async deleteCA(id: string, user: ActiveUserData): Promise<boolean> {
+    return this.assessmentReadProvider.deleteAssessment(id, user, AssessType.CA);
   }
 
-  async deleteExam(id: string, tenantId: string): Promise<boolean> {
-    return this.assessmentReadProvider.deleteAssessment(id, tenantId, AssessType.EXAM);
+  async deleteExam(id: string, user: ActiveUserData): Promise<boolean> {
+    return this.assessmentReadProvider.deleteAssessment(id, user, AssessType.EXAM);
   }
 
 }

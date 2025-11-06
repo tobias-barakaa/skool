@@ -9,7 +9,6 @@ import { CreateCustomSubjectInput } from '../dtos/create-custom-subject.input';
 import { Roles } from 'src/iam/decorators/roles.decorator';
 import { MembershipRole } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
 import { AuthenticationGuard } from 'src/admin/auth/guards/authentication.guard';
-import { TenantRoleGuard } from 'src/iam/guards/tenant-role.guard';
 
 
 @Resolver(() => TenantSubject)
@@ -78,7 +77,7 @@ export class TenantSubjectResolver {
     @Args('curriculumId', { nullable: true }) curriculumId?: string,
   ): Promise<TenantSubject[]> {
     return await this.createTenantSubjectService.getTenantSubjects(
-      user.tenantId,
+      user,
       curriculumId,
     );
   }

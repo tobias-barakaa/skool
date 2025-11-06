@@ -25,8 +25,7 @@ import { AcceptInvitationResponse } from '../teacher/dtos/accept-teacher-invitat
 @Resolver()
 export class ParentResolver {
   constructor(private parentService: ParentService) {}
-  
- 
+
 
   @Roles(
     MembershipRole.SCHOOL_ADMIN,
@@ -66,6 +65,9 @@ export class ParentResolver {
 async getAllParents(
   @ActiveUser() currentUser: ActiveUserData,
 ): Promise<ParentDto[]> {
+  if (!currentUser?.tenantId) {
+    throw new ForbiddenException('Access denied: tenantId is missing');
+  }
   return this.parentService.getAllParents(currentUser.tenantId);
 }
 
@@ -193,10 +195,10 @@ async getAllParents(
     @ActiveUser() currentUser: ActiveUserData,
   ) {
     console.log('Using tenantId filter :::::', tenantId);
-    console.log('Current user tenantId :::::', currentUser.tenantId);
+    console.log('Current user tenantId :::::', currentUser?.tenantId);
 
     // 🚫 Prevent cross-tenant access
-    if (tenantId.trim() !== currentUser.tenantId.trim()) {
+    if (!currentUser?.tenantId || tenantId.trim() !== currentUser.tenantId.trim()) {
       throw new ForbiddenException('Access denied: tenantId mismatch');
     }
 

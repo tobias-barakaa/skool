@@ -20,12 +20,8 @@ export class ChatResolver {
     private readonly redisChatProvider: RedisChatProvider,
   ) {}
 
-  // ==================== MUTATIONS ====================
-
   /**
-   * Send message from teacher to a specific student
-   * 
-   * Example:
+ 
    * mutation {
    *   sendMessageToStudent(input: {
    *     recipientId: "student-uuid"
@@ -51,7 +47,7 @@ export class ChatResolver {
   ): Promise<ChatMessage> {
     const message = await this.chatService.sendMessageToStudent(
       currentUser.sub,
-      currentUser.tenantId,
+      currentUser,
       input,
     );
 
@@ -68,8 +64,7 @@ export class ChatResolver {
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<boolean> {
     return await this.chatService.deleteMessage(
-      currentUser.sub,       // teacher's userId
-      currentUser.tenantId,
+      currentUser,
       messageId,
     );
   }
@@ -77,8 +72,7 @@ export class ChatResolver {
 
   /**
    * Send message from teacher to a specific parent
-   * 
-   * Example:
+  
    * mutation {
    *   sendMessageToParent(input: {
    *     recipientId: "parent-uuid"
@@ -100,8 +94,7 @@ export class ChatResolver {
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<ChatMessage> {
     const message = await this.chatService.sendMessageToParent(
-      currentUser.sub,
-      currentUser.tenantId,
+      currentUser,
       input,
     );
 
@@ -133,8 +126,7 @@ export class ChatResolver {
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<ChatMessage[]> {
     const messages = await this.chatService.broadcastToAllStudents(
-      currentUser.sub,
-      currentUser.tenantId,
+      currentUser,
       input,
     );
 
@@ -171,8 +163,7 @@ rents in the school
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<ChatMessage[]> {
     const messages = await this.chatService.broadcastToAllParents(
-      currentUser.sub,
-      currentUser.tenantId,
+      currentUser,
       input,
     );
 
@@ -199,7 +190,7 @@ rents in the school
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<boolean> {
     return await this.chatService.markMessagesAsRead(
-      currentUser.sub,
+      currentUser,
       chatRoomId,
     );
   }
@@ -233,7 +224,7 @@ rents in the school
   // ): Promise<ChatMessage> {
   //   const message = await this.chatService.sendMessageFromParentToTeacher(
   //     currentUser.sub,
-  //     currentUser.tenantId,
+  //     currentUser,
   //     input,
   //   );
 
@@ -250,8 +241,7 @@ rents in the school
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<ChatMessage> {
     const message = await this.chatService.sendMessageFromParentToTeacher(
-      currentUser.sub,
-      currentUser.tenantId,
+      currentUser,
       input,
     );
   
@@ -263,8 +253,7 @@ rents in the school
 
   /**
    * Get chat history for a specific room
-   * 
-   * Example:
+   
    * query {
    *   getChatHistory(chatRoomId: "room-uuid", limit: 50, offset: 0) {
    *     id
@@ -291,7 +280,7 @@ rents in the school
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<ChatMessage[]> {
     return await this.chatService.getChatHistory(
-      currentUser.sub,
+      currentUser,
       chatRoomId,
       limit,
       offset,
@@ -513,8 +502,7 @@ async broadcastToEntireSchool(
   @ActiveUser() currentUser: ActiveUserData,
 ): Promise<ChatMessage[]> {
   const messages = await this.chatService.broadcastToEntireSchool(
-    currentUser.sub,
-    currentUser.tenantId,
+    currentUser,
     input,
   );
 
@@ -548,8 +536,7 @@ async broadcastToAllSchoolParents(
   @ActiveUser() currentUser: ActiveUserData,
 ): Promise<ChatMessage[]> {
   const messages = await this.chatService.broadcastToAllSchoolParents(
-    currentUser.sub,
-    currentUser.tenantId,
+    currentUser,
     input,
   );
 
@@ -584,8 +571,7 @@ async broadcastToGradeLevels(
   @ActiveUser() currentUser: ActiveUserData,
 ): Promise<ChatMessage[]> {
   const messages = await this.chatService.broadcastToGradeLevels(
-    currentUser.sub,
-    currentUser.tenantId,
+    currentUser,
     input,
   );
 
@@ -620,8 +606,7 @@ async broadcastToGradeLevelParents(
   @ActiveUser() currentUser: ActiveUserData,
 ): Promise<ChatMessage[]> {
   const messages = await this.chatService.broadcastToGradeLevelParents(
-    currentUser.sub,
-    currentUser.tenantId,
+    currentUser,
     input,
   );
 

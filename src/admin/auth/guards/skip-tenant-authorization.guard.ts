@@ -46,7 +46,7 @@ export class TenantAccessGuard implements CanActivate {
 
     const validation = await this.tenantValidationService.validateUserTenantAccess(
       user.sub,
-      user.tenantId
+      tenantIdFromCookie
     );
 
     request.tenant = validation.tenant;

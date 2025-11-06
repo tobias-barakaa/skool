@@ -183,9 +183,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     try {
       const userId = client.handshake.query.userId as string;
 
-      // Store typing status in Redis
+      // Build an ActiveUserData-like object and store typing status in Redis
+      const currentUser = { sub: userId } as any;
       await this.redisChatProvider.setTypingIndicator(
-        userId,
+        currentUser,
         data.roomId,
         data.isTyping,
       );

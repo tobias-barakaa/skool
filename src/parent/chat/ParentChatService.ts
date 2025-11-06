@@ -9,6 +9,7 @@ import { SendMessageFromParentToTeacherInput } from 'src/messaging/dtos/send-mes
 import { ChatMessage } from 'src/messaging/entities/chat-message.entity';
 import { RedisChatProvider } from 'src/messaging/providers/redis-chat.provider';
 import { ChatRoom } from 'src/messaging/entities/chat-room.entity';
+import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 
 @Injectable()
 export class ParentChatService {
@@ -34,13 +35,25 @@ export class ParentChatService {
    * Send message from parent to a specific teacher about their child
    */
   async sendMessageToTeacher(
-    parentUserId: string,
-    tenantId: string,
+   currentUser: ActiveUserData,
     input: SendMessageFromParentToTeacherInput,
   ): Promise<ChatMessage> {
     // Get parent by user_id
+
+    const tenantId = currentUser.tenantId;
+
+    if(!tenantId) {
+        throw new BadRequestException('Tenant ID is required');
+    }
+
+    const parentUserId = currentUser.sub;
+
+    if(!parentUserId) {
+        throw new BadRequestException('User ID is required');
+    }
+
     const parent = await this.parentRepository.findOne({
-      where: { user: { id: parentUserId }, tenantId },
+      where: { user: { id: parentUserId }, tenantId: tenantId },
     });
 
     if (!parent) {
@@ -52,7 +65,7 @@ export class ParentChatService {
       where: { 
         parentId: parent.id, 
         studentId: input.studentId, 
-        tenantId 
+        tenantId: currentUser.tenantId 
       },
     });
 
@@ -62,7 +75,7 @@ export class ParentChatService {
 
     // Get teacher and their user_id
     const teacher = await this.teacherRepository.findOne({
-      where: { id: input.recipientId, tenantId },
+      where: { id: input.recipientId, tenantId: currentUser.tenantId },
       relations: ['user'],
     });
 
@@ -76,7 +89,7 @@ const roomName = `teacher-parent-${participants[0]}-${participants[1]}`;
 const chatRoom = await this.getOrCreateChatRoom(
   roomName,
   'DIRECT',
-  [parentUserId, teacher.user.id],
+  [tenantId, teacher.user.id],
   tenantId,
 );
 
@@ -328,12 +341,11 @@ const chatRoom = await this.getOrCreateChatRoom(
 
   
   async deleteMessage(
-    parentUserId: string,
-    tenantId: string,
+    currentUser: ActiveUserData,
     messageId: string,
     options?: { hard?: boolean },
   ): Promise<boolean> {
-    // Find message with room
+    const parentUserId = currentUser.sub
     const message = await this.chatMessageRepository.findOne({
       where: { id: messageId },
       relations: ['chatRoom'],
@@ -371,11 +383,12 @@ const chatRoom = await this.getOrCreateChatRoom(
    * Get list of teachers for a specific student (so parent knows who to message)
    */
   async getTeachersForStudent(
-    parentUserId: string,
+    currentUser: ActiveUserData,
     studentId: string,
-    tenantId: string,
   ): Promise<Teacher[]> {
-    // Verify parent-student relationship
+    const parentUserId = currentUser.sub;
+    const tenantId = currentUser.tenantId;
+
     const parent = await this.parentRepository.findOne({
       where: { user: { id: parentUserId }, tenantId },
     });
@@ -447,10 +460,11 @@ const chatRoom = await this.getOrCreateChatRoom(
 
 
   async getChatRoomWithTeacher(
-    parentUserId: string,
+    currentUser: ActiveUserData,
     teacherId: string,
-    tenantId: string,
   ): Promise<ChatRoom | null> {
+    const parentUserId = currentUser.sub;
+    const tenantId = currentUser.tenantId;
     const parent = await this.parentRepository.findOne({
       where: { user: { id: parentUserId }, tenantId },
     });

@@ -10,9 +10,10 @@ import { Curriculum } from '../../curriculum/entities/curicula.entity';
 import { Tenant } from '../../tenants/entities/tenant.entity';
 import { CacheProvider } from 'src/common/providers/cache.provider';
 import { TenantGradeLevel } from 'src/admin/school-type/entities/tenant-grade-level';
+import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 
 export interface CreateTenantGradeLevelDto {
-  tenantId: string;
+  user: ActiveUserData;
   curriculumId: string;
   gradeLevelId: string;
 }
@@ -26,6 +27,14 @@ export class CreateTenantGradeLevelProvider {
     private readonly cacheProvider: CacheProvider,
   ) {}
 
+  private getTenantId(dto: CreateTenantGradeLevelDto) {
+
+    if(!dto.user.tenantId) {
+      throw new NotFoundException('Tenant ID not found for the user');
+    }
+    return dto.user.tenantId;
+  }
+
   async createTenantGradeLevel(
     dto: CreateTenantGradeLevelDto,
   ): Promise<TenantGradeLevel> {
@@ -36,7 +45,7 @@ export class CreateTenantGradeLevelProvider {
     try {
       // Validate tenant exists
       const tenant = await queryRunner.manager.findOne(Tenant, {
-        where: { id: dto.tenantId },
+        where: { id: dto.user.tenantId },
       });
 
       if (!tenant) {
@@ -67,10 +76,11 @@ export class CreateTenantGradeLevelProvider {
         TenantGradeLevel,
         {
           where: {
-            tenant: { id: dto.tenantId },
+            tenant: { id: dto.user.tenantId },
             curriculum: { id: dto.curriculumId },
             gradeLevel: { id: dto.gradeLevelId },
           },
+          relations: ['streams'],
         },
       );
 
@@ -91,14 +101,14 @@ export class CreateTenantGradeLevelProvider {
         );
 
         await queryRunner.commitTransaction();
-        await this.invalidateCache(dto.tenantId);
+        await this.invalidateCache(this.getTenantId(dto));
 
         return result;
       }
 
       // Create new tenant grade level
       const tenantGradeLevel = queryRunner.manager.create(TenantGradeLevel, {
-        tenant: { id: dto.tenantId },
+        tenant: { id: this.getTenantId(dto) },
         curriculum: { id: dto.curriculumId },
         gradeLevel: { id: dto.gradeLevelId },
         isActive: true,
@@ -110,10 +120,10 @@ export class CreateTenantGradeLevelProvider {
       );
 
       await queryRunner.commitTransaction();
-      await this.invalidateCache(dto.tenantId);
+      await this.invalidateCache(this.getTenantId(dto));
 
       this.logger.log(
-        `Created tenant grade level: ${result.id} for tenant: ${dto.tenantId}`,
+        `Created tenant grade level: ${result.id} for tenant: ${this.getTenantId(dto)}`,
       );
       return result;
     } catch (error) {
@@ -127,7 +137,7 @@ export class CreateTenantGradeLevelProvider {
 
   async deleteTenantGradeLevel(
     tenantGradeLevelId: string,
-    tenantId: string,
+    user: ActiveUserData,
   ): Promise<boolean> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -140,7 +150,7 @@ export class CreateTenantGradeLevelProvider {
         {
           where: {
             id: tenantGradeLevelId,
-            tenant: { id: tenantId },
+            tenant: { id: user.tenantId },
           },
         },
       );
@@ -158,10 +168,13 @@ export class CreateTenantGradeLevelProvider {
       await queryRunner.manager.save(TenantGradeLevel, tenantGradeLevel);
 
       await queryRunner.commitTransaction();
-      await this.invalidateCache(tenantId);
+      if(!user.tenantId) {
+        throw new NotFoundException('Tenant ID not found for the user');
+      }
+      await this.invalidateCache(user.tenantId);
 
       this.logger.log(
-        `Deleted tenant grade level: ${tenantGradeLevelId} for tenant: ${tenantId}`,
+        `Deleted tenant grade level: ${tenantGradeLevelId} for tenant: ${user.tenantId}`,
       );
       return true;
     } catch (error) {
@@ -274,7 +287,7 @@ export class CreateTenantGradeLevelProvider {
         // Check if already exists
         const existing = await queryRunner.manager.findOne(TenantGradeLevel, {
           where: {
-            tenant: { id: dto.tenantId },
+            tenant: { id: this.getTenantId(dto) },
             curriculum: { id: dto.curriculumId },
             gradeLevel: { id: dto.gradeLevelId },
           },
@@ -294,7 +307,7 @@ export class CreateTenantGradeLevelProvider {
           const tenantGradeLevel = queryRunner.manager.create(
             TenantGradeLevel,
             {
-              tenant: { id: dto.tenantId },
+              tenant: { id: this.getTenantId(dto) },
               curriculum: { id: dto.curriculumId },
               gradeLevel: { id: dto.gradeLevelId },
               isActive: true,
@@ -310,7 +323,7 @@ export class CreateTenantGradeLevelProvider {
       await queryRunner.commitTransaction();
 
       // Invalidate cache for all affected tenants
-      const tenantIds = [...new Set(gradeLevels.map((gl) => gl.tenantId))];
+      const tenantIds = [...new Set(gradeLevels.map((gl) => this.getTenantId(gl)))];
       for (const tenantId of tenantIds) {
         await this.invalidateCache(tenantId);
       }

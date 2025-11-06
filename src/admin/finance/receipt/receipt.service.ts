@@ -218,6 +218,10 @@ export class ReceiptService {
   
     const payment = receipt.payment;
     const student = receipt.student;
+
+    if(!user.tenantId) {
+      throw new NotFoundException('Tenant ID is missing from the active user');
+    }
   
     await this.emailService.sendReceiptEmail(emailAddress, {
       recipientName: student.user.name,

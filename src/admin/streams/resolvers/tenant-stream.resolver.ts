@@ -55,7 +55,7 @@ export class TenantStreamResolver {
   async tenantStreams(
     @ActiveUser() user: ActiveUserData,
   ): Promise<TenantStream[]> {
-    return this.createTenantStreamService.findAllByTenant(user.tenantId);
+    return this.createTenantStreamService.findAllByTenant(user);
   }
 
   @Mutation(() => Boolean)
@@ -65,7 +65,7 @@ export class TenantStreamResolver {
   ): Promise<boolean> {
     return await this.createTenantStreamService.deleteTenantStream(
       tenantStreamId,
-      user.tenantId,
+      user,
     );
   }
 
@@ -75,7 +75,7 @@ export class TenantStreamResolver {
     @Args('tenantGradeLevelId', { nullable: true }) tenantGradeLevelId?: string,
   ): Promise<TenantStream[]> {
     return await this.createTenantStreamService.getTenantStreams(
-      user.tenantId,
+      user,
       tenantGradeLevelId,
     );
   }

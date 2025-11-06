@@ -5,6 +5,7 @@ import { AssessmentFilterInput } from '../dto/assessment-filter.input';
 import { AssessType } from '../enums/assesment-type.enum';
 import { Assessment } from '../entity/assessment.entity';
 import { SchoolSetupGuardService } from 'src/admin/config/school-config.guard';
+import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 
 @Injectable()
 export class AssessmentReadProvider {
@@ -19,9 +20,13 @@ export class AssessmentReadProvider {
   }
 
   async getAll(
-    tenantId: string,
+    user: ActiveUserData,
     filter?: AssessmentFilterInput,
   ): Promise<Assessment[]> {
+    const tenantId = user.tenantId;
+    if (!tenantId) {
+      throw new Error('User tenant information is missing');
+    }
     await this.ensureSchoolConfigured(tenantId);
 
     const qb = this.repo
@@ -54,9 +59,13 @@ export class AssessmentReadProvider {
 
   async deleteAssessment(
     id: string,
-    tenantId: string,
+    user: ActiveUserData,
     allowedType: AssessType,
   ): Promise<boolean> {
+    const tenantId = user.tenantId;
+    if (!tenantId) {
+      throw new Error('User tenant information is missing');
+    }
     await this.ensureSchoolConfigured(tenantId);
 
     const res = await this.repo.delete({
@@ -64,6 +73,9 @@ export class AssessmentReadProvider {
       tenantId,
       type: allowedType,
     });
-    return res.affected === 1;
+    if (res.affected === 0) {
+      throw new Error('Assessment not found or not allowed to delete');
+    }
+    return true;
   }
 }

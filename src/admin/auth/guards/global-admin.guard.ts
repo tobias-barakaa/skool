@@ -18,7 +18,7 @@ export class GlobalAdminGuard implements CanActivate {
     if (!requiresGlobalAdmin) return true;
 
     let request: any;
-    if (context.getType<GqlExecutionContext>() === 'graphql') {
+    if ((context.getType() as unknown as string) === 'graphql') {
       request = GqlExecutionContext.create(context).getContext().req;
     } else {
       request = context.switchToHttp().getRequest();

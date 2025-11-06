@@ -20,7 +20,7 @@ export class TeacherParentsResolver {
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<Parent[]> {
     return await this.teacherParentsService.getParentsByTenant(
-      currentUser.tenantId,
+      currentUser,
     );
   }
 
@@ -32,7 +32,7 @@ export class TeacherParentsResolver {
     // console.log('Fetching parents for student ID:::::', currentUser);
     return await this.teacherParentsService.getParentsByStudentId(
       studentId,
-      currentUser.tenantId,
+      currentUser,
     );
   }
 
@@ -43,7 +43,7 @@ export class TeacherParentsResolver {
   ): Promise<Parent | null> {
     return await this.teacherParentsService.getParentById(
       parentId,
-      currentUser.tenantId,
+      currentUser,
     );
   }
 
@@ -54,7 +54,7 @@ export class TeacherParentsResolver {
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<ParentStudent[]> {
     return await this.teacherParentsService.getStudentParentRelationships(
-      currentUser.tenantId,
+      currentUser,
     );
   }
 
@@ -68,7 +68,7 @@ export class TeacherParentsResolver {
   ): Promise<Parent | null> {
     return await this.teacherParentsService.getPrimaryParentByStudentId(
       studentId,
-      currentUser.tenantId,
+      currentUser,
     );
   }
 
@@ -79,7 +79,7 @@ export class TeacherParentsResolver {
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<any[]> {
     return await this.teacherParentsService.getStudentsWithParents(
-      currentUser.tenantId,
+      currentUser,
     );
   }
 }

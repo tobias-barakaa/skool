@@ -23,12 +23,12 @@ export class StudentNotesService {
    */
   private async getStudentByUserId(
     userId: string,
-    tenantId: string,
+    user: ActiveUserData,
   ): Promise<Student> {
     const student = await this.studentRepository.findOne({
       where: {
         user_id: userId,
-        tenant_id: tenantId,
+        tenant_id: user.tenantId,
       },
       relations: ['grade'],
     });
@@ -53,7 +53,7 @@ export class StudentNotesService {
     user: ActiveUserData,
     filters?: FilterTeacherNotesDto,
   ): Promise<TeacherNote[]> {
-    const student = await this.getStudentByUserId(user.sub, user.tenantId);
+    const student = await this.getStudentByUserId(user.sub, user);
   
     const query = this.teacherNoteRepository
       .createQueryBuilder('note')
@@ -101,7 +101,7 @@ export class StudentNotesService {
     user: ActiveUserData,
     subjectId: string,
   ): Promise<TeacherNote[]> {
-    const student = await this.getStudentByUserId(user.sub, user.tenantId);
+    const student = await this.getStudentByUserId(user.sub, user);
 
   return await this.teacherNoteRepository
   .createQueryBuilder('note')
@@ -129,7 +129,7 @@ export class StudentNotesService {
    * @returns List of grade-specific notes
    */
   async getGradeNotes(user: ActiveUserData): Promise<TeacherNote[]> {
-    const student = await this.getStudentByUserId(user.sub, user.tenantId);
+    const student = await this.getStudentByUserId(user.sub, user);
 
     return await this.teacherNoteRepository.find({
       where: {
@@ -167,7 +167,7 @@ export class StudentNotesService {
    * @returns Note details
    */
   async getNoteById(id: string, user: ActiveUserData): Promise<TeacherNote> {
-    const student = await this.getStudentByUserId(user.sub, user.tenantId);
+    const student = await this.getStudentByUserId(user.sub, user);
 
     const note = await this.teacherNoteRepository
       .createQueryBuilder('note')

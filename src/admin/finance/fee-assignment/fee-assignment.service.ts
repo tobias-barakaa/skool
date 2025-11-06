@@ -792,6 +792,9 @@ export class FeeAssignmentService {
   
   async getAllTenantFeeAssignments(user: ActiveUserData): Promise<TenantFeeAssignmentSummary> {
     const tenantId = user.tenantId;
+    if (!tenantId) {
+      throw new BadRequestException('Tenant ID missing from user context');
+    }
   
     console.log('=== FETCHING ALL TENANT FEE ASSIGNMENTS ===');
     console.log('Tenant ID:', tenantId);
@@ -855,6 +858,9 @@ export class FeeAssignmentService {
     user: ActiveUserData
   ): Promise<FeeAssignmentWithStudents> {
     const tenantId = user.tenantId;
+    if (!tenantId) {
+      throw new BadRequestException('Tenant ID missing from user context');
+    }
   
     console.log('=== FETCHING FEE ASSIGNMENT BY ID ===');
     console.log('Fee Assignment ID:', feeAssignmentId);

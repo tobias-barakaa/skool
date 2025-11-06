@@ -22,20 +22,20 @@ export class HostelService {
     private readonly manager: EntityManager
   ) {}
 
-  async findAll(tenantId: string): Promise<Hostel[]> {
-    return this.hostelRepository.find({ where: { tenantId } });
+  async findAll(user: any): Promise<Hostel[]> {
+    return this.hostelRepository.find({ where: { tenantId: user.tenantId } });
   }
 
-  async create(input: CreateHostelInput, tenantId: string): Promise<Hostel> {
+  async create(input: CreateHostelInput, user): Promise<Hostel> {
     const existing = await this.hostelRepository.findOne({
-      where: { name: input.name, tenantId },
+      where: { name: input.name, tenantId: user.tenantId },
     });
   
     if (existing) {
       throw new ConflictException(`Hostel with the name "${input.name}" already exists.`);
     }
   
-    const hostel = this.hostelRepository.create({ ...input, tenantId });
+    const hostel = this.hostelRepository.create({ ...input, tenantId: user.tenantId });
     return this.hostelRepository.save(hostel);
   }
 
@@ -64,10 +64,10 @@ export class HostelService {
 
   async assignStudent(
     input: CreateHostelAssignmentInput,
-    tenantId: string,
+    user: any,
   ): Promise<HostelAssignment> {
     const student = await this.manager.findOne(Student, {
-      where: { id: input.studentId, tenant_id: tenantId },
+      where: { id: input.studentId, tenant_id: user.tenantId },
       relations: ['user'], 
     });
     if (!student) {
@@ -75,7 +75,7 @@ export class HostelService {
     }
 
     const hostel = await this.manager.findOne(Hostel, {
-      where: { id: input.hostelId, tenantId },
+      where: { id: input.hostelId, tenantId: user.tenantId },
     });
     if (!hostel) {
       throw new Error('Hostel not found or does not belong to this tenant');
@@ -83,7 +83,7 @@ export class HostelService {
 
     const assignment = this.manager.create(HostelAssignment, {
       ...input,
-      tenantId,
+      tenantId: user.tenantId,
       student,
       hostel,
     });
@@ -114,10 +114,10 @@ export class HostelService {
 
   async getAssignmentsByHostel(
     hostelId: string,
-    tenantId: string,
+    user,
   ): Promise<HostelAssignment[]> {
     return this.hostelAssignmentRepo.find({
-      where: { hostel: { id: hostelId }, tenantId },
+      where: { hostel: { id: hostelId }, tenantId: user.tenantId },
       relations: ['student', 'student.user', 'hostel'],
     });
   }

@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { TeacherParentsProvider } from '../providers/teacher-parents.provider';
 import { ParentStudent } from 'src/admin/parent/entities/parent-student.entity';
 import { Parent } from 'src/admin/parent/entities/parent.entity';
+import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 
 @Injectable()
 export class TeacherParentsService {
@@ -9,14 +10,23 @@ export class TeacherParentsService {
     private readonly teacherParentsProvider: TeacherParentsProvider,
   ) {}
 
-  async getParentsByTenant(tenantId: string): Promise<Parent[]> {
+   private getTenantId(user: ActiveUserData): string {
+      if (!user.tenantId) {
+        throw new UnauthorizedException('Tenant ID is missing from the active user');
+      }
+      return user.tenantId;
+    }
+
+  async getParentsByTenant(user: ActiveUserData): Promise<Parent[]> {
+    const tenantId = this.getTenantId(user);
     return await this.teacherParentsProvider.findParentsByTenant(tenantId);
   }
 
   async getParentsByStudentId(
     studentId: string,
-    tenantId: string,
+    currentUser: ActiveUserData,
   ): Promise<Parent[]> {
+    const tenantId = this.getTenantId(currentUser);
     return await this.teacherParentsProvider.findParentsByStudentId(
       studentId,
       tenantId,
@@ -25,26 +35,27 @@ export class TeacherParentsService {
 
   async getParentById(
     parentId: string,
-    tenantId: string,
+    currentUser: ActiveUserData,
   ): Promise<Parent | null> {
+    const tenantId = this.getTenantId(currentUser);
     return await this.teacherParentsProvider.findParentById(parentId, tenantId);
   }
 
   async getStudentParentRelationships(
-    tenantId: string,
+    currentUser: ActiveUserData,
   ): Promise<ParentStudent[]> {
     return await this.teacherParentsProvider.findStudentParentRelationships(
-      tenantId,
+      this.getTenantId(currentUser),
     );
   }
 
   async getPrimaryParentByStudentId(
     studentId: string,
-    tenantId: string,
+    currentUser: ActiveUserData,
   ): Promise<Parent | null> {
     return await this.teacherParentsProvider.findPrimaryParentByStudentId(
       studentId,
-      tenantId,
+      this.getTenantId(currentUser),
     );
   }
 
@@ -78,8 +89,8 @@ export class TeacherParentsService {
   //   return Object.values(studentsWithParents);
   // }
 
-  async getStudentsWithParents(tenantId: string): Promise<any[]> {
-    const relationships = await this.getStudentParentRelationships(tenantId);
+  async getStudentsWithParents(currentUser: ActiveUserData): Promise<any[]> {
+    const relationships = await this.getStudentParentRelationships(currentUser);
 
     const studentMap: Record<string, any> = {};
 

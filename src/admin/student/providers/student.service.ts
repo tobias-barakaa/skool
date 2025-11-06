@@ -107,7 +107,8 @@ export class StudentsService {
   //   return this.studentQueryProvider.findAllByTenant(tenantId);
   // }
 
-  async getGradeLevelsWithStreamsForTenant(tenantId: string): Promise<any[]> {
+  async getGradeLevelsWithStreamsForTenant(user: ActiveUserData): Promise<any[]> {
+    const tenantId = user.tenantId;
     const schoolConfig = await this.schoolConfigRepo
       .createQueryBuilder('config')
       .leftJoin('config.selectedLevels', 'schoolLevel')

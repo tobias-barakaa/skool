@@ -33,7 +33,7 @@ export class AssessmentResolver {
     @Args('filter', { nullable: true }) filter?: AssessmentFilterInput,
   ): Promise<AssessmentOutput[]> {
     const items = await this.assessmentService.getAllAssessments(
-      user.tenantId,
+      user,
       filter,
     );
     return items.map(AssessmentOutput.from);
@@ -44,7 +44,7 @@ export class AssessmentResolver {
     @Args('id') id: string,
     @ActiveUser() user: ActiveUserData,
   ): Promise<boolean> {
-    return this.assessmentService.deleteCA(id, user.tenantId);
+    return this.assessmentService.deleteCA(id, user);
   }
 
   @Mutation(() => Boolean)
@@ -52,6 +52,6 @@ export class AssessmentResolver {
     @Args('id') id: string,
     @ActiveUser() user: ActiveUserData,
   ): Promise<boolean> {
-    return this.assessmentService.deleteExam(id, user.tenantId);
+    return this.assessmentService.deleteExam(id, user);
   }
 }

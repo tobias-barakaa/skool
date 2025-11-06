@@ -4,9 +4,9 @@ import { GenerateTokenProvider } from 'src/admin/auth/providers/generate-token.p
 import { HashingProvider } from 'src/admin/auth/providers/hashing.provider';
 import { Repository } from 'typeorm';
 import { AuthResponse, SignInInput } from '../dtos/signin-input.dto';
-import { User } from 'src/admin/users/entities/user.entity';
+import { GlobalRole, User } from 'src/admin/users/entities/user.entity';
 import { Tenant } from 'src/admin/tenants/entities/tenant.entity';
-import { MembershipRole, MembershipStatus, UserTenantMembership } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
+import { MembershipStatus, UserTenantMembership } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
 
 @Injectable()
 export class SignInProvider {
@@ -29,55 +29,116 @@ export class SignInProvider {
       where: { email: signInInput.email },
       relations: ['memberships', 'memberships.tenant'],
     });
-  
+
     if (!user) throw new UnauthorizedException('Invalid credentials');
-  
+
     const isPasswordValid = await this.hashingProvider.comparePassword(
       signInInput.password,
       user.password,
     );
-    if (!isPasswordValid) throw new UnauthorizedException('Invalid credentials');
-  
-    if (user.isGlobalAdmin) {
-      const tokens = await this.generateTokensProvider.generateSuperAdminTokens(user);
-  
-      return {
-        user,
-        membership: ({ role: MembershipRole.SUPER_ADMIN, status: MembershipStatus.ACTIVE } as unknown) as UserTenantMembership,
-        allMemberships: [],
-        tokens,
-        tenant: null,
-        subdomainUrl: "global-admin.squl.co.ke",
-      };
-    }
-  
+
+    if (!isPasswordValid)
+      throw new UnauthorizedException('Invalid credentials');
+
     const activeMemberships = user.memberships.filter(
       (m) => m.status === MembershipStatus.ACTIVE,
     );
-  
+
     if (activeMemberships.length === 0) {
       throw new UnauthorizedException('No active school memberships found');
     }
-  
+
+    // Optionally pick the first one as default
     const defaultMembership = activeMemberships[0];
     const tenant = defaultMembership.tenant;
-  
+
     const tokens = await this.generateTokensProvider.generateTokens(
       user,
       defaultMembership,
       tenant,
     );
-  
+
     return {
       user,
-      membership: defaultMembership,
+      membership: {
+        ...defaultMembership,
+        role: defaultMembership.role, // explicitly expose role
+      },
       allMemberships: activeMemberships,
       tokens,
       tenant,
       subdomainUrl: `${tenant.subdomain}.squl.co.ke`,
     };
   }
-  
+
+
+
+
+//   async signIn(signInInput: SignInInput): Promise<AuthResponse> {
+//     const user = await this.userRepository.findOne({
+//       where: { email: signInInput.email },
+//       // Only load memberships if the user is NOT a Super Admin (optimization)
+//       relations: ['memberships', 'memberships.tenant'], 
+//     });
+
+//     if (!user) throw new UnauthorizedException('Invalid credentials');
+
+//     const isPasswordValid = await this.hashingProvider.comparePassword(
+//       signInInput.password,
+//       user.password,
+//     );
+
+//     if (!isPasswordValid)
+//       throw new UnauthorizedException('Invalid credentials');
+
+//     // --- NEW: Super Admin Sign-In Check ---
+//     if (user.globalRole === GlobalRole.SUPER_ADMIN) {
+//         // Use the dedicated Super Admin token generation
+//         const tokens = await this.generateTokensProvider.generateGlobalAdminTokens(user);
+
+//         return {
+//             user,
+//             tokens,
+//             // Explicitly return null/undefined for tenant/membership for type consistency
+//             membership: null as any, 
+//             tenant: null as any,
+//             subdomainUrl: '',
+//             allMemberships: [],
+//         };
+//     }
+//     // -------------------------------------
+
+//     // --- Existing: Tenant User Sign-In Logic ---
+//     const activeMemberships = user.memberships.filter(
+//       (m) => m.status === MembershipStatus.ACTIVE,
+//     );
+
+//     if (activeMemberships.length === 0) {
+//       throw new UnauthorizedException('No active school memberships found');
+//     }
+
+//     const defaultMembership = activeMemberships[0];
+//     const tenant = defaultMembership.tenant;
+
+//     // Use the standard generateTokens which requires tenant/membership
+//     const tokens = await this.generateTokensProvider.generateTokens(
+//       user,
+//       defaultMembership,
+//       tenant,
+//     );
+
+//     return {
+//       user,
+//       membership: {
+//         ...defaultMembership,
+//         role: defaultMembership.role, 
+//       },
+//       allMemberships: activeMemberships,
+//       tokens,
+//       tenant,
+//       subdomainUrl: `${tenant.subdomain}.squl.co.ke`,
+//     };
+// }
 
   // async signIn(signInInput: SignInInput, subdomain: string): Promise<AuthResponse> {
   //   console.log(signInInput, 'this is the sign in input..::', subdomain)

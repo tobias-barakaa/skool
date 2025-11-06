@@ -1,6 +1,7 @@
 import { InjectRedis } from '@nestjs-modules/ioredis';
 import { Injectable, Logger } from '@nestjs/common';
 import Redis from 'ioredis';
+import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 
 @Injectable()
 export class RedisChatProvider {
@@ -67,16 +68,16 @@ export class RedisChatProvider {
    * ----------------------------- */
 
   async setTypingIndicator(
-    userId: string,
+    currentUser: ActiveUserData,
     roomId: string,
     isTyping: boolean,
   ): Promise<void> {
     const key = `room:${roomId}:typing`;
     if (isTyping) {
-      await this.redis.sadd(key, userId);
-      await this.redis.expire(key, 30); // expires after 30s inactivity
+      await this.redis.sadd(key, currentUser.sub);
+      await this.redis.expire(key, 30);
     } else {
-      await this.redis.srem(key, userId);
+      await this.redis.srem(key, currentUser.sub);
     }
   }
 

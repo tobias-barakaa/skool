@@ -60,8 +60,7 @@ export class StudentChatResolver {
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<ChatMessage | null> {
     const message = await this.studentChatService.sendMessageToTeacher(
-      currentUser.sub,
-      currentUser.tenantId,
+      currentUser,
       input,
     );
   
@@ -88,7 +87,7 @@ export class StudentChatResolver {
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<boolean> {
     return await this.studentChatService.markMessagesAsRead(
-      currentUser.sub,
+      currentUser,
       chatRoomId,
     );
   }
@@ -116,7 +115,7 @@ export class StudentChatResolver {
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<boolean> {
     await this.redisChatProvider.setTypingIndicator(
-      currentUser.sub,
+      currentUser,
       chatRoomId,
       isTyping,
     );
@@ -170,7 +169,7 @@ export class StudentChatResolver {
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<ChatMessage[]> {
     return await this.studentChatService.getChatHistory(
-      currentUser.sub,
+      currentUser,
       chatRoomId,
       limit,
       offset,
@@ -301,11 +300,11 @@ export class StudentChatResolver {
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<boolean> {
     return await this.studentChatService.deleteMessage(
-      currentUser.sub,       
-      currentUser.tenantId,
+      currentUser,
       messageId,
     );
   }
+
   
   /**
    * GET TOTAL UNREAD MESSAGE COUNT
@@ -396,9 +395,8 @@ export class StudentChatResolver {
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<ChatRoom | null> {
     return await this.studentChatService.getChatRoomWithTeacher(
-      currentUser.sub,
-      teacherId,
-      currentUser.tenantId,
+      currentUser,
+      teacherId
     );
   }
 
@@ -431,8 +429,7 @@ export class StudentChatResolver {
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<Teacher[]> {
     return await this.studentChatService.getStudentTeachers(
-      currentUser.sub,
-      currentUser.tenantId,
+      currentUser
     );
   }
 
@@ -607,7 +604,7 @@ export class StudentChatResolver {
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<boolean> {
     return await this.studentChatService.markMessagesAsRead(
-      currentUser.sub,
+      currentUser,
       chatRoomId,
     );
   }

@@ -24,7 +24,7 @@ export class TransportResolver {
     @Args('input') input: CreateTransportRouteInput,
     @ActiveUser() user: ActiveUserData,
   ) {
-    return this.transportService.createRoute(input, user.tenantId);
+    return this.transportService.createRoute(input, user);
   }
   
 
@@ -33,7 +33,7 @@ export class TransportResolver {
     @Args('input') input: UpdateTransportRouteInput,
     @ActiveUser() user: ActiveUserData,
   ) {
-    return this.transportService.updateRoute(input, user.tenantId);
+    return this.transportService.updateRoute(input, user);
   }
   
 
@@ -42,13 +42,13 @@ removeTransportRoute(
   @Args('id', { type: () => String }) id: string,
   @ActiveUser() user: ActiveUserData,
 ) {
-  return this.transportService.removeRoute(id, user.tenantId);
+  return this.transportService.removeRoute(id, user);
 }
 
 
 @Query(() => [TransportRoute])
 transportRoutes(@ActiveUser() user: ActiveUserData) {
-  return this.transportService.findAllRoutes(user.tenantId);
+  return this.transportService.findAllRoutes(user);
 }
 
 
@@ -57,12 +57,12 @@ transportRoutes(@ActiveUser() user: ActiveUserData) {
     @Args('id', { type: () => ID }) id: string,
     @ActiveUser() user: ActiveUserData,
   ) {
-    return this.transportService.deleteRoute(id, user.tenantId);
+    return this.transportService.deleteRoute(id, user);
   }
 
   // @Query(() => [TransportRoute])
   // transportRoutes(@ActiveUser() user: ActiveUserData) {
-  //   return this.transportService.findRoutesByTenant(user.tenantId);
+  //   return this.transportService.findRoutesByTenant(user);
   // }
 
 
@@ -71,7 +71,7 @@ async assignStudentToRoute(
   @Args('input') input: AssignTransportInput,
   @ActiveUser() user: ActiveUserData,
 ) {
- const existing = await this.transportService.assignTransportStudent(input, user.tenantId);
+ const existing = await this.transportService.assignTransportStudent(input, user);
  return existing;
 }
 
@@ -80,7 +80,7 @@ async assignStudentToRoute(
     @Args('input') input: BulkTransportAssignmentInput,
     @ActiveUser() user: ActiveUserData,
   ) {
-    return this.transportService.assignBulkTransportStudents(input, user.tenantId);
+    return this.transportService.assignBulkTransportStudents(input, user);
   }
 
   // @Mutation(() => [BulkTransportAssignmentInput])
@@ -88,7 +88,7 @@ async assignStudentToRoute(
   //   @Args('input') input: BulkTransportAssignmentInput,
   //   @ActiveUser() user: ActiveUserData,
   // ) {
-  //   return this.transportService.assignBulkTransportStudents(input, user.tenantId);
+  //   return this.transportService.assignBulkTransportStudents(input, user);
   // }
 
 
@@ -97,7 +97,7 @@ bulkAssignStudentsToRoute(
   @Args('input') input: BulkTransportAssignmentInput,
   @ActiveUser() user: ActiveUserData,
 ) {
-  return this.transportService.assignBulkTransportStudents(input, user.tenantId);
+  return this.transportService.assignBulkTransportStudents(input, user);
 }
 
   @Mutation(() => TransportAssignment)
@@ -105,7 +105,7 @@ bulkAssignStudentsToRoute(
     @Args('input') input: UpdateTransportAssignmentInput,
     @ActiveUser() user: ActiveUserData,
   ) {
-    return this.transportService.updateAssignment(input, user.tenantId);
+    return this.transportService.updateAssignment(input, user);
   }
 
   @Mutation(() => Boolean)
@@ -113,7 +113,7 @@ removeStudentFromRoute(
   @Args('input') input: RemoveTransportAssignmentInput,
   @ActiveUser() user: ActiveUserData,
 ) {
-  return this.transportService.removeTransportAssignment(input, user.tenantId);
+  return this.transportService.removeTransportAssignment(input, user);
 }
 
 
@@ -122,6 +122,6 @@ removeStudentFromRoute(
     @Args('routeId') routeId: string,
     @ActiveUser() user: ActiveUserData,
   ) {
-    return this.transportService.getAssignmentsByRoute(routeId, user.tenantId);
+    return this.transportService.getAssignmentsByRoute(routeId, user);
   }
 }

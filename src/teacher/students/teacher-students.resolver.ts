@@ -31,7 +31,7 @@ export class TeacherStudentsResolver {
     @ActiveUser() userTenant: ActiveUserData,
   ): Promise<TeacherStudentResponse[]> {
     return await this.teacherStudentsService.getStudentsByTenant(
-      userTenant.tenantId,
+      userTenant,
     );
   }
 
@@ -42,7 +42,7 @@ export class TeacherStudentsResolver {
   ): Promise<Student | null> {
     return await this.teacherStudentsService.getStudentById(
       studentId,
-      userTenant.tenantId,
+      userTenant,
     );
   }
 
@@ -53,7 +53,7 @@ export class TeacherStudentsResolver {
   // ): Promise<Student[]> {
   //   return await this.teacherStudentsService.getStudentsByGradeLevel(
   //     gradeLevelId,
-  //     userTenant.tenantId,
+  //     userTenant,
   //   );
   // }
 
@@ -64,7 +64,7 @@ export class TeacherStudentsResolver {
   ): Promise<Student[]> {
     return await this.teacherStudentsService.getStudentsByStream(
       streamId,
-      userTenant.tenantId,
+      userTenant,
     );
   }
 
@@ -75,7 +75,7 @@ export class TeacherStudentsResolver {
   ): Promise<Student[]> {
     return this.teacherStudentsService.getStudentsByGradeLevel(
       gradeLevelId,
-      userTenant.tenantId,
+      userTenant,
     );
   }
 }

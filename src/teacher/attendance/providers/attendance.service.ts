@@ -36,6 +36,14 @@ export class AttendanceService {
     const userId = currentUser.sub;
     const tenantId = currentUser.tenantId;
 
+    if(!tenantId) {
+      throw new BadRequestException('Tenant ID is missing in user data');
+    }
+
+    if (!gradeId) {
+      throw new BadRequestException('Grade ID is missing in attendance input');
+    }
+
     this.logger.log(`Marking attendance for grade ${gradeId} on ${date} by user ${userId}`);
 
     try {
@@ -233,7 +241,7 @@ export class AttendanceService {
   private async validateStudentAccess(
     studentId: string,
     gradeId: string,
-    tenantId: string,
+    currentUser: ActiveUserData,
   ): Promise<boolean> {
     const student = await this.studentRepository
       .createQueryBuilder('student')
@@ -241,27 +249,27 @@ export class AttendanceService {
       .innerJoin('user.memberships', 'membership')
       .where('student.id = :studentId', { studentId })
       .andWhere('student.grade = :gradeId', { gradeId })
-      .andWhere('membership.tenantId = :tenantId', { tenantId })
+      .andWhere('membership.tenantId = :tenantId', { tenantId: currentUser.tenantId })
       .andWhere('membership.role = :role', { role: MembershipRole.STUDENT })
       .getOne();
 
     return !!student;
   }
 
-  async getAttendanceByDate(date: string, gradeId: string, tenantId: string) {
+  async getAttendanceByDate(date: string, gradeId: string, currentUser: ActiveUserData) {
     return this.attendanceRepository.find({
-      where: { date, gradeId, tenantId },
+      where: { date, gradeId, tenantId: currentUser.tenantId },
       relations: ['student', 'teacher'],
     });
   }
 
-  async getStudentsByGrade(gradeId: string, tenantId: string) {
+  async getStudentsByGrade(gradeId: string, currentUser: ActiveUserData) {
     return this.studentRepository
       .createQueryBuilder('student')
       .innerJoin('student.user', 'user')
       .innerJoin('user.memberships', 'membership')
       .where('student.grade = :gradeId', { gradeId })
-      .andWhere('membership.tenantId = :tenantId', { tenantId })
+      .andWhere('membership.tenantId = :tenantId', { tenantId: currentUser.tenantId })
       .andWhere('membership.role = :role', { role: MembershipRole.STUDENT })
       .select([
         'student.id',

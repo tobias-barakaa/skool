@@ -26,7 +26,7 @@ export class SearchResolver {
     @Args('input') input: SearchStudentInput,
     @ActiveUser() user: ActiveUserData,
   ): Promise<SearchStudentResult> {
-    return this.searchService.searchStudentByName(input, user.tenantId);
+    return this.searchService.searchStudentByName(input, user);
   }
 
   @Query(() => SearchTeacherResult, {
@@ -37,7 +37,7 @@ export class SearchResolver {
     @Args('input') input: SearchStudentInput,
     @ActiveUser() user: ActiveUserData,
   ): Promise<SearchTeacherResult> {
-    return this.searchService.searchTeacherByName(input, user.tenantId);
+    return this.searchService.searchTeacherByName(input, user);
   }
 
   @Query(() => SearchStudentResult, {
@@ -47,7 +47,7 @@ export class SearchResolver {
   async getStudentsByTenant(
     @ActiveUser() user: ActiveUserData,
   ): Promise<SearchStudentResult> {
-    return this.searchService.getStudentsByTenant(user.tenantId);
+    return this.searchService.getStudentsByTenant(user);
   }
 
   @Query(() => SearchTeacherResult, {
@@ -57,7 +57,7 @@ export class SearchResolver {
   async getTeachersByTenant(
     @ActiveUser() user: ActiveUserData,
   ): Promise<SearchTeacherResult> {
-    return this.searchService.getTeachersByTenant(user.tenantId);
+    return this.searchService.getTeachersByTenant(user);
   }
 
   @Query(() => CombinedSearchResult, {
@@ -67,7 +67,7 @@ export class SearchResolver {
   async getBothStudentsAndTeachersByTenant(
     @ActiveUser() user: ActiveUserData,
   ): Promise<CombinedSearchResult> {
-    return this.searchService.getBothStudentsAndTeachersByTenant(user.tenantId);
+    return this.searchService.getBothStudentsAndTeachersByTenant(user);
   }
 
   @Query(() => FilteredResult, {
@@ -78,7 +78,7 @@ export class SearchResolver {
     @Args('input') input: FilterInput,
     @ActiveUser() user: ActiveUserData,
   ): Promise<FilteredResult> {
-    return this.searchService.filterByGradeLevelAndSubjects(input, user.tenantId);
+    return this.searchService.filterByGradeLevelAndSubjects(input, user);
   }
 
   @Query(() => [Stream], {
@@ -88,7 +88,7 @@ export class SearchResolver {
   async getStreamsByTenant(
     @ActiveUser() user: ActiveUserData,
   ): Promise<Stream[]> {
-    return this.searchService.getStreamsByTenant(user.tenantId);
+    return this.searchService.getStreamsByTenant(user);
   }
 
   @Query(() => String, {
@@ -98,7 +98,7 @@ export class SearchResolver {
   async getTenantStatistics(
     @ActiveUser() user: ActiveUserData,
   ): Promise<string> {
-    const stats = await this.searchService.getTenantStatistics(user.tenantId);
+    const stats = await this.searchService.getTenantStatistics(user);
     return JSON.stringify(stats);
   }
 
@@ -111,7 +111,7 @@ export class SearchResolver {
     @ActiveUser() user: ActiveUserData,
   ): Promise<boolean> {
 
-    console.log(`Refreshing cache for tenant: ${user.tenantId}`);
+    console.log(`Refreshing cache for tenant: ${user}`);
     return true;
   }
 
@@ -123,7 +123,7 @@ export class SearchResolver {
     @Args('input') input: SearchStudentInput,
     @ActiveUser() user: ActiveUserData,
   ): Promise<SearchStudentResult> {
-    return this.searchService.searchStudentByName(input, user.tenantId);
+    return this.searchService.searchStudentByName(input, user);
   }
   @Mutation(() => SearchTeacherResult, {
     name: 'searchAndCacheTeachers',
@@ -134,6 +134,6 @@ export class SearchResolver {
     @ActiveUser() user: ActiveUserData,
   ): Promise<SearchTeacherResult> {
 
-    return this.searchService.searchTeacherByName(input, user.tenantId);
+    return this.searchService.searchTeacherByName(input, user);
   }
 }

@@ -51,7 +51,7 @@ export class SchoolConfigResolver {
     @ActiveUser() user: ActiveUserData,
   ): Promise<TenantGradeLevel[]> {
     return this.schoolConfigService.getWholeGradeLevelForSchoolType(
-      user.tenantId,
+      user
     );
   }
 }

@@ -72,6 +72,9 @@ export class FeeStructureSummaryService {
       });
     });
 
+    if(!user.tenantId) {
+      throw new Error('Tenant ID is missing from the active user');
+    }
     return {
       tenantId: user.tenantId,
       totalFeeStructures: feeStructures.length,

@@ -34,9 +34,9 @@ export class ParentPortalService {
   ) {}
 
   // Get parent by userId
-  async getParentByUserId(userId: string, tenantId: string): Promise<Parent> {
+  async getParentByUserId(user: ActiveUserData): Promise<Parent> {
     const parent = await this.parentRepo.findOne({
-      where: { userId, tenantId, isActive: true },
+      where: { userId: user.sub, tenantId: user.tenantId, isActive: true },
       relations: ['parentStudents', 'parentStudents.student', 'parentStudents.student.user', 'parentStudents.student.grade'],
     });
 
@@ -49,7 +49,7 @@ export class ParentPortalService {
 
   // Get all children for a parent
   async getMyChildren(user: ActiveUserData) {
-    const parent = await this.getParentByUserId(user.sub, user.tenantId);
+    const parent = await this.getParentByUserId(user);
     
     return parent.parentStudents.map(ps => ({
       id: ps.student.id,
@@ -66,12 +66,11 @@ export class ParentPortalService {
 
   // Helper method to verify parent-student relationship
   private async verifyParentStudentRelationship(
-    userId: string,
+    user: ActiveUserData,
     studentId: string,
-    tenantId: string,
   ): Promise<void> {
     const parent = await this.parentRepo.findOne({
-      where: { userId, tenantId, isActive: true },
+      where: { userId: user.sub, tenantId: user.tenantId, isActive: true },
     });
 
     if (!parent) {
@@ -79,7 +78,7 @@ export class ParentPortalService {
     }
 
     const relationship = await this.parentStudentRepo.findOne({
-      where: { parentId: parent.id, studentId, tenantId },
+      where: { parentId: parent.id, studentId, tenantId: user.tenantId },
     });
 
     if (!relationship) {
@@ -89,7 +88,7 @@ export class ParentPortalService {
 
   // Get child profile
   async getChildProfile(studentId: string, user: ActiveUserData) {
-    await this.verifyParentStudentRelationship(user.sub, studentId, user.tenantId);
+    await this.verifyParentStudentRelationship(user, studentId);
 
     const student = await this.studentRepo.findOne({
       where: { id: studentId, tenant_id: user.tenantId },
@@ -123,7 +122,7 @@ export class ParentPortalService {
     endDate: string,
     user: ActiveUserData,
   ) {
-    await this.verifyParentStudentRelationship(user.sub, studentId, user.tenantId);
+    await this.verifyParentStudentRelationship(user, studentId);
 
     const attendances = await this.attendanceRepo.find({
       where: {
@@ -156,7 +155,7 @@ export class ParentPortalService {
     endDate: string,
     user: ActiveUserData,
   ) {
-    await this.verifyParentStudentRelationship(user.sub, studentId, user.tenantId);
+    await this.verifyParentStudentRelationship(user, studentId);
 
     return this.attendanceRepo.find({
       where: {
@@ -171,7 +170,7 @@ export class ParentPortalService {
 
   // Get fee balance and details
   async getChildFeeBalance(studentId: string, user: ActiveUserData) {
-    await this.verifyParentStudentRelationship(user.sub, studentId, user.tenantId);
+    await this.verifyParentStudentRelationship(user, studentId);
 
     const student = await this.studentRepo.findOne({
       where: { id: studentId, tenant_id: user.tenantId },
@@ -299,7 +298,7 @@ export class ParentPortalService {
     academicYear: string,
     user: ActiveUserData,
   ) {
-    await this.verifyParentStudentRelationship(user.sub, studentId, user.tenantId);
+    await this.verifyParentStudentRelationship(user, studentId);
 
     const student = await this.studentRepo.findOne({
       where: { id: studentId, tenant_id: user.tenantId },

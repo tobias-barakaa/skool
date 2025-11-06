@@ -37,6 +37,11 @@ export class TeacherResolver {
     @ActiveUser() user: ActiveUserData,
   ) {
     console.log(user.tenantId, 'this is the tenant ids');
+
+    if (!user.tenantId) {
+      throw new BadRequestException('Missing tenantId');
+    }
+
     return this.teacherService.inviteTeacher(dto, user, user.tenantId);
   }
 
@@ -46,12 +51,19 @@ export class TeacherResolver {
     @Args('email') email: string,
     @ActiveUser() user: ActiveUserData,
   ) {
+
+    if (!user.tenantId) {
+      throw new BadRequestException('Missing tenantId');
+    }
     return this.teacherService.getPendingInvitation(email, user.tenantId);
   }
 
   @Roles(MembershipRole.SCHOOL_ADMIN)
   @Query(() => [PendingInvitationResponse], { nullable: true })
   async getPendingTeacherInvitations(@ActiveUser() user: ActiveUserData) {
+    if (!user.tenantId) {
+      throw new BadRequestException('Missing tenantId');
+    }
     return this.teacherService.getPendingInvitations(user.tenantId);
   }
 
@@ -61,6 +73,9 @@ export class TeacherResolver {
     @Args('invitationId') invitationId: string,
     @ActiveUser() user: ActiveUserData,
   ) {
+    if (!user.tenantId) {
+      throw new BadRequestException('Missing tenantId');
+    }
     return this.teacherService.resendTeacherInvitation(
       invitationId,
       user,
@@ -96,6 +111,9 @@ export class TeacherResolver {
 async getTeachersByTenants(
   @ActiveUser() currentUser: ActiveUserData,
 ): Promise<TeacherDto[]> {
+  if (!currentUser.tenantId) {
+    throw new BadRequestException('Missing tenantId');
+  }
   return this.teacherService.getTeachersByTenants(currentUser.tenantId);
 }
 
@@ -113,8 +131,12 @@ async getTeachersByTenants(
       throw new BadRequestException('Missing tenantId');
     }
 
+    if (!currentUser.tenantId) {
+      throw new BadRequestException('Missing tenantId on current user');
+    }
+
     if (tenantId.trim() !== currentUser.tenantId.trim()) {
-      throw new ForbiddenException('123 Access denied: tenantId mismatch');
+      throw new ForbiddenException('Access denied: tenantId mismatch');
     }
 
     return this.teacherService.getPendingTeacherInvitations(

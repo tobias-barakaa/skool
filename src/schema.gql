@@ -1692,6 +1692,7 @@ type Query {
   Get all fee assignments for the current tenant with complete student and grade level data
   """
   getAllTenantFeeAssignments: TenantFeeAssignmentSummary!
+  getAllUsers: [User!]!
   getAssignmentsByRoute(routeId: String!): [TransportAssignment!]!
   getAttendanceByDate(date: String!, gradeId: String!): [Attendance!]!
 

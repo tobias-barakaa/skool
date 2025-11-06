@@ -37,7 +37,7 @@ export class AttendanceResolver {
     return this.attendanceService.getAttendanceByDate(
       date,
       gradeId,
-      currentUser.tenantId,
+      currentUser,
     );
   }
 
@@ -48,7 +48,7 @@ export class AttendanceResolver {
   ) {
     return this.attendanceService.getStudentsByGrade(
       gradeId,
-      currentUser.tenantId,
+      currentUser,
     );
   }
 }

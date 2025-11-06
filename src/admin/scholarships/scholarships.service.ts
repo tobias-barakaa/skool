@@ -10,6 +10,7 @@ import { StudentScholarship } from './entities/scholarship_assignments.entity';
 import { AssignScholarshipInput } from './dtos/assign-scholarship.input';
 import { Student } from '../student/entities/student.entity';
 import { UpdateStudentScholarshipInput } from './dtos/update-student-scholarship.input';
+import { ActiveUserData } from '../auth/interface/active-user.interface';
 
 @Injectable()
 @Roles(MembershipRole.SCHOOL_ADMIN)
@@ -25,9 +26,11 @@ export class ScholarshipsService {
     
   ) {}
 
-  async create(input: CreateScholarshipInput, tenantId: string): Promise<Scholarship> {
+  async create(input: CreateScholarshipInput, user: ActiveUserData): Promise<Scholarship> {
+
+
     const existing = await this.scholarshipRepo.findOne({
-      where: { name: input.name, tenantId },
+      where: { name: input.name, tenantId: user.tenantId },
     });
   
     if (existing) {
@@ -36,7 +39,7 @@ export class ScholarshipsService {
   
     const scholarship = this.scholarshipRepo.create({
       ...input,
-      tenantId,
+      tenantId: user.tenantId,
       type: input.type ?? 'FIXED',
     });
   
@@ -44,9 +47,9 @@ export class ScholarshipsService {
   }
   
   
-  async findAll(tenantId: string): Promise<Scholarship[]> {
+  async findAll(user: ActiveUserData): Promise<Scholarship[]> {
     return this.scholarshipRepo.find({
-      where: { tenantId },
+      where: { tenantId: user.tenantId },
       relations: ['studentScholarships', 'studentScholarships.student', 'studentScholarships.student.user'], // optional, if you want eager student info
       order: { createdAt: 'DESC' },
     });
@@ -59,9 +62,9 @@ export class ScholarshipsService {
     return scholarship;
   }
 
-  async update(input: UpdateScholarshipInput, tenantId: string): Promise<Scholarship> {
+  async update(input: UpdateScholarshipInput, user: ActiveUserData): Promise<Scholarship> {
     const scholarship = await this.scholarshipRepo.findOne({
-      where: { id: input.id, tenantId },
+      where: { id: input.id, tenantId: user.tenantId },
     });
   
     if (!scholarship) {
@@ -101,17 +104,17 @@ export class ScholarshipsService {
 
 async assignScholarship(
   input: AssignScholarshipInput,
-  tenantId: string,
+  user: ActiveUserData,
 ): Promise<StudentScholarship> {
   const student = await this.studentRepo.findOne({
-    where: { id: input.studentId, tenant_id: tenantId },
+    where: { id: input.studentId, tenant_id: user.tenantId },
   });
   if (!student) {
     throw new NotFoundException('Student not found in this tenant');
   }
 
   const scholarship = await this.scholarshipRepo.findOne({
-    where: { id: input.scholarshipId, tenantId },
+    where: { id: input.scholarshipId, tenantId: user.tenantId },
   });
   if (!scholarship) {
     throw new NotFoundException('Scholarship not found in this tenant');
@@ -139,10 +142,10 @@ async assignScholarship(
 }
 
 
-async findAssignmentsByStudent(studentId: string, tenantId: string): Promise<StudentScholarship[]> {
+async findAssignmentsByStudent(studentId: string, user: ActiveUserData): Promise<StudentScholarship[]> {
   return this.studentScholarshipRepo.find({
     where: {
-      student: { id: studentId, tenant_id: tenantId },
+      student: { id: studentId, tenant_id: user.tenantId },
     },
     relations: ['scholarship', 'student'],
     order: { awardedAt: 'DESC' },
@@ -150,10 +153,10 @@ async findAssignmentsByStudent(studentId: string, tenantId: string): Promise<Stu
 }
 
 
-async findAllAssignments(tenantId: string): Promise<StudentScholarship[]> {
+async findAllAssignments(user: ActiveUserData): Promise<StudentScholarship[]> {
   return this.studentScholarshipRepo.find({
     where: {
-      student: { tenant_id: tenantId },
+      student: { tenant_id: user.tenantId },
     },
     relations: ['scholarship', 'student', 'student.user'],
     order: { awardedAt: 'DESC' },
@@ -163,10 +166,10 @@ async findAllAssignments(tenantId: string): Promise<StudentScholarship[]> {
 
 async updateAssignment(
   input: UpdateStudentScholarshipInput,
-  tenantId: string,
+  user: ActiveUserData,
 ): Promise<StudentScholarship> {
   const assignment = await this.studentScholarshipRepo.findOne({
-    where: { id: input.id, student: { tenant_id: tenantId } },
+    where: { id: input.id, student: { tenant_id: user.tenantId } },
     relations: ['student'],
   });
 
@@ -187,9 +190,9 @@ async updateAssignment(
 
 
 
-async removeAssignment(id: string, tenantId: string): Promise<boolean> {
+async removeAssignment(id: string, user: ActiveUserData): Promise<boolean> {
   const assignment = await this.studentScholarshipRepo.findOne({
-    where: { id, student: { tenant_id: tenantId } },
+    where: { id, student: { tenant_id: user.tenantId } },
     relations: ['student'],
   });
 

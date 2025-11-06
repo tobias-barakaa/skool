@@ -7,6 +7,7 @@ import { ChatRoom } from 'src/messaging/entities/chat-room.entity';
 import { ChatMessage } from 'src/messaging/entities/chat-message.entity';
 import { RedisChatProvider } from 'src/messaging/providers/redis-chat.provider';
 import { SendMessageFromStudentToTeacherInput } from './dtos/chat-message.dto.teacher';
+import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 
 @Injectable()
 export class StudentChatService {
@@ -29,12 +30,17 @@ export class StudentChatService {
    */
 
   async sendMessageToTeacher(
-    studentUserId: string,
-    tenantId: string,
+    currentUser: ActiveUserData,
     input: SendMessageFromStudentToTeacherInput,
   ): Promise<ChatMessage> {
+    const studentUserId = currentUser.sub;
+    const tenantId = currentUser.tenantId;
+    if(!tenantId){
+      throw new BadRequestException('Tenant ID is missing from the active user');
+    }
+
     const student = await this.studentRepository.findOne({
-      where: { user: { id: studentUserId }, tenant_id: tenantId },
+      where: { user: { id: studentUserId }, tenant_id: currentUser.tenantId },
       relations: ['user'],
     });
   
@@ -43,7 +49,7 @@ export class StudentChatService {
     }
   
     const teacher = await this.teacherRepository.findOne({
-      where: { id: input.recipientId, tenantId },
+      where: { id: input.recipientId, tenantId: currentUser.tenantId },
       relations: ['user'],
     });
   
@@ -89,8 +95,7 @@ export class StudentChatService {
 
 
   async deleteMessage(
-    userId: string,
-    tenantId: string,
+    currentUser: ActiveUserData,
     messageId: string,
     options?: { hard?: boolean },
   ): Promise<boolean> {
@@ -105,7 +110,7 @@ export class StudentChatService {
     }
   
     // 2️⃣ Check that the current user is allowed to delete it
-    if (message.senderId !== userId) {
+    if (message.senderId !== currentUser.sub) {
       throw new ForbiddenException('You can only delete your own messages');
     }
   
@@ -206,7 +211,7 @@ export class StudentChatService {
    * Get chat history for a specific room (student perspective)
    */
   async getChatHistory(
-    studentUserId: string,
+    currentUser: ActiveUserData,
     chatRoomId: string,
     limit: number = 50,
     offset: number = 0,
@@ -216,7 +221,7 @@ export class StudentChatService {
       where: { id: chatRoomId },
     });
 
-    if (!room || !room.participantIds.includes(studentUserId)) {
+    if (!room || !room.participantIds.includes(currentUser.sub)) {
       throw new NotFoundException('Chat room not found or access denied');
     }
 
@@ -252,14 +257,14 @@ export class StudentChatService {
    * Mark messages as read (student marking teacher's messages)
    */
   async markMessagesAsRead(
-    studentUserId: string,
+    currentUser: ActiveUserData,
     chatRoomId: string,
   ): Promise<boolean> {
     const room = await this.chatRoomRepository.findOne({
       where: { id: chatRoomId },
     });
 
-    if (!room || !room.participantIds.includes(studentUserId)) {
+    if (!room || !room.participantIds.includes(currentUser.sub)) {
       throw new NotFoundException('Chat room not found or access denied');
     }
 
@@ -268,13 +273,13 @@ export class StudentChatService {
       { 
         chatRoomId, 
         isRead: false, 
-        senderId: In([...room.participantIds.filter(id => id !== studentUserId)]) 
+        senderId: In([...room.participantIds.filter(id => id !== currentUser.sub)]) 
       },
       { isRead: true },
     );
 
     // Clear unread count in Redis
-    await this.redisChatProvider.clearUnreadCount(studentUserId, chatRoomId);
+    await this.redisChatProvider.clearUnreadCount(currentUser.sub, chatRoomId);
 
     return true;
   }
@@ -370,12 +375,11 @@ export class StudentChatService {
    * Get chat room with a specific teacher
    */
   async getChatRoomWithTeacher(
-    studentUserId: string,
+    currentUser: ActiveUserData,
     teacherId: string,
-    tenantId: string,
   ): Promise<ChatRoom | null> {
     const student = await this.studentRepository.findOne({
-      where: { user: { id: studentUserId }, tenant_id: tenantId },
+      where: { user: { id: currentUser.sub }, tenant_id: currentUser.tenantId },
     });
     console.log(student, 'this is the stende yohh')
 
@@ -384,7 +388,7 @@ export class StudentChatService {
     }
 
     const teacher = await this.teacherRepository.findOne({
-      where: { id: teacherId, tenantId },
+      where: { id: teacherId, tenantId: currentUser.tenantId },
     });
 
     if (!teacher) {
@@ -403,9 +407,9 @@ export class StudentChatService {
   /**
    * Get all teachers that the student has chat rooms with
    */
-  async getStudentTeachers(studentUserId: string, tenantId: string): Promise<Teacher[]> {
+  async getStudentTeachers(currentUser: ActiveUserData): Promise<Teacher[]> {
     const student = await this.studentRepository.findOne({
-      where: { user: { id: studentUserId }, tenant_id: tenantId },
+      where: { user: { id: currentUser.sub }, tenant_id: currentUser.tenantId },
     });
 
     if (!student) {
@@ -413,12 +417,12 @@ export class StudentChatService {
     }
 
     // Get all chat rooms for this student
-    const rooms = await this.getStudentChatRooms(studentUserId);
+    const rooms = await this.getStudentChatRooms(currentUser.sub);
 
     // Extract teacher user IDs from room names and participant IDs
     const teacherUserIds = rooms
       .flatMap(room => room.participantIds)
-      .filter(id => id !== studentUserId);
+      .filter(id => id !== currentUser.sub);
 
     if (teacherUserIds.length === 0) {
       return [];
@@ -428,7 +432,7 @@ export class StudentChatService {
     const teachers = await this.teacherRepository.find({
       where: { 
         user: { id: In(teacherUserIds) },
-        tenantId 
+        tenantId: currentUser.tenantId
       },
       relations: ['user'],
     });

@@ -15,7 +15,7 @@ export class ParentPortalResolver {
   @Query(() => Parent, { description: 'Get the logged-in parent profile' })
   async myParentProfile(@ActiveUser() user: ActiveUserData): Promise<Parent> {
     console.log('Fetching parent profile for user:::::::::::::::::::', user); 
-    return this.parentPortalService.getParentByUserId(user.sub, user.tenantId);
+    return this.parentPortalService.getParentByUserId(user);
   }
 
   // Get all children

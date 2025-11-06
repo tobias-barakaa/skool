@@ -13,6 +13,7 @@ import { CreateTransportAssignmentInput } from './dtos/transport-assign.input';
 import { BulkTransportAssignmentInput } from './dtos/bulk-assign-transport.input';
 import { UpdateTransportAssignmentInput } from './dtos/update-assignment-transport.input';
 import { In } from 'typeorm';
+import { ActiveUserData } from '../auth/interface/active-user.interface';
 
 
 @Injectable()
@@ -31,9 +32,16 @@ export class TransportService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async createRoute(input: CreateTransportRouteInput, tenantId: string): Promise<TransportRoute> {
+
+  private getTenantId(user: ActiveUserData): string {
+    if (!user.tenantId) {
+      throw new BadRequestException('Tenant ID is missing from the active user');
+    };
+    return user.tenantId;
+  }
+  async createRoute(input: CreateTransportRouteInput, user: ActiveUserData): Promise<TransportRoute> {
     const existing = await this.routeRepo.findOne({
-      where: { name: input.name, tenantId },
+      where: { name: input.name, tenantId: this.getTenantId(user) },
     });
   
     if (existing) {
@@ -41,13 +49,14 @@ export class TransportService {
 
     }
   
-    const route = this.routeRepo.create({ ...input, tenantId });
+    const route = this.routeRepo.create({ ...input, tenantId: this.getTenantId(user) });
     return this.routeRepo.save(route);
   }
   
 
 
-  async updateRoute(input: UpdateTransportRouteInput, tenantId: string): Promise<TransportRoute> {
+  async updateRoute(input: UpdateTransportRouteInput, user: ActiveUserData): Promise<TransportRoute> {
+    const tenantId = this.getTenantId(user);
     const route = await this.routeRepo.findOne({
       where: { id: input.id, tenantId },
     });
@@ -63,29 +72,32 @@ export class TransportService {
     return this.routeRepo.save(route);
   }
   
-  async removeRoute(id: string, tenantId: string): Promise<boolean> {
-    const result = await this.routeRepo.delete({ id, tenantId });
+  async removeRoute(id: string, user: ActiveUserData): Promise<boolean> {
+    const result = await this.routeRepo.delete({ id, tenantId: this.getTenantId(user) });
     return (result.affected ?? 0) > 0;
   }
   
 
-  async deleteRoute(id: string, tenantId: string): Promise<boolean> {
-    const res = await this.routeRepo.delete({ id, tenantId });
+  async deleteRoute(id: string, user: ActiveUserData): Promise<boolean> {
+    const res = await this.routeRepo.delete({ id, tenantId: this.getTenantId(user) });
     return (res.affected ?? 0) > 0;
   }
 
-  async findAllRoutes(tenantId: string): Promise<TransportRoute[]> {
+  async findAllRoutes(user: ActiveUserData): Promise<TransportRoute[]> {
+    const tenantId = this.getTenantId(user);
     return this.routeRepo.find({
       where: { tenantId },
       order: { createdAt: 'DESC' },
     });
   }
 
-  async findRoutesByTenant(tenantId: string): Promise<TransportRoute[]> {
+  async findRoutesByTenant(user: ActiveUserData): Promise<TransportRoute[]> {
+    const tenantId = this.getTenantId(user);
     return this.routeRepo.find({ where: { tenantId } });
   }
 
-  async findRoutes(tenantId: string): Promise<TransportRoute[]> {
+  async findRoutes(user: ActiveUserData): Promise<TransportRoute[]> {
+    const tenantId = this.getTenantId(user);
     return this.routeRepo.find({
       where: { tenantId },
       relations: ['assignments', 'assignments.student', 'assignments.student.user'],
@@ -93,7 +105,8 @@ export class TransportService {
   };
 
 
-  async findAssignments(tenantId: string): Promise<TransportAssignment[]> {
+  async findAssignments(user: ActiveUserData): Promise<TransportAssignment[]> {
+    const tenantId = this.getTenantId(user);
     return this.assignmentRepo.find({
       where: { tenantId },
       relations: ['route', 'student', 'student.user'],
@@ -103,8 +116,9 @@ export class TransportService {
   
   async assignTransportStudent(
     input: AssignTransportInput,
-    tenantId: string,
+    user: ActiveUserData,
   ): Promise<TransportAssignment> {
+    const tenantId = this.getTenantId(user);
     this.logger.debug('Starting single student assignment', { input, tenantId });
   
     const student = await this.studentRepo.findOne({
@@ -157,13 +171,13 @@ export class TransportService {
   }
 
   
-  async assignBulkTransportStudents(input: BulkTransportAssignmentInput, tenantId: string): Promise<TransportAssignment[]> {
-    this.logger.debug('Starting bulk student assignment', { input, tenantId });
+  async assignBulkTransportStudents(input: BulkTransportAssignmentInput, user: ActiveUserData): Promise<TransportAssignment[]> {
+    // this.logger.debug('Starting bulk student assignment', { input, tenantId });
 
     try {
     
       const route = await this.routeRepo.findOne({
-        where: { id: input.routeId, tenantId }
+        where: { id: input.routeId, tenantId: this.getTenantId(user) }
       });
 
       if (!route) {
@@ -175,7 +189,7 @@ export class TransportService {
         students = await this.studentRepo.find({
           where: {
             id: In(input.studentIds),
-            tenant_id: tenantId,
+            tenant_id: this.getTenantId(user),
           },
           relations: ['user']
         });
@@ -187,7 +201,7 @@ export class TransportService {
         }
       } else {
         students = await this.studentRepo.find({
-          where: { tenant_id: tenantId },
+          where: { tenant_id: this.getTenantId(user) },
           relations: ['user']
         });
       }
@@ -200,7 +214,7 @@ export class TransportService {
         where: {
           routeId: input.routeId,
           studentId: In(students.map(s => s.id)),
-          tenantId,
+          tenantId: this.getTenantId(user),
           status: 'ACTIVE'
         },
         relations: ['student', 'student.user']
@@ -218,7 +232,7 @@ export class TransportService {
         this.assignmentRepo.create({
           routeId: input.routeId,
           studentId: student.id,
-          tenantId,
+          tenantId: this.getTenantId(user),
           status: 'ACTIVE',
           pickupPoint: input.pickupPoint,
         })
@@ -233,7 +247,7 @@ export class TransportService {
         .leftJoinAndSelect('assignment.route', 'route')
         .where('assignment.id IN (:...ids) AND assignment.tenantId = :tenantId', {
           ids: savedAssignments.map(a => a.id),
-          tenantId
+          tenantId: this.getTenantId(user),
         })
         .getMany();
 
@@ -241,7 +255,7 @@ export class TransportService {
       return results;
 
     } catch (error) {
-      this.logger.error('Failed to bulk assign students to route', { error: error.message, input, tenantId });
+      this.logger.error('Failed to bulk assign students to route', { error: error.message, input, tenantId: this.getTenantId(user), });
       
       if (error instanceof NotFoundException || error instanceof ConflictException || error instanceof BadRequestException) {
         throw error;
@@ -256,15 +270,15 @@ export class TransportService {
   }
 
  
-  async removeTransportAssignment(input: RemoveTransportAssignmentInput, tenantId: string): Promise<boolean> {
-    this.logger.debug('Starting transport assignment removal', { input, tenantId });
+  async removeTransportAssignment(input: RemoveTransportAssignmentInput, user: ActiveUserData): Promise<boolean> {
+    this.logger.debug('Starting transport assignment removal', { input, user });
 
     try {
       const assignment = await this.assignmentRepo.findOne({
         where: {
           studentId: input.studentId,
           routeId: input.routeId,
-          tenantId,
+          tenantId: this.getTenantId(user),
           status: 'ACTIVE'
         },
         relations: ['student', 'student.user', 'route']
@@ -283,7 +297,7 @@ export class TransportService {
       return true;
 
     } catch (error) {
-      this.logger.error('Failed to remove transport assignment', { error: error.message, input, tenantId });
+      this.logger.error('Failed to remove transport assignment', { error: error.message, input, tenantId: this.getTenantId(user) });
       
       if (error instanceof NotFoundException) {
         throw error;
@@ -293,13 +307,13 @@ export class TransportService {
     }
   }
 
-  async removeBulkTransportAssignments(input: { studentIds: string[]; routeId?: string }, tenantId: string): Promise<number> {
-    this.logger.debug('Starting bulk transport assignment removal', { input, tenantId });
+  async removeBulkTransportAssignments(input: { studentIds: string[]; routeId?: string }, user: ActiveUserData): Promise<number> {
+    this.logger.debug('Starting bulk transport assignment removal', { input, tenantId: this.getTenantId(user) });
 
     try {
       const whereCondition: any = {
         studentId: In(input.studentIds),
-        tenantId,
+        tenantId: this.getTenantId(user),
         status: 'ACTIVE'
       };
 
@@ -328,7 +342,7 @@ export class TransportService {
       return assignments.length;
 
     } catch (error) {
-      this.logger.error('Failed to bulk remove transport assignments', { error: error.message, input, tenantId });
+      this.logger.error('Failed to bulk remove transport assignments', { error: error.message, input, tenantId: this.getTenantId(user) });
       
       if (error instanceof NotFoundException) {
         throw error;
@@ -474,9 +488,9 @@ export class TransportService {
   }
 
 
-  async updateAssignment(input: UpdateTransportAssignmentInput, tenantId: string) {
+  async updateAssignment(input: UpdateTransportAssignmentInput, user: ActiveUserData): Promise<TransportAssignment> {
     const assignment = await this.assignmentRepo.findOne({
-      where: { id: input.assignmentId, tenantId },
+      where: { id: input.assignmentId, tenantId: user.tenantId },
     });
 
     if (!assignment) throw new NotFoundException('Assignment not found');
@@ -485,9 +499,9 @@ export class TransportService {
     return this.assignmentRepo.save(assignment);
   }
 
-  async getAssignmentsByRoute(routeId: string, tenantId: string) {
+  async getAssignmentsByRoute(routeId: string, user: ActiveUserData) {
     return this.assignmentRepo.find({
-      where: { routeId, tenantId },
+      where: { routeId, tenantId: user.tenantId },
       relations: ['student', 'route'],
     });
   }

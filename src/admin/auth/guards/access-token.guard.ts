@@ -32,17 +32,40 @@ export class AccessTokenGuard implements CanActivate {
       throw new UnauthorizedException('Access token not found');
     }
 
+    // try {
+    //   const payload = await this.jwtService.verifyAsync(
+    //     token,
+    //     this.jwtConfiguration,
+    //   );
+
+    //    this.logger.debug(`Decoded JWT payload::::::::::::PSYPPPDIFU::::DJFIDJFIDJSODIFJIS: ${JSON.stringify(payload, null, 2)}`);
+
+    //   request[REQUEST_USER_KEY] = payload;
+    //   return true;
+    // } catch (err: any) {
+
     try {
       const payload = await this.jwtService.verifyAsync(
         token,
         this.jwtConfiguration,
       );
-
-       this.logger.debug(`Decoded JWT payload::::::::::::PSYPPPDIFU::::DJFIDJFIDJSODIFJIS: ${JSON.stringify(payload, null, 2)}`);
-
+    
+      this.logger.debug(
+        `Decoded JWT payload::::::::::::PSYPPPDIFU::::DJFIDJFIDJSODIFJIS: ${JSON.stringify(payload, null, 2)}`
+      );
+    
+      // ✅ SUPER ADMIN BYPASS
+      if (payload.globalRole === 'SUPER_ADMIN') {
+        this.logger.debug('✅ Super Admin detected → bypassing tenantId requirement');
+        request[REQUEST_USER_KEY] = payload;
+        return true;
+      }
+    
+      // ✅ NORMAL USER FLOW
       request[REQUEST_USER_KEY] = payload;
       return true;
     } catch (err: any) {
+      
       if (err instanceof TokenExpiredError) {
         this.logger.warn('JWT token has expired');
         throw new UnauthorizedException('Access token expired');

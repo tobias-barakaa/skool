@@ -44,6 +44,12 @@ export class SchoolConfigService {
     const lockValue = `${Date.now()}-${Math.random()}`;
     const lockTTL = 30;
 
+    const tenantId = user.tenantId;
+
+      if(!tenantId) {
+        throw new NotFoundException("Tenant not found");
+      }
+
     try {
       const lockAcquired = await this.cacheProvider.acquireLock(
         lockKey,
@@ -56,9 +62,11 @@ export class SchoolConfigService {
         );
       }
 
+      
+
       return await this.dataSource.transaction(async (manager) => {
         const tenant = await this.schoolConfigProvider.findTenantById(
-          user.tenantId,
+         tenantId
         );
         if (!tenant) {
           throw new BadRequestException('Tenant not found');
@@ -162,7 +170,7 @@ export class SchoolConfigService {
       });
     } finally {
       await this.cacheProvider.releaseLock(lockKey, lockValue);
-      await this.schoolConfigProvider.invalidateConfigCache(user.tenantId);
+      await this.schoolConfigProvider.invalidateConfigCache(tenantId);
     }
   }
 
@@ -296,15 +304,20 @@ export class SchoolConfigService {
       throw new NotFoundException('School configuration not found');
     }
 
-    return this.mapToSchoolConfigurationResponse(config, user.tenantId);
+    const tenantId = user.tenantId;
+    if (!tenantId) {
+      throw new NotFoundException('School configuration not found');
+    }
+
+    return this.mapToSchoolConfigurationResponse(config, tenantId);
   }
 
   async getWholeGradeLevelForSchoolType(
-    tenantId: string,
+    user: ActiveUserData,
   ): Promise<TenantGradeLevel[]> {
    
     const config = await this.schoolConfigRepo.findOne({
-      where: { tenant: { id: tenantId }, isActive: true },
+      where: { tenant: { id: user.tenantId }, isActive: true },
       relations: ['schoolType'],
     });
 
@@ -320,7 +333,7 @@ return this.tenantGradeLevelRepo
   .leftJoinAndSelect('tenantStreams.stream', 'stream')    
   .innerJoinAndSelect('tgl.curriculum', 'curriculum')
   .innerJoinAndSelect('curriculum.schoolType', 'schoolType')
-  .where('tgl.tenantId = :tenantId', { tenantId })
+  .where('tgl.tenantId = :tenantId', { tenantId: user.tenantId })
   .andWhere('tgl.isActive = true')
   .andWhere('curriculum.schoolTypeId = :schoolTypeId', {
     schoolTypeId: config.schoolType.id,

@@ -21,15 +21,16 @@ export class CreateTestProvider {
   ) {}
 
 
- async createTest(
-    dto: CreateTestInput,
-    teacher: ActiveUserData,
-  ): Promise<Test> {
+async createTest(
+  dto: CreateTestInput,
+  teacher: ActiveUserData,
+): Promise<Test> {
 
 
-
-
-        await this.schoolSetupGuardService.validateSchoolIsConfigured(teacher.tenantId);
+      if (!teacher.tenantId) {
+        throw new BadRequestException('Tenant ID is required');
+      }
+      await this.schoolSetupGuardService.validateSchoolIsConfigured(teacher.tenantId);
 
     const qr = this.dataSource.createQueryRunner();
     await qr.connect();

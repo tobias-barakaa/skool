@@ -27,7 +27,12 @@ export class PaymentService {
       user: ActiveUserData,
     ): Promise<Payment> {
       const { invoiceId, amount, paymentMethod, transactionReference, paymentDate, notes } = input;
+
       const tenantId = user.tenantId;
+
+      if(!tenantId) {
+        throw new NotFoundException('Tenant ID is missing from the active user');
+      }
   
       const invoice = await this.invoiceRepo.findOne({
         where: { id: invoiceId, tenantId },

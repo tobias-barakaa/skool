@@ -1,9 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { TenantGradeLevel } from 'src/admin/school-type/entities/tenant-grade-level';
 import { CreateTenantGradeLevelDto, CreateTenantGradeLevelProvider } from '../create-tenant-grade-level.provider';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SchoolConfig } from 'src/admin/school-type/entities/school-config.entity';
+import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 
 @Injectable()
 export class CreateTenantGradeLevelService {
@@ -20,7 +21,7 @@ export class CreateTenantGradeLevelService {
   async createTenantGradeLevel(
     dto: CreateTenantGradeLevelDto,
   ): Promise<TenantGradeLevel> {
-    this.logger.log(`Creating tenant grade level for tenant: ${dto.tenantId}`);
+    // this.logger.log(`Creating tenant grade level for tenant: ${dto.tenantId}`);
     return await this.createTenantGradeLevelProvider.createTenantGradeLevel(
       dto,
     );
@@ -28,38 +29,45 @@ export class CreateTenantGradeLevelService {
 
   async deleteTenantGradeLevel(
     tenantGradeLevelId: string,
-    tenantId: string,
+    user: ActiveUserData,
   ): Promise<boolean> {
     this.logger.log(
-      `Deleting tenant grade level: ${tenantGradeLevelId} for tenant: ${tenantId}`,
+      `Deleting tenant grade level: ${tenantGradeLevelId} for tenant: ${user.tenantId}`,
     );
     return await this.createTenantGradeLevelProvider.deleteTenantGradeLevel(
       tenantGradeLevelId,
-      tenantId,
+      user,
     );
   }
 
   async getTenantGradeLevels(
-    tenantId: string,
+    user: ActiveUserData,
     curriculumId?: string,
   ): Promise<TenantGradeLevel[]> {
-    this.logger.log(`Getting tenant grade levels for tenant: ${tenantId}`);
+    this.logger.log(`Getting tenant grade levels for tenant: ${user.tenantId}`);
+    if(!user.tenantId) {
+      throw new NotFoundException("not Found anywhere around the world")
+    }
     return await this.createTenantGradeLevelProvider.getTenantGradeLevels(
-      tenantId,
+      user.tenantId,
       curriculumId,
     );
   }
 
   async getTenantGradeLevelById(
     tenantGradeLevelId: string,
-    tenantId: string,
+    user: ActiveUserData,
   ): Promise<TenantGradeLevel | null> {
     this.logger.log(
-      `Getting tenant grade level: ${tenantGradeLevelId} for tenant: ${tenantId}`,
+      `Getting tenant grade level: ${tenantGradeLevelId} for tenant: ${user.tenantId}`,
     );
+
+    if(!user.tenantId) {
+      throw new NotFoundException("not Found anywhere around the world")
+    }
     return await this.createTenantGradeLevelProvider.getTenantGradeLevelById(
       tenantGradeLevelId,
-      tenantId,
+      user.tenantId,
     );
   }
 
@@ -73,14 +81,18 @@ export class CreateTenantGradeLevelService {
   }
 
   async getGradeLevelsWithTenantStreams(
-    tenantId: string,
+    user: ActiveUserData,
     curriculumId?: string,
   ): Promise<any[]> {
     this.logger.log(
-      `Getting tenant grade levels with streams for tenant: ${tenantId}`,
+      `Getting tenant grade levels with streams for tenant: ${user.tenantId}`,
     );
+
+    if(!user.tenantId) {
+      throw new NotFoundException("not Found anywhere around the world")
+    }
     return await this.createTenantGradeLevelProvider.getGradeLevelsWithTenantStreams(
-      tenantId,
+      user.tenantId,
       curriculumId,
     );
   };

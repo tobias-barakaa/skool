@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, Logger, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, Logger, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource, QueryRunner } from 'typeorm';
 import { FeeItemSummary, GradeLevelStudentsSummary, StudentSummary } from '../dtos/student-summary.dto';
@@ -63,11 +63,23 @@ export class StudentSummaryService {
   ) {}
 
 
+  private getTenantId(user: ActiveUserData): string {
+      if (!user.tenantId) {
+        throw new UnauthorizedException('Tenant ID is missing from the active user');
+      }
+      return user.tenantId;
+    }
+
 
   async getStudentSummary(
     studentId: string,
     user: ActiveUserData,
   ): Promise<StudentSummary> {
+
+    const tenantId = user.tenantId;
+    if(!tenantId) {
+      throw new NotFoundException("Tenant not found:")
+    }
     const student = await this.studentRepository.findOne({
       where: {
         id: studentId,
@@ -89,13 +101,14 @@ export class StudentSummaryService {
       );
     }
 
-    const feeItems = await this.getStudentFeeItems(studentId, user.tenantId);
+    const feeItems = await this.getStudentFeeItems(studentId, tenantId);
     return this.mapToStudentSummary(student, feeItems);
   }
 
   async getAllStudentsSummary(
     user: ActiveUserData,
   ): Promise<StudentSummary[]> {
+  
     const students = await this.studentRepository.find({
       where: {
         tenant_id: user.tenantId,
@@ -115,7 +128,7 @@ export class StudentSummaryService {
       students.map(async (student) => {
         const feeItems = await this.getStudentFeeItems(
           student.id,
-          user.tenantId,
+          this.getTenantId(user),
         );
         return this.mapToStudentSummary(student, feeItems);
       }),
@@ -127,6 +140,7 @@ export class StudentSummaryService {
   async getStudentsSummaryByGradeLevel(
     user: ActiveUserData,
   ): Promise<GradeLevelStudentsSummary[]> {
+   
     const students = await this.studentRepository
   .createQueryBuilder('student')
   .leftJoinAndSelect('student.user', 'user')
@@ -157,7 +171,7 @@ export class StudentSummaryService {
         gradeStudents.map(async (student) => {
           const feeItems = await this.getStudentFeeItems(
             student.id,
-            user.tenantId,
+            this.getTenantId(user),
           );
           return this.mapToStudentSummary(student, feeItems);
         }),
@@ -193,7 +207,7 @@ export class StudentSummaryService {
   ): Promise<GradeLevelStudentsSummary> {
     const students = await this.studentRepository.find({
       where: {
-        tenant_id: user.tenantId,
+        tenant_id: this.getTenantId(user),
         grade: { id: gradeLevelId },
         isActive: true,
       },
@@ -218,7 +232,7 @@ export class StudentSummaryService {
       students.map(async (student) => {
         const feeItems = await this.getStudentFeeItems(
           student.id,
-          user.tenantId,
+          this.getTenantId(user),
         );
         return this.mapToStudentSummary(student, feeItems);
       }),
@@ -264,7 +278,7 @@ export class StudentSummaryService {
     );
 
     return {
-      tenantId: user.tenantId,
+      tenantId: this.getTenantId(user),
       totalStudents,
       totalFeesOwed,
       totalFeesPaid,
@@ -432,7 +446,7 @@ ORDER BY sfi.id;
         gradeStudents.map(async (student) => {
           const feeItems = await this.getStudentFeeItemsByAcademicYear(
             student.id,
-            user.tenantId,
+            this.getTenantId(user),
             academicYearId,
           );
           return this.mapToStudentSummary(student, feeItems);
@@ -474,7 +488,7 @@ ORDER BY sfi.id;
     );
 
     return {
-      tenantId: user.tenantId,
+      tenantId: this.getTenantId(user),
       academicYearId,
       academicYearName: academicYear[0].name,
       totalStudents,

@@ -40,7 +40,7 @@ export class SuperAdminAuthService {
   
       await queryRunner.commitTransaction();
   
-      const tokens = await this.generateTokens.generateSuperAdminTokens(savedUser);
+      const tokens = await this.generateTokens.generateSuperAdminToken(savedUser);
   
       return {
         user: savedUser,
@@ -55,6 +55,18 @@ export class SuperAdminAuthService {
       await queryRunner.release();
     }
   }
+
+
+// admin/users/user.service.ts
+async getAllUsers(): Promise<User[]> {
+    const userRepository = this.dataSource.getRepository(User);
+    return userRepository.find({
+      relations: ['memberships', 'memberships.tenant'],
+    });
+  }
   
+  
+
+ 
   
 }

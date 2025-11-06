@@ -384,9 +384,9 @@ export class ParentService {
     await this.emailService.sendParentInvitation(
       createParentDto.email,
       createParentDto.name,
-      currentUser.subdomain,
+      currentUser.subdomain ?? '',
       token,
-      currentUser.tenantId,
+      currentUser.tenantId ?? '',
       studentsData,
     );
   } catch (error) {

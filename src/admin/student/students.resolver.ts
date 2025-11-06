@@ -99,7 +99,7 @@ export class StudentsResolver {
     @ActiveUser() user: ActiveUserData,
   ): Promise<GradeLevelWithStreamsOutput[]> {
     return this.studentsService.getGradeLevelsWithStreamsForTenant(
-      user.tenantId,
+      user,
     );
   }
 

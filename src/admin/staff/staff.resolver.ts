@@ -62,7 +62,7 @@ export class StaffResolver {
   async getAllStaff(
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<StaffDto[]> {
-    return await this.staffService.getAllStaff(currentUser.tenantId);
+    return await this.staffService.getAllStaff(currentUser);
   }
 
   @Query(() => StaffDto)
@@ -70,7 +70,7 @@ export class StaffResolver {
     @Args('id', { type: () => ID }) id: string,
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<StaffDto> {
-    return await this.staffService.getStaffById(id, currentUser.tenantId);
+    return await this.staffService.getStaffById(id, currentUser);
   }
 
   @Mutation(() => StaffDto)
@@ -78,7 +78,7 @@ export class StaffResolver {
     @Args('updateInput') updateInput: UpdateStaffInput,
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<StaffDto> {
-    return await this.staffService.updateStaff(updateInput, currentUser.tenantId);
+    return await this.staffService.updateStaff(updateInput, currentUser);
   }
 
   @Mutation(() => Boolean)
@@ -86,7 +86,7 @@ export class StaffResolver {
     @Args('id', { type: () => ID }) id: string,
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<boolean> {
-    return await this.staffService.deleteStaff(id, currentUser.tenantId);
+    return await this.staffService.deleteStaff(id, currentUser);
   }
 }
 // export class StaffResolver {

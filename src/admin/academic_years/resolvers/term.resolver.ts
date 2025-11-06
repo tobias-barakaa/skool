@@ -5,10 +5,19 @@ import { CreateTermInput } from '../dtos/create-term-input.dto';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { UpdateTermInput } from '../dtos/update-term.input.dto';
+import { UnauthorizedException } from '@nestjs/common';
 
 @Resolver(() => Term)
 export class TermResolver {
   constructor(private readonly service: TermService) {}
+
+
+   private getTenantId(user: ActiveUserData): string {
+      if (!user.tenantId) {
+        throw new UnauthorizedException('Tenant ID is missing from the active user');
+      }
+      return user.tenantId;
+    }
 
   @Mutation(() => Term, {
     description: 'Create a new term within an academic year'
@@ -20,7 +29,7 @@ export class TermResolver {
     }) input: CreateTermInput,
     @ActiveUser() user: ActiveUserData,
   ): Promise<Term> {
-    return this.service.create(input, user.tenantId);
+    return this.service.create(input, this.getTenantId(user))
   }
 
 
@@ -30,7 +39,8 @@ async updateTerm(
   @Args('input') input: UpdateTermInput,
   @ActiveUser() user: ActiveUserData,
 ): Promise<Term> {
-  return this.service.update(id,input,user.tenantId);
+  return this.service.update(id,input,this.getTenantId(user));
+
 }
 
 
@@ -38,7 +48,8 @@ async updateTerm(
   description: 'Get all terms for the current tenant, including academic year details',
 })
 async terms(@ActiveUser() user: ActiveUserData): Promise<Term[]> {
-  return this.service.findAllTerms(user.tenantId);
+  return this.service.findAllTerms(this.getTenantId(user));
+  
 }
 
 
@@ -47,7 +58,7 @@ async deleteTerm(
   @Args('id', { type: () => ID }) id: string,
   @ActiveUser() user: ActiveUserData,
 ): Promise<boolean> {
-  return this.service.remove( id, user.tenantId)
+  return this.service.remove(id, this.getTenantId(user));
 }
 
 @Mutation(() => Term, { description: 'Mark a term as the current one for its academic year' })
@@ -55,7 +66,7 @@ async setCurrentTerm(
   @Args('id', { type: () => ID }) id: string,
   @ActiveUser() user: ActiveUserData,
 ): Promise<Term> {
-  return this.service.setCurrent(id, user.tenantId)
+  return this.service.setCurrent(id, this.getTenantId(user));
 }
 
 @Query(() => Term, { description: 'Get a single term by ID' })
@@ -63,7 +74,7 @@ async term(
   @Args('id', { type: () => ID }) id: string,
   @ActiveUser() user: ActiveUserData,
 ): Promise<Term> {
-  return this.service.findById(id, user.tenantId)
+  return this.service.findById(id, this.getTenantId(user));
 }
 
   @Query(() => [Term], { name: 'termsByAcademicYear', description: 'Retrieves all terms for a given academic year' })
@@ -71,7 +82,7 @@ async term(
     @Args('academicYearId', { type: () => ID, description: 'The ID of the academic year to fetch terms for' }) academicYearId: string,
     @ActiveUser() user: ActiveUserData,
   ): Promise<Term[]> {
-    return this.service.findAllByAcademicYear(academicYearId, user.tenantId);
+    return this.service.findAllByAcademicYear(academicYearId, this.getTenantId(user));
   }
 
   @Query(() => Term, { name: 'term', description: 'Retrieves a single term by its ID' })
@@ -79,7 +90,7 @@ async term(
     @Args('id', { type: () => ID, description: 'The ID of the term' }) id: string,
     @ActiveUser() user: ActiveUserData,
   ): Promise<Term> {
-    return this.service.findOne(id, user.tenantId);
+    return this.service.findOne(id, this.getTenantId(user));
   }
   
 
@@ -90,7 +101,7 @@ async term(
     @Args('academicYearId', { type: () => ID }) academicYearId: string,
     @ActiveUser() user: ActiveUserData
   ): Promise<Term[]> {
-    return this.service.findByAcademicYear(academicYearId, user.tenantId);
+    return this.service.findByAcademicYear(academicYearId, this.getTenantId(user));
   }
 }
 

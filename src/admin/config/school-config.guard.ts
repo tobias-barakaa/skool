@@ -5,6 +5,7 @@ import { SchoolConfig } from '../school-type/entities/school-config.entity';
 import { SchoolConfigLevel } from '../school-type/entities/school_config_level';
 import { SchoolConfigGradeLevel } from '../school-type/entities/school_config_grade_level';
 import { TenantGradeLevel } from '../school-type/entities/tenant-grade-level';
+import { ActiveUserData } from '../auth/interface/active-user.interface';
 
 @Injectable()
 export class SchoolSetupGuardService {
@@ -48,14 +49,13 @@ export class SchoolSetupGuardService {
 
 
 
-  
-  async validateSchoolIsConfigured(tenantId: string) {
+  async validateSchoolIsConfigured(tenantId: string): Promise<void> {
     this.logger.debug(`Validating school configuration for tenant: ${tenantId}`);
 
     const schoolConfigRepository = this.dataSource.getRepository(SchoolConfig);
 
-    const config = await schoolConfigRepository.findOneBy({
-      tenant: { id: tenantId }
+    const config = await schoolConfigRepository.findOne({
+      where: { tenant: { id: tenantId } },
     });
 
     if (!config) {
@@ -68,6 +68,75 @@ export class SchoolSetupGuardService {
 
     this.logger.debug(`School is configured for tenant: ${tenantId}. Validation successful.`);
   }
+
+  /**
+   * Validates if a school is configured using user data
+   * @param user - The active user data containing tenant information
+   * @throws ForbiddenException if school is not configured or user has no tenant
+   */
+  async validateSchoolIsConfiguredForUser(user: ActiveUserData): Promise<void> {
+    if (!user.tenantId) {
+      this.logger.warn(`User ${user.email} has no tenant ID`);
+      throw new ForbiddenException({
+        message: 'No school association found for this user.',
+        error: 'NO_TENANT',
+      });
+    }
+
+    await this.validateSchoolIsConfigured(user.tenantId);
+  }
+
+  /**
+   * Checks if a school is configured without throwing an error
+   * @param tenantId - The tenant/school ID to check
+   * @returns true if configured, false otherwise
+   */
+  async isSchoolConfigured(tenantId: string): Promise<boolean> {
+    try {
+      await this.validateSchoolIsConfigured(tenantId);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  /**
+   * Gets the school configuration if it exists
+   * @param tenantId - The tenant/school ID
+   * @returns SchoolConfig or null if not found
+   */
+  async getSchoolConfig(tenantId: string): Promise<SchoolConfig | null> {
+    this.logger.debug(`Fetching school configuration for tenant: ${tenantId}`);
+
+    const schoolConfigRepository = this.dataSource.getRepository(SchoolConfig);
+
+    const config = await schoolConfigRepository.findOne({
+      where: { tenant: { id: tenantId } },
+      relations: ['tenant'], // Include tenant details if needed
+    });
+
+    return config;
+  }
+  // async validateSchoolIsConfigured(teacher: ActiveUserData) {
+  //   const tenantId = teacher.tenantId;
+  //   this.logger.debug(`Validating school configuration for tenant: ${tenantId}`);
+
+  //   const schoolConfigRepository = this.dataSource.getRepository(SchoolConfig);
+
+  //   const config = await schoolConfigRepository.findOneBy({
+  //     tenant: { id: tenantId }
+  //   });
+
+  //   if (!config) {
+  //     this.logger.warn(`Action denied for unconfigured school. Tenant ID: ${tenantId}`);
+  //     throw new ForbiddenException({
+  //       message: 'School setup is not complete. Please configure the school before proceeding.',
+  //       error: 'SCHOOL_NOT_CONFIGURED',
+  //     });
+  //   }
+
+  //   this.logger.debug(`School is configured for tenant: ${tenantId}. Validation successful.`);
+  // }
 }
 
 

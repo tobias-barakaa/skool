@@ -38,7 +38,7 @@ async termAssessmentsWithStudents(
     term,
     gradeLevelId,
     academicYear,    
-    user.tenantId,
+    user
   );
 }
 
@@ -68,7 +68,7 @@ async marksStats(
     gradeLevelId,
     subjectId,
     academicYear,  
-    user.tenantId,
+    user,
   );
 }
 }

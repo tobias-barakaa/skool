@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateTenantSubjectDto, CreateTenantSubjectProvider, UpdateTenantSubjectDto } from '../create-tenant-subject.provider';
 import { TenantSubject } from 'src/admin/school-type/entities/tenant-specific-subject';
 import { DataSource, Repository } from 'typeorm';
@@ -98,7 +98,9 @@ export class CreateTenantSubjectService {
     await qr.startTransaction();
   
     try {
-      // 1. Tenant must exist
+      if(!user.tenantId) {
+        throw new UnauthorizedException("Missing tenantId")
+      }
       const schoolConfig = await qr.manager.findOne(SchoolConfig, {
         where: { tenant: { id: user.tenantId } },
       });
@@ -136,6 +138,15 @@ export class CreateTenantSubjectService {
     }
   }
 
+
+  private getTenantId(user: ActiveUserData): string {
+      if (!user.tenantId) {
+        throw new UnauthorizedException('Tenant ID is missing from the active user');
+      }
+      return user.tenantId;
+    };
+
+
   async deactivate(
     tenantSubjectId: string,
     user: ActiveUserData,
@@ -146,7 +157,7 @@ export class CreateTenantSubjectService {
     if (!ts) throw new NotFoundException('Subject not found');
     ts.isActive = false;
     await this.tenantSubjectRepo.save(ts);
-    await this.invalidateCache(user.tenantId);
+    await this.invalidateCache(this.getTenantId(user));
     return true;
   }
 
@@ -168,7 +179,7 @@ export class CreateTenantSubjectService {
     if (!ts) throw new NotFoundException('Subject not found');
     ts.isActive = true;
     await this.tenantSubjectRepo.save(ts);
-    await this.invalidateCache(user.tenantId);
+    await this.invalidateCache(this.getTenantId(user));
     return true;
   }
 
@@ -192,7 +203,7 @@ export class CreateTenantSubjectService {
       await qr.manager.remove(TenantSubject, ts);
   
       await qr.commitTransaction();
-      await this.invalidateCache(user.tenantId);
+      await this.invalidateCache(this.getTenantId(user));
       this.logger.log(`Hard-deleted tenant subject ${tenantSubjectId}`);
   
       return true;
@@ -219,12 +230,12 @@ export class CreateTenantSubjectService {
   }
 
   async getTenantSubjects(
-    tenantId: string,
+    user: ActiveUserData,
     curriculumId?: string,
   ): Promise<TenantSubject[]> {
-    this.logger.log(`Getting tenant subjects for tenant: ${tenantId}`);
+    this.logger.log(`Getting tenant subjects for tenant: ${this.getTenantId(user)}`);
     return await this.createTenantSubjectProvider.getTenantSubjects(
-      tenantId,
+      this.getTenantId(user),
       curriculumId,
     );
   }

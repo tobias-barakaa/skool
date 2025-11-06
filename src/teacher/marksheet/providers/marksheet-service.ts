@@ -26,7 +26,11 @@ export class MarkService {
     input: EnterStudentMarksInput,
     user: ActiveUserData,
   ): Promise<AssessmentMark[]> {
-    await this.ensureSchoolConfigured(user.tenantId);
+    const tenantId = user.tenantId;
+    if(!tenantId) {
+      throw new ForbiddenException('Access denied: tenantId is missing');
+    }
+    await this.ensureSchoolConfigured(tenantId);
 
     const { studentId, marks } = input;
 
@@ -103,15 +107,20 @@ export class MarkService {
   term: number,
   tenantGradeLevelId: string,
  academicYear: string,
-  tenantId: string,
+  currentUser: ActiveUserData
 ) {
+
+  const tenantId = currentUser.tenantId;
+  if(!tenantId) {
+    throw new ForbiddenException('Access denied: tenantId is missing');
+  }
   await this.ensureSchoolConfigured(tenantId);
 
   const assessments = await this.assessmentRepo.find({
     where: {
       term,
       tenantGradeLevelId,
-     academicYear,
+      academicYear,
       tenantId,
       type: In([AssessType.CA, AssessType.EXAM]),
     },
@@ -122,7 +131,7 @@ export class MarkService {
   const students = await this.studentRepo.find({
     where: {
       grade: { id: tenantGradeLevelId },
-      tenant_id: tenantId,
+      tenant_id: currentUser.tenantId,
       isActive: true,
     },
     relations: ['user'],
@@ -134,14 +143,19 @@ export class MarkService {
 
   async updateStudentMarks(
     input: EnterStudentMarksInput,
-    user: ActiveUserData,
+    currentUser: ActiveUserData,
   ): Promise<AssessmentMark[]> {
-    await this.ensureSchoolConfigured(user.tenantId);
+
+    const tenantId = currentUser.tenantId;
+    if(!tenantId) {
+      throw new ForbiddenException('Access denied: tenantId is missing');
+    }
+    await this.ensureSchoolConfigured(tenantId);
 
     const { studentId, marks } = input;
 
     const student = await this.studentRepo.findOne({
-      where: { id: studentId, tenant_id: user.tenantId },
+      where: { id: studentId, tenant_id: tenantId },
     });
     if (!student) throw new NotFoundException('Student not found');
 
@@ -152,7 +166,7 @@ export class MarkService {
         where: {
           assessmentId: m.assessmentId,
           studentId,
-          assessment: { tenantId: user.tenantId },
+          assessment: { tenantId: tenantId },
         },
         relations: ['assessment'],
       });
@@ -195,8 +209,12 @@ export class MarkService {
   tenantGradeLevelId: string,
   tenantSubjectId: string,
   academicYear: string,
-  tenantId: string,
+  currentUser: ActiveUserData
 ) {
+  const tenantId = currentUser.tenantId;
+  if(!tenantId) {
+    throw new ForbiddenException('Access denied: tenantId is missing');
+  }
   await this.ensureSchoolConfigured(tenantId);
 
   const qb = this.markRepo

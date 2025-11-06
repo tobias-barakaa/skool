@@ -42,6 +42,10 @@ export class InvoiceService {
   ): Promise<Invoice[]> {
     const { studentId, termId, tenantGradeLevelIds, issueDate, dueDate, notes } = input;
     const tenantId = user.tenantId;
+
+    if(!tenantId) {
+      throw new NotFoundException('Tenant ID is missing from the active user');
+    }
     const termRepo = this.dataSource.getRepository(Term);
 
     const term = await termRepo.findOne({

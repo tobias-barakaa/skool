@@ -62,6 +62,9 @@ export class StaffService {
     currentUser: ActiveUserData,
   ): Promise<InviteStaffResponse> {
     const tenantId = currentUser.tenantId;
+    if(!tenantId) {
+      throw new NotFoundException("Tenant not found");
+    }
 
     await this.validateMembershipAccess(
       currentUser.sub,
@@ -286,9 +289,9 @@ private async handleInvitationResendLogic(
   }
   
 
-  async getAllStaff(tenantId: string): Promise<StaffDto[]> {
+  async getAllStaff(user: ActiveUserData): Promise<StaffDto[]> {
     const staff = await this.staffRepository.find({
-      where: { tenantId },
+      where: {tenantId: user.tenantId },
       order: { createdAt: 'DESC' },
     });
 
@@ -325,9 +328,9 @@ private async handleInvitationResendLogic(
     }));
   }
 
-  async getStaffById(id: string, tenantId: string): Promise<StaffDto> {
+  async getStaffById(id: string, currentUser: ActiveUserData): Promise<StaffDto> {
     const staff = await this.staffRepository.findOne({
-      where: { id, tenantId },
+      where: { id, tenantId: currentUser.tenantId },
     });
 
     if (!staff) {
@@ -369,8 +372,13 @@ private async handleInvitationResendLogic(
 
   async updateStaff(
     updateInput: UpdateStaffInput,
-    tenantId: string,
+    currentUser: ActiveUserData,
   ): Promise<StaffDto> {
+
+    const tenantId = currentUser.tenantId;
+    if(!tenantId) {
+      throw new NotFoundException("Tenant not found");
+    }
     const staff = await this.staffRepository.findOne({
       where: { id: updateInput.id, tenantId },
     });
@@ -386,10 +394,12 @@ private async handleInvitationResendLogic(
 
     const updatedStaff = await this.staffRepository.save(staff);
 
-    return this.getStaffById(updatedStaff.id, tenantId);
+    return this.getStaffById(updatedStaff.id, currentUser);
   }
 
-  async deleteStaff(id: string, tenantId: string): Promise<boolean> {
+  async deleteStaff(id: string, user: ActiveUserData): Promise<boolean> {
+    const tenantId = user.tenantId;
+
     const staff = await this.staffRepository.findOne({
       where: { id, tenantId },
     });

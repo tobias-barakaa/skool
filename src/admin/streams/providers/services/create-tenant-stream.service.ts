@@ -38,15 +38,20 @@ export class CreateTenantStreamService {
     await qr.startTransaction();
 
     try {
+      const tenantId = user.tenantId;
+      if(!tenantId) {
+        throw new NotFoundException("Tenant not found");
+      }
       const tenant = await qr.manager.findOne(Tenant, {
-        where: { id: user.tenantId },
+        where: { id: tenantId },
       });
       if (!tenant) {
-        throw new BadRequestException('Tenant not found');
+        throw new NotFoundException('Tenant not found');
       }
+     
 
       const tenantGradeLevel = await qr.manager.findOne(TenantGradeLevel, {
-        where: { id: dto.tenantGradeLevelId, tenant: { id: user.tenantId } },
+        where: { id: dto.tenantGradeLevelId, tenant: { id: tenantId } },
         relations: ['gradeLevel'],
       });
       if (!tenantGradeLevel) {
@@ -88,7 +93,7 @@ export class CreateTenantStreamService {
       const result = await qr.manager.save(TenantStream, tenantStream);
 
       await qr.commitTransaction();
-      await this.invalidateCache(user.tenantId);
+      await this.invalidateCache(tenantId);
 
       this.logger.log(
         `Created new stream "${result.stream.name}" for tenant ${user.tenantId}`,
@@ -113,8 +118,13 @@ export class CreateTenantStreamService {
     await qr.startTransaction();
 
     try {
+
+      const tenantId = user.tenantId;
+      if(!tenantId) {
+        throw new NotFoundException("Tenant not found");
+      }
       const stream = await qr.manager.findOne(TenantStream, {
-        where: { id, tenant: { id: user.tenantId } },
+        where: { id, tenant: { id: tenantId } },
         relations: ['stream', 'tenantGradeLevel'],
       });
       if (!stream) throw new NotFoundException('Stream not found');
@@ -123,7 +133,7 @@ export class CreateTenantStreamService {
       const updated = await qr.manager.save(TenantStream, stream);
 
       await qr.commitTransaction();
-      await this.invalidateCache(user.tenantId);
+      await this.invalidateCache(tenantId);
       this.logger.log(`Updated tenant stream ${updated.id}`);
       return updated;
     } catch (err) {
@@ -144,6 +154,11 @@ export class CreateTenantStreamService {
     await qr.startTransaction();
 
     try {
+
+      const tenantId = user.tenantId;
+      if(!tenantId) {
+        throw new NotFoundException("Tenant not found");
+      }
       const stream = await qr.manager.findOne(TenantStream, {
         where: { id, tenant: { id: user.tenantId } },
       });
@@ -153,7 +168,7 @@ export class CreateTenantStreamService {
       await qr.manager.save(TenantStream, stream);
 
       await qr.commitTransaction();
-      await this.invalidateCache(user.tenantId);
+      await this.invalidateCache(tenantId);
       this.logger.log(
         `${activate ? 'Activated' : 'Deactivated'} tenant stream ${id}`,
       );
@@ -166,9 +181,9 @@ export class CreateTenantStreamService {
     }
   }
 
-  async findAllByTenant(tenantId: string): Promise<TenantStream[]> {
+  async findAllByTenant(user: ActiveUserData): Promise<TenantStream[]> {
     return this.tenantStreamRepo.find({
-      where: { tenant: { id: tenantId }, isActive: true },
+      where: { tenant: { id: user.tenantId }, isActive: true },
       relations: [
         'stream',
         'tenantGradeLevel',
@@ -181,22 +196,32 @@ export class CreateTenantStreamService {
 
   async deleteTenantStream(
     tenantStreamId: string,
-    tenantId: string,
+    user: ActiveUserData,
   ): Promise<boolean> {
+    const tenantId = user.tenantId;
+
+    if(!tenantId) {
+      throw new NotFoundException("Tenant not found");
+    }
     this.logger.log(
-      `Deleting tenant stream: ${tenantStreamId} for tenant: ${tenantId}`,
+      `Deleting tenant stream: ${tenantStreamId} for tenant: ${user.tenantId}`,
     );
     return await this.createTenantStreamProvider.deleteTenantStream(
       tenantStreamId,
-      tenantId,
+      tenantId
     );
   }
 
   async getTenantStreams(
-    tenantId: string,
+    user: ActiveUserData,
     tenantGradeLevelId?: string,
   ): Promise<TenantStream[]> {
-    this.logger.log(`Getting tenant streams for tenant: ${tenantId}`);
+    const tenantId = user.tenantId;
+
+    if(!tenantId) {
+      throw new NotFoundException(`Not found tenantId `)
+    }
+    this.logger.log(`Getting tenant streams for tenant: ${user.tenantId}`);
     return await this.createTenantStreamProvider.getTenantStreams(
       tenantId,
       tenantGradeLevelId,

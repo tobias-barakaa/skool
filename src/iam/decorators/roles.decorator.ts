@@ -1,4 +1,3 @@
-// src/auth/decorators/roles.decorator.ts
 import { SetMetadata } from '@nestjs/common';
 import { MembershipRole } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
 

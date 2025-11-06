@@ -9,6 +9,10 @@ import { Teacher } from 'src/admin/teacher/entities/teacher.entity';
 import { ParentStudent } from 'src/admin/parent/entities/parent-student.entity';
 import { Parent } from 'src/admin/parent/entities/parent.entity';
 import { BroadcastMessageInput, BroadcastToGradeLevelsInput, SendMessageFromTeacherToParentInput, SendMessageInput } from '../dtos/send-message.input';
+import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
+import { NotFound } from '@aws-sdk/client-s3';
+
+
 
 @Injectable()
 export class ChatService {
@@ -37,12 +41,15 @@ export class ChatService {
    */
   async sendMessageToStudent(
     teacherUserId: string,
-    tenantId: string,
+    user: ActiveUserData,
     input: SendMessageInput,
   ): Promise<ChatMessage> {
-    // Get teacher by user_id
+    const tenantId = user.tenantId;
+    if(!tenantId) {
+      throw new NotFoundException("Tenant not found");
+    }
     const teacher = await this.teacherRepository.findOne({
-      where: { user: { id: teacherUserId }, tenantId },
+      where: { user: { id: teacherUserId }, tenantId: user.tenantId },
     });
 
     console.log(teacher, 'this is teacher.....')
@@ -53,7 +60,7 @@ export class ChatService {
 
     // Get student and their user_id
     const student = await this.studentRepository.findOne({
-      where: { id: input.recipientId, tenant_id: tenantId },
+      where: { id: input.recipientId, tenant_id: user.tenantId },
       relations: ['user'],
     });
 
@@ -105,11 +112,15 @@ return messageWithRoom;
    * Send message from teacher to a specific parent
    */
   async sendMessageToParent(
-    teacherUserId: string,
-    tenantId: string,
+    user: ActiveUserData,
     input: SendMessageFromTeacherToParentInput,
   ): Promise<ChatMessage> {
     // Get teacher by user_id
+    const teacherUserId = user.sub;
+    const tenantId = user.tenantId;
+    if(!tenantId) {
+      throw new NotFoundException("Tenant not found");
+    }
     const teacher = await this.teacherRepository.findOne({
       where: { user: { id: teacherUserId }, tenantId },
       relations: ['user'],
@@ -181,8 +192,7 @@ return messageWithRoom;
 
 
   async deleteMessage(
-    userId: string,
-    tenantId: string,
+    user: ActiveUserData,
     messageId: string,
     options?: { hard?: boolean },
   ): Promise<boolean> {
@@ -197,7 +207,7 @@ return messageWithRoom;
     }
   
     // 2️⃣ Check that the current user is allowed to delete it
-    if (message.senderId !== userId) {
+    if (message.senderId !== user.sub) {
       throw new ForbiddenException('You can only delete your own messages');
     }
   
@@ -226,10 +236,14 @@ return messageWithRoom;
    * Broadcast message to all students in tenant
    */
   async broadcastToAllStudents(
-    teacherUserId: string,
-    tenantId: string,
+    currentUser: ActiveUserData,
     input: BroadcastMessageInput,
   ): Promise<ChatMessage[]> {
+    const teacherUserId = currentUser.sub;
+    const tenantId = currentUser.tenantId;
+    if(!tenantId) {
+      throw new NotFoundException("Tenant not found");
+    }
     const teacher = await this.teacherRepository.findOne({
       where: { user: { id: teacherUserId }, tenantId },
     });
@@ -285,10 +299,14 @@ return messageWithRoom;
    * Broadcast message to all parents in tenant
    */
   async broadcastToAllParents(
-    teacherUserId: string,
-    tenantId: string,
+    currentUser: ActiveUserData,
     input: BroadcastMessageInput,
   ): Promise<ChatMessage[]> {
+    const teacherUserId = currentUser.sub;
+    const tenantId = currentUser.tenantId;
+    if (!tenantId) {
+      throw new NotFoundException("Tenant not found");
+    }
     const teacher = await this.teacherRepository.findOne({
       where: { user: { id: teacherUserId }, tenantId },
     });
@@ -344,7 +362,7 @@ return messageWithRoom;
 
 
   async getChatHistory(
-    userId: string,
+    currentUser: ActiveUserData,
     chatRoomId: string,
     limit: number = 50,
     offset: number = 0,
@@ -354,7 +372,7 @@ return messageWithRoom;
       where: { id: chatRoomId },
     });
   
-    if (!room || !room.participantIds.includes(userId)) {
+    if (!room || !room.participantIds.includes(currentUser.sub)) {
       throw new NotFoundException('Chat room not found or access denied');
     }
   
@@ -392,9 +410,10 @@ return messageWithRoom;
    * Mark messages as read
    */
   async markMessagesAsRead(
-    userId: string,
+    currentUser: ActiveUserData,
     chatRoomId: string,
   ): Promise<boolean> {
+    const userId = currentUser.sub;
     const room = await this.chatRoomRepository.findOne({
       where: { id: chatRoomId },
     });
@@ -474,10 +493,14 @@ async getUserChatRooms(userId: string): Promise<ChatRoom[]> {
    * Send message from parent to teacher about their child
    */
   async sendMessageFromParentToTeacher(
-    parentUserId: string,
-    tenantId: string,
+    user: ActiveUserData,
     input: SendMessageInput & { studentId: string },
   ): Promise<ChatMessage> {
+    const parentUserId = user.sub;
+    const tenantId = user.tenantId;
+    if(!tenantId) {
+      throw new NotFoundException("Tenant Not Found")
+    }
     const parent = await this.parentRepository.findOne({
       where: { user: { id: parentUserId }, tenantId },
     });
@@ -532,10 +555,16 @@ async getUserChatRooms(userId: string): Promise<ChatRoom[]> {
 
 
   async broadcastToEntireSchool(
-    teacherUserId: string,
-    tenantId: string,
+    user: ActiveUserData,
     input: BroadcastMessageInput,
   ): Promise<ChatMessage[]> {
+    const teacherUserId = user.sub;
+    const tenantId = user.tenantId;
+
+    if(!tenantId) {
+      throw new NotFoundException("Tenant not found");
+    }
+
     const teacher = await this.teacherRepository.findOne({
       where: { user: { id: teacherUserId }, tenantId },
     });
@@ -593,10 +622,14 @@ async getUserChatRooms(userId: string): Promise<ChatRoom[]> {
    * Broadcast to all school parents
    */
   async broadcastToAllSchoolParents(
-    teacherUserId: string,
-    tenantId: string,
+    user: ActiveUserData,
     input: BroadcastMessageInput,
   ): Promise<ChatMessage[]> {
+    const teacherUserId = user.sub;
+    const tenantId = user.tenantId;
+    if (!tenantId) {
+      throw new NotFoundException("Tenant not found");
+    }
     const teacher = await this.teacherRepository.findOne({
       where: { user: { id: teacherUserId }, tenantId },
     });
@@ -656,10 +689,14 @@ async getUserChatRooms(userId: string): Promise<ChatRoom[]> {
    * Broadcast to specific grade levels (students)
    */
   async broadcastToGradeLevels(
-    teacherUserId: string,
-    tenantId: string,
+    user: ActiveUserData,
     input: BroadcastToGradeLevelsInput,
   ): Promise<ChatMessage[]> {
+    const teacherUserId = user.sub;
+    const tenantId = user.tenantId;
+    if(!tenantId) {
+      throw new NotFoundException("Tenant not found");
+    }
     const teacher = await this.teacherRepository.findOne({
       where: { user: { id: teacherUserId }, tenantId },
     });
@@ -723,10 +760,14 @@ async getUserChatRooms(userId: string): Promise<ChatRoom[]> {
    * Broadcast to parents of specific grade levels
    */
   async broadcastToGradeLevelParents(
-    teacherUserId: string,
-    tenantId: string,
+    user: ActiveUserData,
     input: BroadcastToGradeLevelsInput,
   ): Promise<ChatMessage[]> {
+    const teacherUserId = user.sub;
+    const tenantId = user.tenantId;
+    if (!tenantId) {
+      throw new NotFoundException("Tenant not found");
+    }
     const teacher = await this.teacherRepository.findOne({
       where: { user: { id: teacherUserId }, tenantId },
     });

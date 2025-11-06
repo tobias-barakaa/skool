@@ -20,7 +20,7 @@ export class TenantGradeLevelResolver {
     @ActiveUser() user: ActiveUserData,
   ): Promise<TenantGradeLevel> {
     return await this.createTenantGradeLevelService.createTenantGradeLevel({
-      tenantId: user.tenantId,
+      user,
       curriculumId,
       gradeLevelId,
     });
@@ -33,7 +33,7 @@ export class TenantGradeLevelResolver {
   ): Promise<boolean> {
     return await this.createTenantGradeLevelService.deleteTenantGradeLevel(
       tenantGradeLevelId,
-      user.tenantId,
+      user,
     );
   }
 
@@ -43,7 +43,7 @@ export class TenantGradeLevelResolver {
     @Args('curriculumId', { nullable: true }) curriculumId?: string,
   ): Promise<TenantGradeLevel[]> {
     return await this.createTenantGradeLevelService.getTenantGradeLevels(
-      user.tenantId,
+      user,
       curriculumId,
     );
   }
@@ -55,7 +55,7 @@ export class TenantGradeLevelResolver {
   ): Promise<TenantGradeLevel | null> {
     return await this.createTenantGradeLevelService.getTenantGradeLevelById(
       tenantGradeLevelId,
-      user.tenantId,
+      user,
     );
   }
 
@@ -65,7 +65,7 @@ export class TenantGradeLevelResolver {
     @Args('curriculumId', { nullable: true }) curriculumId?: string,
   ): Promise<any[]> {
     return await this.createTenantGradeLevelService.getGradeLevelsWithTenantStreams(
-      user.tenantId,
+      user,
       curriculumId,
     );
   }
