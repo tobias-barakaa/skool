@@ -55,6 +55,10 @@ export class SchoolConfiguredGuard implements CanActivate {
     }
 
     const user = request[REQUEST_USER_KEY];
+
+    if (request.bypassSchoolConfig === true) {
+      return true;
+    }
     
     if (!user) {
       this.logger.debug('No authenticated user found, skipping school configuration check');

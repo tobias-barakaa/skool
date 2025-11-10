@@ -53,4 +53,7 @@ export class Tenant {
 
   @OneToMany(() => Stream, (stream) => stream.tenant)
   streams: Stream[];
+
+  @Column({ type: 'varchar', default: 'ACTIVE' })
+status: string;
 }

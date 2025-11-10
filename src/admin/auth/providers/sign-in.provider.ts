@@ -7,6 +7,7 @@ import { AuthResponse, SignInInput } from '../dtos/signin-input.dto';
 import { GlobalRole, User } from 'src/admin/users/entities/user.entity';
 import { Tenant } from 'src/admin/tenants/entities/tenant.entity';
 import { MembershipStatus, UserTenantMembership } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
+import { TokenProvider } from './token.provider';
 
 @Injectable()
 export class SignInProvider {
@@ -22,6 +23,7 @@ export class SignInProvider {
 
     private readonly hashingProvider: HashingProvider,
     private readonly generateTokensProvider: GenerateTokenProvider,
+    private readonly tokenPair: TokenProvider
   ) {}
 
   async signIn(signInInput: SignInInput): Promise<AuthResponse> {
@@ -52,7 +54,7 @@ export class SignInProvider {
     const defaultMembership = activeMemberships[0];
     const tenant = defaultMembership.tenant;
 
-    const tokens = await this.generateTokensProvider.generateTokens(
+    const tokens = await this.tokenPair.generateTenantUserTokens(
       user,
       defaultMembership,
       tenant,

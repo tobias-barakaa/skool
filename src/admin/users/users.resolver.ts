@@ -1,9 +1,6 @@
 // src/users/users.resolver.ts
-import { Logger, SetMetadata, UseFilters } from '@nestjs/common';
+import { Logger, UseFilters } from '@nestjs/common';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { Auth } from 'src/admin/auth/decorator/auth.decorator';
-import { SkipTenantValidation } from 'src/admin/auth/decorator/skip-tenant-validation.decorator';
-import { AuthType } from 'src/admin/auth/enums/auth-type.enum';
 import { CreateUserResponse } from './dtos/create-user-response';
 import { AuthResponse, SignupInput } from './dtos/signUp-input';
 import { User } from './entities/user.entity';
@@ -11,7 +8,7 @@ import { UsersService } from './providers/users.service';
 import { GraphQLExceptionsFilter } from '../common/filter/graphQLException.filter';
 import { MembershipRole } from '../user-tenant-membership/entities/user-tenant-membership.entity';
 import { TenantUserSummary } from './dtos/tenant-user-summary.output';
-import { SkipSchoolConfigCheck } from 'src/iam/guards/school-setup-guard-service';
+import { Public } from '../auth/decorator/public.decorator';
 
 
 @Resolver(() => User)
@@ -21,11 +18,8 @@ export class UsersResolver {
 
   constructor(private readonly usersService: UsersService) {}
 
-  @SkipTenantValidation()
-  @SetMetadata('isPublic', true)
+  @Public()
   @Mutation(() => CreateUserResponse, { name: 'createUser' })
-  @Auth(AuthType.None)
-  @SkipSchoolConfigCheck()
   async createUser(
     @Args('signupInput') signupInput: SignupInput,
     @Context() context,

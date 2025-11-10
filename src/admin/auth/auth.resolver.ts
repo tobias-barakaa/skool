@@ -22,6 +22,7 @@ import { User } from '../users/entities/user.entity';
 import { MembershipRole } from '../user-tenant-membership/entities/user-tenant-membership.entity';
 import { Roles } from 'src/iam/decorators/roles.decorator';
 import { SkipSchoolConfigCheck } from 'src/iam/guards/school-setup-guard-service';
+import { Public } from './decorator/public.decorator';
 
 @Resolver()
 @UseFilters(GraphQLExceptionsFilter)
@@ -35,18 +36,9 @@ export class AuthResolver {
   ) {}
 
   @Mutation(() => AuthResponse, { name: 'signIn' })
-      // @Auth(AuthType.None)
-      // @SkipTenantValidation()
-      // @SetMetadata('isPublic', true)
+   
 
-
-      //  @Mutation(() => AcceptInvitationResponse)
-        @Auth(AuthType.None)
-        @SkipTenantValidation()
-        @SetMetadata('isPublic', true)
-        @SkipSchoolConfigCheck()
-        
-
+  @Public()
   async signIn(
     @Args('signInInput') signInInput: SignInInput,
     @Context() context,
@@ -92,10 +84,7 @@ export class AuthResolver {
   ): Promise<PasswordResetResponse> {
     const host = context.req.headers.host;
     const subdomain = host.split('.')[0];
-    console.log(
-      'Subdomain::::::::::::::::::::::::::::://///////////////////////',
-      subdomain,
-    );
+   
     return await this.forgotPasswordProvider.sendResetPasswordEmail(
       forgotPasswordInput,
     );

@@ -1,7 +1,7 @@
 import { Args, ID, Query, Resolver } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
-import { AuthenticationGuard } from 'src/admin/auth/guards/authentication.guard';
+import { AuthenticationGuard } from 'src/admin/auth/guards/fdfdf/authentication.guard';
 import { Test } from 'src/teacher/test/entities/test.entity';
 import { StudentTestProvider } from '../providers/student-test.provider';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';

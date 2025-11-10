@@ -27,14 +27,14 @@ export class GenerateTokenProvider {
   ) {}
 
   public async signToken<T>(userId: string, expiresIn: number, payload?: T) {
-    console.log(
-      'Signing token with payload:',
-      payload,
-      'userId:',
-      userId,
-      'expiresIn:',
-      expiresIn,
-    );
+    // console.log(
+    //   'Signing token with payload:',
+    //   payload,
+    //   'userId:',
+    //   userId,
+    //   'expiresIn:',
+    //   expiresIn,
+    // );
 
     return await this.jwtService.signAsync(
       {

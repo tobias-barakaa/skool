@@ -5,6 +5,7 @@ import { HashingProvider } from 'src/admin/auth/providers/hashing.provider';
 import { GenerateTokenProvider } from 'src/admin/auth/providers/generate-token.provider';
 import { SuperAdminSignupInput } from '../dtos/super-admin-signup.input';
 import { UserAlreadyExistsException } from 'src/admin/common/exceptions/business.exception';
+import { TokenProvider } from 'src/admin/auth/providers/token.provider';
 
 @Injectable()
 export class SuperAdminAuthService {
@@ -12,6 +13,7 @@ export class SuperAdminAuthService {
     private readonly dataSource: DataSource,
     private readonly hashingProvider: HashingProvider,
     private readonly generateTokens: GenerateTokenProvider,
+    private readonly tokenPair: TokenProvider
   ) {}
 
   async signup(input: SuperAdminSignupInput) {
@@ -40,8 +42,9 @@ export class SuperAdminAuthService {
   
       await queryRunner.commitTransaction();
   
-      const tokens = await this.generateTokens.generateSuperAdminToken(savedUser);
+      const tokens = await this.tokenPair.generateSuperAdminTokens(savedUser);
   
+      const userRole = "SUPER_ADMIN";
       return {
         user: savedUser,
         accessToken: tokens.accessToken,

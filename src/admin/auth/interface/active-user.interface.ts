@@ -4,24 +4,21 @@ import { User } from "src/admin/users/entities/user.entity";
 export interface ActiveUserData {
     sub: string;
     email: string;
-    // tenantId: string;
-    // subdomain: string;
-    // membershipId: string;
+    
     membershipId?: string;
     globalRole?: User['globalRole'];
     subdomain?: string;
     tenantId?: string;
     role?: MembershipRole;
-    // globalRole?: boolean;
   }
   
 
-  export interface ActiveTenantUser extends ActiveUserData {
-    tenantId: string; 
-    subdomain: string; 
-    membershipId: string; 
-    role: MembershipRole;
-}
+//   export interface ActiveTenantUser extends ActiveUserData {
+//     tenantId: string; 
+//     subdomain: string; 
+//     membershipId: string; 
+//     role: MembershipRole;
+// }
 
 
  

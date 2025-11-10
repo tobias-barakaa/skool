@@ -17,8 +17,7 @@ export class SchoolConfigResolver {
   constructor(private readonly schoolConfigService: SchoolConfigService) {}
 
   @Mutation(() => SchoolConfigurationResponse)
-  @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.SUPER_ADMIN)
-  @SkipSchoolConfigCheck()
+  @Roles(MembershipRole.SCHOOL_ADMIN)
   async configureSchoolLevelsByNames(
     @Args('levelNames', { type: () => [String] }) levelNames: string[],
     @ActiveUser() user: ActiveUserData,

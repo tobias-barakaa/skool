@@ -14,8 +14,8 @@ import { AppService } from './app.service';
 import { RedisModule } from '@nestjs-modules/ioredis';
 import { AdminModule } from './admin/admin.module';
 import jwtConfig from './admin/auth/config/jwt.config';
-import { AccessTokenGuard } from './admin/auth/guards/access-token.guard';
-import { AuthenticationGuard } from './admin/auth/guards/authentication.guard';
+// import { AccessTokenGuard } from './admin/auth/guards/fdfdf/access-token.guard';
+// import { AuthenticationGuard } from './admin/auth/guards/fdfdf/authentication.guard';
 import { DataResponseInterceptor } from './admin/common/interceptor/data-response/data-response.interceptor';
 import appConfig from './admin/config/app.config';
 import databaseConfig from './admin/config/database.config';
@@ -32,7 +32,12 @@ import { SuperAdminModule } from './super_admin/super_admin.module';
 import { StudentPortalModule } from './student/student.module';
 import { SchoolConfiguredGuard } from './iam/guards/school-config.guard';
 import { ParentModule } from './parent/parent.module';
-import { GlobalAdminGuard } from './admin/auth/guards/global-admin.guard';
+import { SuperAdminGuard } from './admin/auth/guards/fdfdf/super-admin.guard';
+import { TenantAccessGuard } from './admin/auth/guards/tenant-access.guard';
+import { SchoolConfigGuard } from './admin/auth/guards/school-config.guard';
+import { RoleGuard } from './admin/auth/guards/role.guard';
+import { AuthenticationGuard } from './admin/auth/guards/authentication.guard';
+import { AccessTokenGuard } from './admin/auth/guards/access-token.guard';
 
 const ENV = process.env.NODE_ENV;
 
@@ -132,19 +137,25 @@ const ENV = process.env.NODE_ENV;
 
     {
       provide: APP_GUARD,
-      useClass: AuthenticationGuard,
+      useClass: AuthenticationGuard, // 1. Check authentication
     },
-    { provide: APP_GUARD, useClass: SchoolConfiguredGuard },
-
-    { provide: APP_GUARD, useClass: TenantRoleGuard },
     {
+      provide: APP_GUARD,
+      useClass: TenantAccessGuard, // 2. Check tenant access
+    },
+    {
+      provide: APP_GUARD,
+      useClass: SchoolConfigGuard, // 3. Check school config
+    },
+{
       provide: APP_INTERCEPTOR,
       useClass: DataResponseInterceptor,
     },
     {
       provide: APP_GUARD,
-      useClass: GlobalAdminGuard,
+      useClass: RoleGuard, // 4. Check roles
     },
+
     AccessTokenGuard,
   ],
 })

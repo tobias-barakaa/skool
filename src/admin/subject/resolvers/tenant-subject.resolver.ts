@@ -8,7 +8,7 @@ import { UpdateTenantSubjectInput } from '../dtos/tenant-subject.input';
 import { CreateCustomSubjectInput } from '../dtos/create-custom-subject.input';
 import { Roles } from 'src/iam/decorators/roles.decorator';
 import { MembershipRole } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
-import { AuthenticationGuard } from 'src/admin/auth/guards/authentication.guard';
+import { AuthenticationGuard } from 'src/admin/auth/guards/fdfdf/authentication.guard';
 
 
 @Resolver(() => TenantSubject)

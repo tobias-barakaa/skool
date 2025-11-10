@@ -58,5 +58,7 @@ import { FeeManagementModule } from './finance/fee-management.module';
     AcademicModule,
     FeeManagementModule
   ],
+
+  exports: [ AuthModule]
 })
 export class AdminModule {}

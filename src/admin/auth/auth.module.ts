@@ -14,17 +14,20 @@ import { ForgotPasswordProvider } from './providers/forgot-password.provider';
 import { ChangePasswordProvider } from './providers/change-password.provider';
 import { EmailService } from 'src/admin/email/providers/email.service';
 import { EmailModule } from 'src/admin/email/email.module';
-import { TenantValidationProvider } from './providers/tenant-validation.provider';
+// import { TenantValidationProvider } from './providers/tenant-validation.provider';
 import { APP_GUARD } from '@nestjs/core';
-import { TenantAccessGuard } from './guards/tenant-access.guard';
 import { UserModule } from '../users/users.module';
 import { UserTenantMembershipModule } from '../user-tenant-membership/user-tenant-membership.module';
+import { TokenProvider } from './providers/token.provider';
+import { AccessTokenGuard } from './guards/access-token.guard';
+import { AuthenticationGuard } from './guards/authentication.guard';
+import { TenantValidationProvider } from './providers/tenant-validation.provider';
 
 @Module({
   providers: [AuthService, SignInProvider, { provide: HashingProvider, useClass: BcryptProvider },
-    BcryptProvider, GenerateTokenProvider, AuthResolver, RefreshTokensProvider, ForgotPasswordProvider, ChangePasswordProvider, SignInProvider, TenantValidationProvider
+    BcryptProvider, GenerateTokenProvider, TokenProvider, AuthResolver, AccessTokenGuard, RefreshTokensProvider, ForgotPasswordProvider, ChangePasswordProvider, SignInProvider, TenantValidationProvider, AuthenticationGuard
   ],
-  imports: [forwardRef(() => UserModule), ConfigModule.forFeature(jwtConfig), EmailModule,JwtModule.registerAsync(jwtConfig.asProvider()), TenantsModule, UserTenantMembershipModule ],
-  exports: [AuthService, HashingProvider, GenerateTokenProvider],
+  imports: [forwardRef(() => UserModule), ConfigModule.forFeature(jwtConfig), EmailModule, JwtModule.registerAsync(jwtConfig.asProvider()), TenantsModule, UserTenantMembershipModule],
+  exports: [AuthService, HashingProvider, TokenProvider, GenerateTokenProvider, AccessTokenGuard, AuthenticationGuard, TenantValidationProvider],
 })
 export class AuthModule {}

@@ -10,6 +10,7 @@ import { User } from '../entities/user.entity';
 import { MembershipRole, UserTenantMembership } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
 import { Tenant } from 'src/admin/tenants/entities/tenant.entity';
 import { SchoolAlreadyExistsException, UserAlreadyExistsException } from 'src/admin/common/exceptions/business.exception';
+import { TokenProvider } from 'src/admin/auth/providers/token.provider';
 
 @Injectable()
 export class UsersCreateProvider {
@@ -19,7 +20,7 @@ export class UsersCreateProvider {
 
     @Inject(forwardRef(() => GenerateTokenProvider))
     private readonly generateTokensProvider: GenerateTokenProvider,
-
+    private readonly tokenPair: TokenProvider,
     private dataSource: DataSource,
   ) {}
 
@@ -81,7 +82,7 @@ export class UsersCreateProvider {
 
       await queryRunner.commitTransaction();
 
-      const tokens = await this.generateTokensProvider.generateTokens(
+      const tokens = await this.tokenPair.generateTenantUserTokens(
         savedUser,
         savedMembership,
         savedTenant,

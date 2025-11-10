@@ -7,10 +7,13 @@ import { SkipTenantValidation } from 'src/admin/auth/decorator/skip-tenant-valid
 import { SetMetadata, UseGuards } from '@nestjs/common';
 import { AuthType } from 'src/admin/auth/enums/auth-type.enum';
 import { SkipSchoolConfigCheck } from 'src/iam/guards/school-setup-guard-service';
-import { GlobalAdminGuard } from 'src/admin/auth/guards/global-admin.guard';
 import { IsGlobalAdmin } from 'src/admin/auth/decorator/is-global-admin.decorator';
 import { User } from 'src/admin/users/entities/user.entity';
-import { SuperAdminAuth } from 'src/admin/auth/decorator/super-admin.decorator';
+import { SuperAdminOnly } from 'src/admin/auth/decorator/super-admin.decorator';
+import { SkipTenant } from 'src/admin/auth/decorator/skip-tenant.decorator';
+import { Public } from 'src/admin/auth/decorator/public.decorator';
+import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
+import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 
 @Resolver()
 export class SuperAdminAuthResolver {
@@ -32,15 +35,18 @@ export class SuperAdminAuthResolver {
   // @SkipTenantValidation()
   // @SetMetadata('isPublic', true)
   // @SkipSchoolConfigCheck()
-  async superAdminSignup(
-    @Args('input') input: SuperAdminSignupInput,
-  ): Promise<SuperAdminAuthResponse> {
-    return this.superAdminAuthService.signup(input);
-  }
+  // @SuperAdminOnly()
+  @Public()
+@Mutation(() => SuperAdminAuthResponse)
+async superAdminSignup(@Args('input') input: SuperAdminSignupInput) {
+  return this.superAdminAuthService.signup(input);
+}
 
 
+// @SkipTenant()
   @Query(() => [User])
-  async getAllUsers() {
+  async getAllUsers(@ActiveUser() user: ActiveUserData) {
+    console.log(user,'this is the user please')
     return this.superAdminAuthService.getAllUsers();
   }
   

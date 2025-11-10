@@ -1,9 +1,10 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { TenantValidationProvider } from "../providers/tenant-validation.provider";
+// import { TenantValidationProvider } from "../../providers/tenant-validation.provider";
 import { GqlContextType, GqlExecutionContext } from "@nestjs/graphql";
-import { REQUEST_USER_KEY } from "../constants/auth.constants";
-import { ActiveUserData } from "../interface/active-user.interface";
+import { REQUEST_USER_KEY } from "../../constants/auth.constants";
+import { ActiveUserData } from "../../interface/active-user.interface";
+import { TenantValidationProvider } from "../../providers/tenant-validation.provider";
 
 
 // Update your TenantAccessGuard to check for this metadata

@@ -18,7 +18,6 @@ import { StudentLoginInfo } from './dtos/student-login-info.output';
 
 @Resolver()
 @UseFilters(GraphQLExceptionsFilter)
-@Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.SUPER_ADMIN)
 export class StudentsResolver {
   private readonly logger = new Logger(StudentsResolver.name);
 
@@ -40,7 +39,6 @@ export class StudentsResolver {
 
   @Query(() => [Student], { name: 'studentsByGradeLevel' })
   @Auth(AuthType.Bearer)
-  @Roles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
   async studentsByGradeLevel(
     @Args('tenantGradeLevelId', { type: () => ID }) tenantGradeLevelId: string,
     @ActiveUser() user: ActiveUserData,
@@ -60,10 +58,9 @@ export class StudentsResolver {
   }
 
   @Query(() => [Student], { name: 'allStudents' })
-  @Auth(AuthType.Bearer)
-  @Roles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
+  // @Roles(MembershipRole.TEACHER, MembershipRole.SCHOOL_ADMIN)
   async allStudents(@ActiveUser() user: ActiveUserData): Promise<Student[]> {
-    console.log(user, 'this is the user');
+    // console.log(user, 'this is the user');
     return this.studentsService.getAllStudentsByTenant(user);
   }
 

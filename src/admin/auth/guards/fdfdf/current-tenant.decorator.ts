@@ -1,7 +1,7 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { GqlContextType, GqlExecutionContext } from '@nestjs/graphql';
-import { ActiveUserData } from '../interface/active-user.interface';
-import { REQUEST_USER_KEY } from '../constants/auth.constants';
+import { ActiveUserData } from '../../interface/active-user.interface';
+import { REQUEST_USER_KEY } from '../../constants/auth.constants';
 
 export const CurrentTenant = createParamDecorator(
     (data: unknown, ctx: ExecutionContext) => {
@@ -15,6 +15,10 @@ export const CurrentTenant = createParamDecorator(
       }
       
       const user: ActiveUserData = request[REQUEST_USER_KEY];
+
+      if (user.globalRole === 'SUPER_ADMIN') {
+        return null;
+      }
       return user.tenantId;
     },
   );
