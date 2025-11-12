@@ -1,9 +1,12 @@
 import { Controller, Get } from '@nestjs/common';
 import { Auth } from './admin/auth/decorator/auth.decorator';
 import { AuthType } from './admin/auth/enums/auth-type.enum';
+import { Public } from './admin/auth/decorator/public.decorator';
 
 @Controller()
 export class AppController {
+
+  @Public() 
   @Get()
   @Auth(AuthType.None)
   getRoot() {

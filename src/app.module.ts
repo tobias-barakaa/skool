@@ -137,15 +137,15 @@ const ENV = process.env.NODE_ENV;
 
     {
       provide: APP_GUARD,
-      useClass: AuthenticationGuard, // 1. Check authentication
+      useClass: AuthenticationGuard, 
     },
     {
       provide: APP_GUARD,
-      useClass: TenantAccessGuard, // 2. Check tenant access
+      useClass: TenantAccessGuard, 
     },
     {
       provide: APP_GUARD,
-      useClass: SchoolConfigGuard, // 3. Check school config
+      useClass: SchoolConfigGuard,
     },
 {
       provide: APP_INTERCEPTOR,
@@ -153,7 +153,7 @@ const ENV = process.env.NODE_ENV;
     },
     {
       provide: APP_GUARD,
-      useClass: RoleGuard, // 4. Check roles
+      useClass: RoleGuard, 
     },
 
     AccessTokenGuard,
