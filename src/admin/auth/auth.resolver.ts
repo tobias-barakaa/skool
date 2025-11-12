@@ -36,8 +36,6 @@ export class AuthResolver {
   ) {}
 
   @Mutation(() => AuthResponse, { name: 'signIn' })
-   
-
   @Public()
   async signIn(
     @Args('signInInput') signInInput: SignInInput,

@@ -103,8 +103,10 @@ async function bootstrap() {
     // const seeder = app.get(SeedingService);
     // await seedingService.seedAllSchoolTypes();
 
-    await app.listen(port, '0.0.0.0');
-    console.log('ENV TEST::::::g', process.env.PORT);
+    // await app.listen(port, '0.0.0.0');
+    await app.listen(port || 3000, '0.0.0.0');
+
+    console.log('ENV TEST::::::g', port);
 
     const url = await app.getUrl();
     logger.log(`🚀 Application is running on: ${url}`);
