@@ -126,4 +126,11 @@ export class Teacher {
   @JoinColumn({ name: 'tenantId' })
   @Field(() => Tenant, { nullable: false })
   tenant: Tenant;
+
+
+
+
 }
+
+
+

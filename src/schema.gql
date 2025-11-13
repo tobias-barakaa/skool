@@ -986,6 +986,13 @@ type Grade {
   totalMarks: Float!
 }
 
+type GradeInfo {
+  displayName: String!
+  id: ID!
+  level: Int!
+  name: String!
+}
+
 type GradeLevel {
   age: Float
   code: String!
@@ -1890,6 +1897,11 @@ type Query {
 
   """Get user last seen timestamp"""
   getUserLastSeen(userId: String!): String
+
+  """
+  Get complete timetable data for entire school - matches frontend transformMockData() structure
+  """
+  getWholeSchoolTimetable(termId: String!): TimetableData!
   gradeLevelsForSchoolType: [TenantGradeLevel!]!
   gradeLevelsWithStreams: [GradeLevelWithStreamsOutput!]!
   hostel(id: String!): Hostel!
@@ -3100,6 +3112,14 @@ type TimetableCell {
   periodNumber: Int!
 }
 
+type TimetableData {
+  breaks: [TimetableBreak!]!
+  entries: [TimetableEntry!]!
+  grades: [GradeInfo!]!
+  lastUpdated: String!
+  timeSlots: [TimeSlot!]!
+}
+
 type TimetableEntry {
   createdAt: DateTime!
   dayOfWeek: Int!
@@ -3110,7 +3130,7 @@ type TimetableEntry {
   roomNumber: String
   subject: TenantSubject!
   subjectId: ID!
-  teacher: User!
+  teacher: Teacher!
   teacherId: ID!
   tenantId: String!
   term: Term!

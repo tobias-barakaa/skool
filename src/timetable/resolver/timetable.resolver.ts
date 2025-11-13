@@ -13,6 +13,7 @@ import { BulkCreateTimetableEntryInput, CreateTimetableEntryInput } from '../dto
 import { GradeTimetableResponse } from '../dtos/timetable-response.dto';
 import { Roles } from 'src/admin/auth/decorator/roles.decorator';
 import { MembershipRole } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
+import { TimetableData } from '../dtos/timetable_response.dto';
 
 @Resolver()
 export class TimetableResolver {
@@ -44,6 +45,14 @@ export class TimetableResolver {
     return this.timetableService.updateTimeSlot(id, user, input);
   }
 
+//   @Mutation(() => TimeSlot)
+// async updateTimeSlot(
+//   @Args('input') input: UpdateTimeSlotInput,
+//   @ActiveUser() user: ActiveUserData,
+// ): Promise<TimeSlot> {
+//   return this.timetableService.updateTimeSlot(user, input);
+// }
+
   @Mutation(() => Boolean)
   async deleteTimeSlot(
     @Args('id') id: string,
@@ -51,6 +60,8 @@ export class TimetableResolver {
   ): Promise<boolean> {
     return this.timetableService.deleteTimeSlot(id, user);
   }
+
+
 
   // ========== BREAKS ==========
   @Mutation(() => TimetableBreak)
@@ -62,6 +73,7 @@ export class TimetableResolver {
   }
 
   @Query(() => [TimetableBreak])
+  @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER)
   async getTimetableBreaks(
     @Args('dayOfWeek', { nullable: true }) dayOfWeek: number,
     @ActiveUser() user: ActiveUserData,
@@ -95,6 +107,7 @@ export class TimetableResolver {
   }
 
   @Query(() => [TimetableEntry])
+  @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER, MembershipRole.STUDENT, MembershipRole.PARENT)
   async getGradeTimetableEntries(
     @Args('termId') termId: string,
     @Args('gradeId') gradeId: string,
@@ -149,4 +162,18 @@ export class TimetableResolver {
   ): Promise<boolean> {
     return this.timetableService.deleteEntry(id, user);
   }
+
+  @Query(() => TimetableData, { 
+    name: 'getWholeSchoolTimetable',
+    description: 'Get complete timetable data for entire school - matches frontend transformMockData() structure'
+  })
+  async getWholeSchoolTimetable(
+    @Args('termId') termId: string,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<TimetableData> {
+    return this.timetableService.getWholeSchoolTimetable(user, termId);
+  }
 }
+
+
+

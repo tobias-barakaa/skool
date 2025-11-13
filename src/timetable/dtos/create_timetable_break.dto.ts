@@ -37,3 +37,5 @@ export class CreateTimetableBreakInput {
 @IsOptional() 
 color?: string;
 }
+
+

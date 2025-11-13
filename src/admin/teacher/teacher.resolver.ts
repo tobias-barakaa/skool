@@ -213,6 +213,7 @@ async getTeacher(
   @ActiveUser() currentUser: ActiveUserData,
 ): Promise<Teacher> {
   console.log('teacherrss...............................')
+  console.log(currentUser.sub, 'this is user sub')
   return this.teacherService.getTeacherForCurrentUser(currentUser);
 }
   

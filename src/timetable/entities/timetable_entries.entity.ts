@@ -16,6 +16,7 @@ import { Term } from 'src/admin/academic_years/entities/terms.entity';
 import { TenantGradeLevel } from 'src/admin/school-type/entities/tenant-grade-level';
 import { TenantSubject } from 'src/admin/school-type/entities/tenant-specific-subject';
 import { TimeSlot } from './time_slots.entity';
+import { Teacher } from 'src/admin/teacher/entities/teacher.entity';
   
   @ObjectType()
   @Entity('timetable_entries')
@@ -72,10 +73,10 @@ import { TimeSlot } from './time_slots.entity';
     @Column()
     teacherId: string;
   
-    @Field(() => User)
-    @ManyToOne(() => User, { eager: true })
+    @Field(() => Teacher)
+    @ManyToOne(() => Teacher, { eager: true })
     @JoinColumn({ name: 'teacherId' })
-    teacher: User;
+    teacher: Teacher;
   
     // Which time slot
     @Field(() => ID)

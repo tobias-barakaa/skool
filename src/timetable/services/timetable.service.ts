@@ -10,6 +10,8 @@ import { CreateTimetableBreakInput } from '../dtos/create_timetable_break.dto';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { GradeTimetableResponse, TimetableCell } from '../dtos/timetable-response.dto';
 import { BulkCreateTimetableEntryInput, CreateTimetableEntryInput } from '../dtos/create-timetable-entry.input';
+import { GradeInfo, TimetableData } from '../dtos/timetable_response.dto';
+import { UpdateTimetableBreakInput } from '../dtos/update-timetable-break.input';
 
 @Injectable()
 export class TimetableService {
@@ -70,6 +72,24 @@ export class TimetableService {
     return this.timeSlotRepo.save(timeSlot);
   }
 
+//   async updateTimeSlot(user: ActiveUserData, input: UpdateTimeSlotInput): Promise<TimeSlot> {
+//     const timeSlot = await this.timeSlotRepo.findOne({
+//       where: { id: input.id, tenantId: user.tenantId },
+//     });
+  
+//     if (!timeSlot) throw new NotFoundException('Time slot not found');
+  
+//     if (input.periodNumber && input.periodNumber !== timeSlot.periodNumber) {
+//       const conflict = await this.timeSlotRepo.findOne({
+//         where: { tenantId: user.tenantId, periodNumber: input.periodNumber },
+//       });
+//       if (conflict) throw new ConflictException(`Time slot for period ${input.periodNumber} already exists`);
+//     }
+  
+//     Object.assign(timeSlot, input);
+//     return this.timeSlotRepo.save(timeSlot);
+//   }
+
   async deleteTimeSlot(id: string, user: ActiveUserData): Promise<boolean> {
     const result = await this.timeSlotRepo.delete({ id, tenantId: user.tenantId });
     return (result.affected ?? 0) > 0;
@@ -117,6 +137,27 @@ export class TimetableService {
     });
   }
 
+  async updateBreak(user: ActiveUserData, input: UpdateTimetableBreakInput): Promise<TimetableBreak> {
+    const breakEntity = await this.breakRepo.findOne({
+      where: { id: input.id, tenantId: user.tenantId },
+    });
+  
+    if (!breakEntity) throw new NotFoundException('Break not found');
+  
+    if ((input.dayOfWeek && input.afterPeriod) &&
+        (input.dayOfWeek !== breakEntity.dayOfWeek || input.afterPeriod !== breakEntity.afterPeriod)) {
+      const conflict = await this.breakRepo.findOne({
+        where: { tenantId: user.tenantId, dayOfWeek: input.dayOfWeek, afterPeriod: input.afterPeriod },
+      });
+      if (conflict) throw new ConflictException(
+        `A break already exists after period ${input.afterPeriod} for day ${input.dayOfWeek}`,
+      );
+    }
+  
+    Object.assign(breakEntity, input);
+    return this.breakRepo.save(breakEntity);
+  }
+
   async deleteBreak(id: string, user: ActiveUserData): Promise<boolean> {
     const result = await this.breakRepo.delete({ id, tenantId: user.tenantId });
     return (result.affected ?? 0) > 0;
@@ -127,30 +168,95 @@ export class TimetableService {
     user: ActiveUserData,
     input: CreateTimetableEntryInput,
   ): Promise<TimetableEntry> {
-    // Check for conflicts
+    const termRepo = this.dataSource.getRepository('Term');
+    const gradeRepo = this.dataSource.getRepository('TenantGradeLevel');
+    const subjectRepo = this.dataSource.getRepository('TenantSubject');
+    const teacherRepo = this.dataSource.getRepository('Teacher');
+    const timeSlotRepo = this.dataSource.getRepository('TimeSlot');
+  
+    const [term, grade, subject, teacher, timeSlot] = await Promise.all([
+      termRepo.findOne({ where: { id: input.termId, tenantId: user.tenantId } }),
+      gradeRepo.findOne({ where: { id: input.gradeId, tenant: { id: user.tenantId } } }),
+      subjectRepo.findOne({ where: { id: input.subjectId, tenant: { id: user.tenantId } } }),
+      teacherRepo.findOne({ where: { id: input.teacherId, tenant: { id: user.tenantId } } }),
+      timeSlotRepo.findOne({ where: { id: input.timeSlotId, tenant: { id: user.tenantId } } }),
+    ]);
+  
+    if (!term || !grade || !subject || !teacher || !timeSlot) {
+      throw new BadRequestException('One or more IDs are invalid for your tenant');
+    }
+  
+    // Prevent duplicate slot for same grade/day/time
     const existing = await this.entryRepo.findOne({
       where: {
         tenantId: user.tenantId,
-        termId: input.termId,
-        gradeId: input.gradeId,
+        term: { id: term.id },
+        grade: { id: grade.id },
         dayOfWeek: input.dayOfWeek,
-        timeSlotId: input.timeSlotId,
+        timeSlot: { id: timeSlot.id },
       },
     });
-
+  
     if (existing) {
       throw new ConflictException(
         'A class is already scheduled for this grade at this time',
       );
     }
-
+  
+    // ✅ Attach relations properly
     const entry = this.entryRepo.create({
-      ...input,
-      tenantId: user.tenantId,
-    });
-
-    return this.entryRepo.save(entry);
+        tenantId: user.tenantId,
+        dayOfWeek: input.dayOfWeek,
+        roomNumber: input.roomNumber,
+        term: term,           
+        grade: grade,         
+        subject: subject,     
+        teacher: teacher,     
+        timeSlot: timeSlot,   
+        
+      });
+    
+      return await this.entryRepo.save(entry);
   }
+  
+
+  async getWholeSchoolTimetable(
+    user: ActiveUserData,
+    termId: string,
+  ): Promise<TimetableData> {
+    // Get all components
+    const gradeRepo = this.dataSource.getRepository('TenantGradeLevel');
+    const [timeSlots, breaks, entries, grades] = await Promise.all([
+      this.getTimeSlots(user),
+      this.getBreaks(user),
+      this.entryRepo.find({
+        where: { tenantId: user.tenantId, termId, isActive: true },
+        order: { dayOfWeek: 'ASC' },
+      }),
+      
+      gradeRepo.find({
+        where: { tenant: { id: user.tenantId }, isActive: true },
+        order: { sortOrder: 'ASC' },
+      }),
+    ]);
+
+  
+    const gradeInfos: GradeInfo[] = grades.map((g, index) => ({
+      id: g.id,
+      name: g.gradeLevel?.name || g.name || `Grade ${index + 1}`,
+      displayName: g.shortName || g.gradeLevel?.name || g.name || `G${index + 1}`,
+      level: g.sortOrder || index + 1,
+    }));
+
+    return {
+      timeSlots,
+      breaks,
+      entries,
+      grades: gradeInfos,
+      lastUpdated: new Date().toISOString(),
+    };
+  }
+  
 
   async bulkCreateEntries(
     user: ActiveUserData,
@@ -280,3 +386,4 @@ export class TimetableService {
     };
   }
 }
+
