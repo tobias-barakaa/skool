@@ -233,6 +233,12 @@ type AuthResponse {
   user: User!
 }
 
+enum BreakType {
+  ASSEMBLY
+  LUNCH
+  SHORT_BREAK
+}
+
 input BroadcastMessageInput {
   imageUrl: String
   message: String!
@@ -246,6 +252,12 @@ input BroadcastToGradeLevelsInput {
   message: String!
   recipientType: String!
   subject: String
+}
+
+input BulkCreateTimetableEntryInput {
+  entries: [SingleEntryInput!]!
+  gradeId: String!
+  termId: String!
 }
 
 """
@@ -609,6 +621,34 @@ input CreateTestInput {
   tenantSubjectId: ID!
   title: String!
   totalMarks: Int!
+}
+
+input CreateTimeSlotInput {
+  color: String
+  displayTime: String!
+  endTime: String!
+  periodNumber: Int!
+  startTime: String!
+}
+
+input CreateTimetableBreakInput {
+  afterPeriod: Int!
+  color: String
+  dayOfWeek: Int!
+  durationMinutes: Int!
+  icon: String
+  name: String!
+  type: BreakType!
+}
+
+input CreateTimetableEntryInput {
+  dayOfWeek: Int!
+  gradeId: String!
+  roomNumber: String
+  subjectId: String!
+  teacherId: String!
+  termId: String!
+  timeSlotId: String!
 }
 
 input CreateTransportRouteInput {
@@ -988,6 +1028,13 @@ type GradeLevelWithStreamsOutput {
   streams: [StreamOutput!]!
 }
 
+type GradeTimetableResponse {
+  cells: [TimetableCell!]!
+  gradeId: String!
+  gradeName: String!
+  timeSlots: [TimeSlot!]!
+}
+
 type Hostel {
   capacity: Int!
   createdAt: DateTime!
@@ -1205,6 +1252,7 @@ type Mutation {
   """Broadcast message to students in specific grade levels"""
   broadcastToGradeLevels(input: BroadcastToGradeLevelsInput!): [ChatMessage!]!
   bulkAssignStudentsToRoute(input: BulkTransportAssignmentInput!): [TransportAssignment!]!
+  bulkCreateTimetableEntries(input: BulkCreateTimetableEntryInput!): [TimetableEntry!]!
 
   """
   Bulk toggle fee items by fee structure item and grade levels (e.g., activate transport for all Grade 1 students)
@@ -1250,6 +1298,9 @@ type Mutation {
     input: CreateTermInput!
   ): Term!
   createTest(createTestInput: CreateTestInput!): Test!
+  createTimeSlot(input: CreateTimeSlotInput!): TimeSlot!
+  createTimetableBreak(input: CreateTimetableBreakInput!): TimetableBreak!
+  createTimetableEntry(input: CreateTimetableEntryInput!): TimetableEntry!
   createTransportRoute(input: CreateTransportRouteInput!): TransportRoute!
   createUser(signupInput: SignupInput!): CreateUserResponse!
   deactivateTenantSubject(tenantSubjectId: String!): Boolean!
@@ -1296,6 +1347,9 @@ type Mutation {
 
   """Delete a term"""
   deleteTerm(id: ID!): Boolean!
+  deleteTimeSlot(id: String!): Boolean!
+  deleteTimetableBreak(id: String!): Boolean!
+  deleteTimetableEntry(id: String!): Boolean!
   deleteTransportRoute(id: ID!): Boolean!
 
   """Email receipt to student/parent"""
@@ -1426,6 +1480,8 @@ type Mutation {
   """Update a term"""
   updateTerm(id: ID!, input: UpdateTermInput!): Term!
   updateTest(updateTestInput: UpdateTestInput!): Test!
+  updateTimeSlot(id: String!, input: UpdateTimeSlotInput!): TimeSlot!
+  updateTimetableEntry(id: String!, input: CreateTimetableEntryInput!): TimetableEntry!
   updateTransportAssignment(input: UpdateTransportAssignmentInput!): TransportAssignment!
   updateTransportRoute(input: UpdateTransportRouteInput!): TransportRoute!
 
@@ -1702,6 +1758,7 @@ type Query {
   """Get chat history for a specific room with pagination"""
   getChatHistory(chatRoomId: String!, limit: Int! = 50, offset: Int! = 0): [ChatMessage!]!
   getChatRoomWithTeacher(teacherId: String!): ChatRoom
+  getCompleteTimetable(gradeId: String!, termId: String!): GradeTimetableResponse!
 
   """Get a specific fee assignment by ID with all student details"""
   getFeeAssignmentById(feeAssignmentId: ID!): FeeAssignmentWithStudents!
@@ -1711,6 +1768,7 @@ type Query {
   """
   getFeeAssignmentsByGradeLevels(input: GetFeeAssignmentsByGradeLevelsInput!): [FeeAssignmentWithStudents!]!
   getGradeLevelClassTeacher(gradeLevelId: String!): ClassTeacherAssignment
+  getGradeTimetableEntries(gradeId: String!, termId: String!): [TimetableEntry!]!
   getMessageById(id: String!): ChatMessage
   getMyAttendanceSummary: AttendanceSummaryResponse!
   getMyTeacherNotes(filters: FilterTeacherNotesDto): [TeacherNote!]!
@@ -1795,6 +1853,7 @@ type Query {
   """Get teacher last seen timestamp (ISO format)"""
   getTeacherLastSeen(teacherUserId: String!): String
   getTeacherNoteById(id: String!): TeacherNote!
+  getTeacherSchedule(teacherId: String!, termId: String!): [TimetableEntry!]!
 
   """Get all teachers for current user tenant"""
   getTeachersByTenant: SearchTeacherResult!
@@ -1811,6 +1870,8 @@ type Query {
   getTenantStatistics: String!
   getTenantStreams(tenantGradeLevelId: String): [TenantStream!]!
   getTenantSubjects(curriculumId: String): [TenantSubject!]!
+  getTimeSlots: [TimeSlot!]!
+  getTimetableBreaks(dayOfWeek: Float): [TimetableBreak!]!
 
   """Get unread message count for a specific room"""
   getUnreadCountForRoom(chatRoomId: String!): Int!
@@ -2283,6 +2344,14 @@ input SignupInput {
   password: String!
   schoolName: String!
   schoolUrl: String
+}
+
+input SingleEntryInput {
+  dayOfWeek: Int!
+  roomNumber: String
+  subjectId: String!
+  teacherId: String!
+  timeSlotId: String!
 }
 
 type StaffDto {
@@ -2995,6 +3064,62 @@ type TestCountsOutput {
   total: Int!
 }
 
+type TimeSlot {
+  color: String
+  createdAt: DateTime!
+  displayTime: String!
+  endTime: String!
+  id: ID!
+  isActive: Boolean!
+  periodNumber: Int!
+  startTime: String!
+  tenantId: String!
+  updatedAt: DateTime!
+}
+
+type TimetableBreak {
+  afterPeriod: Int!
+  color: String
+  createdAt: DateTime!
+  dayOfWeek: Int!
+  durationMinutes: Int!
+  icon: String
+  id: ID!
+  isActive: Boolean!
+  name: String!
+  tenantId: String!
+  type: BreakType!
+  updatedAt: DateTime!
+}
+
+type TimetableCell {
+  breakData: TimetableBreak
+  dayOfWeek: Int!
+  entryData: TimetableEntry
+  isBreak: Boolean
+  periodNumber: Int!
+}
+
+type TimetableEntry {
+  createdAt: DateTime!
+  dayOfWeek: Int!
+  grade: TenantGradeLevel!
+  gradeId: ID!
+  id: ID!
+  isActive: Boolean!
+  roomNumber: String
+  subject: TenantSubject!
+  subjectId: ID!
+  teacher: User!
+  teacherId: ID!
+  tenantId: String!
+  term: Term!
+  termId: ID!
+  timeSlot: TimeSlot!
+  timeSlotId: ID!
+  updatedAt: DateTime!
+}
+
 type TokenPair {
   accessToken: String!
   refreshToken: String!
@@ -3223,6 +3348,15 @@ input UpdateTestInput {
   tenantSubjectId: ID
   title: String
   totalMarks: Int
+}
+
+input UpdateTimeSlotInput {
+  color: String
+  displayTime: String
+  endTime: String
+  isActive: Boolean
+  periodNumber: Int
+  startTime: String
 }
 
 input UpdateTransportAssignmentInput {

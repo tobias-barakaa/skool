@@ -38,6 +38,7 @@ import { SchoolConfigGuard } from './admin/auth/guards/school-config.guard';
 import { RoleGuard } from './admin/auth/guards/role.guard';
 import { AuthenticationGuard } from './admin/auth/guards/authentication.guard';
 import { AccessTokenGuard } from './admin/auth/guards/access-token.guard';
+import { TimeTableModule } from './timetable/timetable.module';
 
 const ENV = process.env.NODE_ENV;
 
@@ -128,7 +129,8 @@ const ENV = process.env.NODE_ENV;
     CommonModule,
 
     SuperAdminModule,
-    ParentModule
+    ParentModule,
+    TimeTableModule
   ],
   controllers: [AppController],
   providers: [
