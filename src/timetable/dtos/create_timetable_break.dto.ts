@@ -1,6 +1,8 @@
-import { InputType, Field, Int } from '@nestjs/graphql';
+import { InputType, Field, Int, ObjectType } from '@nestjs/graphql';
 import { IsInt, IsString, IsEnum, Min, Max, IsOptional } from 'class-validator';
 import { BreakType } from '../entities/timetable_break.entity';
+import { GraphQLJSONObject } from 'graphql-type-json';
+import { TimetableEntry } from '../entities/timetable_entries.entity';
 
 @InputType()
 export class CreateTimetableBreakInput {
@@ -39,3 +41,58 @@ color?: string;
 }
 
 
+@ObjectType()
+export class TeacherWeeklySummary {
+  @Field(() => Int)
+  totalClasses: number;
+
+  @Field(() => GraphQLJSONObject)
+  classesByDay: Record<number, number>;
+
+  @Field(() => GraphQLJSONObject)
+  classesByGrade: Record<string, number>;
+
+  @Field(() => GraphQLJSONObject)
+  classesBySubject: Record<string, number>;
+
+  @Field(() => [TimetableEntry])
+  entries: TimetableEntry[];
+}
+
+
+@ObjectType()
+export class TeacherLoadSummary {
+  @Field()
+  teacherId: string;
+
+  @Field()
+  teacherName: string;
+
+  @Field(() => Int)
+  totalClasses: number;
+
+  @Field(() => [String])
+  subjects: string[];
+
+  @Field(() => [String])
+  grades: string[];
+}
+
+
+@ObjectType()
+export class TeacherConflict {
+  @Field()
+  teacherId: string;
+
+  @Field()
+  teacherName: string;
+
+  @Field(() => Int)
+  dayOfWeek: number;
+
+  @Field()
+  timeSlotId: string;
+
+  @Field(() => [TimetableEntry])
+  conflictingEntries: TimetableEntry[];
+}

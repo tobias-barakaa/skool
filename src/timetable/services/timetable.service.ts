@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { TimeSlot } from '../entities/time_slots.entity';
 import { TimetableBreak } from '../entities/timetable_break.entity';
 import { TimetableEntry } from '../entities/timetable_entries.entity';
@@ -319,6 +319,7 @@ export class TimetableService {
   }
 
 
+
   async getCompleteTimetable(
     user: ActiveUserData,
     termId: string,
@@ -385,5 +386,280 @@ export class TimetableService {
       cells,
     };
   }
+
+
+
+
+
+  async getTeacherTimetableData(
+    user: ActiveUserData,
+    termId: string,
+    teacherId: string,
+  ): Promise<TimetableData> {
+    const gradeRepo = this.dataSource.getRepository('TenantGradeLevel');
+    const [timeSlots, breaks, entries, grades] = await Promise.all([
+      this.getTimeSlots(user),
+      this.getBreaks(user),
+      this.entryRepo.find({
+        where: { tenantId: user.tenantId, termId, teacherId, isActive: true },
+        order: { dayOfWeek: 'ASC' },
+      }),
+      gradeRepo.find({
+        where: { tenant: { id: user.tenantId }, isActive: true },
+        order: { sortOrder: 'ASC' },
+      }),
+    ]);
+
+    const gradeInfos: GradeInfo[] = grades.map((g, index) => ({
+      id: g.id,
+      name: g.gradeLevel?.name || g.name || `Grade ${index + 1}`,
+      displayName: g.shortName || g.gradeLevel?.name || g.name || `G${index + 1}`,
+      level: g.sortOrder || index + 1,
+    }));
+
+    return {
+      timeSlots,
+      breaks,
+      entries, 
+      grades: gradeInfos,
+      lastUpdated: new Date().toISOString(),
+    };
+  }
+
+  // Get teacher's weekly schedule summary
+  async getTeacherWeeklySummary(
+    user: ActiveUserData,
+    termId: string,
+    teacherId: string,
+  ): Promise<{
+    totalClasses: number;
+    classesByDay: Record<number, number>;
+    classesByGrade: Record<string, number>;
+    classesBySubject: Record<string, number>;
+    entries: TimetableEntry[];
+  }> {
+    const entries = await this.getTeacherSchedule(user, termId, teacherId);
+
+    const classesByDay: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    const classesByGrade: Record<string, number> = {};
+    const classesBySubject: Record<string, number> = {};
+
+    entries.forEach((entry) => {
+      classesByDay[entry.dayOfWeek]++;
+      
+      const gradeName = entry.grade?.name || 'Unknown';
+      classesByGrade[gradeName] = (classesByGrade[gradeName] || 0) + 1;
+      
+      const subjectName = entry.subject?.name || 'Unknown';
+      classesBySubject[subjectName] = (classesBySubject[subjectName] || 0) + 1;
+    });
+
+    return {
+      totalClasses: entries.length,
+      classesByDay,
+      classesByGrade,
+      classesBySubject,
+      entries,
+    };
+  }
+
+  // Check if teacher is available at a specific time
+  async isTeacherAvailable(
+    tenantId: string,
+    termId: string,
+    teacherId: string,
+    dayOfWeek: number,
+    timeSlotId: string,
+  ): Promise<boolean> {
+    const existing = await this.entryRepo.findOne({
+      where: {
+        tenantId,
+        termId,
+        teacherId,
+        dayOfWeek,
+        timeSlotId,
+        isActive: true,
+      },
+    });
+
+    return !existing; // Available if no entry found
+  }
+
+  // Get all teachers with their teaching load for a term
+  async getAllTeachersWithLoad(
+    user: ActiveUserData,
+    termId: string,
+  ): Promise<Array<{
+    teacherId: string;
+    teacherName: string;
+    totalClasses: number;
+    subjects: string[];
+    grades: string[];
+  }>> {
+    const entries = await this.entryRepo.find({
+      where: { tenantId: user.tenantId, termId, isActive: true },
+    });
+
+    const teacherMap = new Map<string, {
+      teacherId: string;
+      teacherName: string;
+      totalClasses: number;
+      subjects: Set<string>;
+      grades: Set<string>;
+    }>();
+
+    entries.forEach((entry) => {
+      const teacherId = entry.teacherId;
+      const teacherName = entry.teacher.fullName || 'Unknown';
+      
+      if (!teacherMap.has(teacherId)) {
+        teacherMap.set(teacherId, {
+          teacherId,
+          teacherName,
+          totalClasses: 0,
+          subjects: new Set(),
+          grades: new Set(),
+        });
+      }
+
+      const data = teacherMap.get(teacherId)!;
+      data.totalClasses++;
+      data.subjects.add(entry.subject?.name || 'Unknown');
+      data.grades.add(entry.grade?.name || 'Unknown');
+    });
+
+    return Array.from(teacherMap.values()).map((data) => ({
+      teacherId: data.teacherId,
+      teacherName: data.teacherName,
+      totalClasses: data.totalClasses,
+      subjects: Array.from(data.subjects),
+      grades: Array.from(data.grades),
+    }));
+  }
+
+  // Get teacher conflicts (same time, different classes)
+  async getTeacherConflicts(
+    user: ActiveUserData,
+    termId: string,
+  ): Promise<Array<{
+    teacherId: string;
+    teacherName: string;
+    dayOfWeek: number;
+    timeSlotId: string;
+    conflictingEntries: TimetableEntry[];
+  }>> {
+    const entries = await this.entryRepo.find({
+      where: { tenantId: user.tenantId, termId, isActive: true },
+    });
+
+    const conflicts: Array<{
+      teacherId: string;
+      teacherName: string;
+      dayOfWeek: number;
+      timeSlotId: string;
+      conflictingEntries: TimetableEntry[];
+    }> = [];
+
+    // Group by teacher + day + timeSlot
+    const groupKey = (entry: TimetableEntry) =>
+      `${entry.teacherId}-${entry.dayOfWeek}-${entry.timeSlotId}`;
+
+    const grouped = new Map<string, TimetableEntry[]>();
+    entries.forEach((entry) => {
+      const key = groupKey(entry);
+      if (!grouped.has(key)) {
+        grouped.set(key, []);
+      }
+      grouped.get(key)!.push(entry);
+    });
+
+    // Find conflicts (more than 1 class at same time)
+    grouped.forEach((entries, key) => {
+      if (entries.length > 1) {
+        const [teacherId, dayOfWeek, timeSlotId] = key.split('-');
+        conflicts.push({
+          teacherId,
+          teacherName: entries[0].teacher?.fullName || 'Unknown',
+          dayOfWeek: parseInt(dayOfWeek),
+          timeSlotId,
+          conflictingEntries: entries,
+        });
+      }
+    });
+
+    return conflicts;
+  }
+
+  // Helper to get entries for specific grades
+  async getMultipleGradeTimetables(
+    user: ActiveUserData,
+    termId: string,
+    gradeIds: string[],
+  ): Promise<TimetableEntry[]> {
+    return this.entryRepo.find({
+      where: {
+        tenantId: user.tenantId,
+        termId,
+        gradeId: In(gradeIds),
+        isActive: true,
+      },
+      order: { dayOfWeek: 'ASC' },
+    });
+  }
+
+
+
+  // timetable.service.ts
+
+async getMyTimetable(
+  user: ActiveUserData,
+  termId: string,
+): Promise<TimetableData> {
+  if (!user.tenantId) {
+    throw new BadRequestException('Tenant ID is required');
+  }
+
+  // Get all grades the user teaches (or has access to)
+  const gradeRepo = this.dataSource.getRepository('TenantGradeLevel');
+  const grades = await gradeRepo.find({
+    where: { teacherId: user.sub, tenant: { id: user.tenantId }, isActive: true },
+    order: { sortOrder: 'ASC' },
+  });
+
+  // Fetch all necessary data
+  const [timeSlots, breaks, entries] = await Promise.all([
+    this.getTimeSlots(user),
+    this.getBreaks(user),
+    this.entryRepo.find({
+      where: { tenantId: user.tenantId, termId, teacherId: user.sub, isActive: true },
+      order: { dayOfWeek: 'ASC', timeSlotId: 'ASC' },
+    }),
+  ]);
+
+  const gradeInfos: GradeInfo[] = grades.map((g, index) => ({
+    id: g.id,
+    name: g.gradeLevel?.name || g.name || `Grade ${index + 1}`,
+    displayName: g.shortName || g.gradeLevel?.name || g.name || `G${index + 1}`,
+    level: g.sortOrder || index + 1,
+  }));
+
+  return {
+    timeSlots,
+    breaks,
+    entries,
+    grades: gradeInfos,
+    lastUpdated: new Date().toISOString(),
+  };
+}
+
+
+async getMyTimetableAsTeacher(
+  user: ActiveUserData,
+  termId: string
+): Promise<TimetableData> {
+  return this.getTeacherTimetableData(user, termId, user.sub);
+}
+
+
 }
 

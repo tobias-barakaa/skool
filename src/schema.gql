@@ -1170,6 +1170,11 @@ The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://
 """
 scalar JSON
 
+"""
+The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSONObject
+
 """Individual ledger entry"""
 type LedgerEntry {
   balance: Float!
@@ -1752,6 +1757,11 @@ type Query {
   getAllTeachers: [Teacher!]!
 
   """
+  Get teaching load summary for all teachers in a tenant for a given term
+  """
+  getAllTeachersWithLoad(termId: String!): [TeacherLoadSummary!]!
+
+  """
   Get all fee assignments for the current tenant with complete student and grade level data
   """
   getAllTenantFeeAssignments: TenantFeeAssignmentSummary!
@@ -1777,6 +1787,9 @@ type Query {
   getGradeLevelClassTeacher(gradeLevelId: String!): ClassTeacherAssignment
   getGradeTimetableEntries(gradeId: String!, termId: String!): [TimetableEntry!]!
   getMessageById(id: String!): ChatMessage
+
+  """Get timetable entries for multiple grades in a single query"""
+  getMultipleGradeTimetables(gradeIds: [String!]!, termId: String!): [TimetableEntry!]!
   getMyAttendanceSummary: AttendanceSummaryResponse!
   getMyTeacherNotes(filters: FilterTeacherNotesDto): [TeacherNote!]!
 
@@ -1793,6 +1806,9 @@ type Query {
 
   """Get tests filtered by status for the logged-in student"""
   getMyTestsByStatus(status: String!): [Test!]!
+
+  """Get timetable for the currently logged-in teacher"""
+  getMyTimetable(termId: String!): TimetableData!
 
   """Get upcoming tests (within next 7 days) for the logged-in student"""
   getMyUpcomingTests: [Test!]!
@@ -1857,10 +1873,21 @@ type Query {
   getStudentsForParent(parentId: String!, tenantId: String!): [StudentSearchResponse!]!
   getTeacher: Teacher!
 
+  """
+  Find timetable conflicts where a teacher is assigned multiple classes at the same time
+  """
+  getTeacherConflicts(termId: String!): [TeacherConflict!]!
+
   """Get teacher last seen timestamp (ISO format)"""
   getTeacherLastSeen(teacherUserId: String!): String
   getTeacherNoteById(id: String!): TeacherNote!
   getTeacherSchedule(teacherId: String!, termId: String!): [TimetableEntry!]!
+
+  """Get timetable data for a specific teacher for a given term"""
+  getTeacherTimetable(teacherId: String!, termId: String!): TimetableData!
+
+  """Returns weekly class summary for a specific teacher"""
+  getTeacherWeeklySummary(teacherId: String!, termId: String!): TeacherWeeklySummary!
 
   """Get all teachers for current user tenant"""
   getTeachersByTenant: SearchTeacherResult!
@@ -2828,6 +2855,14 @@ type Teacher {
   user: User
 }
 
+type TeacherConflict {
+  conflictingEntries: [TimetableEntry!]!
+  dayOfWeek: Int!
+  teacherId: String!
+  teacherName: String!
+  timeSlotId: String!
+}
+
 type TeacherDto {
   address: String
   dateOfBirth: DateTime
@@ -2844,6 +2879,14 @@ type TeacherDto {
   phoneNumber: String!
   subject: String
   userId: String
+}
+
+type TeacherLoadSummary {
+  grades: [String!]!
+  subjects: [String!]!
+  teacherId: String!
+  teacherName: String!
+  totalClasses: Int!
 }
 
 type TeacherNote {
@@ -2895,6 +2938,14 @@ type TeacherStudentResponse {
 type TeacherStudentStreamDto {
   id: ID!
   name: String!
+}
+
+type TeacherWeeklySummary {
+  classesByDay: JSONObject!
+  classesByGrade: JSONObject!
+  classesBySubject: JSONObject!
+  entries: [TimetableEntry!]!
+  totalClasses: Int!
 }
 
 type Tenant {

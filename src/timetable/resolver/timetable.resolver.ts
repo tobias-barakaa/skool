@@ -7,7 +7,7 @@ import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { UpdateTimeSlotInput } from '../dtos/update_time_slot.dto';
 import { TimetableBreak } from '../entities/timetable_break.entity';
-import { CreateTimetableBreakInput } from '../dtos/create_timetable_break.dto';
+import { CreateTimetableBreakInput, TeacherConflict, TeacherLoadSummary, TeacherWeeklySummary } from '../dtos/create_timetable_break.dto';
 import { TimetableEntry } from '../entities/timetable_entries.entity';
 import { BulkCreateTimetableEntryInput, CreateTimetableEntryInput } from '../dtos/create-timetable-entry.input';
 import { GradeTimetableResponse } from '../dtos/timetable-response.dto';
@@ -173,7 +173,108 @@ export class TimetableResolver {
   ): Promise<TimetableData> {
     return this.timetableService.getWholeSchoolTimetable(user, termId);
   }
+
+  @Query(() => TimetableData, {
+    name: 'getTeacherTimetable',
+    description: 'Get timetable data for a specific teacher for a given term',
+  })
+  async getTeacherTimetable(
+    @Args('termId') termId: string,
+    @Args('teacherId') teacherId: string,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<TimetableData> {
+    return this.timetableService.getTeacherTimetableData(
+      user,
+      termId,
+      teacherId,
+    );
+  }
+
+
+  @Query(() => TeacherWeeklySummary, {
+    name: 'getTeacherWeeklySummary',
+    description: 'Returns weekly class summary for a specific teacher',
+  })
+  async getTeacherWeeklySummary(
+    @Args('termId') termId: string,
+    @Args('teacherId') teacherId: string,
+    @ActiveUser() user: ActiveUserData,
+  ) {
+    return this.timetableService.getTeacherWeeklySummary(
+      user,
+      termId,
+      teacherId,
+    );
+  }
+  
+
+  @Query(() => [TeacherLoadSummary], {
+    name: 'getAllTeachersWithLoad',
+    description: 'Get teaching load summary for all teachers in a tenant for a given term',
+  })
+  async getAllTeachersWithLoad(
+    @Args('termId') termId: string,
+    @ActiveUser() user: ActiveUserData,
+  ) {
+    return this.timetableService.getAllTeachersWithLoad(
+      user,
+      termId,
+    );
+  }
+
+  @Query(() => [TeacherConflict], {
+    name: 'getTeacherConflicts',
+    description: 'Find timetable conflicts where a teacher is assigned multiple classes at the same time',
+  })
+  async getTeacherConflicts(
+    @Args('termId') termId: string,
+    @ActiveUser() user: ActiveUserData,
+  ) {
+    return this.timetableService.getTeacherConflicts(
+      user,
+      termId,
+    );
+  }
+  
+
+  @Query(() => [TimetableEntry], {
+    name: 'getMultipleGradeTimetables',
+    description: 'Get timetable entries for multiple grades in a single query',
+  })
+  async getMultipleGradeTimetables(
+    @Args('termId') termId: string,
+    @Args({ name: 'gradeIds', type: () => [String] }) gradeIds: string[],
+    @ActiveUser() user: ActiveUserData,
+  ) {
+    return this.timetableService.getMultipleGradeTimetables(
+      user,
+      termId,
+      gradeIds,
+    );
+  }
+  
+  
+  // timetable.resolver.ts
+
+  @Query(() => TimetableData, {
+    name: 'getMyTimetable',
+    description: 'Get timetable for the currently logged-in teacher'
+  })
+  async getMyTimetable(
+    @Args('termId') termId: string,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<TimetableData> {
+    // user.sub is the teacher's user ID
+    return this.timetableService.getMyTimetableAsTeacher(
+      user,
+      termId,
+    );
+  }
+
+  
 }
+
+
 
 
 
