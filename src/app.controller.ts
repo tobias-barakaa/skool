@@ -33,6 +33,11 @@ export class AppController {
       timestamp: new Date().toISOString() 
     };
   }
+
+  @Get()
+root() {
+  return { status: 'ok' };
+}
 }
 
 // import { Controller, Get } from '@nestjs/common';
