@@ -96,10 +96,10 @@ async function bootstrap() {
     //  const seeder = app.get(SeedingService);
     //  await seeder.seedAllSchoolTypes();
 
-    app.enableCors({
-      origin: ['https://subdomain.squl.co.ke', 'http://localhost:3000'],
-      credentials: true, // ✅ allow cookies
-    });
+    // app.enableCors({
+    //   origin: ['https://subdomain.squl.co.ke', 'http://localhost:3000'],
+    //   credentials: true, // ✅ allow cookies
+    // });
     // const seeder = app.get(SeedingService);
     // await seedingService.seedAllSchoolTypes();
 

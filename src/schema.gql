@@ -1875,6 +1875,7 @@ type Query {
   getStudentsByTenant: SearchStudentResult!
   getStudentsForParent(parentId: String!, tenantId: String!): [StudentSearchResponse!]!
   getTeacher: Teacher!
+  getTeacherById(teacherId: String!): Teacher!
 
   """
   Find timetable conflicts where a teacher is assigned multiple classes at the same time
@@ -1891,6 +1892,7 @@ type Query {
 
   """Returns weekly class summary for a specific teacher"""
   getTeacherWeeklySummary(teacherId: String!, termId: String!): TeacherWeeklySummary!
+  getTeachers: [Teacher!]!
 
   """Get all teachers for current user tenant"""
   getTeachersByTenant: SearchTeacherResult!

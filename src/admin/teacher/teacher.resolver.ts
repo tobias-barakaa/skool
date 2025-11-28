@@ -209,6 +209,7 @@ async assignGradeLevelClassTeacher(
   }
   
   @Query(() => Teacher)
+  @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER)
 async getTeacher(
   @ActiveUser() currentUser: ActiveUserData,
 ): Promise<Teacher> {
@@ -216,6 +217,24 @@ async getTeacher(
   console.log(currentUser.sub, 'this is user sub')
   return this.teacherService.getTeacherForCurrentUser(currentUser);
 }
+
+@Query(() => Teacher)
+@Roles(MembershipRole.SCHOOL_ADMIN)
+async getTeacherById(
+  @ActiveUser() currentUser: ActiveUserData,
+  @Args('teacherId') teacherId: string,
+): Promise<Teacher> {
+  return this.teacherService.getTeacherByIdForTenant(teacherId, currentUser.sub);
+}
+
+@Query(() => [Teacher])
+@Roles(MembershipRole.SCHOOL_ADMIN)
+async getTeachers(
+  @ActiveUser() currentUser: ActiveUserData,
+): Promise<Teacher[]> {
+  return this.teacherService.getTeachersForTenant(currentUser);
+}
+
   
   @Query(() => [Teacher])
   async getAllTeachers(

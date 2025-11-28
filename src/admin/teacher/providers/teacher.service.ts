@@ -875,7 +875,90 @@ export class TeacherService {
     }
   
     return teacher;
+  };
+
+
+
+  async getTeachersForTenant(currentUser: ActiveUserData): Promise<Teacher[]> {
+  if (!currentUser.tenantId) {
+    throw new BadRequestException('Tenant information not found');
   }
+
+  return this.teacherRepository.find({
+    where: { tenantId: currentUser.tenantId },
+    relations: [
+      'tenantSubjects',
+      'tenantGradeLevels',
+      'tenantStreams',
+      'classTeacherAssignments',
+      'classTeacherAssignments.stream',
+      'classTeacherAssignments.stream.stream',
+      'classTeacherAssignments.gradeLevel',
+      'classTeacherAssignments.gradeLevel.gradeLevel',
+      'user',
+      'tenant',
+    ],
+    order: {
+      user: { name: 'ASC' }, // optional: sort by name
+    },
+  });
+}
+
+
+  // async getTeacherByIdForTenant(
+  //   teacherId: string,
+  //   tenantId: string,
+  // ): Promise<Teacher> {
+  //   const teacher = await this.teacherRepository.findOne({
+  //     where: { id: teacherId, tenantId },
+  //     relations: [
+  //       'classTeacherAssignments',
+  //       'classTeacherAssignments.stream',
+  //       'classTeacherAssignments.stream.stream',
+  //       'classTeacherAssignments.gradeLevel',
+  //       'classTeacherAssignments.gradeLevel.gradeLevel',
+  //       'user',
+  //       'tenant',
+  //     ],
+  //   });
+  
+  //   if (!teacher) {
+  //     throw new BadRequestException(
+  //       `No teacher record found for teacher '${teacherId}' in tenant '${tenantId}'`
+  //     );
+  //   }
+  
+  //   return teacher;
+  // }
+
+
+  async getTeacherByIdForTenant(teacherId: string, tenantId: string): Promise<Teacher> {
+  const teacher = await this.teacherRepository.findOne({
+    where: { id: teacherId, tenantId },
+    relations: [
+      'tenantSubjects',
+      'tenantGradeLevels',
+      'tenantStreams',
+      'classTeacherAssignments',
+      'classTeacherAssignments.stream',
+      'classTeacherAssignments.stream.stream',
+      'classTeacherAssignments.gradeLevel',
+      'classTeacherAssignments.gradeLevel.gradeLevel',
+      'user',
+      'tenant',
+    ]
+  });
+
+  if (!teacher) {
+    throw new BadRequestException(
+      `Teacher '${teacherId}' not found in tenant '${tenantId}'`
+    );
+  }
+
+  return teacher;
+}
+
+  
   
   
   async getAllTeachersInTenant(
