@@ -17,9 +17,9 @@ export class AppController {
     };
   }
 
-  // @Get('/.well-known/appspecific/com.chrome.devtools.json')
-  // chromeDevTools() {
-  //   return {};
-  // }
+  @Get('/.well-known/appspecific/com.chrome.devtools.json')
+  chromeDevTools() {
+    return {};
+  }
 }
 // EbtKKqozQ7IBCEF
