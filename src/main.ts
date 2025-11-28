@@ -96,7 +96,9 @@ async function bootstrap() {
     logger.log(`🚀 Starting server on port ${port}...`);
     
     // Single listen call - bind to all interfaces for Docker
-    await app.listen(port, '0.0.0.0');
+    // await app.listen(port, '0.0.0.0');
+    await app.listen(3000, '0.0.0.0');
+
 
     const url = await app.getUrl();
     logger.log(`✅ Application is running on: ${url}`);
