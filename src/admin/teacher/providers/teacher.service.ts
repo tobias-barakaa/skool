@@ -74,7 +74,6 @@ export class TeacherService {
 
     await this.schoolSetupGuardService.validateSchoolIsConfigured(tenantId);
 
-
     try {
       const inviter = await this.userRepository.findOne({
         where: { id: currentUser.sub },
@@ -860,7 +859,7 @@ export class TeacherService {
         'tenantStreams',
         'classTeacherAssignments',
         'classTeacherAssignments.stream',
-        'classTeacherAssignments.stream.stream',
+        // 'classTeacherAssignments.stream.stream',
         'classTeacherAssignments.gradeLevel',
         'classTeacherAssignments.gradeLevel.gradeLevel',
         'user',
@@ -892,7 +891,7 @@ export class TeacherService {
       'tenantStreams',
       'classTeacherAssignments',
       'classTeacherAssignments.stream',
-      'classTeacherAssignments.stream.stream',
+      // 'classTeacherAssignments.stream.stream',
       'classTeacherAssignments.gradeLevel',
       'classTeacherAssignments.gradeLevel.gradeLevel',
       'user',
@@ -941,7 +940,7 @@ export class TeacherService {
       'tenantStreams',
       'classTeacherAssignments',
       'classTeacherAssignments.stream',
-      'classTeacherAssignments.stream.stream',
+      // 'classTeacherAssignments.stream.stream',
       'classTeacherAssignments.gradeLevel',
       'classTeacherAssignments.gradeLevel.gradeLevel',
       'user',
@@ -975,7 +974,7 @@ export class TeacherService {
       relations: [
         'classTeacherAssignments',
         'classTeacherAssignments.stream',
-        'classTeacherAssignments.stream.stream',
+        // 'classTeacherAssignments.stream.stream',
         'classTeacherAssignments.gradeLevel',
         'classTeacherAssignments.gradeLevel.gradeLevel',
         'user',
