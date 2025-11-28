@@ -321,7 +321,7 @@ export class ParentChatResolver {
       currentUser,
       studentId,
     );
-  }
+  } 
 
   /**
    * Check if a user is currently online

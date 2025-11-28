@@ -67,180 +67,610 @@ export class FeeStructureService {
 
 
 
-  async createWithItems(
-    input: CreateFeeStructureWithItemsInput,
-    user: ActiveUserData,
-  ): Promise<FeeStructure> {
-    const existingStructure = await this.feeStructureRepository.findOne({
-      where: {
-        tenantId: user.tenantId,
-        academicYearId: input.academicYearId,
-        name: input.name,
-      },
-    });
+  // async createWithItems(
+  //   input: CreateFeeStructureWithItemsInput,
+  //   user: ActiveUserData,
+  // ): Promise<FeeStructure> {
+  //   const existingStructure = await this.feeStructureRepository.findOne({
+  //     where: {
+  //       tenantId: user.tenantId,
+  //       academicYearId: input.academicYearId,
+  //       name: input.name,
+  //     },
+  //   });
 
-    if (existingStructure) {
-      throw new ConflictException(
-        'Fee structure already exists for this academic year and name',
-      );
-    }
+  //   if (existingStructure) {
+  //     throw new ConflictException(
+  //       'Fee structure already exists for this academic year and name',
+  //     );
+  //   }
 
-    if(!user.tenantId) {
-      throw new NotFoundException('Tenant ID is missing from the active user');
-    }
+  //   if(!user.tenantId) {
+  //     throw new NotFoundException('Tenant ID is missing from the active user');
+  //   }
 
-    await this.validateCoreEntities(input, user.tenantId);
+  //   await this.validateCoreEntities(input, user.tenantId);
 
-    let gradeLevels: TenantGradeLevel[] = [];
-    if (input.gradeLevelIds?.length) {
-      gradeLevels = await this.validateGradeLevels(
-        input.gradeLevelIds,
-        user.tenantId,
-      );
-    }
+  //   let gradeLevels: TenantGradeLevel[] = [];
+  //   if (input.gradeLevelIds?.length) {
+  //     gradeLevels = await this.validateGradeLevels(
+  //       input.gradeLevelIds,
+  //       user.tenantId,
+  //     );
+  //   }
 
-    const termRepository = this.dataSource.getRepository(Term);
-    const terms = await termRepository.find({
-      where: {
-        id: In(input.termIds),
-        tenantId: user.tenantId,
-      },
-    });
+  //   const termRepository = this.dataSource.getRepository(Term);
+  //   const terms = await termRepository.find({
+  //     where: {
+  //       id: In(input.termIds),
+  //       tenantId: user.tenantId,
+  //     },
+  //   });
 
-    if (terms.length !== input.termIds.length) {
-      throw new NotFoundException('One or more terms not found');
-    }
+  //   if (terms.length !== input.termIds.length) {
+  //     throw new NotFoundException('One or more terms not found');
+  //   }
 
-    if (input.items?.length) {
-      const bucketIds = input.items.map(item => item.feeBucketId);
-      const buckets = await this.feeBucketRepository.find({
-        where: {
-          id: In(bucketIds),
-          tenantId: user.tenantId,
-          isActive: true,
-        },
-      });
+  //   if (input.items?.length) {
+  //     const bucketIds = input.items.map(item => item.feeBucketId);
+  //     const buckets = await this.feeBucketRepository.find({
+  //       where: {
+  //         id: In(bucketIds),
+  //         tenantId: user.tenantId,
+  //         isActive: true,
+  //       },
+  //     });
 
-      if (buckets.length !== bucketIds.length) {
-        throw new NotFoundException('One or more fee buckets not found or inactive');
-      }
+  //     if (buckets.length !== bucketIds.length) {
+  //       throw new NotFoundException('One or more fee buckets not found or inactive');
+  //     }
 
-      const uniqueBuckets = new Set(bucketIds);
-      if (uniqueBuckets.size !== bucketIds.length) {
-        throw new BadRequestException('Duplicate fee buckets in items');
-      }
+  //     const uniqueBuckets = new Set(bucketIds);
+  //     if (uniqueBuckets.size !== bucketIds.length) {
+  //       throw new BadRequestException('Duplicate fee buckets in items');
+  //     }
 
-      for (const item of input.items) {
-        if (item.amount < 0) {
-          throw new BadRequestException('Amount must be greater than or equal to 0');
-        }
-      }
-    }
+  //     for (const item of input.items) {
+  //       if (item.amount < 0) {
+  //         throw new BadRequestException('Amount must be greater than or equal to 0');
+  //       }
+  //     }
+  //   }
 
-    return await this.dataSource.transaction(async (manager) => {
-      const feeStructure = manager.create(FeeStructure, {
-        name: input.name,
-        academicYearId: input.academicYearId,
-        tenantId: user.tenantId,
-        terms,
-        gradeLevels,
-      });
+  //   return await this.dataSource.transaction(async (manager) => {
+  //     const feeStructure = manager.create(FeeStructure, {
+  //       name: input.name,
+  //       academicYearId: input.academicYearId,
+  //       tenantId: user.tenantId,
+  //       terms,
+  //       gradeLevels,
+  //     });
 
 
       
-      const savedStructure = await manager.save(feeStructure);
+  //     const savedStructure = await manager.save(feeStructure);
 
-      if (input.items?.length) {
-        const itemsToCreate = input.items.map(item =>
-          manager.create(FeeStructureItem, {
-            tenantId: user.tenantId,
-            feeStructureId: savedStructure.id,
-            feeBucketId: item.feeBucketId,
-            amount: item.amount,
-            isMandatory: item.isMandatory ?? true,
-          })
-        );
+  //     if (input.items?.length) {
+  //       const itemsToCreate = input.items.map(item =>
+  //         manager.create(FeeStructureItem, {
+  //           tenantId: user.tenantId,
+  //           feeStructureId: savedStructure.id,
+  //           feeBucketId: item.feeBucketId,
+  //           amount: item.amount,
+  //           isMandatory: item.isMandatory ?? true,
+  //         })
+  //       );
 
-        await manager.save(FeeStructureItem, itemsToCreate);
-      }
+  //       await manager.save(FeeStructureItem, itemsToCreate);
+  //     }
 
-      return await manager.findOneOrFail(FeeStructure, {
-        where: { id: savedStructure.id },
-        relations: [
-          'academicYear',
-          'terms',
-          'gradeLevels',
-          'gradeLevels.gradeLevel',
-          'gradeLevels.curriculum',
-          'items',
-          'items.feeBucket',
-        ],
-      });
+  //     return await manager.findOneOrFail(FeeStructure, {
+  //       where: { id: savedStructure.id },
+  //       relations: [
+  //         'academicYear',
+  //         'terms',
+  //         'gradeLevels',
+  //         'gradeLevels.gradeLevel',
+  //         'gradeLevels.curriculum',
+  //         'items',
+  //         'items.feeBucket',
+  //       ],
+  //     });
+  //   });
+  // }
+async createWithItems(
+  input: CreateFeeStructureWithItemsInput,
+  user: ActiveUserData,
+): Promise<FeeStructure> {
+  // Check for existing structure
+  const existingStructure = await this.feeStructureRepository.findOne({
+    where: {
+      tenantId: user.tenantId,
+      academicYearId: input.academicYearId,
+      name: input.name,
+    },
+  });
+
+  if (existingStructure) {
+    throw new ConflictException(
+      'Fee structure already exists for this academic year and name',
+    );
+  }
+
+  if (!user.tenantId) {
+    throw new NotFoundException('Tenant ID is missing from the active user');
+  }
+
+  // Validate academic year, terms, and grade levels
+  await this.validateCoreEntities(input, user.tenantId);
+
+  // Fetch grade levels
+  let gradeLevels: TenantGradeLevel[] = [];
+  if (input.gradeLevelIds?.length) {
+    gradeLevels = await this.validateGradeLevels(
+      input.gradeLevelIds,
+      user.tenantId,
+    );
+  }
+
+  // Collect all unique term IDs from items
+  const allTermIds = new Set<string>();
+  if (input.items?.length) {
+    input.items.forEach(item => {
+      item.termIds.forEach(termId => allTermIds.add(termId));
     });
   }
+
+  // Fetch all terms that are referenced in items (already validated)
+  const termRepository = this.dataSource.getRepository(Term);
+  const terms = await termRepository.find({
+    where: {
+      id: In(Array.from(allTermIds)),
+      tenantId: user.tenantId,
+    },
+  });
+
+  // Create a map for easy term lookup
+  const termMap = new Map(terms.map(term => [term.id, term]));
+
+  // Validate fee buckets
+  if (input.items?.length) {
+    const bucketIds = input.items.map(item => item.feeBucketId);
+
+    const buckets = await this.feeBucketRepository.find({
+      where: {
+        id: In(bucketIds),
+        tenantId: user.tenantId,
+        isActive: true,
+      },
+    });
+
+    if (buckets.length !== bucketIds.length) {
+      throw new NotFoundException('One or more fee buckets not found or inactive');
+    }
+
+    // Validate amounts
+    for (const item of input.items) {
+      if (item.amount < 0) {
+        throw new BadRequestException('Amount must be greater than or equal to 0');
+      }
+    }
+  }
+
+  // Transaction
+  return await this.dataSource.transaction(async (manager) => {
+    // Create fee structure with all terms
+    const feeStructure = manager.create(FeeStructure, {
+      name: input.name,
+      academicYearId: input.academicYearId,
+      tenantId: user.tenantId,
+      terms: terms,
+      gradeLevels,
+    });
+
+    const savedStructure = await manager.save(feeStructure);
+
+    // Create items with their specific terms
+    if (input.items?.length) {
+      for (const itemInput of input.items) {
+        // Get the Term entities for this item
+        const itemTerms = itemInput.termIds
+          .map(termId => termMap.get(termId))
+          .filter(Boolean) as Term[];
+
+        const item = manager.create(FeeStructureItem, {
+          tenantId: user.tenantId,
+          feeStructureId: savedStructure.id,
+          feeBucketId: itemInput.feeBucketId,
+          amount: itemInput.amount,
+          isMandatory: itemInput.isMandatory ?? true,
+          terms: itemTerms,
+        });
+
+        await manager.save(FeeStructureItem, item);
+      }
+    }
+
+    // Return with all relations
+    return await manager.findOneOrFail(FeeStructure, {
+      where: { id: savedStructure.id },
+      relations: [
+        'academicYear',
+        'terms',
+        'gradeLevels',
+        'gradeLevels.gradeLevel',
+        'gradeLevels.curriculum',
+        'items',
+        'items.feeBucket',
+        'items.terms',
+      ],
+    });
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+//   async createWithItems(
+//   input: CreateFeeStructureWithItemsInput,
+//   user: ActiveUserData,
+// ) {
+//   const existingStructure = await this.feeStructureRepository.findOne({
+//     where: {
+//       tenantId: user.tenantId,
+//       academicYearId: input.academicYearId,
+//       name: input.name,
+//     },
+//   });
+
+//   if (existingStructure) {
+//     throw new ConflictException(
+//       'Fee structure already exists for this academic year and name',
+//     );
+//   }
+
+//   if(!user.tenantId) {
+//     throw new NotFoundException('Tenant ID is missing from the active user');
+//   }
+
+//   await this.validateCoreEntities(input, user.tenantId);
+
+//   // Fetch grade levels
+//   let gradeLevels: TenantGradeLevel[] = [];
+//   if (input.gradeLevelIds?.length) {
+//     gradeLevels = await this.validateGradeLevels(
+//       input.gradeLevelIds,
+//       user.tenantId,
+//     );
+//   }
+
+//   // Fetch terms
+//   const termRepository = this.dataSource.getRepository(Term);
+//   const terms = await termRepository.find({
+//     where: {
+//       id: In(input.termIds),
+//       tenantId: user.tenantId,
+//     },
+//   });
+
+//   if (terms.length !== input.termIds.length) {
+//     throw new NotFoundException('One or more terms not found');
+//   }
+
+//   // Validate items
+//   if (input.items?.length) {
+//     const bucketIds = input.items.map(item => item.feeBucketId);
+//     const itemTermIds = input.items.map(item => item.termId);
+    
+//     // Validate that all item termIds are in the termIds array
+//     const invalidTerms = itemTermIds.filter(termId => !input.termIds.includes(termId));
+//     if (invalidTerms.length > 0) {
+//       throw new BadRequestException('Item terms must be in the fee structure terms list');
+//     }
+
+//     const buckets = await this.feeBucketRepository.find({
+//       where: {
+//         id: In(bucketIds),
+//         tenantId: user.tenantId,
+//         isActive: true,
+//       },
+//     });
+
+//     if (buckets.length !== bucketIds.length) {
+//       throw new NotFoundException('One or more fee buckets not found or inactive');
+//     }
+
+//     const uniqueBuckets = new Set(bucketIds);
+//     if (uniqueBuckets.size !== bucketIds.length) {
+//       throw new BadRequestException('Duplicate fee buckets in items');
+//     }
+
+//     for (const item of input.items) {
+//       if (item.amount < 0) {
+//         throw new BadRequestException('Amount must be greater than or equal to 0');
+//       }
+//     }
+//   }
+
+//   // Transaction starts here - terms and gradeLevels are in scope
+//   return await this.dataSource.transaction(async (manager) => {
+//     const feeStructure = manager.create(FeeStructure, {
+//       name: input.name,
+//       academicYearId: input.academicYearId,
+//       tenantId: user.tenantId,
+//       terms,          // ✅ Now in scope
+//       gradeLevels,    // ✅ Now in scope
+//     });
+
+//     const savedStructure = await manager.save(feeStructure);
+
+//     if (input.items?.length) {
+//       const itemsToCreate = input.items.map(item =>
+//         manager.create(FeeStructureItem, {
+//           tenantId: user.tenantId,
+//           feeStructureId: savedStructure.id,
+//           feeBucketId: item.feeBucketId,
+//           termId: item.termId,
+//           amount: item.amount,
+//           isMandatory: item.isMandatory ?? true,
+//         })
+//       );
+
+//       await manager.save(FeeStructureItem, itemsToCreate);
+//     }
+
+//     return await manager.findOneOrFail(FeeStructure, {
+//       where: { id: savedStructure.id },
+//       relations: [
+//         'academicYear',
+//         'terms',
+//         'gradeLevels',
+//         'gradeLevels.gradeLevel',
+//         'gradeLevels.curriculum',
+//         'items',
+//         'items.feeBucket',
+//         'items.term',
+//       ],
+//     });
+//   });
+// }
+//   async createWithItems(
+//   input: CreateFeeStructureWithItemsInput,
+//   user: ActiveUserData,
+// ): Promise<FeeStructure> {
+//   // ... existing validation code ...
+
+//   if (input.items?.length) {
+//     const bucketIds = input.items.map(item => item.feeBucketId);
+//     const itemTermIds = input.items.map(item => item.termId);
+    
+//     // Validate that all item termIds are in the termIds array
+//     const invalidTerms = itemTermIds.filter(termId => !input.termIds.includes(termId));
+//     if (invalidTerms.length > 0) {
+//       throw new BadRequestException('Item terms must be in the fee structure terms list');
+//     }
+
+//     const buckets = await this.feeBucketRepository.find({
+//       where: {
+//         id: In(bucketIds),
+//         tenantId: user.tenantId,
+//         isActive: true,
+//       },
+//     });
+
+//     if (buckets.length !== bucketIds.length) {
+//       throw new NotFoundException('One or more fee buckets not found or inactive');
+//     }
+
+   
+//       if (buckets.length !== bucketIds.length) {
+//         throw new NotFoundException('One or more fee buckets not found or inactive');
+//       }
+
+//       const uniqueBuckets = new Set(bucketIds);
+//       if (uniqueBuckets.size !== bucketIds.length) {
+//         throw new BadRequestException('Duplicate fee buckets in items');
+//       }
+
+//       for (const item of input.items) {
+//         if (item.amount < 0) {
+//           throw new BadRequestException('Amount must be greater than or equal to 0');
+//         }
+//       }
+//     }
   
-  private async validateCoreEntities(
-    input: CreateFeeStructureWithItemsInput,
-    tenantId: string,
-  ): Promise<void> {
-    const repo = this.dataSource.getRepository.bind(this.dataSource);
-  
-    const ayPromise = repo(AcademicYear)
-      .findOne({
-        where: { id: input.academicYearId, tenantId },
-        select: ['id'],
-      })
-      .then((row) => {
-        if (!row) {
-          throw new BadRequestException(
-            `Academic year ${input.academicYearId} not found or does not belong to your organisation.`,
-          );
-        }
-      });
-  
-    const termPromise = repo(Term)
+
+//   return await this.dataSource.transaction(async (manager) => {
+//     const feeStructure = manager.create(FeeStructure, {
+//       name: input.name,
+//       academicYearId: input.academicYearId,
+//       tenantId: user.tenantId,
+//       terms,
+//       gradeLevels,
+//     });
+
+//     const savedStructure = await manager.save(feeStructure);
+
+//     if (input.items?.length) {
+//       const itemsToCreate = input.items.map(item =>
+//         manager.create(FeeStructureItem, {
+//           tenantId: user.tenantId,
+//           feeStructureId: savedStructure.id,
+//           feeBucketId: item.feeBucketId,
+//           termId: item.termId, // ADD THIS
+//           amount: item.amount,
+//           isMandatory: item.isMandatory ?? true,
+//         })
+//       );
+
+//       await manager.save(FeeStructureItem, itemsToCreate);
+//     }
+
+//     return await manager.findOneOrFail(FeeStructure, {
+//       where: { id: savedStructure.id },
+//       relations: [
+//         'academicYear',
+//         'terms',
+//         'gradeLevels',
+//         'gradeLevels.gradeLevel',
+//         'gradeLevels.curriculum',
+//         'items',
+//         'items.feeBucket',
+//         'items.term', 
+//       ],
+//     });
+//   });
+// }
+
+private async validateCoreEntities(
+  input: CreateFeeStructureWithItemsInput,
+  tenantId: string,
+): Promise<void> {
+  const repo = this.dataSource.getRepository.bind(this.dataSource);
+
+  // Validate Academic Year
+  const ayPromise = repo(AcademicYear)
+    .findOne({
+      where: { id: input.academicYearId, tenantId },
+      select: ['id'],
+    })
+    .then((row) => {
+      if (!row) {
+        throw new BadRequestException(
+          `Academic year ${input.academicYearId} not found or does not belong to your organisation.`,
+        );
+      }
+    });
+
+  // Collect all unique term IDs from items
+  const allTermIds = new Set<string>();
+  if (input.items?.length) {
+    input.items.forEach(item => {
+      item.termIds.forEach(termId => allTermIds.add(termId));
+    });
+  }
+
+  // Validate Terms (only if there are items with terms)
+  let termPromise: Promise<void> = Promise.resolve();
+  if (allTermIds.size > 0) {
+    const termIdsArray = Array.from(allTermIds);
+    termPromise = repo(Term)
       .find({
         where: {
-          id: In(input.termIds),
+          id: In(termIdsArray),
           tenantId,
         },
         select: ['id'],
       })
       .then((rows) => {
-        if (rows.length !== input.termIds.length) {
+        if (rows.length !== termIdsArray.length) {
           const found = new Set(rows.map((r) => r.id));
-          const missing = input.termIds.filter((id) => !found.has(id));
+          const missing = termIdsArray.filter((id) => !found.has(id));
           throw new BadRequestException(
             `Term(s) ${missing.join(', ')} not found or do not belong to your organisation.`,
           );
         }
       });
-  
-    let glPromise: Promise<void> = Promise.resolve();
-    const glIds = input.gradeLevelIds ?? []; 
-  
-    if (glIds.length) {
-      glPromise = repo(TenantGradeLevel)
-        .find({
-          where: {
-            id: In(glIds),
-            tenant: { id: tenantId },
-          },
-          select: ['id'],
-        })
-        .then((rows) => {
-          if (rows.length !== glIds.length) {
-            const found = new Set(rows.map((r) => r.id));
-            const missing = glIds.filter((id) => !found.has(id));
-            throw new BadRequestException(
-              `Grade level(s) ${missing.join(', ')} not found or do not belong to your organisation.`,
-            );
-          }
-        });
-    }
-  
-    await Promise.all([ayPromise, termPromise, glPromise]);
   }
+
+  // Validate Grade Levels
+  let glPromise: Promise<void> = Promise.resolve();
+  const glIds = input.gradeLevelIds ?? [];
+
+  if (glIds.length) {
+    glPromise = repo(TenantGradeLevel)
+      .find({
+        where: {
+          id: In(glIds),
+          tenant: { id: tenantId },
+        },
+        select: ['id'],
+      })
+      .then((rows) => {
+        if (rows.length !== glIds.length) {
+          const found = new Set(rows.map((r) => r.id));
+          const missing = glIds.filter((id) => !found.has(id));
+          throw new BadRequestException(
+            `Grade level(s) ${missing.join(', ')} not found or do not belong to your organisation.`,
+          );
+        }
+      });
+  }
+
+  await Promise.all([ayPromise, termPromise, glPromise]);
+}
+  
+  // private async validateCoreEntities(
+  //   input: CreateFeeStructureWithItemsInput,
+  //   tenantId: string,
+  // ): Promise<void> {
+  //   const repo = this.dataSource.getRepository.bind(this.dataSource);
+  
+  //   const ayPromise = repo(AcademicYear)
+  //     .findOne({
+  //       where: { id: input.academicYearId, tenantId },
+  //       select: ['id'],
+  //     })
+  //     .then((row) => {
+  //       if (!row) {
+  //         throw new BadRequestException(
+  //           `Academic year ${input.academicYearId} not found or does not belong to your organisation.`,
+  //         );
+  //       }
+  //     });
+  
+  //   const termPromise = repo(Term)
+  //     .find({
+  //       where: {
+  //         id: In(input.termIds),
+  //         tenantId,
+  //       },
+  //       select: ['id'],
+  //     })
+  //     .then((rows) => {
+  //       if (rows.length !== input.termIds.length) {
+  //         const found = new Set(rows.map((r) => r.id));
+  //         const missing = input.termIds.filter((id) => !found.has(id));
+  //         throw new BadRequestException(
+  //           `Term(s) ${missing.join(', ')} not found or do not belong to your organisation.`,
+  //         );
+  //       }
+  //     });
+  
+  //   let glPromise: Promise<void> = Promise.resolve();
+  //   const glIds = input.gradeLevelIds ?? []; 
+  
+  //   if (glIds.length) {
+  //     glPromise = repo(TenantGradeLevel)
+  //       .find({
+  //         where: {
+  //           id: In(glIds),
+  //           tenant: { id: tenantId },
+  //         },
+  //         select: ['id'],
+  //       })
+  //       .then((rows) => {
+  //         if (rows.length !== glIds.length) {
+  //           const found = new Set(rows.map((r) => r.id));
+  //           const missing = glIds.filter((id) => !found.has(id));
+  //           throw new BadRequestException(
+  //             `Grade level(s) ${missing.join(', ')} not found or do not belong to your organisation.`,
+  //           );
+  //         }
+  //       });
+  //   }
+  
+  //   await Promise.all([ayPromise, termPromise, glPromise]);
+  // }
   
   
   // async create(input: CreateFeeStructureInput, user: ActiveUserData) {

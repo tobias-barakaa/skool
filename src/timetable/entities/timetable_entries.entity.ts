@@ -110,3 +110,4 @@ import { Teacher } from 'src/admin/teacher/entities/teacher.entity';
     @UpdateDateColumn()
     updatedAt: Date;
   }
+

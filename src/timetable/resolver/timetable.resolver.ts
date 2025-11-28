@@ -63,6 +63,14 @@ export class TimetableResolver {
 
 
 
+  @Mutation(() => Boolean)
+async deleteAllTimeSlots(
+  @ActiveUser() user: ActiveUserData,
+): Promise<boolean> {
+  return this.timetableService.deleteAllTimeSlots(user);
+}
+
+
   // ========== BREAKS ==========
   @Mutation(() => TimetableBreak)
   async createTimetableBreak(

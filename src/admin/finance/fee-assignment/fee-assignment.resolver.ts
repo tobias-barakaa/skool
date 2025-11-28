@@ -110,24 +110,15 @@ export class FeeAssignmentResolver {
     @Args('isActive', { type: () => Boolean }) isActive: boolean,
     @ActiveUser() user: ActiveUserData,
   ): Promise<StudentFeeItem> {
-    const tenantId = user.tenantId;
+    // const tenantId = user.tenantId;
     return this.feeAssignmentService.toggleStudentFeeItem(studentFeeItemId, isActive, this.getTenantId(user));
   }
 
+  
 
 
-  // @Mutation(() => StudentFeeItem, {
-  //   description: 'Activate or deactivate an optional fee item for a student'
-  // })
-  // async toggleStudentFeeItem(
-  //   @Args('studentFeeItemId', { type: () => ID }) studentFeeItemId: string,
-  //   @Args('isActive', { type: () => Boolean }) isActive: boolean,
-  //   @ActiveUser() user: ActiveUserData,
-  // ): Promise<StudentFeeItem> {
-  //   const tenantId = user.tenantId;
-  //   return this.feeAssignmentService.toggleStudentFeeItem(studentFeeItemId, isActive, tenantId);
-  // }
 
+  
   @Query(() => [StudentFeeItem], {
     description: 'Get all fee items for a specific student'
   })
@@ -221,52 +212,5 @@ async studentFeeSummary(
     return this.feeAssignmentService.getFeeAssignmentById(feeAssignmentId, user);
   }
   
-  // Additional utility query to get fee assignment statistics
-//   @Query(() => GraphQLJSON, {
-//     description: 'Get statistical summary of fee assignments for the tenant'
-//   })
-//   async getFeeAssignmentStatistics(
-//     @ActiveUser() user: ActiveUserData,
-//   ): Promise<any> {
-//     const tenantId = user.tenantId;
   
-//     const totalFeeAssignments = await this.feeAssignmentService.feeAssignmentRepo.count({
-//       where: { tenantId, isActive: true }
-//     });
-  
-//     const totalStudentAssignments = await this.feeAssignmentService.studentFeeAssignmentRepo.count({
-//       where: { tenantId, isActive: true }
-//     });
-  
-//     const totalFeeItems = await this.feeAssignmentService.studentFeeItemRepo.count({
-//       where: { tenantId, isActive: true }
-//     });
-  
-//     // Get fee assignments grouped by fee structure
-//     const feeStructureStats = await this.feeAssignmentService.feeAssignmentRepo
-//       .createQueryBuilder('fa')
-//       .select('fs.name', 'feeStructureName')
-//       .addSelect('COUNT(fa.id)', 'assignmentCount')
-//       .addSelect('SUM(fa.studentsAssignedCount)', 'totalStudents')
-//       .leftJoin('fa.feeStructure', 'fs')
-//       .where('fa.tenantId = :tenantId', { tenantId })
-//       .andWhere('fa.isActive = true')
-//       .groupBy('fa.feeStructureId')
-//       .addGroupBy('fs.name')
-//       .getRawMany();
-  
-//     return {
-//       overview: {
-//         totalFeeAssignments,
-//         totalStudentAssignments,
-//         totalFeeItems,
-//       },
-//       feeStructureBreakdown: feeStructureStats,
-//       generatedAt: new Date().toISOString(),
-//     };
-  
-
-// }
-
 }
-

@@ -428,11 +428,10 @@ input CreateFeeBucketInput {
 }
 
 input CreateFeeStructureWithItemsInput {
-  academicYearId: String!
-  gradeLevelIds: [String!]
+  academicYearId: ID!
+  gradeLevelIds: [ID!]
   items: [FeeStructureItemInput!]
   name: String!
-  termIds: [String!]!
 }
 
 input CreateHostelAssignmentInput {
@@ -851,13 +850,15 @@ type FeeStructureItem {
   id: ID!
   isMandatory: Boolean!
   tenantId: String!
+  terms: [Term!]!
   updatedAt: DateTime!
 }
 
 input FeeStructureItemInput {
   amount: Float!
-  feeBucketId: String!
+  feeBucketId: ID!
   isMandatory: Boolean! = true
+  termIds: [ID!]!
 }
 
 type FeeStructureSummaryByAcademicYear {
@@ -1319,6 +1320,7 @@ type Mutation {
 
   """Delete an academic year"""
   deleteAcademicYear(id: ID!): Boolean!
+  deleteAllTimeSlots: Boolean!
   deleteAssignment(id: String!): Boolean!
   deleteCA(id: String!): Boolean!
   deleteExam(id: String!): Boolean!

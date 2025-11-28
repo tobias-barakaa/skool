@@ -48,12 +48,67 @@ export class TimetableService {
     return this.timeSlotRepo.save(timeSlot);
   }
 
+  // async getTimeSlots(user: ActiveUserData): Promise<TimeSlot[]> {
+  //   return this.timeSlotRepo.find({
+  //     where: { tenantId: user.tenantId, isActive: true },
+  //     order: { periodNumber: 'ASC' },
+  //   });
+  // }
+
   async getTimeSlots(user: ActiveUserData): Promise<TimeSlot[]> {
-    return this.timeSlotRepo.find({
-      where: { tenantId: user.tenantId, isActive: true },
-      order: { periodNumber: 'ASC' },
-    });
-  }
+  const slots = await this.timeSlotRepo.find({
+    where: { tenantId: user.tenantId, isActive: true },
+    order: { periodNumber: 'ASC' }
+  });
+
+  const breaks = await this.getBreaks(user, 0); // Get all-day breaks
+  
+  return this.calculateActualTimes(slots, breaks);
+}
+
+private calculateActualTimes(slots: TimeSlot[], breaks: TimetableBreak[]): TimeSlot[] {
+  const SCHOOL_START = '08:00'; // Configurable
+  const PERIOD_DURATION = 45; // minutes
+  
+  let currentTime = this.parseTime(SCHOOL_START);
+  
+  return slots.map(slot => {
+    const startTime = this.formatTime(currentTime);
+    currentTime += PERIOD_DURATION;
+    const endTime = this.formatTime(currentTime);
+    
+    // Check if there's a break after this period
+    const breakAfter = breaks.find(b => b.afterPeriod === slot.periodNumber);
+    if (breakAfter) {
+      currentTime += breakAfter.durationMinutes;
+    }
+    
+    return {
+      ...slot,
+      startTime,
+      endTime,
+      displayTime: `${this.format12Hour(startTime)} – ${this.format12Hour(endTime)}`
+    };
+  });
+}
+  
+private format12Hour(startTime: string): string {
+  const [hours, minutes] = startTime.split(':').map(Number);
+  const ampm = hours < 12 ? 'AM' : 'PM';
+  const hour12 = hours % 12 || 12;
+  return `${hour12}:${minutes.toString().padStart(2, '0')} ${ampm}`;
+}
+
+private parseTime(time: string): number {
+  const [hours, minutes] = time.split(':').map(Number);
+  return hours * 60 + minutes;
+}
+
+private formatTime(minutes: number): string {
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+}
 
   async updateTimeSlot(
     id: string,
@@ -94,6 +149,22 @@ export class TimetableService {
     const result = await this.timeSlotRepo.delete({ id, tenantId: user.tenantId });
     return (result.affected ?? 0) > 0;
   }
+
+  async deleteAllTimeSlots(user: ActiveUserData): Promise<boolean> {
+  // Delete all entries that reference timeslots
+  await this.entryRepo.delete({
+    tenantId: user.tenantId,
+  });
+
+  // Now delete the timeslots
+  const result = await this.timeSlotRepo.delete({
+    tenantId: user.tenantId,
+  });
+
+  return (result.affected ?? 0) > 0;
+}
+
+
 
   // ========== BREAKS ==========
   async createBreak(

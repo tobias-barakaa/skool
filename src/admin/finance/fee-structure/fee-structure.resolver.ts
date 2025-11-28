@@ -15,19 +15,33 @@ export class FeeStructureResolver {
 
   constructor(private readonly feeStructureService: FeeStructureService) {}
 
-  @Mutation(() => FeeStructure, {
-    description: 'Create a new fee structure with optional items in a single transaction',
-  })
-  @Roles(MembershipRole.SCHOOL_ADMIN)
-  async createFeeStructureWithItems(
-    @Args('input') input: CreateFeeStructureWithItemsInput,
-    @ActiveUser() user: ActiveUserData,
-  ): Promise<FeeStructure> {
-    this.logger.log(
-      `Creating fee structure with items: ${input.name} by user ${user.sub}`,
-    );
-    return await this.feeStructureService.createWithItems(input, user);
-  }
+  // @Mutation(() => CreateFeeStructureWithItemsInput, {
+  //   description: 'Create a new fee structure with optional items in a single transaction',
+  // })
+  // @Roles(MembershipRole.SCHOOL_ADMIN)
+  // async createFeeStructureWithItems(
+  //   @Args('input') input: CreateFeeStructureWithItemsInput,
+  //   @ActiveUser() user: ActiveUserData,
+  // ) {
+  //   this.logger.log(
+  //     `Creating fee structure with items: ${input.name} by user ${user.sub}`,
+  //   );
+  //   return await this.feeStructureService.createWithItems(input, user);
+  // }
+
+  @Mutation(() => FeeStructure, {  
+  description: 'Create a new fee structure with optional items in a single transaction',
+})
+@Roles(MembershipRole.SCHOOL_ADMIN)
+async createFeeStructureWithItems(
+  @Args('input') input: CreateFeeStructureWithItemsInput,  // ← This is the INPUT
+  @ActiveUser() user: ActiveUserData,
+): Promise<FeeStructure> {  // ← This is what you return
+  this.logger.log(
+    `Creating fee structure with items: ${input.name} by user ${user.sub}`,
+  );
+  return await this.feeStructureService.createWithItems(input, user);
+}
 
   // @Mutation(() => FeeStructure, { 
   //   description: 'Create a new fee structure (items added separately)'
