@@ -15,13 +15,17 @@ async function bootstrap() {
   const logger = new CustomLogger('Bootstrap');
 
   try {
+    logger.log('🔄 Starting application bootstrap...');
+    
     if (!(global as any).crypto) {
       (global as any).crypto = { randomUUID };
     }
 
+    logger.log('📦 Creating NestJS application...');
     const app = await NestFactory.create(AppModule, {
       logger,
     });
+    logger.log('✅ NestJS application created');
 
     app.useGlobalFilters(
       new EntityNotFoundFilter(),
@@ -89,14 +93,17 @@ async function bootstrap() {
     // Use PORT from environment, default to 3000 to match healthcheck
     const port = process.env.PORT || 3000;
 
+    logger.log(`🚀 Starting server on port ${port}...`);
+    
     // Single listen call - bind to all interfaces for Docker
     await app.listen(port, '0.0.0.0');
 
     const url = await app.getUrl();
-    logger.log(`🚀 Application is running on: ${url}`);
+    logger.log(`✅ Application is running on: ${url}`);
     logger.log(`📘 GraphQL Playground: ${url}/graphql`);
     logger.log(`📚 Swagger API docs: ${url}/api`);
     logger.log(`🏥 Health check available at: ${url}/health`);
+    logger.log(`✨ Application startup complete!`);
   } catch (error) {
     logger.error('❌ Failed to start application', error.stack);
     process.exit(1);
