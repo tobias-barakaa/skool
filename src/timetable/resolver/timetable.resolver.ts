@@ -80,6 +80,24 @@ async deleteAllTimeSlots(
     return this.timetableService.createBreak(user, input);
   }
 
+
+
+//   @Mutation(() => Boolean)
+// async deleteTimetableBreak(
+//   @Args('id') id: string,
+//   @ActiveUser() user: ActiveUserData,
+// ): Promise<boolean> {
+//   return this.timetableService.deleteBreak(id, user);
+// }
+
+@Mutation(() => Boolean)
+async deleteAllTimetableBreaks(
+  @ActiveUser() user: ActiveUserData,
+): Promise<boolean> {
+  return this.timetableService.deleteAllBreaks(user);
+}
+
+
   @Query(() => [TimetableBreak])
   @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER)
   async getTimetableBreaks(

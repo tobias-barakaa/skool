@@ -55,30 +55,52 @@ export class TimetableService {
   //   });
   // }
 
-  async getTimeSlots(user: ActiveUserData): Promise<TimeSlot[]> {
+  async getTimeSlots(
+  user: ActiveUserData,
+  dayOfWeek?: number
+): Promise<TimeSlot[]> {
   const slots = await this.timeSlotRepo.find({
     where: { tenantId: user.tenantId, isActive: true },
     order: { periodNumber: 'ASC' }
   });
 
-  const breaks = await this.getBreaks(user, 0); // Get all-day breaks
+  if (slots.length === 0) {
+    return [];
+  }
+
+  const breaks = await this.getBreaks(user, dayOfWeek);
   
-  return this.calculateActualTimes(slots, breaks);
+  return this.calculateActualTimes(slots, breaks, dayOfWeek);
 }
 
-private calculateActualTimes(slots: TimeSlot[], breaks: TimetableBreak[]): TimeSlot[] {
-  const SCHOOL_START = '08:00'; // Configurable
-  const PERIOD_DURATION = 45; // minutes
+private calculateActualTimes(
+  slots: TimeSlot[],
+  breaks: TimetableBreak[],
+  dayOfWeek?: number
+): TimeSlot[] {
+  // Find the first period to determine school start time and duration
+  const firstPeriod = slots[0];
   
-  let currentTime = this.parseTime(SCHOOL_START);
+  // Calculate period duration from the first period
+  const schoolStartTime = firstPeriod.startTime;
+  const periodDuration = this.calculateDuration(
+    firstPeriod.startTime,
+    firstPeriod.endTime
+  );
+  
+  let currentTime = this.parseTime(schoolStartTime);
   
   return slots.map(slot => {
     const startTime = this.formatTime(currentTime);
-    currentTime += PERIOD_DURATION;
+    currentTime += periodDuration;
     const endTime = this.formatTime(currentTime);
     
-    // Check if there's a break after this period
-    const breakAfter = breaks.find(b => b.afterPeriod === slot.periodNumber);
+    // Check for breaks
+    const breakAfter = breaks.find(b => 
+      b.afterPeriod === slot.periodNumber &&
+      (b.dayOfWeek === 0 || b.dayOfWeek === dayOfWeek)
+    );
+    
     if (breakAfter) {
       currentTime += breakAfter.durationMinutes;
     }
@@ -91,12 +113,11 @@ private calculateActualTimes(slots: TimeSlot[], breaks: TimetableBreak[]): TimeS
     };
   });
 }
-  
-private format12Hour(startTime: string): string {
-  const [hours, minutes] = startTime.split(':').map(Number);
-  const ampm = hours < 12 ? 'AM' : 'PM';
-  const hour12 = hours % 12 || 12;
-  return `${hour12}:${minutes.toString().padStart(2, '0')} ${ampm}`;
+
+private calculateDuration(startTime: string, endTime: string): number {
+  const start = this.parseTime(startTime);
+  const end = this.parseTime(endTime);
+  return end - start;
 }
 
 private parseTime(time: string): number {
@@ -108,6 +129,13 @@ private formatTime(minutes: number): string {
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
   return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+}
+
+private format12Hour(time: string): string {
+  const [hours, minutes] = time.split(':').map(Number);
+  const period = hours >= 12 ? 'PM' : 'AM';
+  const hour12 = hours % 12 || 12;
+  return `${hour12}:${minutes.toString().padStart(2, '0')} ${period}`;
 }
 
   async updateTimeSlot(
@@ -194,6 +222,9 @@ private formatTime(minutes: number): string {
   
     return this.breakRepo.save(breakEntity);
   }
+
+
+
   
 
   async getBreaks(user: ActiveUserData, dayOfWeek?: number): Promise<TimetableBreak[]> {
@@ -233,6 +264,19 @@ private formatTime(minutes: number): string {
     const result = await this.breakRepo.delete({ id, tenantId: user.tenantId });
     return (result.affected ?? 0) > 0;
   }
+
+
+
+  async deleteAllBreaks(user: ActiveUserData): Promise<boolean> {
+  const result = await this.breakRepo.delete({
+    tenantId: user.tenantId,
+  });
+
+  return (result.affected ?? 0) > 0;
+}
+
+
+
 
   // ========== TIMETABLE ENTRIES ==========
   async createEntry(

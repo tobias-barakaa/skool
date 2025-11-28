@@ -1321,6 +1321,7 @@ type Mutation {
   """Delete an academic year"""
   deleteAcademicYear(id: ID!): Boolean!
   deleteAllTimeSlots: Boolean!
+  deleteAllTimetableBreaks: Boolean!
   deleteAssignment(id: String!): Boolean!
   deleteCA(id: String!): Boolean!
   deleteExam(id: String!): Boolean!
