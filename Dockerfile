@@ -1,41 +1,36 @@
-# Build stage
-FROM node:18-alpine AS builder
+# Use Node LTS
+FROM node:20-alpine AS builder
 
+# Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy package.json and lockfile
+COPY package.json package-lock.json ./
 
-# Install dependencies
-RUN npm ci --only=production && npm cache clean --force
+# Install dependencies (omit dev)
+RUN npm install --omit=dev
 
-# Copy source code
+# Copy the rest of the app
 COPY . .
 
-# Build application
+# Build the app
 RUN npm run build
 
-# Production stage
-FROM node:18-alpine AS production
+# Production image
+FROM node:20-alpine AS production
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy only production dependencies
+COPY package.json package-lock.json ./
+RUN npm install --omit=dev
 
-# Install only production dependencies
-RUN npm ci --only=production && npm cache clean --force
-
-# Copy built application from builder
+# Copy built files
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/public ./public
 
 # Expose port
 EXPOSE 3000
 
-# Health check
-HEALTHCHECK --interval=10s --timeout=5s --start-period=30s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
-
-# Start application
-CMD ["node", "dist/main"]
+# Start command
+CMD ["node", "dist/main.js"]
