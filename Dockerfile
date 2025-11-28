@@ -29,7 +29,6 @@
     # Install production dependencies
     RUN npm install --omit=dev --legacy-peer-deps
     
-    # Copy compiled dist folder from builder
     COPY --from=build /app/dist ./dist
     
     # Expose port used by NestJS
