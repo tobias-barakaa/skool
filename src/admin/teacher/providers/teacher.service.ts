@@ -41,25 +41,7 @@ export class TeacherService {
     private readonly invitationService: InvitationService,
     @InjectRepository(UserInvitation)
     private invitationRepository: Repository<UserInvitation>,
-
-    @InjectRepository(Subject)
-    private subjectRepository: Repository<Subject>,
-    @InjectRepository(GradeLevel)
-    private gradeLevelRepository: Repository<GradeLevel>,
-    @InjectRepository(Stream)
-    private streamRepository: Repository<Stream>,
-
-    @InjectRepository(TenantGradeLevel)
-    private readonly tenantGradeLevelRepo: Repository<TenantGradeLevel>,
-
-    @InjectRepository(TenantStream)
-    private readonly tenantStreamRepo: Repository<TenantStream>,
-
-    @InjectRepository(TenantSubject)
-    private readonly tenantSubjectRepo: Repository<TenantSubject>,
-
     private readonly classTeacherProvider: ClassTeacherProvider,
-
     @InjectRepository(ClassTeacherAssignment)
     private readonly classTeacherAssignmentRepository: Repository<ClassTeacherAssignment>,
      private readonly schoolSetupGuardService: SchoolSetupGuardService,
@@ -511,6 +493,9 @@ export class TeacherService {
         if (teacher) {
           teacher.isActive = true;
           teacher.hasCompletedProfile = true;
+
+
+
           teacher.user = user; 
           await this.teacherRepository.save(teacher);
         } else {
@@ -859,7 +844,7 @@ export class TeacherService {
         'tenantStreams',
         'classTeacherAssignments',
         'classTeacherAssignments.stream',
-        // 'classTeacherAssignments.stream.stream',
+        'classTeacherAssignments.stream.stream',
         'classTeacherAssignments.gradeLevel',
         'classTeacherAssignments.gradeLevel.gradeLevel',
         'user',
@@ -891,44 +876,18 @@ export class TeacherService {
       'tenantStreams',
       'classTeacherAssignments',
       'classTeacherAssignments.stream',
-      // 'classTeacherAssignments.stream.stream',
+      'classTeacherAssignments.stream.stream',
       'classTeacherAssignments.gradeLevel',
       'classTeacherAssignments.gradeLevel.gradeLevel',
       'user',
       'tenant',
     ],
     order: {
-      user: { name: 'ASC' }, // optional: sort by name
+      user: { name: 'ASC' }, 
     },
   });
 }
 
-
-  // async getTeacherByIdForTenant(
-  //   teacherId: string,
-  //   tenantId: string,
-  // ): Promise<Teacher> {
-  //   const teacher = await this.teacherRepository.findOne({
-  //     where: { id: teacherId, tenantId },
-  //     relations: [
-  //       'classTeacherAssignments',
-  //       'classTeacherAssignments.stream',
-  //       'classTeacherAssignments.stream.stream',
-  //       'classTeacherAssignments.gradeLevel',
-  //       'classTeacherAssignments.gradeLevel.gradeLevel',
-  //       'user',
-  //       'tenant',
-  //     ],
-  //   });
-  
-  //   if (!teacher) {
-  //     throw new BadRequestException(
-  //       `No teacher record found for teacher '${teacherId}' in tenant '${tenantId}'`
-  //     );
-  //   }
-  
-  //   return teacher;
-  // }
 
 
   async getTeacherByIdForTenant(teacherId: string, tenantId: string): Promise<Teacher> {
@@ -940,7 +899,7 @@ export class TeacherService {
       'tenantStreams',
       'classTeacherAssignments',
       'classTeacherAssignments.stream',
-      // 'classTeacherAssignments.stream.stream',
+      'classTeacherAssignments.stream.stream',
       'classTeacherAssignments.gradeLevel',
       'classTeacherAssignments.gradeLevel.gradeLevel',
       'user',
@@ -974,7 +933,7 @@ export class TeacherService {
       relations: [
         'classTeacherAssignments',
         'classTeacherAssignments.stream',
-        // 'classTeacherAssignments.stream.stream',
+        'classTeacherAssignments.stream.stream',
         'classTeacherAssignments.gradeLevel',
         'classTeacherAssignments.gradeLevel.gradeLevel',
         'user',
@@ -1061,33 +1020,4 @@ export class TeacherService {
     });
   }
 
-
-
 }
-
-
-
-
-
-
-// {
-//   "data": {
-//     "acceptTeacherInvitation": {
-//       "message": "Invitation accepted successfully",
-//       "user": {
-//         "id": "8f174895-9834-4c12-8965-391d495723eb",
-//         "name": "Jane Smith",
-//         "email": "programmingenious@gmail.com"
-//       },
-//       "tokens": {
-//         "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4ZjE3NDg5NS05ODM0LTRjMTItODk2NS0zOTFkNDk1NzIzZWIiLCJlbWFpbCI6InByb2dyYW1taW5nZW5pb3VzQGdtYWlsLmNvbSIsInRlbmFudElkIjoiMGI3OGVjYzMtNWEwOS00YThlLWJiMzMtMWNkODc0YTM2OTUyIiwic3ViZG9tYWluIjoibXlmZGZkc2RkY2Rob2RvbCIsIm1lbWJlcnNoaXBJZCI6IjI1ZjUyMDkwLTBhNTUtNDI4MS1iOTEzLTk2NWQzMTNlZGM1OSIsImlhdCI6MTc1Njk4OTU5NiwiZXhwIjoxNzkyOTg5NTk2LCJhdWQiOiJzcXVsLmNvLmtlIiwiaXNzIjoic2tvb2wuemVsaXNsaW5lLmNvbSJ9.TKtA8m3PFKvcQ0Dkf2DZjS5zLQ7QS1WQCTzGmZEsLb4",
-//         "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4ZjE3NDg5NS05ODM0LTRjMTItODk2NS0zOTFkNDk1NzIzZWIiLCJlbWFpbCI6InByb2dyYW1taW5nZW5pb3VzQGdtYWlsLmNvbSIsInRlbmFudElkIjoiMGI3OGVjYzMtNWEwOS00YThlLWJiMzMtMWNkODc0YTM2OTUyIiwic3ViZG9tYWluIjoibXlmZGZkc2RkY2Rob2RvbCIsIm1lbWJlcnNoaXBJZCI6IjI1ZjUyMDkwLTBhNTUtNDI4MS1iOTEzLTk2NWQzMTNlZGM1OSIsImlhdCI6MTc1Njk4OTU5NiwiZXhwIjoxODQzMzg5NTk2LCJhdWQiOiJzcXVsLmNvLmtlIiwiaXNzIjoic2tvb2wuemVsaXNsaW5lLmNvbSJ9.UqymRjpPSQSu3oCOSyx-Jxxbis70ky2_1kRuELOdtcM"
-//       },
-//       "teacher": {
-//         "id": "1af61fc8-a6a7-4fea-923b-5d15b53281a9",
-//         "name": "Mike Johndson"
-//       },
-//       "role": "TEACHER"
-//     }
-//   }
-// }
