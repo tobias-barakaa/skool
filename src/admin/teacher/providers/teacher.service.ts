@@ -478,58 +478,115 @@ export class TeacherService {
   }
 
   async acceptInvitation(
-    token: string,
-    password: string,
-  ): Promise<AcceptInvitationResponse> {
-    const result = await this.invitationService.acceptInvitation(
-      token,
-      password,
-      async (user: User, invitation: UserInvitation) => {
-        let teacher = await this.teacherRepository.findOne({
-          where: { email: invitation.email },
-          relations: ['user'],
+  token: string,
+  password: string,
+) {
+  const result = await this.invitationService.acceptInvitation(
+    token,
+    password,
+    async (user: User, invitation: UserInvitation) => {
+      let teacher = await this.teacherRepository.findOne({
+        where: { email: invitation.email },
+        relations: ['user', 'tenant'],
+      });
+
+      if (teacher) {
+        teacher.isActive = true;
+        teacher.hasCompletedProfile = true;
+        teacher.user = user;
+        teacher.tenantId = invitation.tenantId;  
+        await this.teacherRepository.save(teacher);
+      } else {
+        teacher = this.teacherRepository.create({
+          email: invitation.email,
+          fullName: invitation.name,
+          isActive: true,
+          hasCompletedProfile: true,
+          user,
+          tenantId: invitation.tenantId,  
         });
+        await this.teacherRepository.save(teacher);
+      }
+    },
+  );
 
-        if (teacher) {
-          teacher.isActive = true;
-          teacher.hasCompletedProfile = true;
+  // Correct relation
+  const teacher = await this.teacherRepository.findOne({
+    where: { email: result.user.email },
+    relations: ['user', 'tenant'],
+  });
 
-
-
-          teacher.user = user; 
-          await this.teacherRepository.save(teacher);
-        } else {
-          teacher = this.teacherRepository.create({
-            email: invitation.email,
-            fullName: invitation.name,
-            isActive: true,
-            hasCompletedProfile: true,
-            user,
-          });
-          await this.teacherRepository.save(teacher);
+  return {
+    message: result.message,
+    user: result.user,
+    tokens: result.tokens,
+    teacher: teacher
+      ? {
+          id: teacher.id,
+          name: teacher.fullName,
+          tenantId: teacher.tenantId,   
         }
-      },
-    );
+      : null,
+    invitation: result.invitation,
+    role: result.role,
+    tenant: teacher?.tenant ?? null,     
+  };
+}
 
-    const teacher = await this.teacherRepository.findOne({
-      where: { email: result.user.email },
-      relations: ['user'],
-    });
 
-    return {
-      message: result.message,
-      user: result.user,
-      tokens: result.tokens,
-      teacher: teacher
-        ? {
-            id: teacher.id,
-            name: teacher.fullName,
-          }
-        : null,
-      invitation: result.invitation,
-      role: result.role,
-    };
-  }
+  // async acceptInvitation(
+  //   token: string,
+  //   password: string,
+  // ): Promise<AcceptInvitationResponse> {
+  //   const result = await this.invitationService.acceptInvitation(
+  //     token,
+  //     password,
+  //     async (user: User, invitation: UserInvitation) => {
+  //       let teacher = await this.teacherRepository.findOne({
+  //         where: { email: invitation.email },
+  //         relations: ['user'],
+  //       });
+
+  //       if (teacher) {
+  //         teacher.isActive = true;
+  //         teacher.hasCompletedProfile = true;
+
+
+
+  //         teacher.user = user; 
+  //         await this.teacherRepository.save(teacher);
+  //       } else {
+  //         teacher = this.teacherRepository.create({
+  //           email: invitation.email,
+  //           fullName: invitation.name,
+  //           isActive: true,
+  //           hasCompletedProfile: true,
+  //           user,
+  //         });
+  //         await this.teacherRepository.save(teacher);
+  //       }
+  //     },
+  //   );
+
+  //   const teacher = await this.teacherRepository.findOne({
+  //     where: { email: result.user.email },
+  //     relations: ['user', 'tenantId'],
+  //   });
+
+  //   return {
+  //     message: result.message,
+  //     user: result.user,
+  //     tokens: result.tokens,
+  //     teacher: teacher
+  //       ? {
+  //           id: teacher.id,
+  //           name: teacher.fullName,
+  //         }
+  //       : null,
+  //     invitation: result.invitation,
+  //     role: result.role,
+  //   };
+  // }
 
   async getPendingTeacherInvitations(
     tenantId: string,
@@ -864,6 +921,7 @@ export class TeacherService {
 
 
   async getTeachersForTenant(currentUser: ActiveUserData): Promise<Teacher[]> {
+    console.log('what the helly.........')
   if (!currentUser.tenantId) {
     throw new BadRequestException('Tenant information not found');
   }

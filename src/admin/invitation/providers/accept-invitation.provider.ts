@@ -22,6 +22,7 @@ import {
 import { GenerateTokenProvider } from 'src/admin/auth/providers/generate-token.provider';
 import { HashingProvider } from 'src/admin/auth/providers/hashing.provider';
 import { Teacher } from 'src/admin/teacher/entities/teacher.entity';
+import { TokenProvider } from 'src/admin/auth/providers/token.provider';
 
 export interface AcceptInvitationResult {
   message: string;
@@ -53,6 +54,9 @@ export class AcceptInvitationProvider {
     private readonly hashPassword: HashingProvider,
     @InjectRepository(Teacher)
     private teacherRepository: Repository<Teacher>,
+
+
+        private readonly tokenPair: TokenProvider
   ) {}
 
   async acceptInvitation(
@@ -89,7 +93,7 @@ export class AcceptInvitationProvider {
     });
 
     // Generate tokens
-    const tokens = await this.generateTokensProvider.generateTokens(
+    const tokens = await this.tokenPair.generateTenantUserTokens(
       user,
       membership,
       invitation.tenant,
@@ -111,6 +115,8 @@ export class AcceptInvitationProvider {
       role: membership.role,
     };
   }
+
+  
 
   private async findAndValidateInvitation(
     token: string,

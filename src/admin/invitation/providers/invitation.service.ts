@@ -78,7 +78,7 @@ export class InvitationService {
       user: User,
       invitation: UserInvitation,
     ) => Promise<void>,
-  ): Promise<AcceptInvitationResponse> {
+  ) {
     return this.acceptInvitationProvider.acceptInvitation(
       token,
       password,

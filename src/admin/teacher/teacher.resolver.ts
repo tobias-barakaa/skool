@@ -1,4 +1,4 @@
-import { Args, Context, GraphQLExecutionContext, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, GqlExecutionContext, GraphQLExecutionContext, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { Auth } from 'src/admin/auth/decorator/auth.decorator';
 import { AuthType } from 'src/admin/auth/enums/auth-type.enum';
@@ -22,7 +22,8 @@ import { Teacher } from './entities/teacher.entity';
 import { AssignGradeLevelClassTeacherInput, AssignStreamClassTeacherInput, UnassignClassTeacherInput } from './dtos/assign/assign-classTeacher.dto';
 import { GraphQLExceptionsFilter } from '../common/filter/graphQLException.filter';
 
-
+import type { Response } from 'express';   
+import { Public } from '../auth/decorator/public.decorator';
 
 
 @Resolver(() => Teacher)
@@ -83,29 +84,125 @@ export class TeacherResolver {
     );
   }
 
-  @SkipTenantValidation()
-  @SetMetadata('isPublic', true)
-  @Mutation(() => AcceptInvitationResponse)
-  @Mutation(() => AcceptInvitationResponse, { name: 'acceptTeacherInvitation' })
-  @Auth(AuthType.None)
-  async acceptTeacherInvitation(
-    @Args('acceptInvitationInput') input: AcceptInvitationInput,
-    @Context() context: GraphQLExecutionContext,
-  ): Promise<AcceptInvitationResponse> {
-    const { message, user, tokens, teacher, invitation, role } =
-      await this.teacherService.acceptInvitation(input.token, input.password);
+@Public()
+// @SkipTenantValidation()
+// @SetMetadata('isPublic', true)
+// @Mutation(() => AcceptInvitationResponse)
+// @Auth(AuthType.None)
+@Mutation(() => AcceptInvitationResponse, { name: 'acceptTeacherInvitation' })
+async acceptTeacherInvitation(
+  @Args('acceptInvitationInput') input: AcceptInvitationInput,
+  @Context() context: any, // raw GraphQL context
+) {
+  const { message, user, tokens, teacher, invitation, role, tenant } =
+    await this.teacherService.acceptInvitation(input.token, input.password);
 
-    setAuthCookies(context, tokens, invitation.tenant.id);
+  
+    context.res.cookie('access_token', tokens.accessToken, {
+      httpOnly: true,
+      sameSite: 'None',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 1000 * 60 * 15,
+      domain: '.squl.co.ke',
+    });
 
-    return {
-      message,
-      user,
-      tokens,
-      teacher,
-      invitation,
-      role,
-    };
-  }
+    context.res.cookie('refresh_token', tokens.refreshToken, {
+      httpOnly: true,
+      sameSite: 'None',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+      domain: '.squl.co.ke',
+    });
+
+    if (tenant && tenant.id !== undefined && tenant.id !== null) {
+      context.res.cookie('tenant_id', String(tenant.id), {
+        httpOnly: true,
+        sameSite: 'None',
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 1000 * 60 * 60 * 24 * 30,
+        domain: '.squl.co.ke',
+      });
+    }
+
+  return { message, user, tokens, teacher, invitation, role };
+}
+
+
+  // @SkipTenantValidation()
+  // @SetMetadata('isPublic', true)
+  // @Mutation(() => AcceptInvitationResponse)
+  // @Mutation(() => AcceptInvitationResponse, { name: 'acceptTeacherInvitation' })
+  // @Auth(AuthType.None)
+  // async acceptTeacherInvitation(
+  //   @Args('acceptInvitationInput') input: AcceptInvitationInput,
+  //   @Context() context: GraphQLExecutionContext,
+  // ): Promise<AcceptInvitationResponse> {
+  //   const { message, user, tokens, teacher, invitation, role } =
+  //     await this.teacherService.acceptInvitation(input.token, input.password);
+
+
+
+
+  //   setAuthCookies(context, tokens, invitation.tenant.id);
+
+  //   return {
+  //     message,
+  //     user,
+  //     tokens,
+  //     teacher,
+  //     invitation,
+  //     role,
+  //   };
+  // }
+
+
+
+
+
+
+// @Mutation(() => AuthResponse, { name: 'signIn' })
+//   @Public()
+//   async signIn(
+//     @Args('signInInput') signInInput: SignInInput,
+//     @Context() context,
+//   ): Promise<AuthResponse> {
+//     const result = await this.signInProvider.signIn(signInInput);
+
+//     const { tokens, tenant } = result;
+
+//     context.res.cookie('access_token', tokens.accessToken, {
+//       httpOnly: true,
+//       sameSite: 'None',
+//       secure: process.env.NODE_ENV === 'production',
+//       maxAge: 1000 * 60 * 15,
+//       domain: '.squl.co.ke',
+//     });
+
+//     context.res.cookie('refresh_token', tokens.refreshToken, {
+//       httpOnly: true,
+//       sameSite: 'None',
+//       secure: process.env.NODE_ENV === 'production',
+//       maxAge: 1000 * 60 * 60 * 24 * 7,
+//       domain: '.squl.co.ke',
+//     });
+
+//     if (tenant && tenant.id !== undefined && tenant.id !== null) {
+//       context.res.cookie('tenant_id', String(tenant.id), {
+//         httpOnly: true,
+//         sameSite: 'None',
+//         secure: process.env.NODE_ENV === 'production',
+//         maxAge: 1000 * 60 * 60 * 24 * 30,
+//         domain: '.squl.co.ke',
+//       });
+//     }
+
+//     return result;
+
+
+
+
+
+
 
   @Query(() => [TeacherDto])
 async getTeachersByTenants(
@@ -224,8 +321,16 @@ async getTeacherById(
   @ActiveUser() currentUser: ActiveUserData,
   @Args('teacherId') teacherId: string,
 ): Promise<Teacher> {
-  return this.teacherService.getTeacherByIdForTenant(teacherId, currentUser.sub);
+  console.log('tenantId', currentUser.tenantId);
+const tenantId = currentUser.tenantId;
+if (!tenantId) {
+  throw new Error('Tenant ID is required');
 }
+
+
+  return this.teacherService.getTeacherByIdForTenant(teacherId, tenantId);
+}
+
 
 @Query(() => [Teacher])
 @Roles(MembershipRole.SCHOOL_ADMIN)
@@ -265,10 +370,6 @@ async getTeachers(
   ): Promise<ClassTeacherAssignment | null> {
     return this.teacherService.getGradeLevelClassTeacher(gradeLevelId, currentUser);
   }
-
-
-
-
 
 
 

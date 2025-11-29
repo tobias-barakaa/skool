@@ -22,6 +22,9 @@ export class AcceptInvitationResponse {
   @Field(() => UserInvitation)
   invitation: UserInvitation;
 
+  @Field()
+  tenantId: string;
+
   @Field(() => String)
   role: MembershipRole;
 }

@@ -46,6 +46,7 @@ type AcceptInvitationResponse {
   message: String!
   role: String!
   teacher: TeacherOutput
+  tenantId: String!
   tokens: TokensOutput!
   user: User!
 }
