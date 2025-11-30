@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, In, Repository } from 'typeorm';
+import { DataSource, In, QueryRunner, Repository } from 'typeorm';
 import { TimeSlot } from '../entities/time_slots.entity';
 import { TimetableBreak } from '../entities/timetable_break.entity';
 import { TimetableEntry } from '../entities/timetable_entries.entity';
@@ -9,7 +9,7 @@ import { UpdateTimeSlotInput } from '../dtos/update_time_slot.dto';
 import { CreateTimetableBreakInput } from '../dtos/create_timetable_break.dto';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { GradeTimetableResponse, TimetableCell } from '../dtos/timetable-response.dto';
-import { BulkCreateTimetableEntryInput, CreateTimetableEntryInput } from '../dtos/create-timetable-entry.input';
+import { BulkCreateTimetableEntryInput, CreateTimetableEntryInput, SingleEntryInput } from '../dtos/create-timetable-entry.input';
 import { GradeInfo, TimetableData } from '../dtos/timetable_response.dto';
 import { UpdateTimetableBreakInput } from '../dtos/update-timetable-break.input';
 
@@ -453,21 +453,157 @@ private format12Hour(time: string): string {
   }
   
 
-  async bulkCreateEntries(
+   async bulkCreateEntries(
     user: ActiveUserData,
     input: BulkCreateTimetableEntryInput,
   ): Promise<TimetableEntry[]> {
-    const entries = input.entries.map((e) =>
-      this.entryRepo.create({
-        ...e,
-        tenantId: user.tenantId,
-        termId: input.termId,
-        gradeId: input.gradeId,
-      }),
-    );
+    const termRepo = this.dataSource.getRepository('Term');
+    const gradeRepo = this.dataSource.getRepository('TenantGradeLevel');
+    const subjectRepo = this.dataSource.getRepository('TenantSubject');
+    const teacherRepo = this.dataSource.getRepository('Teacher');
+    const timeSlotRepo = this.dataSource.getRepository('TimeSlot');
+    const entryRepo = this.dataSource.getRepository('TimetableEntry');
 
-    return this.entryRepo.save(entries);
+    // Basic checks
+    if (!Array.isArray(input.entries) || input.entries.length === 0) {
+      throw new BadRequestException('entries must be a non-empty array');
+    }
+
+    // Validate term & grade (tenant-scoped)
+    const [term, grade] = await Promise.all([
+      termRepo.findOne({ where: { id: input.termId, tenantId: user.tenantId } }),
+      gradeRepo.findOne({ where: { id: input.gradeId, tenant: { id: user.tenantId } } }),
+    ]);
+
+    if (!term) {
+      throw new BadRequestException(`Invalid termId: ${input.termId}`);
+    }
+    if (!grade) {
+      throw new BadRequestException(`Invalid gradeId: ${input.gradeId}`);
+    }
+
+    // Collect unique ids from payload
+    const subjectIds = Array.from(new Set(input.entries.map((e) => e.subjectId)));
+    const teacherIds = Array.from(new Set(input.entries.map((e) => e.teacherId)));
+    const timeSlotIds = Array.from(new Set(input.entries.map((e) => e.timeSlotId)));
+
+    // Fetch referenced entities (tenant-scoped)
+    const [subjects, teachers, timeSlots] = await Promise.all([
+      subjectRepo.find({ where: { id: In(subjectIds), tenant: { id: user.tenantId } } }),
+      teacherRepo.find({ where: { id: In(teacherIds), tenant: { id: user.tenantId } } }),
+      timeSlotRepo.find({ where: { id: In(timeSlotIds), tenant: { id: user.tenantId } } }),
+    ]);
+
+    const subjectMap = new Map(subjects.map((s: any) => [s.id, s]));
+    const teacherMap = new Map(teachers.map((t: any) => [t.id, t]));
+    const timeSlotMap = new Map(timeSlots.map((ts: any) => [ts.id, ts]));
+
+    // Per-entry validation & batch-duplicate detection
+    const errors: string[] = [];
+    const batchKeys = new Set<string>(); // key = `${dayOfWeek}:${timeSlotId}`
+    const batchEntriesToCreate: { input: SingleEntryInput; idx: number; key: string }[] = [];
+
+    input.entries.forEach((entry, idx) => {
+      // Validate UUID presence (you already have class-validator on DTOs, but double-check here for clarity)
+      if (!entry.subjectId) errors.push(`Entry ${idx}: missing subjectId`);
+      if (!entry.teacherId) errors.push(`Entry ${idx}: missing teacherId`);
+      if (!entry.timeSlotId) errors.push(`Entry ${idx}: missing timeSlotId`);
+
+      // Existence checks (tenant-scoped lookups done above)
+      if (entry.subjectId && !subjectMap.has(entry.subjectId)) {
+        errors.push(`Entry ${idx}: Invalid subjectId: ${entry.subjectId}`);
+      }
+      if (entry.teacherId && !teacherMap.has(entry.teacherId)) {
+        errors.push(`Entry ${idx}: Invalid teacherId: ${entry.teacherId}`);
+      }
+      if (entry.timeSlotId && !timeSlotMap.has(entry.timeSlotId)) {
+        errors.push(`Entry ${idx}: Invalid timeSlotId: ${entry.timeSlotId}`);
+      }
+
+      // dayOfWeek validation (should match your DTO: 1..5)
+      if (typeof entry.dayOfWeek !== 'number' || entry.dayOfWeek < 1 || entry.dayOfWeek > 7) {
+        errors.push(`Entry ${idx}: dayOfWeek must be an integer (1-7). Got: ${entry.dayOfWeek}`);
+      }
+
+      const key = `${entry.dayOfWeek}:${entry.timeSlotId}`;
+      if (batchKeys.has(key)) {
+        errors.push(`Entry ${idx}: duplicate slot in the provided batch (day ${entry.dayOfWeek}, timeSlot ${entry.timeSlotId})`);
+      } else {
+        batchKeys.add(key);
+        batchEntriesToCreate.push({ input: entry, idx, key });
+      }
+    });
+
+    if (errors.length > 0) {
+      throw new BadRequestException({ message: 'Validation failed', details: errors });
+    }
+
+    // Check for conflicts with existing DB entries for same tenant/term/grade
+    // We query all existing entries for this tenant + term + grade where dayOfWeek/timeSlot intersects with our batch
+    const days = Array.from(new Set(input.entries.map((e) => e.dayOfWeek)));
+    const timeSlotIdsInBatch = Array.from(batchKeys).map(k => k.split(':')[1]);
+    const existingEntries = await entryRepo.find({
+      where: {
+        tenantId: user.tenantId,
+        term: { id: term.id },
+        grade: { id: grade.id },
+        dayOfWeek: In(days),
+        timeSlot: { id: In(timeSlotIdsInBatch) },
+      },
+      relations: ['timeSlot'],
+    });
+
+    // Build existing key set
+    const existingKeys = new Set(existingEntries.map((ex: any) => `${ex.dayOfWeek}:${ex.timeSlot.id}`));
+    const conflictErrors: string[] = [];
+    batchEntriesToCreate.forEach(({ input: e, idx }) => {
+      const k = `${e.dayOfWeek}:${e.timeSlotId}`;
+      if (existingKeys.has(k)) {
+        conflictErrors.push(`Entry ${idx}: conflict with existing timetable for day ${e.dayOfWeek}, timeSlot ${e.timeSlotId}`);
+      }
+    });
+
+    if (conflictErrors.length > 0) {
+      throw new ConflictException({ message: 'Some entries conflict with existing timetable', details: conflictErrors });
+    }
+
+    // All validation passed — create entries inside a transaction
+    const queryRunner: QueryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const toSave: any[] = [];
+
+      for (const { input: e } of batchEntriesToCreate) {
+        const ent = entryRepo.create({
+          tenantId: user.tenantId,
+          dayOfWeek: e.dayOfWeek,
+          roomNumber: e.roomNumber ?? null,
+          term: term,
+          grade: grade,
+          subject: subjectMap.get(e.subjectId),
+          teacher: teacherMap.get(e.teacherId),
+          timeSlot: timeSlotMap.get(e.timeSlotId),
+        });
+        toSave.push(ent);
+      }
+
+      // Use the transaction manager to save
+      const saved = await queryRunner.manager.save(toSave);
+
+      await queryRunner.commitTransaction();
+
+      return saved;
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      // rethrow — keep original error if possible
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
   }
+
 
   async getEntriesForGrade(
     user: ActiveUserData,
