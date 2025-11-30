@@ -1,0 +1,2717 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>skool documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">skool documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >FeeAssignmentService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/admin/finance/fee-assignment/fee-assignment.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#bulkToggleByFeeStructureItem" >bulkToggleByFeeStructureItem</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#bulkToggleStudentFeeItems" >bulkToggleStudentFeeItems</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#create" >create</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#findAll" >findAll</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#findOne" >findOne</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getAllTenantFeeAssignments" >getAllTenantFeeAssignments</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getAssignedStudents" >getAssignedStudents</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getFeeAssignmentById" >getFeeAssignmentById</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getFeeAssignmentsByGradeLevels" >getFeeAssignmentsByGradeLevels</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getStudentFeeAssignments" >getStudentFeeAssignments</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getStudentFeeItems" >getStudentFeeItems</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getStudentFeeSummary" >getStudentFeeSummary</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getTenantFeeItems" >getTenantFeeItems</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#remove" >remove</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#toggleStudentFeeItem" >toggleStudentFeeItem</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#update" >update</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(feeAssignmentRepo: <a href="../entitys/FeeAssignment.html" target="_self">Repository&lt;FeeAssignment&gt;</a>, studentFeeAssignmentRepo: <a href="../interfaces/Student.html" target="_self">Repository&lt;StudentFeeAssignment&gt;</a>, studentFeeItemRepo: <a href="../interfaces/Student.html" target="_self">Repository&lt;StudentFeeItem&gt;</a>, feeStructureItemRepo: Repository<FeeStructureItem>, studentRepo: <a href="../interfaces/Student.html" target="_self">Repository&lt;Student&gt;</a>, dataSource: DataSource)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">src/admin/finance/fee-assignment/fee-assignment.service.ts:24</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>feeAssignmentRepo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../entitys/FeeAssignment.html" target="_self" >Repository&lt;FeeAssignment&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>studentFeeAssignmentRepo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../interfaces/Student.html" target="_self" >Repository&lt;StudentFeeAssignment&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>studentFeeItemRepo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../interfaces/Student.html" target="_self" >Repository&lt;StudentFeeItem&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>feeStructureItemRepo</td>
+                                                  
+                                                        <td>
+                                                                    <code>Repository&lt;FeeStructureItem&gt;</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>studentRepo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../interfaces/Student.html" target="_self" >Repository&lt;Student&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>dataSource</td>
+                                                  
+                                                        <td>
+                                                                    <code>DataSource</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="bulkToggleByFeeStructureItem"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>bulkToggleByFeeStructureItem</b></span>
+                        <a href="#bulkToggleByFeeStructureItem"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>bulkToggleByFeeStructureItem(feeStructureItemId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, gradeLevelIds: string[], isActive: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="616"
+                                    class="link-to-prism">src/admin/finance/fee-assignment/fee-assignment.service.ts:616</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>feeStructureItemId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>gradeLevelIds</td>
+                                            <td>
+                                                        <code>string[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>isActive</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/Student.html" target="_self" >Promise&lt;StudentFeeItem[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="bulkToggleStudentFeeItems"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>bulkToggleStudentFeeItems</b></span>
+                        <a href="#bulkToggleStudentFeeItems"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>bulkToggleStudentFeeItems(input: <a href="../classes/BulkToggleStudentFeeItemsInput.html" target="_self">BulkToggleStudentFeeItemsInput</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="583"
+                                    class="link-to-prism">src/admin/finance/fee-assignment/fee-assignment.service.ts:583</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/BulkToggleStudentFeeItemsInput.html" target="_self" >BulkToggleStudentFeeItemsInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/Student.html" target="_self" >Promise&lt;StudentFeeItem[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="create"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>create</b></span>
+                        <a href="#create"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>create(createFeeAssignmentInput: <a href="../classes/CreateFeeAssignmentInput.html" target="_self">CreateFeeAssignmentInput</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="48"
+                                    class="link-to-prism">src/admin/finance/fee-assignment/fee-assignment.service.ts:48</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>createFeeAssignmentInput</td>
+                                            <td>
+                                                            <code><a href="../classes/CreateFeeAssignmentInput.html" target="_self" >CreateFeeAssignmentInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../entitys/FeeAssignment.html" target="_self" >Promise&lt;FeeAssignment&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findAll"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>findAll</b></span>
+                        <a href="#findAll"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findAll(tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="380"
+                                    class="link-to-prism">src/admin/finance/fee-assignment/fee-assignment.service.ts:380</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../entitys/FeeAssignment.html" target="_self" >Promise&lt;FeeAssignment[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findOne"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>findOne</b></span>
+                        <a href="#findOne"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findOne(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="387"
+                                    class="link-to-prism">src/admin/finance/fee-assignment/fee-assignment.service.ts:387</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../entitys/FeeAssignment.html" target="_self" >Promise&lt;FeeAssignment&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAllTenantFeeAssignments"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getAllTenantFeeAssignments</b></span>
+                        <a href="#getAllTenantFeeAssignments"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getAllTenantFeeAssignments(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="864"
+                                    class="link-to-prism">src/admin/finance/fee-assignment/fee-assignment.service.ts:864</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../miscellaneous/variables.html#Tenant" target="_self" >Promise&lt;TenantFeeAssignmentSummary&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAssignedStudents"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getAssignedStudents</b></span>
+                        <a href="#getAssignedStudents"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getAssignedStudents(feeAssignmentId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="425"
+                                    class="link-to-prism">src/admin/finance/fee-assignment/fee-assignment.service.ts:425</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>feeAssignmentId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/Student.html" target="_self" >Promise&lt;StudentFeeAssignment[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getFeeAssignmentById"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getFeeAssignmentById</b></span>
+                        <a href="#getFeeAssignmentById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getFeeAssignmentById(feeAssignmentId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="927"
+                                    class="link-to-prism">src/admin/finance/fee-assignment/fee-assignment.service.ts:927</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>feeAssignmentId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/Student.html" target="_self" >Promise&lt;FeeAssignmentWithStudents&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getFeeAssignmentsByGradeLevels"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getFeeAssignmentsByGradeLevels</b></span>
+                        <a href="#getFeeAssignmentsByGradeLevels"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getFeeAssignmentsByGradeLevels(input: <a href="../classes/GetFeeAssignmentsByGradeLevelsInput.html" target="_self">GetFeeAssignmentsByGradeLevelsInput</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="663"
+                                    class="link-to-prism">src/admin/finance/fee-assignment/fee-assignment.service.ts:663</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/GetFeeAssignmentsByGradeLevelsInput.html" target="_self" >GetFeeAssignmentsByGradeLevelsInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getStudentFeeAssignments"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getStudentFeeAssignments</b></span>
+                        <a href="#getStudentFeeAssignments"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getStudentFeeAssignments(studentId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="414"
+                                    class="link-to-prism">src/admin/finance/fee-assignment/fee-assignment.service.ts:414</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>studentId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/Student.html" target="_self" >Promise&lt;StudentFeeAssignment[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getStudentFeeItems"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getStudentFeeItems</b></span>
+                        <a href="#getStudentFeeItems"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getStudentFeeItems(studentId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="532"
+                                    class="link-to-prism">src/admin/finance/fee-assignment/fee-assignment.service.ts:532</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>studentId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/Student.html" target="_self" >Promise&lt;StudentFeeItem[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getStudentFeeSummary"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getStudentFeeSummary</b></span>
+                        <a href="#getStudentFeeSummary"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getStudentFeeSummary(studentId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="490"
+                                    class="link-to-prism">src/admin/finance/fee-assignment/fee-assignment.service.ts:490</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>studentId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/Student.html" target="_self" >Promise&lt;StudentFeeSummary | null&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getTenantFeeItems"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getTenantFeeItems</b></span>
+                        <a href="#getTenantFeeItems"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getTenantFeeItems(tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="556"
+                                    class="link-to-prism">src/admin/finance/fee-assignment/fee-assignment.service.ts:556</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/Student.html" target="_self" >Promise&lt;StudentFeeItem[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="remove"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>remove</b></span>
+                        <a href="#remove"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>remove(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="407"
+                                    class="link-to-prism">src/admin/finance/fee-assignment/fee-assignment.service.ts:407</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toggleStudentFeeItem"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>toggleStudentFeeItem</b></span>
+                        <a href="#toggleStudentFeeItem"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>toggleStudentFeeItem(studentFeeItemId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, isActive: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="437"
+                                    class="link-to-prism">src/admin/finance/fee-assignment/fee-assignment.service.ts:437</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>studentFeeItemId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>isActive</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/Student.html" target="_self" >Promise&lt;StudentFeeItem&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="update"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>update</b></span>
+                        <a href="#update"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>update(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, updateFeeAssignmentInput: <a href="../classes/UpdateFeeAssignmentInput.html" target="_self">UpdateFeeAssignmentInput</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="399"
+                                    class="link-to-prism">src/admin/finance/fee-assignment/fee-assignment.service.ts:399</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>updateFeeAssignmentInput</td>
+                                            <td>
+                                                            <code><a href="../classes/UpdateFeeAssignmentInput.html" target="_self" >UpdateFeeAssignmentInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../entitys/FeeAssignment.html" target="_self" >Promise&lt;FeeAssignment&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, NotFoundException, BadRequestException, ConflictException } from &#x27;@nestjs/common&#x27;;
+import { InjectRepository } from &#x27;@nestjs/typeorm&#x27;;
+import { Repository, In, DataSource } from &#x27;typeorm&#x27;;
+import { FeeAssignment } from &#x27;./entities/fee-assignment.entity&#x27;;
+import { StudentFeeAssignment } from &#x27;./entities/student_fee_assignments.entity&#x27;;
+import { StudentFeeItem } from &#x27;./entities/student_fee_items.entity&#x27;;
+import { FeeStructureItem } from &#x27;../fee-structure-item/entities/fee-structure-item.entity&#x27;;
+import { Student } from &#x27;src/admin/student/entities/student.entity&#x27;;
+import { CreateFeeAssignmentInput } from &#x27;./dtos/assignment-structure.input&#x27;;
+import { UpdateFeeAssignmentInput } from &#x27;./dtos/update-fee-assignment.input&#x27;;
+import { ActiveUserData } from &#x27;src/admin/auth/interface/active-user.interface&#x27;;
+import { User } from &#x27;src/admin/users/entities/user.entity&#x27;;
+import { FeeStructure } from &#x27;../fee-structure/entities/fee-structure.entity&#x27;;
+import { TenantGradeLevel } from &#x27;src/admin/school-type/entities/tenant-grade-level&#x27;;
+import { BulkToggleStudentFeeItemsInput } from &#x27;./dtos/bulk-toggle-student-fee-items.input&#x27;;
+import { FeeAssignmentWithStudents, GetFeeAssignmentsByGradeLevelsInput, TenantFeeAssignmentSummary } from &#x27;./dtos/fee-summary.dto&#x27;;
+import { FeeAssignmentGradeLevel } from &#x27;./entities/fee_assignment_grade_levels.entity&#x27;;
+import { StudentFeeSummary } from &#x27;./dtos/student-fee-summary.dto&#x27;;
+
+
+
+
+@Injectable()
+export class FeeAssignmentService {
+  constructor(
+    @InjectRepository(FeeAssignment)
+    private readonly feeAssignmentRepo: Repository&lt;FeeAssignment&gt;,
+    
+    @InjectRepository(StudentFeeAssignment)
+    private readonly studentFeeAssignmentRepo: Repository&lt;StudentFeeAssignment&gt;,
+    
+    @InjectRepository(StudentFeeItem)
+    private readonly studentFeeItemRepo: Repository&lt;StudentFeeItem&gt;,
+    
+    @InjectRepository(FeeStructureItem)
+    private readonly feeStructureItemRepo: Repository&lt;FeeStructureItem&gt;,
+    
+    @InjectRepository(Student)
+    private readonly studentRepo: Repository&lt;Student&gt;,
+
+        private readonly dataSource: DataSource,
+    
+
+
+  ) {}
+
+  
+  async create(
+    createFeeAssignmentInput: CreateFeeAssignmentInput,
+    user: ActiveUserData
+  ): Promise&lt;FeeAssignment&gt; {
+    const { feeStructureId, tenantGradeLevelIds, description } &#x3D; createFeeAssignmentInput;
+    const tenantId &#x3D; user.tenantId;
+  
+    const feeStructure &#x3D; await this.dataSource.getRepository(FeeStructure).findOne({
+      where: { id: feeStructureId, tenantId }
+    });
+    if (!feeStructure) {
+      throw new BadRequestException(&#x60;Fee structure with id ${feeStructureId} not found for this tenant&#x60;);
+    }
+  
+    const assignedByUserData &#x3D; await this.dataSource.getRepository(User).findOne({
+      where: { id: user.sub },
+      select: [&#x27;id&#x27;, &#x27;name&#x27;],
+    });
+    if (!assignedByUserData) {
+      throw new BadRequestException(&#x60;User with id ${user.sub} not found&#x60;);
+    }
+  
+    console.log(&#x27;&#x3D;&#x3D;&#x3D; DEBUGGING TENANT GRADE LEVEL QUERY &#x3D;&#x3D;&#x3D;&#x27;);
+    console.log(&#x27;Target Tenant ID:&#x27;, tenantId);
+    console.log(&#x27;Target Tenant Grade Level IDs:&#x27;, tenantGradeLevelIds);
+  
+    const validTenantGradeLevels &#x3D; await this.dataSource
+      .getRepository(TenantGradeLevel)
+      .createQueryBuilder(&#x27;tgl&#x27;)
+      .innerJoin(&#x27;tgl.tenant&#x27;, &#x27;tenant&#x27;)
+      .leftJoinAndSelect(&#x27;tgl.gradeLevel&#x27;, &#x27;gradeLevel&#x27;) 
+      .where(&#x27;tenant.id &#x3D; :tenantId&#x27;, { tenantId })
+      .andWhere(&#x27;tgl.id IN (:...tenantGradeLevelIds)&#x27;, { tenantGradeLevelIds })
+      .andWhere(&#x27;tgl.isActive &#x3D; true&#x27;)
+      .getMany();
+  
+    if (validTenantGradeLevels.length !&#x3D;&#x3D; tenantGradeLevelIds.length) {
+      const foundIds &#x3D; validTenantGradeLevels.map(tgl &#x3D;&gt; tgl.id);
+      const missingIds &#x3D; tenantGradeLevelIds.filter(id &#x3D;&gt; !foundIds.includes(id));
+      throw new BadRequestException(
+        &#x60;Some tenant grade levels do not belong to this tenant or are inactive. Missing IDs: ${missingIds.join(&#x27;, &#x27;)}&#x60;
+      );
+    }
+  
+    const actualGradeLevelIds &#x3D; validTenantGradeLevels.map(tgl &#x3D;&gt; tgl.gradeLevel.id);
+    
+    console.log(&#x27;Valid tenant grade levels found:&#x27;, validTenantGradeLevels.length);
+    console.log(&#x27;Extracted grade level IDs for students:&#x27;, actualGradeLevelIds);
+  
+    const existingAssignment &#x3D; await this.dataSource
+    .getRepository(FeeAssignmentGradeLevel)
+    .createQueryBuilder(&#x27;fagl&#x27;)
+    .innerJoin(&#x27;fagl.feeAssignment&#x27;, &#x27;fa&#x27;)
+    .where(&#x27;fa.tenantId &#x3D; :tenantId&#x27;, { tenantId })
+    .andWhere(&#x27;fa.feeStructureId &#x3D; :feeStructureId&#x27;, { feeStructureId })
+    .andWhere(&#x27;fagl.tenantGradeLevelId IN (:...tenantGradeLevelIds)&#x27;, { tenantGradeLevelIds })
+    .andWhere(&#x27;fa.isActive &#x3D; true&#x27;)
+    .getOne();
+  
+  if (existingAssignment) {
+    throw new ConflictException(
+      &#x60;Fee structure already assigned to one or more of these grade levels&#x60;
+    );
+  }
+    const feeAssignment &#x3D; this.feeAssignmentRepo.create({
+      tenantId,
+      feeStructureId,
+      assignedBy: assignedByUserData.id,
+      description,
+    });
+    const savedFeeAssignment &#x3D; await this.feeAssignmentRepo.save(feeAssignment);
+  
+    const feeAssignmentGradeLevels &#x3D; tenantGradeLevelIds.map(tenantGradeLevelId &#x3D;&gt; 
+      this.dataSource.getRepository(FeeAssignmentGradeLevel).create({
+        feeAssignmentId: savedFeeAssignment.id,
+        tenantGradeLevelId,
+      })
+    );
+    await this.dataSource.getRepository(FeeAssignmentGradeLevel).save(feeAssignmentGradeLevels);
+  
+    // const students &#x3D; await this.studentRepo.find({
+    //   where: {
+    //     tenant_id: tenantId,
+    //     grade: In(tenantGradeLevelIds),
+    //     isActive: true,
+    //   },
+    // });
+
+
+    // const students &#x3D; await this.studentRepo.find({
+    //   where: {
+    //     tenant_id: tenantId,
+    //     grade: { id: In(tenantGradeLevelIds) },  
+    //     isActive: true,
+    //   },
+    // });
+    const students &#x3D; await this.studentRepo
+    .createQueryBuilder(&#x27;student&#x27;)
+    .where(&#x27;student.tenant_id &#x3D; :tenantId&#x27;, { tenantId })
+    .andWhere(&#x27;student.grade_level_id IN (:...tenantGradeLevelIds)&#x27;, { tenantGradeLevelIds })
+    .andWhere(&#x27;student.isActive &#x3D; true&#x27;)
+    .getMany();
+  
+    console.log(students, &#x27;students found for assignment...&#x27;);
+    console.log(&#x27;Students found:&#x27;, students.length);
+  
+    let studentsAssigned &#x3D; 0;
+  
+    if (students.length &gt; 0) {
+      const items &#x3D; await this.feeStructureItemRepo.find({
+        where: { tenantId, feeStructureId },
+      });
+      if (items.length &#x3D;&#x3D;&#x3D; 0) {
+        throw new BadRequestException(&#x27;No fee structure items found for the specified fee structure&#x27;);
+      }
+  
+      for (const student of students) {
+        const studentAssignment &#x3D; this.studentFeeAssignmentRepo.create({
+          tenantId,
+          studentId: student.id,
+          feeAssignmentId: savedFeeAssignment.id,
+        });
+  
+        const savedStudentAssignment &#x3D; await this.studentFeeAssignmentRepo.save(studentAssignment);
+  
+        for (const item of items) {
+          const studentFeeItem &#x3D; this.studentFeeItemRepo.create({
+            tenantId,
+            studentFeeAssignmentId: savedStudentAssignment.id,
+            feeStructureItemId: item.id,
+            amount: item.amount,
+            isMandatory: item.isMandatory,
+            isActive: true, 
+          });
+  
+          await this.studentFeeItemRepo.save(studentFeeItem);
+        }
+        studentsAssigned++;
+      }
+    }
+  
+    savedFeeAssignment.studentsAssignedCount &#x3D; studentsAssigned;
+    await this.feeAssignmentRepo.save(savedFeeAssignment);
+  
+    console.log(&#x27;Successfully assigned fees to&#x27;, studentsAssigned, &#x27;students&#x27;);
+  
+    const finalFeeAssignment &#x3D; await this.feeAssignmentRepo.findOne({
+      where: { id: savedFeeAssignment.id },
+      relations: [&#x27;assignedByUser&#x27;, &#x27;feeStructure&#x27;, &#x27;gradeLevels&#x27;, &#x27;gradeLevels.tenantGradeLevel&#x27;],
+    });
+  
+    if (!finalFeeAssignment) {
+      throw new Error(&#x27;Fee assignment not found after creation&#x27;);
+    }
+  
+    return finalFeeAssignment;
+  }
+
+
+
+
+
+
+  
+
+  // async create(
+  //   createFeeAssignmentInput: CreateFeeAssignmentInput,
+  //   user: ActiveUserData
+  // ): Promise&lt;FeeAssignment&gt; {
+  //   const { feeStructureId, gradeLevelIds, description } &#x3D; createFeeAssignmentInput;
+    
+  //   const tenantId &#x3D; user.tenantId;
+  
+  //   const feeStructure &#x3D; await this.dataSource.getRepository(FeeStructure).findOne({
+  //     where: { id: feeStructureId, tenantId }
+  //   });
+    
+  //   if (!feeStructure) {
+  //     throw new BadRequestException(&#x60;Fee structure with id ${feeStructureId} not found&#x60;);
+  //   }
+  
+  //   const assignedByUserData &#x3D; await this.dataSource.getRepository(User).findOne({
+  //     where: { id: user.sub },
+  //     select: [&#x27;id&#x27;, &#x27;name&#x27;],
+  //   });
+
+  //   console.log(assignedByUserData, &#x27;assignedByUserData&#x27;);
+    
+  //   if (!assignedByUserData) {
+  //     throw new BadRequestException(&#x60;User with id ${user.sub} not found&#x60;);
+  //   }
+    
+  //   const feeAssignment &#x3D; this.feeAssignmentRepo.create({
+  //     tenantId,
+  //     feeStructureId,
+  //     gradeLevelIds,
+  //     assignedBy: assignedByUserData.id, 
+  //     description,
+  //   });
+    
+  
+  //   const savedFeeAssignment &#x3D; await this.feeAssignmentRepo.save(feeAssignment);
+  
+  //   const students &#x3D; await this.studentRepo.find({
+  //     where: { 
+  //       tenant_id: tenantId, 
+  //       grade: { id: In(gradeLevelIds) },
+  //       isActive: true 
+  //     },
+  //   });
+  
+  //   if (students.length &#x3D;&#x3D;&#x3D; 0) {
+  //     throw new BadRequestException(&#x27;No active students found for the specified grade levels&#x27;);
+  //   }
+  
+  //   const items &#x3D; await this.feeStructureItemRepo.find({
+  //     where: { tenantId, feeStructureId },
+  //   });
+  
+  //   if (items.length &#x3D;&#x3D;&#x3D; 0) {
+  //     throw new BadRequestException(&#x27;No fee structure items found for the specified fee structure&#x27;);
+  //   }
+  
+  //   for (const student of students) {
+  //     const studentAssignment &#x3D; this.studentFeeAssignmentRepo.create({
+  //       tenantId,
+  //       studentId: student.id,
+  //       feeAssignmentId: savedFeeAssignment.id,
+  //     });
+  
+  //     const savedStudentAssignment &#x3D; await this.studentFeeAssignmentRepo.save(studentAssignment);
+  
+  //     for (const item of items) {
+  //       const studentFeeItem &#x3D; this.studentFeeItemRepo.create({
+  //         tenantId,
+  //         studentFeeAssignmentId: savedStudentAssignment.id,
+  //         feeStructureItemId: item.id,
+  //         amount: item.amount,
+  //         isMandatory: item.isMandatory,
+  //         isActive: item.isMandatory, 
+  //       });
+  
+  //       await this.studentFeeItemRepo.save(studentFeeItem);
+  //     }
+  //   }
+  
+  //   return this.feeAssignmentRepo.findOne({
+  //     where: { id: savedFeeAssignment.id },
+  //     relations: [&#x27;assignedByUser&#x27;, &#x27;feeStructure&#x27;],
+  //   }).then((feeAssignment) &#x3D;&gt; {
+  //     if (!feeAssignment) {
+  //       throw new Error(&#x27;Fee assignment not found&#x27;);
+  //     }
+  //     return feeAssignment;
+  //   });
+  // }
+  
+
+  // async create(createFeeAssignmentInput: CreateFeeAssignmentInput, user: ActiveUserData): Promise&lt;FeeAssignment&gt; {
+  //   const { feeStructureId, gradeLevelIds } &#x3D; createFeeAssignmentInput;
+
+  //   const tenantId &#x3D; user.tenantId;
+
+  //   const assignedByUser &#x3D; this.dataSource.getRepository(User);
+
+  //   const assignedByUserData &#x3D; await assignedByUser.findOne({
+  //     where: { id: user.sub },
+  //     select: [&#x27;id&#x27;, &#x27;name&#x27;],
+  //   });
+    
+  //   console.log(assignedByUserData?.name, &#x27;fjkdjfkdjfkjdkfjkdfj,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,&#x27;);
+
+    
+
+  //   const feeAssignment &#x3D; this.feeAssignmentRepo.create({
+  //     tenantId,
+  //     feeStructureId,
+  //     gradeLevelIds,
+  //     assignedBy: assignedByUserData?.id,
+  //     description: createFeeAssignmentInput.description, 
+  //   });
+
+    
+
+  //   const savedFeeAssignment &#x3D; await this.feeAssignmentRepo.save(feeAssignment);
+
+  //   const students &#x3D; await this.studentRepo.find({
+  //     where: { 
+  //       tenant_id: tenantId, 
+  //       grade: { id: In(gradeLevelIds) },
+  //       isActive: true 
+  //     },
+  //   });
+
+  //   if (students.length &#x3D;&#x3D;&#x3D; 0) {
+  //     throw new BadRequestException(&#x27;No active students found for the specified grade levels&#x27;);
+  //   }
+
+  //   const items &#x3D; await this.feeStructureItemRepo.find({
+  //     where: { tenantId, feeStructureId },
+  //   });
+
+  //   if (items.length &#x3D;&#x3D;&#x3D; 0) {
+  //     throw new BadRequestException(&#x27;No fee structure items found for the specified fee structure&#x27;);
+  //   }
+
+  //   for (const student of students) {
+  //     const studentAssignment &#x3D; this.studentFeeAssignmentRepo.create({
+  //       tenantId,
+  //       studentId: student.id,
+  //       feeAssignmentId: savedFeeAssignment.id,
+  //     });
+
+  //     const savedStudentAssignment &#x3D; await this.studentFeeAssignmentRepo.save(studentAssignment);
+
+  //     for (const item of items) {
+  //       const studentFeeItem &#x3D; this.studentFeeItemRepo.create({
+  //         tenantId,
+  //         studentFeeAssignmentId: savedStudentAssignment.id,
+  //         feeStructureItemId: item.id,
+  //         amount: item.amount,
+  //         isMandatory: item.isMandatory,
+  //         isActive: item.isMandatory ? true : false,
+  //       });
+
+  //       await this.studentFeeItemRepo.save(studentFeeItem);
+  //     }
+  //   }
+
+  //   return savedFeeAssignment;
+  // }
+
+  async findAll(tenantId: string): Promise&lt;FeeAssignment[]&gt; {
+    return this.feeAssignmentRepo.find({
+      where: { tenantId },
+      order: { createdAt: &#x27;DESC&#x27; },
+    });
+  }
+
+  async findOne(id: string, tenantId: string): Promise&lt;FeeAssignment&gt; {
+    const feeAssignment &#x3D; await this.feeAssignmentRepo.findOne({
+      where: { id, tenantId },
+    });
+
+    if (!feeAssignment) {
+      throw new NotFoundException(&#x60;Fee assignment with ID ${id} not found&#x60;);
+    }
+
+    return feeAssignment;
+  }
+
+  async update(id: string, updateFeeAssignmentInput: UpdateFeeAssignmentInput, tenantId: string): Promise&lt;FeeAssignment&gt; {
+    const feeAssignment &#x3D; await this.findOne(id, tenantId);
+    
+    Object.assign(feeAssignment, updateFeeAssignmentInput);
+    
+    return this.feeAssignmentRepo.save(feeAssignment);
+  }
+
+  async remove(id: string, tenantId: string): Promise&lt;boolean&gt; {
+    const feeAssignment &#x3D; await this.findOne(id, tenantId);
+    
+    await this.feeAssignmentRepo.remove(feeAssignment);
+    return true;
+  }
+
+  async getStudentFeeAssignments(studentId: string, tenantId: string): Promise&lt;StudentFeeAssignment[]&gt; {
+    return this.studentFeeAssignmentRepo.find({
+      where: { 
+        studentId, 
+        tenantId,
+        isActive: true 
+      },
+      relations: [&#x27;feeItems&#x27;],
+    });
+  }
+
+  async getAssignedStudents(feeAssignmentId: string, tenantId: string): Promise&lt;StudentFeeAssignment[]&gt; {
+    return this.studentFeeAssignmentRepo.find({
+      where: { 
+        feeAssignmentId, 
+        tenantId,
+        isActive: true 
+      },
+      relations: [&#x27;student&#x27;, &#x27;feeItems&#x27;],
+    });
+  }
+
+
+  async toggleStudentFeeItem(studentFeeItemId: string, isActive: boolean, tenantId: string): Promise&lt;StudentFeeItem&gt; {
+    const studentFeeItem &#x3D; await this.studentFeeItemRepo.findOne({
+      where: { id: studentFeeItemId, tenantId },
+      relations: [
+        &#x27;studentFeeAssignment&#x27;,
+        &#x27;studentFeeAssignment.student&#x27;,
+        &#x27;studentFeeAssignment.student.user&#x27;,
+        &#x27;feeStructureItem&#x27;,
+        &#x27;feeStructureItem.feeBucket&#x27;,
+      ],
+    });
+  
+    if (!studentFeeItem) {
+      throw new NotFoundException(&#x60;Student fee item with ID ${studentFeeItemId} not found&#x60;);
+    }
+  
+    if (studentFeeItem.isMandatory &amp;&amp; !isActive) {
+      throw new BadRequestException(&#x27;Cannot deactivate mandatory fee items&#x27;);
+    }
+  
+    studentFeeItem.isActive &#x3D; isActive;
+    return this.studentFeeItemRepo.save(studentFeeItem);
+  }
+
+
+  // async getStudentFeeItems(studentId: string, tenantId: string): Promise&lt;StudentFeeItem[]&gt; {
+  //   return this.studentFeeItemRepo.find({
+  //     where: {
+  //       tenantId,
+  //       studentFeeAssignment: {
+  //         studentId,
+  //         tenantId,
+  //         isActive: true,
+  //       },
+  //     },
+  //     relations: [
+  //       &#x27;feeStructureItem&#x27;,
+  //       &#x27;feeStructureItem.feeBucket&#x27;,
+  //       &#x27;studentFeeAssignment&#x27;,
+  //       &#x27;studentFeeAssignment.student&#x27;,
+  //       &#x27;studentFeeAssignment.student.user&#x27;,
+  //       &#x27;studentFeeAssignment.student.grade&#x27;,
+  //       &#x27;studentFeeAssignment.student.grade.gradeLevel&#x27;,
+  //       &#x27;studentFeeAssignment.feeAssignment&#x27;,
+  //       &#x27;studentFeeAssignment.feeAssignment.feeStructure&#x27;,
+  //       &#x27;studentFeeAssignment.feeAssignment.feeStructure.academicYear&#x27;,
+  //       &#x27;studentFeeAssignment.feeAssignment.feeStructure.term&#x27;,
+  //     ],
+  //   });
+  // };
+
+  
+
+  async getStudentFeeSummary(studentId: string, tenantId: string): Promise&lt;StudentFeeSummary | null&gt; {
+    const feeItems &#x3D; await this.getStudentFeeItems(studentId, tenantId);
+  
+    if (!feeItems.length) return null;
+  
+    const student &#x3D; feeItems[0].studentFeeAssignment.student;
+    const feeStructure &#x3D; feeItems[0].studentFeeAssignment.feeAssignment.feeStructure;
+  
+    const items &#x3D; feeItems.map(item &#x3D;&gt; ({
+      id: item.id,
+      bucketName: item.feeStructureItem.feeBucket.name,
+      amount: Number(item.amount),  
+      isMandatory: item.isMandatory,
+    }));
+  
+    const totalMandatory &#x3D; items
+      .filter(b &#x3D;&gt; b.isMandatory)
+      .reduce((sum, b) &#x3D;&gt; sum + Number(b.amount), 0);
+  
+    const totalOptional &#x3D; items
+      .filter(b &#x3D;&gt; !b.isMandatory)
+      .reduce((sum, b) &#x3D;&gt; sum + Number(b.amount), 0);
+  
+    const totalAmount &#x3D; totalMandatory + totalOptional;
+  
+    return {
+      studentId: student.id,
+      studentName: student.user.name,
+      admissionNumber: student.admission_number,
+      gradeLevel: student.grade.gradeLevel.name,
+      feeStructureName: feeStructure?.name || null,
+      academicYear: feeStructure.academicYear.name,
+      terms: feeStructure.terms.map(t &#x3D;&gt; t.name),
+      totalAmount, 
+      items,
+    };
+  }
+  
+  
+
+
+
+  async getStudentFeeItems(studentId: string, tenantId: string): Promise&lt;StudentFeeItem[]&gt; {
+    return this.studentFeeItemRepo
+      .createQueryBuilder(&#x27;studentFeeItem&#x27;)
+      .leftJoinAndSelect(&#x27;studentFeeItem.feeStructureItem&#x27;, &#x27;feeStructureItem&#x27;)
+      .leftJoinAndSelect(&#x27;feeStructureItem.feeBucket&#x27;, &#x27;feeBucket&#x27;)
+      .leftJoinAndSelect(&#x27;studentFeeItem.studentFeeAssignment&#x27;, &#x27;studentFeeAssignment&#x27;)
+      .leftJoinAndSelect(&#x27;studentFeeAssignment.student&#x27;, &#x27;student&#x27;)
+      .leftJoinAndSelect(&#x27;student.user&#x27;, &#x27;user&#x27;)
+      .leftJoinAndSelect(&#x27;student.grade&#x27;, &#x27;grade&#x27;)
+      .leftJoinAndSelect(&#x27;grade.gradeLevel&#x27;, &#x27;gradeLevel&#x27;)
+      .leftJoinAndSelect(&#x27;studentFeeAssignment.feeAssignment&#x27;, &#x27;feeAssignment&#x27;)
+      .leftJoinAndSelect(&#x27;feeAssignment.feeStructure&#x27;, &#x27;feeStructure&#x27;)
+      .leftJoinAndSelect(&#x27;feeStructure.academicYear&#x27;, &#x27;academicYear&#x27;)
+      .leftJoinAndSelect(&#x27;feeStructure.terms&#x27;, &#x27;terms&#x27;)
+      .where(&#x27;studentFeeItem.tenantId &#x3D; :tenantId&#x27;, { tenantId })
+      .andWhere(&#x27;studentFeeAssignment.studentId &#x3D; :studentId&#x27;, { studentId })
+      .andWhere(&#x27;studentFeeAssignment.tenantId &#x3D; :tenantId&#x27;, { tenantId })
+      .andWhere(&#x27;studentFeeAssignment.isActive &#x3D; :isActive&#x27;, { isActive: true })
+      .getMany();
+  };
+
+
+
+
+  async getTenantFeeItems(tenantId: string): Promise&lt;StudentFeeItem[]&gt; {
+    return this.studentFeeItemRepo
+      .createQueryBuilder(&#x27;studentFeeItem&#x27;)
+      .leftJoinAndSelect(&#x27;studentFeeItem.feeStructureItem&#x27;, &#x27;feeStructureItem&#x27;)
+      .leftJoinAndSelect(&#x27;feeStructureItem.feeBucket&#x27;, &#x27;feeBucket&#x27;)
+      .leftJoinAndSelect(&#x27;studentFeeItem.studentFeeAssignment&#x27;, &#x27;studentFeeAssignment&#x27;)
+      .leftJoinAndSelect(&#x27;studentFeeAssignment.student&#x27;, &#x27;student&#x27;)
+      .leftJoinAndSelect(&#x27;student.user&#x27;, &#x27;user&#x27;)
+      .leftJoinAndSelect(&#x27;student.grade&#x27;, &#x27;grade&#x27;)
+      .leftJoinAndSelect(&#x27;grade.gradeLevel&#x27;, &#x27;gradeLevel&#x27;)
+      .leftJoinAndSelect(&#x27;studentFeeAssignment.feeAssignment&#x27;, &#x27;feeAssignment&#x27;)
+      .leftJoinAndSelect(&#x27;feeAssignment.feeStructure&#x27;, &#x27;feeStructure&#x27;)
+      .leftJoinAndSelect(&#x27;feeStructure.academicYear&#x27;, &#x27;academicYear&#x27;)
+      .leftJoinAndSelect(&#x27;feeStructure.terms&#x27;, &#x27;terms&#x27;)
+      .where(&#x27;studentFeeItem.tenantId &#x3D; :tenantId&#x27;, { tenantId })
+      .andWhere(&#x27;studentFeeAssignment.tenantId &#x3D; :tenantId&#x27;, { tenantId })
+      .andWhere(&#x27;studentFeeAssignment.isActive &#x3D; :isActive&#x27;, { isActive: true })
+      .getMany();
+  }
+  
+
+
+  
+
+
+
+
+  async bulkToggleStudentFeeItems(input: BulkToggleStudentFeeItemsInput, tenantId: string): Promise&lt;StudentFeeItem[]&gt; {
+    const { studentFeeItemIds, isActive } &#x3D; input;
+
+    const studentFeeItems &#x3D; await this.studentFeeItemRepo.find({
+      where: { id: In(studentFeeItemIds), tenantId },
+      relations: [
+        &#x27;studentFeeAssignment&#x27;,
+        &#x27;studentFeeAssignment.student&#x27;,
+        &#x27;studentFeeAssignment.student.user&#x27;,
+        &#x27;feeStructureItem&#x27;,
+        &#x27;feeStructureItem.feeBucket&#x27;,
+      ],
+    });
+
+    if (studentFeeItems.length &#x3D;&#x3D;&#x3D; 0) {
+      throw new NotFoundException(&#x27;No student fee items found&#x27;);
+    }
+    if (!isActive) {
+      const mandatoryItems &#x3D; studentFeeItems.filter(item &#x3D;&gt; item.isMandatory);
+      if (mandatoryItems.length &gt; 0) {
+        throw new BadRequestException(&#x27;Cannot deactivate mandatory fee items&#x27;);
+      }
+    }
+    const updatedItems: StudentFeeItem[] &#x3D; [];
+    for (const item of studentFeeItems) {
+      item.isActive &#x3D; isActive;
+      const updatedItem &#x3D; await this.studentFeeItemRepo.save(item);
+      updatedItems.push(updatedItem);
+    }
+
+    return updatedItems;
+  }
+
+  async bulkToggleByFeeStructureItem(
+    feeStructureItemId: string, 
+    gradeLevelIds: string[], 
+    isActive: boolean, 
+    tenantId: string
+  ): Promise&lt;StudentFeeItem[]&gt; {
+    const studentFeeItems &#x3D; await this.studentFeeItemRepo.find({
+      where: {
+        tenantId,
+        feeStructureItemId,
+        studentFeeAssignment: {
+          tenantId,
+          student: {
+            tenant_id: tenantId,
+            grade: {
+              id: In(gradeLevelIds)
+            }
+          }
+        }
+      },
+      relations: [&#x27;studentFeeAssignment&#x27;, &#x27;studentFeeAssignment.student&#x27;, &#x27;studentFeeAssignment.student.grade&#x27;]
+    });
+
+    if (studentFeeItems.length &#x3D;&#x3D;&#x3D; 0) {
+      throw new NotFoundException(&#x27;No student fee items found for the specified criteria&#x27;);
+    }
+
+    if (!isActive) {
+      const mandatoryItems &#x3D; studentFeeItems.filter(item &#x3D;&gt; item.isMandatory);
+      if (mandatoryItems.length &gt; 0) {
+        throw new BadRequestException(&#x27;Cannot deactivate mandatory fee items&#x27;);
+      }
+    }
+
+    const updatedItems: StudentFeeItem[] &#x3D; [];
+    for (const item of studentFeeItems) {
+      item.isActive &#x3D; isActive;
+      const updatedItem &#x3D; await this.studentFeeItemRepo.save(item);
+      updatedItems.push(updatedItem);
+    }
+
+    return updatedItems;
+  }
+
+
+  // fee-assignment.service.ts
+
+async getFeeAssignmentsByGradeLevels(
+  input: GetFeeAssignmentsByGradeLevelsInput,
+  user: ActiveUserData,
+) {
+  const { tenantGradeLevelIds, feeStructureId } &#x3D; input;
+  const tenantId &#x3D; user.tenantId;
+
+  console.log(&#x27;&#x3D;&#x3D;&#x3D; FETCHING FEE ASSIGNMENTS BY GRADE LEVELS &#x3D;&#x3D;&#x3D;&#x27;);
+  console.log(&#x27;Tenant ID:&#x27;, tenantId);
+  console.log(&#x27;Target Tenant GradeLevel IDs:&#x27;, tenantGradeLevelIds);
+  console.log(&#x27;Fee Structure Filter:&#x27;, feeStructureId);
+
+  // ✅ Build query with proper joins
+  const queryBuilder &#x3D; this.feeAssignmentRepo
+    .createQueryBuilder(&#x27;fa&#x27;)
+    .leftJoinAndSelect(&#x27;fa.feeStructure&#x27;, &#x27;fs&#x27;)
+    .leftJoinAndSelect(&#x27;fa.assignedByUser&#x27;, &#x27;abu&#x27;)
+    .leftJoinAndSelect(&#x27;fa.gradeLevels&#x27;, &#x27;fagl&#x27;)  // ✅ Changed to leftJoinAndSelect
+    .leftJoinAndSelect(&#x27;fagl.tenantGradeLevel&#x27;, &#x27;tgl&#x27;)  // ✅ Load full TenantGradeLevel
+    .where(&#x27;fa.tenantId &#x3D; :tenantId&#x27;, { tenantId })
+    .andWhere(&#x27;fa.isActive &#x3D; true&#x27;)
+    .andWhere(&#x27;fagl.tenantGradeLevelId IN (:...tenantGradeLevelIds)&#x27;, { tenantGradeLevelIds });
+
+  if (feeStructureId) {
+    queryBuilder.andWhere(&#x27;fa.feeStructureId &#x3D; :feeStructureId&#x27;, { feeStructureId });
+  }
+
+  const feeAssignments &#x3D; await queryBuilder.getMany();
+
+  if (!feeAssignments.length) return [];
+
+  const assignmentIds &#x3D; feeAssignments.map(fa &#x3D;&gt; fa.id);
+
+  // ✅ Load student assignments with all relations
+  const studentAssignments &#x3D; await this.studentFeeAssignmentRepo.find({
+    where: {
+      tenantId,
+      feeAssignmentId: In(assignmentIds),
+      isActive: true,
+    },
+    relations: [
+      &#x27;student&#x27;,
+      &#x27;student.user&#x27;,  // ✅ Added user relation
+      &#x27;student.grade&#x27;,           
+      &#x27;student.grade.gradeLevel&#x27;,
+      &#x27;feeItems&#x27;,
+      &#x27;feeItems.feeStructureItem&#x27;,
+      &#x27;feeItems.feeStructureItem.feeBucket&#x27;,  // ✅ Added feeBucket relation
+    ],
+  });
+
+  const result: FeeAssignmentWithStudents[] &#x3D; [];
+
+  for (const fa of feeAssignments) {
+    // ✅ Filter students that belong to this assignment
+    const students &#x3D; studentAssignments.filter(sa &#x3D;&gt; sa.feeAssignmentId &#x3D;&#x3D;&#x3D; fa.id);
+
+    result.push({
+      feeAssignment: fa,
+      studentAssignments: students,
+      totalStudents: students.length,
+    });
+  }
+
+  console.log(&#x60;Found ${result.length} fee assignments with ${studentAssignments.length} total student assignments&#x60;);
+  
+  return result;
+}
+
+  // async getFeeAssignmentsByGradeLevels(
+  //   input: GetFeeAssignmentsByGradeLevelsInput,
+  //   user: ActiveUserData,
+  // ): Promise&lt;FeeAssignmentWithStudents[]&gt; {
+  //   const { tenantGradeLevelIds, feeStructureId } &#x3D; input;
+  //   const tenantId &#x3D; user.tenantId;
+  
+  //   console.log(&#x27;&#x3D;&#x3D;&#x3D; FETCHING FEE ASSIGNMENTS BY GRADE LEVELS &#x3D;&#x3D;&#x3D;&#x27;);
+  //   console.log(&#x27;Tenant ID:&#x27;, tenantId);
+  //   console.log(&#x27;Target Tenant GradeLevel IDs:&#x27;, tenantGradeLevelIds);
+  //   console.log(&#x27;Fee Structure Filter:&#x27;, feeStructureId);
+  
+  //   const queryBuilder &#x3D; this.feeAssignmentRepo
+  //     .createQueryBuilder(&#x27;fa&#x27;)
+  //     .innerJoinAndSelect(&#x27;fa.feeStructure&#x27;, &#x27;fs&#x27;)
+  //     .innerJoinAndSelect(&#x27;fa.assignedByUser&#x27;, &#x27;abu&#x27;)
+  //     .innerJoin(&#x27;fa.gradeLevels&#x27;, &#x27;fagl&#x27;)
+  //     .where(&#x27;fa.tenantId &#x3D; :tenantId&#x27;, { tenantId })
+  //     .andWhere(&#x27;fa.isActive &#x3D; true&#x27;)
+  //     .andWhere(&#x27;fagl.tenantGradeLevelId IN (:...tenantGradeLevelIds)&#x27;, { tenantGradeLevelIds });
+  
+  //   if (feeStructureId) {
+  //     queryBuilder.andWhere(&#x27;fa.feeStructureId &#x3D; :feeStructureId&#x27;, { feeStructureId });
+  //   }
+  
+  //   const feeAssignments &#x3D; await queryBuilder.getMany();
+  
+  //   if (!feeAssignments.length) return [];
+  
+  //   const assignmentIds &#x3D; feeAssignments.map(fa &#x3D;&gt; fa.id);
+  
+  //   const studentAssignments &#x3D; await this.studentFeeAssignmentRepo.find({
+  //     where: {
+  //       tenantId,
+  //       feeAssignmentId: In(assignmentIds),
+  //       isActive: true,
+  //     },
+  //     relations: [
+  //       &#x27;student&#x27;,
+  //       &#x27;student.grade&#x27;,           
+  //       &#x27;student.grade.gradeLevel&#x27;,
+  //       &#x27;feeItems&#x27;,
+  //       &#x27;feeItems.feeStructureItem&#x27;,
+  //     ],
+  //   });
+  
+  //   const result: FeeAssignmentWithStudents[] &#x3D; [];
+  
+  //   for (const fa of feeAssignments) {
+  //     const students &#x3D; studentAssignments.filter(
+  //       sa &#x3D;&gt;
+  //         sa.feeAssignmentId &#x3D;&#x3D;&#x3D; fa.id &amp;&amp;
+  //         sa.student.grade?.id &amp;&amp;
+  //         tenantGradeLevelIds.includes(sa.student.grade.id),
+  //     );
+  
+  //     result.push({
+  //       feeAssignment: fa,
+  //       studentAssignments: students,
+  //       totalStudents: students.length,
+  //     });
+  //   }
+  
+  //   console.log(&#x60;Found ${result.length} fee assignments with students&#x60;);
+    
+  //   return result;
+  // }
+  
+  // async getFeeAssignmentsByGradeLevels(
+  //   input: GetFeeAssignmentsByGradeLevelsInput,
+  //   user: ActiveUserData,
+  // ): Promise&lt;FeeAssignmentWithStudents[]&gt; {
+  //   const { tenantGradeLevelIds, feeStructureId } &#x3D; input;
+  //   const tenantId &#x3D; user.tenantId;
+  
+  //   console.log(&#x27;&#x3D;&#x3D;&#x3D; FETCHING FEE ASSIGNMENTS BY GRADE LEVELS &#x3D;&#x3D;&#x3D;&#x27;);
+  //   console.log(&#x27;Tenant ID:&#x27;, tenantId);
+  //   console.log(&#x27;Target Grade Level IDs:&#x27;, tenantGradeLevelIds);
+  //   console.log(&#x27;Fee Structure Filter:&#x27;, feeStructureId);
+  
+  //   const feeAssignments &#x3D; await this.feeAssignmentRepo
+  //     .createQueryBuilder(&#x27;fa&#x27;)
+  //     .innerJoinAndSelect(&#x27;fa.feeStructure&#x27;, &#x27;fs&#x27;)
+  //     .innerJoinAndSelect(&#x27;fa.assignedByUser&#x27;, &#x27;abu&#x27;)
+  //     .where(&#x27;fa.tenantId &#x3D; :tenantId&#x27;, { tenantId })
+  //     .andWhere(&#x27;fa.isActive &#x3D; true&#x27;)
+  //     .andWhere(&#x27;fa.tenantGradeLevelIds &amp;&amp; :gradeLevelIds::text[]&#x27;, {
+  //       gradeLevelIds: tenantGradeLevelIds,
+  //     })
+  //     .andWhere(
+  //       feeStructureId ? &#x27;fa.feeStructureId &#x3D; :feeStructureId&#x27; : &#x27;1&#x3D;1&#x27;,
+  //       { feeStructureId },
+  //     )
+  //     .getMany();
+  
+  //   if (!feeAssignments.length) return [];
+  //   const assignmentIds &#x3D; feeAssignments.map(fa &#x3D;&gt; fa.id);
+  
+  //   const studentAssignments &#x3D; await this.studentFeeAssignmentRepo.find({
+  //     where: {
+  //       tenantId,
+  //       feeAssignmentId: In(assignmentIds),
+  //       isActive: true,
+  //     },
+  //     relations: [
+  //       &#x27;student&#x27;,
+  //       &#x27;student.grade&#x27;,
+  //       &#x27;student.grade.gradeLevel&#x27;,
+  //       &#x27;feeItems&#x27;,
+  //       &#x27;feeItems.feeStructureItem&#x27;,
+  //     ],
+  //   });
+  
+  //   const result: FeeAssignmentWithStudents[] &#x3D; [];
+  
+  //   for (const fa of feeAssignments) {
+  //     const students &#x3D; studentAssignments.filter(
+  //       sa &#x3D;&gt;
+  //         sa.feeAssignmentId &#x3D;&#x3D;&#x3D; fa.id &amp;&amp;
+  //         tenantGradeLevelIds.includes(sa.student.grade?.id),
+  //     );
+  
+  //     result.push({
+  //       feeAssignment: fa,
+  //       studentAssignments: students,
+  //       totalStudents: students.length,
+  //     });
+  //   }
+  
+  //   return result;
+  // }
+  
+  async getAllTenantFeeAssignments(user: ActiveUserData): Promise&lt;TenantFeeAssignmentSummary&gt; {
+    const tenantId &#x3D; user.tenantId;
+    if (!tenantId) {
+      throw new BadRequestException(&#x27;Tenant ID missing from user context&#x27;);
+    }
+  
+    console.log(&#x27;&#x3D;&#x3D;&#x3D; FETCHING ALL TENANT FEE ASSIGNMENTS &#x3D;&#x3D;&#x3D;&#x27;);
+    console.log(&#x27;Tenant ID:&#x27;, tenantId);
+  
+    const feeAssignments &#x3D; await this.feeAssignmentRepo.find({
+      where: {
+        tenantId,
+        isActive: true,
+      },
+      relations: [&#x27;feeStructure&#x27;, &#x27;assignedByUser&#x27;],
+      order: {
+        createdAt: &#x27;DESC&#x27;,
+      },
+    });
+  
+    console.log(&#x27;Found fee assignments:&#x27;, feeAssignments.length);
+  
+    const feeAssignmentDetails: FeeAssignmentWithStudents[] &#x3D; [];
+    let totalStudentsWithFees &#x3D; 0;
+  
+    for (const feeAssignment of feeAssignments) {
+      const studentAssignments &#x3D; await this.studentFeeAssignmentRepo.find({
+        where: {
+          tenantId,
+          feeAssignmentId: feeAssignment.id,
+          isActive: true,
+        },
+        relations: [
+          &#x27;student&#x27;,
+          &#x27;student.grade&#x27;,
+          &#x27;student.user&#x27;,
+          &#x27;student.grade.gradeLevel&#x27;,
+          &#x27;feeItems&#x27;,
+          &#x27;feeItems.feeStructureItem&#x27;,
+        ],
+      });
+  
+      console.log(&#x60;Fee Assignment ${feeAssignment.id}: ${studentAssignments.length} students&#x60;);
+  
+      feeAssignmentDetails.push({
+        feeAssignment,
+        studentAssignments,
+        totalStudents: studentAssignments.length,
+      });
+  
+      totalStudentsWithFees +&#x3D; studentAssignments.length;
+    }
+  
+    return {
+      tenantId,
+      feeAssignments: feeAssignmentDetails,
+      totalFeeAssignments: feeAssignments.length,
+      totalStudentsWithFees,
+    };
+  }
+  
+
+
+  async getFeeAssignmentById(
+    feeAssignmentId: string,
+    user: ActiveUserData
+  ): Promise&lt;FeeAssignmentWithStudents&gt; {
+    const tenantId &#x3D; user.tenantId;
+    if (!tenantId) {
+      throw new BadRequestException(&#x27;Tenant ID missing from user context&#x27;);
+    }
+  
+    console.log(&#x27;&#x3D;&#x3D;&#x3D; FETCHING FEE ASSIGNMENT BY ID &#x3D;&#x3D;&#x3D;&#x27;);
+    console.log(&#x27;Fee Assignment ID:&#x27;, feeAssignmentId);
+    console.log(&#x27;Tenant ID:&#x27;, tenantId);
+  
+    const feeAssignment &#x3D; await this.feeAssignmentRepo.findOne({
+      where: {
+        id: feeAssignmentId,
+        tenantId,
+        isActive: true,
+      },
+      relations: [&#x27;feeStructure&#x27;, &#x27;assignedByUser&#x27;],
+    });
+  
+    if (!feeAssignment) {
+      throw new BadRequestException(&#x60;Fee assignment with id ${feeAssignmentId} not found for this tenant&#x60;);
+    }
+  
+    const studentAssignments &#x3D; await this.studentFeeAssignmentRepo.find({
+      where: {
+        tenantId,
+        feeAssignmentId: feeAssignment.id,
+        isActive: true,
+      },
+      relations: [
+        &#x27;student&#x27;,
+        &#x27;student.grade&#x27;,
+        &#x27;student.grade.gradeLevel&#x27;,
+        &#x27;feeItems&#x27;,
+        &#x27;feeItems.feeStructureItem&#x27;,
+      ],
+    });
+  
+    console.log(&#x60;Found ${studentAssignments.length} student assignments&#x60;);
+  
+    return {
+      feeAssignment,
+      studentAssignments,
+      totalStudents: studentAssignments.length,
+    };
+  }
+
+  
+}
+
+
+
+
+
+
+
+
+
+
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'FeeAssignmentService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

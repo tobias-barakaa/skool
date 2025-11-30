@@ -1,0 +1,1904 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>skool documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">skool documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >PaymentService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/admin/finance/payment/payment.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#logger" >logger</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#allocatePaymentToFeeItems" >allocatePaymentToFeeItems</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#createPayment" >createPayment</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#deallocatePaymentFromFeeItems" >deallocatePaymentFromFeeItems</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#deletePayment" >deletePayment</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#findAll" >findAll</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#findById" >findById</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#findByInvoice" >findByInvoice</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#findByStudent" >findByStudent</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#generateReceiptNumber" >generateReceiptNumber</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#updatePayment" >updatePayment</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#updateStudentTotalFeesPaid" >updateStudentTotalFeesPaid</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#voidPayment" >voidPayment</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(paymentRepo: <a href="../classes/Payment.html" target="_self">Repository&lt;Payment&gt;</a>, invoiceRepo: <a href="../classes/Invoice.html" target="_self">Repository&lt;Invoice&gt;</a>, dataSource: DataSource)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">src/admin/finance/payment/payment.service.ts:12</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>paymentRepo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/Payment.html" target="_self" >Repository&lt;Payment&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>invoiceRepo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/Invoice.html" target="_self" >Repository&lt;Invoice&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>dataSource</td>
+                                                  
+                                                        <td>
+                                                                    <code>DataSource</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="allocatePaymentToFeeItems"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>allocatePaymentToFeeItems</b></span>
+                        <a href="#allocatePaymentToFeeItems"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>allocatePaymentToFeeItems(studentId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, paymentAmount: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, ruleOrder: string[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="185"
+                                    class="link-to-prism">src/admin/finance/payment/payment.service.ts:185</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>studentId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>paymentAmount</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>ruleOrder</td>
+                                            <td>
+                                                        <code>string[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>[&#x27;TUITION&#x27;, &#x27;LUNCH&#x27;, &#x27;BUS&#x27;, &#x27;TRANSPORT&#x27;]</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;literal type&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createPayment"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>createPayment</b></span>
+                        <a href="#createPayment"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createPayment(input: <a href="../classes/CreatePaymentInput.html" target="_self">CreatePaymentInput</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="25"
+                                    class="link-to-prism">src/admin/finance/payment/payment.service.ts:25</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/CreatePaymentInput.html" target="_self" >CreatePaymentInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Payment.html" target="_self" >Promise&lt;Payment&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="deallocatePaymentFromFeeItems"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>deallocatePaymentFromFeeItems</b></span>
+                        <a href="#deallocatePaymentFromFeeItems"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>deallocatePaymentFromFeeItems(studentId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, amount: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="247"
+                                    class="link-to-prism">src/admin/finance/payment/payment.service.ts:247</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>studentId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>amount</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="deletePayment"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>deletePayment</b></span>
+                        <a href="#deletePayment"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>deletePayment(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="367"
+                                    class="link-to-prism">src/admin/finance/payment/payment.service.ts:367</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findAll"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>findAll</b></span>
+                        <a href="#findAll"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findAll(filters: <a href="../classes/PaymentFilters.html" target="_self">PaymentFilters</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="413"
+                                    class="link-to-prism">src/admin/finance/payment/payment.service.ts:413</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>filters</td>
+                                            <td>
+                                                            <code><a href="../classes/PaymentFilters.html" target="_self" >PaymentFilters</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Payment.html" target="_self" >Promise&lt;Payment[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findById"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>findById</b></span>
+                        <a href="#findById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findById(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="400"
+                                    class="link-to-prism">src/admin/finance/payment/payment.service.ts:400</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Payment.html" target="_self" >Promise&lt;Payment&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findByInvoice"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>findByInvoice</b></span>
+                        <a href="#findByInvoice"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findByInvoice(invoiceId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="444"
+                                    class="link-to-prism">src/admin/finance/payment/payment.service.ts:444</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>invoiceId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Payment.html" target="_self" >Promise&lt;Payment[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findByStudent"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>findByStudent</b></span>
+                        <a href="#findByStudent"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findByStudent(studentId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="436"
+                                    class="link-to-prism">src/admin/finance/payment/payment.service.ts:436</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>studentId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Payment.html" target="_self" >Promise&lt;Payment[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="generateReceiptNumber"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>generateReceiptNumber</b></span>
+                        <a href="#generateReceiptNumber"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>generateReceiptNumber(tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="452"
+                                    class="link-to-prism">src/admin/finance/payment/payment.service.ts:452</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;string&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updatePayment"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>updatePayment</b></span>
+                        <a href="#updatePayment"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>updatePayment(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, input: <a href="../classes/UpdatePaymentInput.html" target="_self">UpdatePaymentInput</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="281"
+                                    class="link-to-prism">src/admin/finance/payment/payment.service.ts:281</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/UpdatePaymentInput.html" target="_self" >UpdatePaymentInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Payment.html" target="_self" >Promise&lt;Payment&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateStudentTotalFeesPaid"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>updateStudentTotalFeesPaid</b></span>
+                        <a href="#updateStudentTotalFeesPaid"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>updateStudentTotalFeesPaid(studentId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="103"
+                                    class="link-to-prism">src/admin/finance/payment/payment.service.ts:103</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>studentId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="voidPayment"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>voidPayment</b></span>
+                        <a href="#voidPayment"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>voidPayment(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, reason: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="329"
+                                    class="link-to-prism">src/admin/finance/payment/payment.service.ts:329</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>reason</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="logger"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>logger</b></span>
+                        <a href="#logger"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new Logger(PaymentService.name)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">src/admin/finance/payment/payment.service.ts:12</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, NotFoundException, BadRequestException, Logger } from &#x27;@nestjs/common&#x27;;
+import { InjectRepository } from &#x27;@nestjs/typeorm&#x27;;
+import { Repository, Between, DataSource } from &#x27;typeorm&#x27;;
+import { Payment } from &#x27;./entities/payment.entity&#x27;;
+import { Invoice, InvoiceStatus } from &#x27;../invoice/entities/invoice.entity&#x27;;
+import { CreatePaymentInput, PaymentFilters, UpdatePaymentInput } from &#x27;./dtos/create-payment.input&#x27;;
+import { ActiveUserData } from &#x27;src/admin/auth/interface/active-user.interface&#x27;;
+
+@Injectable()
+export class PaymentService {
+  private readonly logger &#x3D; new Logger(PaymentService.name);
+
+  constructor(
+    @InjectRepository(Payment)
+    private readonly paymentRepo: Repository&lt;Payment&gt;,
+    @InjectRepository(Invoice)
+    private readonly invoiceRepo: Repository&lt;Invoice&gt;,
+    private readonly dataSource: DataSource,
+  ) {}
+
+
+
+
+  async createPayment(
+      input: CreatePaymentInput,
+      user: ActiveUserData,
+    ): Promise&lt;Payment&gt; {
+      const { invoiceId, amount, paymentMethod, transactionReference, paymentDate, notes } &#x3D; input;
+
+      const tenantId &#x3D; user.tenantId;
+
+      if(!tenantId) {
+        throw new NotFoundException(&#x27;Tenant ID is missing from the active user&#x27;);
+      }
+  
+      const invoice &#x3D; await this.invoiceRepo.findOne({
+        where: { id: invoiceId, tenantId },
+        relations: [&#x27;student&#x27;],
+      });
+  
+      if (!invoice) {
+        throw new NotFoundException(&#x60;Invoice with id ${invoiceId} not found&#x60;);
+      }
+  
+      if (amount &gt; invoice.balanceAmount) {
+        throw new BadRequestException(
+          &#x60;Payment amount (${amount}) exceeds balance amount (${invoice.balanceAmount})&#x60;,
+        );
+      }
+  
+      const receiptNumber &#x3D; await this.generateReceiptNumber(tenantId);
+  
+      const payment &#x3D; this.paymentRepo.create({
+        tenantId,
+        receiptNumber,
+        invoiceId: invoice.id,
+        studentId: invoice.studentId,
+        amount,
+        paymentMethod,
+        transactionReference,
+        paymentDate: paymentDate ? new Date(paymentDate) : new Date(),
+        receivedBy: user.sub,
+        notes,
+      });
+  
+      const savedPayment &#x3D; await this.paymentRepo.save(payment);
+  
+      // Update invoice
+      const newPaidAmount &#x3D; Number(invoice.paidAmount) + Number(amount);
+      const newBalanceAmount &#x3D; Number(invoice.totalAmount) - newPaidAmount;
+  
+      let newStatus &#x3D; invoice.status;
+      if (newBalanceAmount &#x3D;&#x3D;&#x3D; 0) {
+        newStatus &#x3D; InvoiceStatus.PAID;
+      } else if (newPaidAmount &gt; 0 &amp;&amp; newBalanceAmount &gt; 0) {
+        newStatus &#x3D; InvoiceStatus.PARTIALLY_PAID;
+      }
+  
+      await this.invoiceRepo.update(invoice.id, {
+        paidAmount: newPaidAmount,
+        balanceAmount: newBalanceAmount,
+        status: newStatus,
+      });
+  
+      
+      await this.allocatePaymentToFeeItems(invoice.studentId, tenantId, amount);
+  
+      
+      await this.updateStudentTotalFeesPaid(invoice.studentId);
+  
+      this.logger.log(
+        &#x60;Payment ${receiptNumber} of ${amount} recorded for invoice ${invoice.invoiceNumber}&#x60;,
+      );
+  
+      return this.paymentRepo.findOneOrFail({
+        where: { id: savedPayment.id },
+        relations: [&#x27;invoice&#x27;, &#x27;student&#x27;, &#x27;student.user&#x27;, &#x27;receivedByUser&#x27;],
+      });
+    }
+
+
+    private async updateStudentTotalFeesPaid(studentId: string): Promise&lt;void&gt; {
+      const result &#x3D; await this.dataSource.query(
+        &#x60;
+        SELECT COALESCE(SUM(sfi.&quot;amountPaid&quot;), 0) as total_paid
+        FROM student_fee_items sfi
+        JOIN student_fee_assignments sfa ON sfi.&quot;studentFeeAssignmentId&quot; &#x3D; sfa.id
+        WHERE sfa.&quot;studentId&quot; &#x3D; $1 AND sfi.&quot;isActive&quot; &#x3D; true
+      &#x60;,
+        [studentId],
+      );
+  
+      const totalPaid &#x3D; parseFloat(result[0]?.total_paid || 0);
+  const studentRepository &#x3D; this.dataSource.getRepository(&#x27;Student&#x27;);
+      await studentRepository.update(
+        { id: studentId },
+        { totalFeesPaid: totalPaid },
+      );
+    }
+  // async createPayment(input: CreatePaymentInput, user: ActiveUserData): Promise&lt;Payment&gt; {
+  //   const { invoiceId, amount, paymentMethod, transactionReference, paymentDate, notes } &#x3D; input;
+  //   const tenantId &#x3D; user.tenantId;
+
+  //   const invoice &#x3D; await this.invoiceRepo.findOne({
+  //     where: { id: invoiceId, tenantId },
+  //     relations: [&#x27;student&#x27;],
+  //   });
+
+  //   if (!invoice) {
+  //     throw new NotFoundException(&#x60;Invoice with id ${invoiceId} not found&#x60;);
+  //   }
+
+  //   if (amount &gt; invoice.balanceAmount) {
+  //     throw new BadRequestException(
+  //       &#x60;Payment amount (${amount}) exceeds balance amount (${invoice.balanceAmount})&#x60;
+  //     );
+  //   }
+
+  //   const receiptNumber &#x3D; await this.generateReceiptNumber(tenantId);
+
+  //   const payment &#x3D; this.paymentRepo.create({
+  //     tenantId,
+  //     receiptNumber,
+  //     invoiceId: invoice.id,
+  //     studentId: invoice.studentId,
+  //     amount,
+  //     paymentMethod,
+  //     transactionReference,
+  //     paymentDate: paymentDate ? new Date(paymentDate) : new Date(),
+  //     receivedBy: user.sub,
+  //     notes,
+  //   });
+
+  //   const savedPayment &#x3D; await this.paymentRepo.save(payment);
+
+  //   const newPaidAmount &#x3D; Number(invoice.paidAmount) + Number(amount);
+  //   const newBalanceAmount &#x3D; Number(invoice.totalAmount) - newPaidAmount;
+
+  //   let newStatus &#x3D; invoice.status;
+  //   if (newBalanceAmount &#x3D;&#x3D;&#x3D; 0) {
+  //     newStatus &#x3D; InvoiceStatus.PAID;
+  //   } else if (newPaidAmount &gt; 0 &amp;&amp; newBalanceAmount &gt; 0) {
+  //     newStatus &#x3D; InvoiceStatus.PARTIALLY_PAID;
+  //   }
+
+  //   await this.invoiceRepo.update(invoice.id, {
+  //     paidAmount: newPaidAmount,
+  //     balanceAmount: newBalanceAmount,
+  //     status: newStatus,
+  //   });
+  //   await this.allocatePaymentToFeeItems(invoice.studentId, tenantId, amount);
+
+
+  //   this.logger.log(&#x60;Payment ${receiptNumber} of ${amount} recorded for invoice ${invoice.invoiceNumber}&#x60;);
+
+  //   return this.paymentRepo.findOneOrFail({
+  //     where: { id: savedPayment.id },
+  //     relations: [&#x27;invoice&#x27;, &#x27;student&#x27;,&#x27;student.user&#x27;, &#x27;receivedByUser&#x27;],
+  //   });
+  // }
+
+
+
+  async allocatePaymentToFeeItems(
+    studentId: string,
+    tenantId: string,
+    paymentAmount: number,
+    ruleOrder: string[] &#x3D; [&#x27;TUITION&#x27;, &#x27;LUNCH&#x27;, &#x27;BUS&#x27;, &#x27;TRANSPORT&#x27;],
+  ): Promise&lt;{ [feeItemId: string]: number }&gt; {
+    const studentFeeItemRepository &#x3D; this.paymentRepo.manager.getRepository(&#x27;StudentFeeItem&#x27;);
+    const feeItems &#x3D; await studentFeeItemRepository
+      .createQueryBuilder(&#x27;sfi&#x27;)
+      .innerJoinAndSelect(&#x27;sfi.studentFeeAssignment&#x27;, &#x27;sfa&#x27;)
+      .innerJoinAndSelect(&#x27;sfi.feeStructureItem&#x27;, &#x27;fsi&#x27;)
+      .innerJoinAndSelect(&#x27;fsi.feeBucket&#x27;, &#x27;fb&#x27;)
+      .where(&#x27;sfa.studentId &#x3D; :studentId&#x27;, { studentId })
+      .andWhere(&#x27;sfi.tenantId &#x3D; :tenantId&#x27;, { tenantId })
+      .andWhere(&#x27;sfi.isActive &#x3D; true&#x27;)
+      .orderBy(&#x27;fb.name&#x27;, &#x27;ASC&#x27;)
+      .getMany();
+
+    let remaining &#x3D; paymentAmount;
+    const allocations: Record&lt;string, number&gt; &#x3D; {};
+
+    for (const bucket of ruleOrder) {
+      if (remaining &lt;&#x3D; 0) break;
+
+      const itemsInBucket &#x3D; feeItems.filter(
+        (fi) &#x3D;&gt; fi.feeStructureItem.feeBucket.name.toUpperCase() &#x3D;&#x3D;&#x3D; bucket,
+      );
+
+      for (const item of itemsInBucket) {
+        if (remaining &lt;&#x3D; 0) break;
+        const unpaid &#x3D; Number(item.amount) - Number(item.amountPaid || 0);
+        if (unpaid &lt;&#x3D; 0) continue;
+
+        const toPay &#x3D; Math.min(unpaid, remaining);
+        allocations[item.id] &#x3D; toPay;
+        item.amountPaid &#x3D; Number(item.amountPaid || 0) + toPay;
+        remaining -&#x3D; toPay;
+
+        await studentFeeItemRepository.save(item);
+      }
+    }
+
+    if (remaining &gt; 0) {
+      for (const item of feeItems) {
+        if (remaining &lt;&#x3D; 0) break;
+        const unpaid &#x3D; Number(item.amount) - Number(item.amountPaid || 0);
+        if (unpaid &lt;&#x3D; 0) continue;
+
+        const toPay &#x3D; Math.min(unpaid, remaining);
+        allocations[item.id] &#x3D; (allocations[item.id] || 0) + toPay;
+        item.amountPaid &#x3D; Number(item.amountPaid || 0) + toPay;
+        remaining -&#x3D; toPay;
+
+        await studentFeeItemRepository.save(item);
+      }
+    }
+
+    return allocations;
+  }
+
+
+
+  async deallocatePaymentFromFeeItems(
+    studentId: string,
+    tenantId: string,
+    amount: number,
+  ): Promise&lt;void&gt; {
+    const studentFeeItemRepository &#x3D; this.paymentRepo.manager.getRepository(&#x27;StudentFeeItem&#x27;);
+
+    const feeItems &#x3D; await studentFeeItemRepository
+      .createQueryBuilder(&#x27;sfi&#x27;)
+      .innerJoinAndSelect(&#x27;sfi.studentFeeAssignment&#x27;, &#x27;sfa&#x27;)
+      .innerJoinAndSelect(&#x27;sfi.feeStructureItem&#x27;, &#x27;fsi&#x27;)
+      .innerJoinAndSelect(&#x27;fsi.feeBucket&#x27;, &#x27;fb&#x27;)
+      .where(&#x27;sfa.studentId &#x3D; :studentId&#x27;, { studentId })
+      .andWhere(&#x27;sfi.tenantId &#x3D; :tenantId&#x27;, { tenantId })
+      .andWhere(&#x27;sfi.isActive &#x3D; true&#x27;)
+      .andWhere(&#x27;sfi.amountPaid &gt; 0&#x27;)
+      .orderBy(&#x27;fb.name&#x27;, &#x27;DESC&#x27;)
+      .getMany();
+
+    let remaining &#x3D; amount;
+
+    for (const item of feeItems) {
+      if (remaining &lt;&#x3D; 0) break;
+      const paid &#x3D; Number(item.amountPaid || 0);
+      const toDeduct &#x3D; Math.min(paid, remaining);
+
+      item.amountPaid &#x3D; paid - toDeduct;
+      remaining -&#x3D; toDeduct;
+
+      await studentFeeItemRepository.save(item);
+    }
+  }
+  
+
+  async updatePayment(id: string, input: UpdatePaymentInput, user: ActiveUserData): Promise&lt;Payment&gt; {
+    const payment &#x3D; await this.paymentRepo.findOne({
+      where: { id, tenantId: user.tenantId },
+      relations: [&#x27;invoice&#x27;],
+    });
+
+    if (!payment) {
+      throw new NotFoundException(&#x60;Payment with id ${id} not found&#x60;);
+    }
+
+    if (input.amount &amp;&amp; input.amount !&#x3D;&#x3D; payment.amount) {
+      const invoice &#x3D; payment.invoice;
+      const amountDifference &#x3D; Number(input.amount) - Number(payment.amount);
+      
+      const newPaidAmount &#x3D; Number(invoice.paidAmount) + amountDifference;
+      const newBalanceAmount &#x3D; Number(invoice.totalAmount) - newPaidAmount;
+
+      if (newBalanceAmount &lt; 0) {
+        throw new BadRequestException(&#x27;Updated payment amount exceeds invoice total&#x27;);
+      }
+
+      let newStatus &#x3D; invoice.status;
+      if (newBalanceAmount &#x3D;&#x3D;&#x3D; 0) {
+        newStatus &#x3D; InvoiceStatus.PAID;
+      } else if (newPaidAmount &gt; 0 &amp;&amp; newBalanceAmount &gt; 0) {
+        newStatus &#x3D; InvoiceStatus.PARTIALLY_PAID;
+      } else {
+        newStatus &#x3D; InvoiceStatus.PENDING;
+      }
+
+      await this.invoiceRepo.update(invoice.id, {
+        paidAmount: newPaidAmount,
+        balanceAmount: newBalanceAmount,
+        status: newStatus,
+      });
+    }
+
+    Object.assign(payment, input);
+    await this.paymentRepo.save(payment);
+
+    this.logger.log(&#x60;Payment ${payment.receiptNumber} updated by user ${user.sub}&#x60;);
+
+    return this.paymentRepo.findOneOrFail({
+      where: { id },
+      relations: [&#x27;invoice&#x27;, &#x27;student&#x27;, &#x27;receivedByUser&#x27;],
+    });
+  }
+
+  async voidPayment(id: string, reason: string, user: ActiveUserData): Promise&lt;boolean&gt; {
+    const payment &#x3D; await this.paymentRepo.findOne({
+      where: { id, tenantId: user.tenantId },
+      relations: [&#x27;invoice&#x27;],
+    });
+
+    if (!payment) {
+      throw new NotFoundException(&#x60;Payment with id ${id} not found&#x60;);
+    }
+
+    const invoice &#x3D; payment.invoice;
+    const newPaidAmount &#x3D; Number(invoice.paidAmount) - Number(payment.amount);
+    const newBalanceAmount &#x3D; Number(invoice.totalAmount) - newPaidAmount;
+
+    let newStatus &#x3D; invoice.status;
+    if (newBalanceAmount &#x3D;&#x3D;&#x3D; invoice.totalAmount) {
+      newStatus &#x3D; InvoiceStatus.PENDING;
+    } else if (newPaidAmount &gt; 0 &amp;&amp; newBalanceAmount &gt; 0) {
+      newStatus &#x3D; InvoiceStatus.PARTIALLY_PAID;
+    }
+
+    await this.invoiceRepo.update(invoice.id, {
+      paidAmount: newPaidAmount,
+      balanceAmount: newBalanceAmount,
+      status: newStatus,
+    });
+
+    payment.notes &#x3D; &#x60;VOIDED: ${reason}. Original notes: ${payment.notes || &#x27;N/A&#x27;}&#x60;;
+    payment.isVoided &#x3D; true;
+    payment.voidedAt &#x3D; new Date();
+    payment.voidedBy &#x3D; user.sub;
+    await this.paymentRepo.save(payment);
+
+    this.logger.log(&#x60;Payment ${payment.receiptNumber} voided by user ${user.sub}&#x60;);
+    return true;
+  }
+
+
+  async deletePayment(id: string, user: ActiveUserData): Promise&lt;boolean&gt; {
+    const payment &#x3D; await this.paymentRepo.findOne({
+      where: { id, tenantId: user.tenantId },
+      relations: [&#x27;invoice&#x27;],
+    });
+
+    if (!payment) {
+      throw new NotFoundException(&#x60;Payment with id ${id} not found&#x60;);
+    }
+
+    const invoice &#x3D; payment.invoice;
+    const newPaidAmount &#x3D; Number(invoice.paidAmount) - Number(payment.amount);
+    const newBalanceAmount &#x3D; Number(invoice.totalAmount) - newPaidAmount;
+
+    let newStatus &#x3D; invoice.status;
+    if (newBalanceAmount &#x3D;&#x3D;&#x3D; invoice.totalAmount) {
+      newStatus &#x3D; InvoiceStatus.PENDING;
+    } else if (newPaidAmount &gt; 0) {
+      newStatus &#x3D; InvoiceStatus.PARTIALLY_PAID;
+    }
+
+    await this.invoiceRepo.update(invoice.id, {
+      paidAmount: newPaidAmount,
+      balanceAmount: newBalanceAmount,
+      status: newStatus,
+    });
+
+    await this.paymentRepo.delete(id);
+
+    this.logger.log(&#x60;Payment ${payment.receiptNumber} permanently deleted by user ${user.sub}&#x60;);
+    return true;
+  }
+
+  async findById(id: string, user: ActiveUserData): Promise&lt;Payment&gt; {
+    const payment &#x3D; await this.paymentRepo.findOne({
+      where: { id, tenantId: user.tenantId },
+      relations: [&#x27;invoice&#x27;, &#x27;student&#x27;, &#x27;student.user&#x27;, &#x27;receivedByUser&#x27;],
+    });
+
+    if (!payment) {
+      throw new NotFoundException(&#x60;Payment with id ${id} not found&#x60;);
+    }
+
+    return payment;
+  }
+
+  async findAll(filters: PaymentFilters, user: ActiveUserData): Promise&lt;Payment[]&gt; {
+    const where: any &#x3D; { tenantId: user.tenantId };
+
+    if (filters) {
+      if (filters.studentId) where.studentId &#x3D; filters.studentId;
+      if (filters.invoiceId) where.invoiceId &#x3D; filters.invoiceId;
+      if (filters.paymentMethod) where.paymentMethod &#x3D; filters.paymentMethod;
+      if (filters.receiptNumber) where.receiptNumber &#x3D; filters.receiptNumber;
+      
+      if (filters.startDate &amp;&amp; filters.endDate) {
+        where.paymentDate &#x3D; Between(new Date(filters.startDate), new Date(filters.endDate));
+      }
+    }
+
+    return this.paymentRepo.find({
+      where,
+      relations: [&#x27;invoice&#x27;, &#x27;student&#x27;,&#x27;student.user&#x27;, &#x27;receivedByUser&#x27;],
+      order: { paymentDate: &#x27;DESC&#x27; },
+    });
+  }
+
+  
+
+  async findByStudent(studentId: string, user: ActiveUserData): Promise&lt;Payment[]&gt; {
+    return this.paymentRepo.find({
+      where: { studentId, tenantId: user.tenantId },
+      relations: [&#x27;invoice&#x27;,&#x27;invoice.term&#x27;, &#x27;receivedByUser&#x27;],
+      order: { paymentDate: &#x27;DESC&#x27; },
+    });
+  }
+
+  async findByInvoice(invoiceId: string, user: ActiveUserData): Promise&lt;Payment[]&gt; {
+    return this.paymentRepo.find({
+      where: { invoiceId, tenantId: user.tenantId },
+      relations: [&#x27;student&#x27;, &#x27;receivedByUser&#x27;],
+      order: { paymentDate: &#x27;ASC&#x27; },
+    });
+  }
+
+  private async generateReceiptNumber(tenantId: string): Promise&lt;string&gt; {
+    const lastPayment &#x3D; await this.paymentRepo.findOne({
+      where: { tenantId },
+      order: { createdAt: &#x27;DESC&#x27; },
+    });
+
+    const lastNumber &#x3D; lastPayment?.receiptNumber?.match(/\d+$/)?.[0] || &#x27;0&#x27;;
+    const nextNumber &#x3D; (parseInt(lastNumber) + 1).toString().padStart(6, &#x27;0&#x27;);
+    const year &#x3D; new Date().getFullYear();
+
+    return &#x60;RCP-${year}-${nextNumber}&#x60;;
+  }
+}
+
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'PaymentService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

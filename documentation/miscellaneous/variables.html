@@ -1,0 +1,1572 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>skool documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">skool documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content miscellaneous-variables">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Miscellaneous</li>
+  <li class="breadcrumb-item">Variables</li>
+</ol>
+
+<section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <ul class="index-list">
+                        <li>
+                            <a href="#ActiveUser" title="src/admin/auth/decorator/active-user.decorator.ts" ><b>ActiveUser</b>&nbsp;&nbsp;&nbsp;(src/.../active-user.decorator.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#AppDataSource" title="src/admin/school-type/seeds/fix-null-school-type.ts" ><b>AppDataSource</b>&nbsp;&nbsp;&nbsp;(src/.../fix-null-school-type.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#Auth" title="src/admin/auth/decorator/auth.decorator.ts" ><b>Auth</b>&nbsp;&nbsp;&nbsp;(src/.../auth.decorator.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#AUTH_TYPE_KEY" title="src/admin/auth/constants/auth.constants.ts" ><b>AUTH_TYPE_KEY</b>&nbsp;&nbsp;&nbsp;(src/.../auth.constants.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#Cache" title="src/common/decorators/cache.decorator.ts" ><b>Cache</b>&nbsp;&nbsp;&nbsp;(src/.../cache.decorator.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#CACHE_KEY" title="src/common/decorators/cache.decorator.ts" ><b>CACHE_KEY</b>&nbsp;&nbsp;&nbsp;(src/.../cache.decorator.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#CurrentTenant" title="src/admin/auth/decorator/current-tenant.decorator.ts" ><b>CurrentTenant</b>&nbsp;&nbsp;&nbsp;(src/.../current-tenant.decorator.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#CurrentTenant" title="src/admin/auth/guards/fdfdf/current-tenant.decorator.ts" ><b>CurrentTenant</b>&nbsp;&nbsp;&nbsp;(src/.../current-tenant.decorator.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#DEFAULT_SCALE_CONFIGS" title="src/admin/tenants/dtos/scale-dto.ts" ><b>DEFAULT_SCALE_CONFIGS</b>&nbsp;&nbsp;&nbsp;(src/.../scale-dto.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ENV" title="src/app.module.ts" ><b>ENV</b>&nbsp;&nbsp;&nbsp;(src/.../app.module.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ENV" title="src/seeder/seeder.module.ts" ><b>ENV</b>&nbsp;&nbsp;&nbsp;(src/.../seeder.module.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#IS_GLOBAL_ADMIN_KEY" title="src/admin/auth/decorator/is-global-admin.decorator.ts" ><b>IS_GLOBAL_ADMIN_KEY</b>&nbsp;&nbsp;&nbsp;(src/.../is-global-admin.decorator.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#IsGlobalAdmin" title="src/admin/auth/decorator/is-global-admin.decorator.ts" ><b>IsGlobalAdmin</b>&nbsp;&nbsp;&nbsp;(src/.../is-global-admin.decorator.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#Public" title="src/admin/auth/decorator/public.decorator.ts" ><b>Public</b>&nbsp;&nbsp;&nbsp;(src/.../public.decorator.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#PUBLIC_ROUTE_KEY" title="src/admin/auth/constants/auth.constants.ts" ><b>PUBLIC_ROUTE_KEY</b>&nbsp;&nbsp;&nbsp;(src/.../auth.constants.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#pubSub" title="src/messaging/providers/pubsub.provider.ts" ><b>pubSub</b>&nbsp;&nbsp;&nbsp;(src/.../pubsub.provider.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#REQUEST_USER_KEY" title="src/admin/auth/constants/auth.constants.ts" ><b>REQUEST_USER_KEY</b>&nbsp;&nbsp;&nbsp;(src/.../auth.constants.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#Roles" title="src/iam/decorators/roles.decorator.ts" ><b>Roles</b>&nbsp;&nbsp;&nbsp;(src/.../roles.decorator.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#Roles" title="src/admin/auth/decorator/roles.decorator.ts" ><b>Roles</b>&nbsp;&nbsp;&nbsp;(src/.../roles.decorator.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ROLES_KEY" title="src/iam/decorators/roles.decorator.ts" ><b>ROLES_KEY</b>&nbsp;&nbsp;&nbsp;(src/.../roles.decorator.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ROLES_KEY" title="src/iam/guards/tenant-role.guard.ts" ><b>ROLES_KEY</b>&nbsp;&nbsp;&nbsp;(src/.../tenant-role.guard.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#ROLES_KEY" title="src/admin/auth/constants/auth.constants.ts" ><b>ROLES_KEY</b>&nbsp;&nbsp;&nbsp;(src/.../auth.constants.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#SCHOOL_TYPES_CONFIG" title="src/admin/school/config/school-type.config.ts" ><b>SCHOOL_TYPES_CONFIG</b>&nbsp;&nbsp;&nbsp;(src/.../school-type.config.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#setAuthCookies" title="src/admin/auth/utils/set-auth-cookies.ts" ><b>setAuthCookies</b>&nbsp;&nbsp;&nbsp;(src/.../set-auth-cookies.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#SKIP_SCHOOL_CONFIG_KEY" title="src/iam/decorators/skip-school-config.decorator.ts" ><b>SKIP_SCHOOL_CONFIG_KEY</b>&nbsp;&nbsp;&nbsp;(src/.../skip-school-config.decorator.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#SKIP_SCHOOL_CONFIG_KEY" title="src/admin/auth/constants/auth.constants.ts" ><b>SKIP_SCHOOL_CONFIG_KEY</b>&nbsp;&nbsp;&nbsp;(src/.../auth.constants.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#SKIP_TENANT_KEY" title="src/admin/auth/constants/auth.constants.ts" ><b>SKIP_TENANT_KEY</b>&nbsp;&nbsp;&nbsp;(src/.../auth.constants.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#SKIP_TENANT_VALIDATION_KEY" title="src/admin/auth/decorator/skip-tenant-validation.decorator.ts" ><b>SKIP_TENANT_VALIDATION_KEY</b>&nbsp;&nbsp;&nbsp;(src/.../skip-tenant-validation.decorator.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#SkipSchoolConfig" title="src/iam/decorators/skip-school-config.decorator.ts" ><b>SkipSchoolConfig</b>&nbsp;&nbsp;&nbsp;(src/.../skip-school-config.decorator.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#SkipSchoolConfig" title="src/admin/auth/decorator/skip-school-config.decorator.ts" ><b>SkipSchoolConfig</b>&nbsp;&nbsp;&nbsp;(src/.../skip-school-config.decorator.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#SkipSchoolConfigCheck" title="src/iam/guards/school-setup-guard-service.ts" ><b>SkipSchoolConfigCheck</b>&nbsp;&nbsp;&nbsp;(src/.../school-setup-guard-service.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#SkipTenant" title="src/admin/auth/decorator/skip-tenant.decorator.ts" ><b>SkipTenant</b>&nbsp;&nbsp;&nbsp;(src/.../skip-tenant.decorator.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#SkipTenantValidation" title="src/admin/auth/decorator/skip-tenant-validation.decorator.ts" ><b>SkipTenantValidation</b>&nbsp;&nbsp;&nbsp;(src/.../skip-tenant-validation.decorator.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#SUPER_ADMIN_ONLY" title="src/admin/auth/decorator/super-admin.decorator.ts" ><b>SUPER_ADMIN_ONLY</b>&nbsp;&nbsp;&nbsp;(src/.../super-admin.decorator.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#SuperAdminOnly" title="src/admin/auth/decorator/super-admin.decorator.ts" ><b>SuperAdminOnly</b>&nbsp;&nbsp;&nbsp;(src/.../super-admin.decorator.ts)</a>
+                        </li>
+                        <li>
+                            <a href="#Tenant" title="src/admin/auth/decorator/tenant.decorator.ts" ><b>Tenant</b>&nbsp;&nbsp;&nbsp;(src/.../tenant.decorator.ts)</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    <h3>src/admin/auth/decorator/active-user.decorator.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ActiveUser"></a>
+                    <span class="name">
+                        <span ><b>ActiveUser</b></span>
+                        <a href="#ActiveUser"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>createParamDecorator(
+  (field: keyof ActiveUserData | undefined, ctx: ExecutionContext) &#x3D;&gt; {
+    let request: any;
+    // Handle GraphQL and HTTP contexts
+    if (ctx.getType&lt;GqlContextType&gt;() &#x3D;&#x3D;&#x3D; &#x27;graphql&#x27;) {
+      const gqlCtx &#x3D; GqlExecutionContext.create(ctx);
+      request &#x3D; gqlCtx.getContext().req;
+    } else {
+      request &#x3D; ctx.switchToHttp().getRequest();
+    }
+
+    const user: ActiveUserData | undefined &#x3D; request[REQUEST_USER_KEY];
+    
+    if (!user) {
+      return null; // Let guards handle authentication
+    }
+    
+    return field ? user[field] : user;
+  }
+)</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Extract authenticated user from request</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/admin/school-type/seeds/fix-null-school-type.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="AppDataSource"></a>
+                    <span class="name">
+                        <span ><b>AppDataSource</b></span>
+                        <a href="#AppDataSource"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new DataSource({
+  type: &#x27;postgres&#x27;,
+  host: &#x27;host&#x27;,
+  port: 5432,
+  username: &#x27;owner&#x27;,
+  password: &#x27;password&#x27;,
+  database: &#x27;database_name&#x27;,
+  entities: [
+    SchoolType,
+    Level,
+    Grade,
+    Subject,
+    GradeLevel,
+    School,
+    Student,
+    Teacher,
+    User,
+    Organization,
+    Parent,
+    SchoolLevelSetting,
+    TenantGradeLevel
+
+  ],
+  synchronize: false, // ❗ safer — don&#x27;t let this auto-sync in prod
+  ssl: { rejectUnauthorized: false },
+})</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/admin/auth/decorator/auth.decorator.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="Auth"></a>
+                    <span class="name">
+                        <span ><b>Auth</b></span>
+                        <a href="#Auth"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>(...authTypes: AuthType[]) &#x3D;&gt; 
+  SetMetadata(AUTH_TYPE_KEY, authTypes)</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Defines authentication type for a route</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/admin/auth/constants/auth.constants.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="AUTH_TYPE_KEY"></a>
+                    <span class="name">
+                        <span ><b>AUTH_TYPE_KEY</b></span>
+                        <a href="#AUTH_TYPE_KEY"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;authType&#x27;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="PUBLIC_ROUTE_KEY"></a>
+                    <span class="name">
+                        <span ><b>PUBLIC_ROUTE_KEY</b></span>
+                        <a href="#PUBLIC_ROUTE_KEY"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;isPublic&#x27;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="REQUEST_USER_KEY"></a>
+                    <span class="name">
+                        <span ><b>REQUEST_USER_KEY</b></span>
+                        <a href="#REQUEST_USER_KEY"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;user&#x27;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ROLES_KEY"></a>
+                    <span class="name">
+                        <span ><b>ROLES_KEY</b></span>
+                        <a href="#ROLES_KEY"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;roles&#x27;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SKIP_SCHOOL_CONFIG_KEY"></a>
+                    <span class="name">
+                        <span ><b>SKIP_SCHOOL_CONFIG_KEY</b></span>
+                        <a href="#SKIP_SCHOOL_CONFIG_KEY"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;skipSchoolConfig&#x27;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SKIP_TENANT_KEY"></a>
+                    <span class="name">
+                        <span ><b>SKIP_TENANT_KEY</b></span>
+                        <a href="#SKIP_TENANT_KEY"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;skipTenant&#x27;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/common/decorators/cache.decorator.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="Cache"></a>
+                    <span class="name">
+                        <span ><b>Cache</b></span>
+                        <a href="#Cache"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>(ttl: number &#x3D; 3600) &#x3D;&gt; SetMetadata(CACHE_KEY, ttl)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="CACHE_KEY"></a>
+                    <span class="name">
+                        <span ><b>CACHE_KEY</b></span>
+                        <a href="#CACHE_KEY"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;cache&#x27;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/admin/auth/decorator/current-tenant.decorator.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="CurrentTenant"></a>
+                    <span class="name">
+                        <span ><b>CurrentTenant</b></span>
+                        <a href="#CurrentTenant"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>createParamDecorator(
+  (data: unknown, ctx: ExecutionContext): string | null &#x3D;&gt; {
+    const request &#x3D; extractRequest(ctx);
+    const user: ActiveUserData | undefined &#x3D; request[REQUEST_USER_KEY];
+    
+    if (!user) return null;
+    if (user.globalRole &#x3D;&#x3D;&#x3D; GlobalRole.SUPER_ADMIN) return null;
+    
+    return user.tenantId || null;
+  },
+)</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Extract tenant ID from authenticated user
+Returns null for super admins</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/admin/auth/guards/fdfdf/current-tenant.decorator.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="CurrentTenant"></a>
+                    <span class="name">
+                        <span ><b>CurrentTenant</b></span>
+                        <a href="#CurrentTenant"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>createParamDecorator(
+    (data: unknown, ctx: ExecutionContext) &#x3D;&gt; {
+      let request;
+      
+      if (ctx.getType&lt;GqlContextType&gt;() &#x3D;&#x3D;&#x3D; &#x27;graphql&#x27;) {
+        const gqlContext &#x3D; GqlExecutionContext.create(ctx);
+        request &#x3D; gqlContext.getContext().req;
+      } else {
+        request &#x3D; ctx.switchToHttp().getRequest();
+      }
+      
+      const user: ActiveUserData &#x3D; request[REQUEST_USER_KEY];
+
+      if (user.globalRole &#x3D;&#x3D;&#x3D; &#x27;SUPER_ADMIN&#x27;) {
+        return null;
+      }
+      return user.tenantId;
+    },
+  )</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/admin/tenants/dtos/scale-dto.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="DEFAULT_SCALE_CONFIGS"></a>
+                    <span class="name">
+                        <span ><b>DEFAULT_SCALE_CONFIGS</b></span>
+                        <a href="#DEFAULT_SCALE_CONFIGS"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/ScaleConfig.html" target="_self" >Record&lt;ScaleTier, ScaleConfig&gt;</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{
+  [ScaleTier.SMALL]: {
+    rateLimitCapacity: 15,
+    rateLimitRefillPerSec: 3,
+    queueConcurrency: 10,
+    cacheTimeout: 60,
+    asyncProcessing: false,
+    maxQuestionsInMemory: 100,
+    batchSize: 50,
+    processingDelay: 0,
+  },
+  [ScaleTier.MEDIUM]: {
+    rateLimitCapacity: 8,
+    rateLimitRefillPerSec: 1.5,
+    queueConcurrency: 50,
+    cacheTimeout: 300,
+    asyncProcessing: true,
+    maxQuestionsInMemory: 50,
+    batchSize: 25,
+    processingDelay: 1000,
+  },
+  [ScaleTier.LARGE]: {
+    rateLimitCapacity: 3,
+    rateLimitRefillPerSec: 0.5,
+    queueConcurrency: 100,
+    cacheTimeout: 600,
+    asyncProcessing: true,
+    maxQuestionsInMemory: 20,
+    batchSize: 10,
+    processingDelay: 2000,
+  },
+}</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/app.module.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ENV"></a>
+                    <span class="name">
+                        <span ><b>ENV</b></span>
+                        <a href="#ENV"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>process.env.NODE_ENV</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/seeder/seeder.module.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ENV"></a>
+                    <span class="name">
+                        <span ><b>ENV</b></span>
+                        <a href="#ENV"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>process.env.NODE_ENV</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/admin/auth/decorator/is-global-admin.decorator.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="IS_GLOBAL_ADMIN_KEY"></a>
+                    <span class="name">
+                        <span ><b>IS_GLOBAL_ADMIN_KEY</b></span>
+                        <a href="#IS_GLOBAL_ADMIN_KEY"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;isGlobalAdmin&#x27;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="IsGlobalAdmin"></a>
+                    <span class="name">
+                        <span ><b>IsGlobalAdmin</b></span>
+                        <a href="#IsGlobalAdmin"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>() &#x3D;&gt; SetMetadata(IS_GLOBAL_ADMIN_KEY, true)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/admin/auth/decorator/public.decorator.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="Public"></a>
+                    <span class="name">
+                        <span ><b>Public</b></span>
+                        <a href="#Public"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>() &#x3D;&gt; SetMetadata(PUBLIC_ROUTE_KEY, true)</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Marks a route as public (no authentication required)
+Equivalent to</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/messaging/providers/pubsub.provider.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="pubSub"></a>
+                    <span class="name">
+                        <span ><b>pubSub</b></span>
+                        <a href="#pubSub"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new PubSub()</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/iam/decorators/roles.decorator.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="Roles"></a>
+                    <span class="name">
+                        <span ><b>Roles</b></span>
+                        <a href="#Roles"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>(...roles: MembershipRole[]) &#x3D;&gt;
+  SetMetadata(ROLES_KEY, roles)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ROLES_KEY"></a>
+                    <span class="name">
+                        <span ><b>ROLES_KEY</b></span>
+                        <a href="#ROLES_KEY"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;roles&#x27;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/admin/auth/decorator/roles.decorator.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="Roles"></a>
+                    <span class="name">
+                        <span ><b>Roles</b></span>
+                        <a href="#Roles"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>(...roles: MembershipRole[]) &#x3D;&gt;
+  SetMetadata(ROLES_KEY, roles)</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Defines required tenant roles for a route
+Super Admins bypass role checks</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/iam/guards/tenant-role.guard.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ROLES_KEY"></a>
+                    <span class="name">
+                        <span ><b>ROLES_KEY</b></span>
+                        <a href="#ROLES_KEY"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;roles&#x27;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/admin/school/config/school-type.config.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SCHOOL_TYPES_CONFIG"></a>
+                    <span class="name">
+                        <span ><b>SCHOOL_TYPES_CONFIG</b></span>
+                        <a href="#SCHOOL_TYPES_CONFIG"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/object" target="_blank" >object</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>{
+    CBC: {
+      name: &quot;CBC School&quot;,
+      description: &quot;A complete school offering education from pre-primary through senior secondary under the CBC&quot;,
+      icon: &quot;🏫&quot;,
+      priority: 4,
+      menuItems: [&quot;Home&quot;, &quot;School&quot;, &quot;Teachers&quot;, &quot;Students&quot;, &quot;Attendance&quot;, &quot;Grading&quot;, &quot;Library&quot;, &quot;Finance&quot;],
+      levels: {
+        &quot;pre-primary&quot;: {
+          name: &quot;Pre-primary&quot;,
+          description: &quot;Early childhood education for ages 4-5&quot;,
+          grades: [
+            { name: &quot;Early Childhood&quot;, age: 3 },
+            { name: &quot;PP1&quot;, age: 4 },
+            { name: &quot;PP2&quot;, age: 5 }
+          ]
+        },
+        &quot;lower-primary&quot;: {
+          name: &quot;Lower Primary&quot;,
+          description: &quot;Foundation stage for ages 6-8&quot;,
+          grades: [
+            { name: &quot;Grade 1&quot;, age: 6 },
+            { name: &quot;Grade 2&quot;, age: 7 },
+            { name: &quot;Grade 3&quot;, age: 8 }
+          ]
+        },
+        &quot;upper-primary&quot;: {
+          name: &quot;Upper Primary&quot;,
+          description: &quot;Intermediate stage for ages 9-11&quot;,
+          grades: [
+            { name: &quot;Grade 4&quot;, age: 9 },
+            { name: &quot;Grade 5&quot;, age: 10 },
+            { name: &quot;Grade 6&quot;, age: 11 }
+          ]
+        },
+        &quot;junior-secondary&quot;: {
+          name: &quot;Junior Secondary&quot;,
+          description: &quot;Middle school stage for ages 12-14&quot;,
+          grades: [
+            { name: &quot;Grade 7&quot;, age: 12 },
+            { name: &quot;Grade 8&quot;, age: 13 },
+            { name: &quot;Grade 9&quot;, age: 14 }
+          ]
+        },
+        &quot;senior-secondary&quot;: {
+          name: &quot;Senior Secondary&quot;,
+          description: &quot;Advanced stage for ages 15-17&quot;,
+          grades: [
+            { name: &quot;Grade 10&quot;, age: 15 },
+            { name: &quot;Grade 11&quot;, age: 16 },
+            { name: &quot;Grade 12&quot;, age: 17 }
+          ]
+        }
+      }
+    },
+    INTERNATIONAL: {
+      name: &quot;International School&quot;,
+      description: &quot;An international school in Kenya offers global curricula such as IGCSE, IB, or American&quot;,
+      icon: &quot;🌍&quot;,
+      priority: 4,
+      menuItems: [&quot;Home&quot;, &quot;School&quot;, &quot;Teachers&quot;, &quot;Students&quot;, &quot;Attendance&quot;, &quot;Grading&quot;, &quot;International Programs&quot;],
+      levels: {
+        &quot;igcse-early-years&quot;: {
+          name: &quot;IGCSE Early Years&quot;,
+          description: &quot;British curriculum early years&quot;,
+          grades: [
+            { name: &quot;Nursery&quot;, age: 3 },
+            { name: &quot;Reception&quot;, age: 4 }
+          ]
+        },
+        &quot;igcse-primary&quot;: {
+          name: &quot;IGCSE Primary&quot;,
+          description: &quot;British curriculum primary&quot;,
+          grades: [
+            { name: &quot;Year 1&quot;, age: 5 },
+            { name: &quot;Year 2&quot;, age: 6 },
+            { name: &quot;Year 3&quot;, age: 7 },
+            { name: &quot;Year 4&quot;, age: 8 },
+            { name: &quot;Year 5&quot;, age: 9 },
+            { name: &quot;Year 6&quot;, age: 10 }
+          ]
+        },
+        &quot;igcse-secondary&quot;: {
+          name: &quot;IGCSE Secondary&quot;,
+          description: &quot;British curriculum secondary&quot;,
+          grades: [
+            { name: &quot;Year 7&quot;, age: 11 },
+            { name: &quot;Year 8&quot;, age: 12 },
+            { name: &quot;Year 9&quot;, age: 13 },
+            { name: &quot;Year 10&quot;, age: 14 },
+            { name: &quot;Year 11&quot;, age: 15 }
+          ]
+        },
+        &quot;a-level&quot;: {
+          name: &quot;A-Level&quot;,
+          description: &quot;Advanced level studies&quot;,
+          grades: [
+            { name: &quot;Year 12&quot;, age: 16 },
+            { name: &quot;Year 13&quot;, age: 17 }
+          ]
+        }
+      }
+    },
+    MADRASA: {
+      name: &quot;Madrasa / Faith-based School&quot;,
+      description: &quot;These schools combine religious instruction with academic education&quot;,
+      icon: &quot;🕌&quot;,
+      priority: 2,
+      menuItems: [&quot;Home&quot;, &quot;School&quot;, &quot;Teachers&quot;, &quot;Students&quot;, &quot;Attendance&quot;, &quot;Islamic Studies&quot;, &quot;Quran&quot;],
+      levels: {
+        &quot;pre-primary&quot;: {
+          name: &quot;Pre-primary&quot;,
+          description: &quot;Early childhood education with religious foundation&quot;,
+          grades: [
+            { name: &quot;Early Childhood&quot;, age: 3 },
+            { name: &quot;PP1&quot;, age: 4 },
+            { name: &quot;PP2&quot;, age: 5 }
+          ]
+        },
+        &quot;lower-primary&quot;: {
+          name: &quot;Lower Primary&quot;,
+          description: &quot;Foundation stage with religious instruction&quot;,
+          grades: [
+            { name: &quot;Grade 1&quot;, age: 6 },
+            { name: &quot;Grade 2&quot;, age: 7 },
+            { name: &quot;Grade 3&quot;, age: 8 }
+          ]
+        },
+        &quot;upper-primary&quot;: {
+          name: &quot;Upper Primary&quot;,
+          description: &quot;Intermediate stage with religious education&quot;,
+          grades: [
+            { name: &quot;Grade 4&quot;, age: 9 },
+            { name: &quot;Grade 5&quot;, age: 10 },
+            { name: &quot;Grade 6&quot;, age: 11 }
+          ]
+        },
+        &quot;junior-secondary&quot;: {
+          name: &quot;Junior Secondary&quot;,
+          description: &quot;Middle school stage with religious studies integration&quot;,
+          grades: [
+            { name: &quot;Grade 7&quot;, age: 12 },
+            { name: &quot;Grade 8&quot;, age: 13 },
+            { name: &quot;Grade 9&quot;, age: 14 }
+          ]
+        },
+        &quot;senior-secondary&quot;: {
+          name: &quot;Senior Secondary&quot;,
+          description: &quot;Advanced stage with specialized religious education&quot;,
+          grades: [
+            { name: &quot;Grade 10&quot;, age: 15 },
+            { name: &quot;Grade 11&quot;, age: 16 },
+            { name: &quot;Grade 12&quot;, age: 17 }
+          ]
+        }
+      }
+      
+    },
+    HOMESCHOOL: {
+      name: &quot;Homeschool&quot;,
+      description: &quot;Parents or tutors educating children at home using international curricula&quot;,
+      icon: &quot;🏠&quot;,
+      priority: 2,
+      menuItems: [&quot;Home&quot;, &quot;Curriculum&quot;, &quot;Lessons&quot;, &quot;Assessment&quot;, &quot;Reports&quot;],
+      levels: {
+        &quot;elementary&quot;: {
+          name: &quot;Elementary&quot;,
+          description: &quot;Basic education foundation&quot;,
+          grades: [
+            { name: &quot;Grade 1&quot;, age: 6 },
+            { name: &quot;Grade 2&quot;, age: 7 },
+            { name: &quot;Grade 3&quot;, age: 8 },
+            { name: &quot;Grade 4&quot;, age: 9 },
+            { name: &quot;Grade 5&quot;, age: 10 }
+          ]
+        },
+        &quot;middle-school&quot;: {
+          name: &quot;Middle School&quot;,
+          description: &quot;Intermediate education&quot;,
+          grades: [
+            { name: &quot;Grade 6&quot;, age: 11 },
+            { name: &quot;Grade 7&quot;, age: 12 },
+            { name: &quot;Grade 8&quot;, age: 13 }
+          ]
+        },
+        &quot;high-school&quot;: {
+          name: &quot;High School&quot;,
+          description: &quot;Advanced secondary education&quot;,
+          grades: [
+            { name: &quot;Grade 9&quot;, age: 14 },
+            { name: &quot;Grade 10&quot;, age: 15 },
+            { name: &quot;Grade 11&quot;, age: 16 },
+            { name: &quot;Grade 12&quot;, age: 17 }
+          ]
+        }
+      }
+    }
+  }</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/admin/auth/utils/set-auth-cookies.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="setAuthCookies"></a>
+                    <span class="name">
+                        <span ><b>setAuthCookies</b></span>
+                        <a href="#setAuthCookies"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>(
+  context: any,
+  tokens: { accessToken: string; refreshToken: string },
+  tenantId: string,
+) &#x3D;&gt; {
+  const isProd &#x3D; process.env.NODE_ENV &#x3D;&#x3D;&#x3D; &#x27;production&#x27;;
+
+  context.res.cookie(&#x27;access_token&#x27;, tokens.accessToken, {
+    httpOnly: true,
+    sameSite: &#x27;None&#x27;,
+    secure: isProd,
+    maxAge: 1000 * 60 * 15, 
+    domain: &#x27;.squl.co.ke&#x27;,
+  });
+
+  context.res.cookie(&#x27;refresh_token&#x27;, tokens.refreshToken, {
+    httpOnly: true,
+    sameSite: &#x27;None&#x27;,
+    secure: isProd,
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+    domain: &#x27;.squl.co.ke&#x27;,
+  });
+
+  context.res.cookie(&#x27;tenant_id&#x27;, tenantId, {
+    httpOnly: true,
+    sameSite: &#x27;None&#x27;,
+    secure: isProd,
+    maxAge: 1000 * 60 * 60 * 24 * 30,
+    domain: &#x27;.squl.co.ke&#x27;,
+  });
+}</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/iam/decorators/skip-school-config.decorator.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SKIP_SCHOOL_CONFIG_KEY"></a>
+                    <span class="name">
+                        <span ><b>SKIP_SCHOOL_CONFIG_KEY</b></span>
+                        <a href="#SKIP_SCHOOL_CONFIG_KEY"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;skipSchoolConfigCheck&#x27;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SkipSchoolConfig"></a>
+                    <span class="name">
+                        <span ><b>SkipSchoolConfig</b></span>
+                        <a href="#SkipSchoolConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>() &#x3D;&gt; SetMetadata(SKIP_SCHOOL_CONFIG_KEY, true)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/admin/auth/decorator/skip-tenant-validation.decorator.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SKIP_TENANT_VALIDATION_KEY"></a>
+                    <span class="name">
+                        <span ><b>SKIP_TENANT_VALIDATION_KEY</b></span>
+                        <a href="#SKIP_TENANT_VALIDATION_KEY"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;skipTenantValidation&#x27;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SkipTenantValidation"></a>
+                    <span class="name">
+                        <span ><b>SkipTenantValidation</b></span>
+                        <a href="#SkipTenantValidation"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>() &#x3D;&gt; SetMetadata(SKIP_TENANT_VALIDATION_KEY, true)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/admin/auth/decorator/skip-school-config.decorator.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SkipSchoolConfig"></a>
+                    <span class="name">
+                        <span ><b>SkipSchoolConfig</b></span>
+                        <a href="#SkipSchoolConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>() &#x3D;&gt; SetMetadata(SKIP_SCHOOL_CONFIG_KEY, true)</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Skip school configuration check
+Use for setup routes or super admin routes</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/iam/guards/school-setup-guard-service.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SkipSchoolConfigCheck"></a>
+                    <span class="name">
+                        <span ><b>SkipSchoolConfigCheck</b></span>
+                        <a href="#SkipSchoolConfigCheck"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>() &#x3D;&gt; SetMetadata(&#x27;skipSchoolConfigCheck&#x27;, true)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/admin/auth/decorator/skip-tenant.decorator.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SkipTenant"></a>
+                    <span class="name">
+                        <span ><b>SkipTenant</b></span>
+                        <a href="#SkipTenant"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>() &#x3D;&gt; SetMetadata(SKIP_TENANT_KEY, true)</code>
+                    </td>
+                </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>Skip tenant validation for this route
+Use for routes accessible without tenant context</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/admin/auth/decorator/super-admin.decorator.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SUPER_ADMIN_ONLY"></a>
+                    <span class="name">
+                        <span ><b>SUPER_ADMIN_ONLY</b></span>
+                        <a href="#SUPER_ADMIN_ONLY"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>&#x27;superAdminOnly&#x27;</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="SuperAdminOnly"></a>
+                    <span class="name">
+                        <span ><b>SuperAdminOnly</b></span>
+                        <a href="#SuperAdminOnly"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>() &#x3D;&gt; SetMetadata(SUPER_ADMIN_ONLY, true)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    <h3>src/admin/auth/decorator/tenant.decorator.ts</h3>
+    <section data-compodoc="block-properties">
+    <h3></h3>    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="Tenant"></a>
+                    <span class="name">
+                        <span ><b>Tenant</b></span>
+                        <a href="#Tenant"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>createParamDecorator(
+  (data: unknown, ctx: ExecutionContext) &#x3D;&gt; {
+    const request &#x3D; ctx.switchToHttp().getRequest();
+    return request.headers[&#x27;x-tenant-id&#x27;] || null;
+  },
+)</code>
+                    </td>
+                </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'miscellaneous-variables';
+            var COMPODOC_CURRENT_PAGE_URL = 'variables.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

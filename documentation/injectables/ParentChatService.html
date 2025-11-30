@@ -1,0 +1,2068 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>skool documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">skool documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >ParentChatService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/parent/chat/ParentChatService.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#logger" >logger</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#deleteMessage" >deleteMessage</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getChatHistory" >getChatHistory</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getChatRoomWithTeacher" >getChatRoomWithTeacher</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getOrCreateChatRoom" >getOrCreateChatRoom</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getParentIdByUserId" >getParentIdByUserId</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getReadMessages" >getReadMessages</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getTeachersForStudent" >getTeachersForStudent</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getUnreadCount" >getUnreadCount</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getUnreadMessages" >getUnreadMessages</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getUserChatRooms" >getUserChatRooms</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#markMessageAsRead" >markMessageAsRead</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#markMessagesAsRead" >markMessagesAsRead</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#sendMessageToTeacher" >sendMessageToTeacher</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(chatRoomRepository: <a href="../classes/ChatRoom.html" target="_self">Repository&lt;ChatRoom&gt;</a>, chatMessageRepository: <a href="../classes/ChatMessage.html" target="_self">Repository&lt;ChatMessage&gt;</a>, studentRepository: <a href="../interfaces/Student.html" target="_self">Repository&lt;Student&gt;</a>, parentRepository: <a href="../classes/Parent.html" target="_self">Repository&lt;Parent&gt;</a>, teacherRepository: <a href="../classes/Teacher.html" target="_self">Repository&lt;Teacher&gt;</a>, parentStudentRepository: <a href="../interfaces/Student.html" target="_self">Repository&lt;ParentStudent&gt;</a>, redisChatProvider: <a href="../injectables/RedisChatProvider.html" target="_self">RedisChatProvider</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/parent/chat/ParentChatService.ts:16</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>chatRoomRepository</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/ChatRoom.html" target="_self" >Repository&lt;ChatRoom&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>chatMessageRepository</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/ChatMessage.html" target="_self" >Repository&lt;ChatMessage&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>studentRepository</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../interfaces/Student.html" target="_self" >Repository&lt;Student&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>parentRepository</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/Parent.html" target="_self" >Repository&lt;Parent&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>teacherRepository</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/Teacher.html" target="_self" >Repository&lt;Teacher&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>parentStudentRepository</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../interfaces/Student.html" target="_self" >Repository&lt;ParentStudent&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>redisChatProvider</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/RedisChatProvider.html" target="_self" >RedisChatProvider</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="deleteMessage"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>deleteMessage</b></span>
+                        <a href="#deleteMessage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>deleteMessage(currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, messageId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, options?: literal type)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="343"
+                                    class="link-to-prism">src/parent/chat/ParentChatService.ts:343</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>messageId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>options</td>
+                                            <td>
+                                                        <code>literal type</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getChatHistory"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getChatHistory</b></span>
+                        <a href="#getChatHistory"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getChatHistory(parentUserId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, chatRoomId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, limit: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, offset: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="139"
+                                    class="link-to-prism">src/parent/chat/ParentChatService.ts:139</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Get chat history for a specific room (parent view)</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>parentUserId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>chatRoomId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>limit</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>50</code>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>offset</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>0</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getChatRoomWithTeacher"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getChatRoomWithTeacher</b></span>
+                        <a href="#getChatRoomWithTeacher"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getChatRoomWithTeacher(currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, teacherId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="462"
+                                    class="link-to-prism">src/parent/chat/ParentChatService.ts:462</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>teacherId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatRoom.html" target="_self" >Promise&lt;ChatRoom | null&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getOrCreateChatRoom"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getOrCreateChatRoom</b></span>
+                        <a href="#getOrCreateChatRoom"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getOrCreateChatRoom(name: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, type: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, participantIds: string[], tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="438"
+                                    class="link-to-prism">src/parent/chat/ParentChatService.ts:438</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Get or create chat room</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>name</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>type</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>participantIds</td>
+                                            <td>
+                                                        <code>string[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatRoom.html" target="_self" >Promise&lt;ChatRoom&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getParentIdByUserId"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getParentIdByUserId</b></span>
+                        <a href="#getParentIdByUserId"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getParentIdByUserId(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="202"
+                                    class="link-to-prism">src/parent/chat/ParentChatService.ts:202</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;string | null&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getReadMessages"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getReadMessages</b></span>
+                        <a href="#getReadMessages"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getReadMessages(parentUserId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, limit: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="313"
+                                    class="link-to-prism">src/parent/chat/ParentChatService.ts:313</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>parentUserId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>limit</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>50</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getTeachersForStudent"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getTeachersForStudent</b></span>
+                        <a href="#getTeachersForStudent"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getTeachersForStudent(currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, studentId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="385"
+                                    class="link-to-prism">src/parent/chat/ParentChatService.ts:385</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Get list of teachers for a specific student (so parent knows who to message)</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>studentId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Teacher.html" target="_self" >Promise&lt;Teacher[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getUnreadCount"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getUnreadCount</b></span>
+                        <a href="#getUnreadCount"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getUnreadCount(parentUserId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="278"
+                                    class="link-to-prism">src/parent/chat/ParentChatService.ts:278</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Get unread message count for parent</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>parentUserId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;number&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getUnreadMessages"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getUnreadMessages</b></span>
+                        <a href="#getUnreadMessages"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getUnreadMessages(parentUserId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="285"
+                                    class="link-to-prism">src/parent/chat/ParentChatService.ts:285</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Get all unread messages for a parent</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>parentUserId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getUserChatRooms"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getUserChatRooms</b></span>
+                        <a href="#getUserChatRooms"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getUserChatRooms(parentUserId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="187"
+                                    class="link-to-prism">src/parent/chat/ParentChatService.ts:187</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Get all chat rooms for a parent</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>parentUserId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatRoom.html" target="_self" >Promise&lt;ChatRoom[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="markMessageAsRead"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>markMessageAsRead</b></span>
+                        <a href="#markMessageAsRead"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>markMessageAsRead(parentUserId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, messageId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="244"
+                                    class="link-to-prism">src/parent/chat/ParentChatService.ts:244</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Mark a single message as read</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>parentUserId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>messageId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="markMessagesAsRead"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>markMessagesAsRead</b></span>
+                        <a href="#markMessagesAsRead"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>markMessagesAsRead(parentUserId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, chatRoomId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="213"
+                                    class="link-to-prism">src/parent/chat/ParentChatService.ts:213</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Mark messages as read in a room</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>parentUserId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>chatRoomId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="sendMessageToTeacher"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>sendMessageToTeacher</b></span>
+                        <a href="#sendMessageToTeacher"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>sendMessageToTeacher(currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, input: <a href="../classes/SendMessageFromParentToTeacherInput.html" target="_self">SendMessageFromParentToTeacherInput</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="37"
+                                    class="link-to-prism">src/parent/chat/ParentChatService.ts:37</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Send message from parent to a specific teacher about their child</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/SendMessageFromParentToTeacherInput.html" target="_self" >SendMessageFromParentToTeacherInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="logger"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>logger</b></span>
+                        <a href="#logger"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new Logger(ParentChatService.name)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/parent/chat/ParentChatService.ts:16</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, NotFoundException, BadRequestException, Logger, ForbiddenException } from &#x27;@nestjs/common&#x27;;
+import { InjectRepository } from &#x27;@nestjs/typeorm&#x27;;
+import { Repository, In, Not } from &#x27;typeorm&#x27;;
+import { Student } from &#x27;src/admin/student/entities/student.entity&#x27;;
+import { Teacher } from &#x27;src/admin/teacher/entities/teacher.entity&#x27;;
+import { ParentStudent } from &#x27;src/admin/parent/entities/parent-student.entity&#x27;;
+import { Parent } from &#x27;src/admin/parent/entities/parent.entity&#x27;;
+import { SendMessageFromParentToTeacherInput } from &#x27;src/messaging/dtos/send-message-from-parent-to-teacher.input&#x27;;
+import { ChatMessage } from &#x27;src/messaging/entities/chat-message.entity&#x27;;
+import { RedisChatProvider } from &#x27;src/messaging/providers/redis-chat.provider&#x27;;
+import { ChatRoom } from &#x27;src/messaging/entities/chat-room.entity&#x27;;
+import { ActiveUserData } from &#x27;src/admin/auth/interface/active-user.interface&#x27;;
+
+@Injectable()
+export class ParentChatService {
+  private readonly logger &#x3D; new Logger(ParentChatService.name);
+
+  constructor(
+    @InjectRepository(ChatRoom)
+    private readonly chatRoomRepository: Repository&lt;ChatRoom&gt;,
+    @InjectRepository(ChatMessage)
+    private readonly chatMessageRepository: Repository&lt;ChatMessage&gt;,
+    @InjectRepository(Student)
+    private readonly studentRepository: Repository&lt;Student&gt;,
+    @InjectRepository(Parent)
+    private readonly parentRepository: Repository&lt;Parent&gt;,
+    @InjectRepository(Teacher)
+    private readonly teacherRepository: Repository&lt;Teacher&gt;,
+    @InjectRepository(ParentStudent)
+    private readonly parentStudentRepository: Repository&lt;ParentStudent&gt;,
+    private readonly redisChatProvider: RedisChatProvider,
+  ) {}
+
+  /**
+   * Send message from parent to a specific teacher about their child
+   */
+  async sendMessageToTeacher(
+   currentUser: ActiveUserData,
+    input: SendMessageFromParentToTeacherInput,
+  ): Promise&lt;ChatMessage&gt; {
+    // Get parent by user_id
+
+    const tenantId &#x3D; currentUser.tenantId;
+
+    if(!tenantId) {
+        throw new BadRequestException(&#x27;Tenant ID is required&#x27;);
+    }
+
+    const parentUserId &#x3D; currentUser.sub;
+
+    if(!parentUserId) {
+        throw new BadRequestException(&#x27;User ID is required&#x27;);
+    }
+
+    const parent &#x3D; await this.parentRepository.findOne({
+      where: { user: { id: parentUserId }, tenantId: tenantId },
+    });
+
+    if (!parent) {
+      throw new NotFoundException(&#x27;Parent not found&#x27;);
+    }
+
+    // Verify parent-student relationship
+    const relationship &#x3D; await this.parentStudentRepository.findOne({
+      where: { 
+        parentId: parent.id, 
+        studentId: input.studentId, 
+        tenantId: currentUser.tenantId 
+      },
+    });
+
+    if (!relationship) {
+      throw new BadRequestException(&#x27;You are not linked to this student&#x27;);
+    }
+
+    // Get teacher and their user_id
+    const teacher &#x3D; await this.teacherRepository.findOne({
+      where: { id: input.recipientId, tenantId: currentUser.tenantId },
+      relations: [&#x27;user&#x27;],
+    });
+
+    if (!teacher || !teacher.user) {
+      throw new NotFoundException(&#x27;Teacher not found or not linked to user&#x27;);
+    }
+
+    const participants &#x3D; [parent.id, teacher.id].sort((a, b) &#x3D;&gt; a.localeCompare(b));
+const roomName &#x3D; &#x60;teacher-parent-${participants[0]}-${participants[1]}&#x60;;
+
+const chatRoom &#x3D; await this.getOrCreateChatRoom(
+  roomName,
+  &#x27;DIRECT&#x27;,
+  [tenantId, teacher.user.id],
+  tenantId,
+);
+
+    // // Create or get chat room between parent and teacher
+    // const chatRoom &#x3D; await this.getOrCreateChatRoom(
+    //   &#x60;parent-teacher-${parent.id}-${teacher.id}&#x60;,
+    //   &#x27;DIRECT&#x27;,
+    //   [parentUserId, teacher.user.id],
+    //   tenantId,
+    // );
+
+    
+
+    // Create message
+    const message &#x3D; this.chatMessageRepository.create({
+      senderId: parentUserId,
+      senderType: &#x27;PARENT&#x27;,
+      subject: input.subject,
+      message: input.message,
+      imageUrl: input.imageUrl,
+      chatRoomId: chatRoom.id,
+      isRead: false,
+    });
+
+    const savedMessage &#x3D; await this.chatMessageRepository.save(message);
+
+    // Reload with relations
+    const found &#x3D; await this.chatMessageRepository.findOne({
+      where: { id: savedMessage.id },
+      relations: [&#x27;chatRoom&#x27;],
+    });
+
+    const messageWithRoom: ChatMessage &#x3D; found ?? Object.assign(savedMessage, { chatRoom });
+
+    // Cache in Redis
+    await this.redisChatProvider.cacheMessage(messageWithRoom);
+
+    // Track unread count for teacher
+    await this.redisChatProvider.incrementUnreadCount(teacher.user.id, chatRoom.id);
+
+    return messageWithRoom;
+  }
+
+  /**
+   * Get chat history for a specific room (parent view)
+   */
+  async getChatHistory(
+    parentUserId: string,
+    chatRoomId: string,
+    limit: number &#x3D; 50,
+    offset: number &#x3D; 0,
+  ): Promise&lt;ChatMessage[]&gt; {
+    // Verify that the parent is a participant
+    const room &#x3D; await this.chatRoomRepository.findOne({
+      where: { id: chatRoomId },
+    });
+
+    if (!room || !room.participantIds.includes(parentUserId)) {
+      throw new NotFoundException(&#x27;Chat room not found or access denied&#x27;);
+    }
+
+    // Try cache first (only when we want the first page)
+    if (offset &#x3D;&#x3D;&#x3D; 0) {
+      const cachedMessages &#x3D; await this.redisChatProvider.getRecentMessages(chatRoomId);
+      if (cachedMessages.length &gt; 0) {
+        return cachedMessages.slice(0, limit).map(msg &#x3D;&gt; ({
+          ...msg,
+          createdAt: msg.createdAt ? new Date(msg.createdAt) : new Date(),
+          chatRoom: room,
+        }));
+      }
+    }
+
+    // Fallback to database
+    const messages &#x3D; await this.chatMessageRepository.find({
+      where: { 
+        chatRoomId,
+        deleted: false 
+      },
+      order: { createdAt: &#x27;DESC&#x27; },
+      take: limit,
+      skip: offset,
+      relations: [&#x27;chatRoom&#x27;],
+    });
+
+    return messages.map(msg &#x3D;&gt; ({
+      ...msg,
+      createdAt: msg.createdAt instanceof Date ? msg.createdAt : new Date(msg.createdAt),
+    }));
+  }
+
+  /**
+   * Get all chat rooms for a parent
+   */
+  async getUserChatRooms(parentUserId: string): Promise&lt;ChatRoom[]&gt; {
+    
+    const rooms &#x3D; await this.chatRoomRepository
+      .createQueryBuilder(&#x27;room&#x27;)
+      .leftJoinAndSelect(&#x27;room.messages&#x27;, &#x27;message&#x27;, &#x27;message.deleted &#x3D; false&#x27;)
+      .where(&#x27;room.participantIds LIKE :userIdPattern&#x27;, {
+        userIdPattern: &#x60;%${parentUserId}%&#x60;,
+      })
+      .orderBy(&#x27;room.updatedAt&#x27;, &#x27;DESC&#x27;)
+      .addOrderBy(&#x27;message.createdAt&#x27;, &#x27;ASC&#x27;)
+      .getMany();
+
+    return rooms.filter(room &#x3D;&gt; room.messages.length &gt; 0);
+  }
+
+  async getParentIdByUserId(userId: string): Promise&lt;string | null&gt; {
+    const parent &#x3D; await this.parentRepository.findOne({
+      where: { userId },
+      select: [&#x27;id&#x27;],
+    });
+    return parent?.id || null;
+  }
+
+  /**
+   * Mark messages as read in a room
+   */
+  async markMessagesAsRead(
+    parentUserId: string,
+    chatRoomId: string,
+  ): Promise&lt;boolean&gt; {
+    const room &#x3D; await this.chatRoomRepository.findOne({
+      where: { id: chatRoomId },
+    });
+
+    if (!room || !room.participantIds.includes(parentUserId)) {
+      throw new NotFoundException(&#x27;Chat room not found or access denied&#x27;);
+    }
+
+    await this.chatMessageRepository.update(
+      { 
+        chatRoomId, 
+        isRead: false, 
+        senderId: Not(parentUserId),
+        deleted: false
+      },
+      { isRead: true },
+    );
+
+    // Clear unread count in Redis
+    await this.redisChatProvider.clearUnreadCount(parentUserId, chatRoomId);
+
+    return true;
+  }
+
+  /**
+   * Mark a single message as read
+   */
+  async markMessageAsRead(parentUserId: string, messageId: string): Promise&lt;boolean&gt; {
+    const message &#x3D; await this.chatMessageRepository.findOne({
+      where: { id: messageId },
+      relations: [&#x27;chatRoom&#x27;],
+    });
+
+    if (!message) {
+      throw new NotFoundException(&#x27;Message not found&#x27;);
+    }
+
+    // Verify parent is a participant in the chat room
+    if (!message.chatRoom.participantIds.includes(parentUserId)) {
+      throw new ForbiddenException(&#x27;You do not have access to this message&#x27;);
+    }
+
+    // Don&#x27;t mark own messages as read
+    if (message.senderId &#x3D;&#x3D;&#x3D; parentUserId) {
+      return true;
+    }
+
+    await this.chatMessageRepository.update(
+      { id: messageId },
+      { isRead: true }
+    );
+
+    // Decrement unread count in Redis
+    await this.redisChatProvider.decrementUnreadCount(parentUserId, message.chatRoomId);
+
+    return true;
+  }
+
+  /**
+   * Get unread message count for parent
+   */
+  async getUnreadCount(parentUserId: string): Promise&lt;number&gt; {
+    return await this.redisChatProvider.getTotalUnreadCount(parentUserId);
+  }
+
+  /**
+   * Get all unread messages for a parent
+   */
+  async getUnreadMessages(parentUserId: string): Promise&lt;ChatMessage[]&gt; {
+    const rooms &#x3D; await this.chatRoomRepository
+      .createQueryBuilder(&#x27;room&#x27;)
+      .where(&#x27;room.participantIds LIKE :userIdPattern&#x27;, {
+        userIdPattern: &#x60;%${parentUserId}%&#x60;,
+      })
+      .getMany();
+
+    const roomIds &#x3D; rooms.map(r &#x3D;&gt; r.id);
+
+    if (roomIds.length &#x3D;&#x3D;&#x3D; 0) {
+      return [];
+    }
+
+    const unreadMessages &#x3D; await this.chatMessageRepository.find({
+      where: {
+        chatRoomId: In(roomIds),
+        isRead: false,
+        deleted: false,
+        senderId: Not(parentUserId),
+      },
+      relations: [&#x27;chatRoom&#x27;],
+      order: { createdAt: &#x27;DESC&#x27; },
+    });
+
+    return unreadMessages;
+  }
+
+  async getReadMessages(parentUserId: string, limit: number &#x3D; 50): Promise&lt;ChatMessage[]&gt; {
+    const rooms &#x3D; await this.chatRoomRepository
+      .createQueryBuilder(&#x27;room&#x27;)
+      .where(&#x27;room.participantIds LIKE :userIdPattern&#x27;, {
+        userIdPattern: &#x60;%${parentUserId}%&#x60;,
+      })
+      .getMany();
+
+    const roomIds &#x3D; rooms.map(r &#x3D;&gt; r.id);
+
+    if (roomIds.length &#x3D;&#x3D;&#x3D; 0) {
+      return [];
+    }
+
+    const readMessages &#x3D; await this.chatMessageRepository.find({
+      where: {
+        chatRoomId: In(roomIds),
+        isRead: true,
+        deleted: false,
+        senderId: Not(parentUserId),
+      },
+      relations: [&#x27;chatRoom&#x27;],
+      order: { createdAt: &#x27;DESC&#x27; },
+      take: limit,
+    });
+
+    return readMessages;
+  }
+
+  
+  async deleteMessage(
+    currentUser: ActiveUserData,
+    messageId: string,
+    options?: { hard?: boolean },
+  ): Promise&lt;boolean&gt; {
+    const parentUserId &#x3D; currentUser.sub
+    const message &#x3D; await this.chatMessageRepository.findOne({
+      where: { id: messageId },
+      relations: [&#x27;chatRoom&#x27;],
+    });
+
+    if (!message) {
+      throw new NotFoundException(&#x27;Message not found&#x27;);
+    }
+
+    if (message.senderId !&#x3D;&#x3D; parentUserId) {
+      throw new ForbiddenException(&#x27;You can only delete your own messages&#x27;);
+    }
+
+    if (options?.hard) {
+      await this.chatMessageRepository.delete({ id: messageId });
+
+      // Clean Redis cache
+      await this.redisChatProvider.removeCachedMessage(messageId);
+      return true;
+    }
+
+    // Otherwise mark as deleted (soft delete)
+    await this.chatMessageRepository.update(
+      { id: messageId },
+      { deleted: true },
+    );
+
+    // Optionally remove from Redis visible list
+    await this.redisChatProvider.markMessageDeleted(messageId, message.chatRoomId);
+
+    return true;
+  }
+
+  /**
+   * Get list of teachers for a specific student (so parent knows who to message)
+   */
+  async getTeachersForStudent(
+    currentUser: ActiveUserData,
+    studentId: string,
+  ): Promise&lt;Teacher[]&gt; {
+    const parentUserId &#x3D; currentUser.sub;
+    const tenantId &#x3D; currentUser.tenantId;
+
+    const parent &#x3D; await this.parentRepository.findOne({
+      where: { user: { id: parentUserId }, tenantId },
+    });
+
+    if (!parent) {
+      throw new NotFoundException(&#x27;Parent not found&#x27;);
+    }
+
+    const relationship &#x3D; await this.parentStudentRepository.findOne({
+      where: { 
+        parentId: parent.id, 
+        studentId, 
+        tenantId 
+      },
+    });
+
+    if (!relationship) {
+      throw new BadRequestException(&#x27;You are not linked to this student&#x27;);
+    }
+
+    // Get student with their grade/class info
+    const student &#x3D; await this.studentRepository.findOne({
+      where: { id: studentId, tenant_id: tenantId },
+      relations: [&#x27;grade&#x27;],
+    });
+
+    if (!student) {
+      throw new NotFoundException(&#x27;Student not found&#x27;);
+    }
+
+    // Get teachers associated with this student&#x27;s grade/class
+    // This assumes teachers are linked to grades - adjust based on your schema
+    const teachers &#x3D; await this.teacherRepository.find({
+      where: { 
+        tenantId, 
+        isActive: true 
+      },
+      relations: [&#x27;user&#x27;],
+    });
+
+    return teachers;
+  }
+
+  /**
+   * Get or create chat room
+   */
+  private async getOrCreateChatRoom(
+    name: string,
+    type: string,
+    participantIds: string[],
+    tenantId: string,
+  ): Promise&lt;ChatRoom&gt; {
+    let room &#x3D; await this.chatRoomRepository.findOne({
+      where: { name },
+    });
+
+    if (!room) {
+      room &#x3D; this.chatRoomRepository.create({
+        name,
+        type,
+        participantIds,
+      });
+      room &#x3D; await this.chatRoomRepository.save(room);
+    }
+
+    return room;
+  }
+
+
+
+  async getChatRoomWithTeacher(
+    currentUser: ActiveUserData,
+    teacherId: string,
+  ): Promise&lt;ChatRoom | null&gt; {
+    const parentUserId &#x3D; currentUser.sub;
+    const tenantId &#x3D; currentUser.tenantId;
+    const parent &#x3D; await this.parentRepository.findOne({
+      where: { user: { id: parentUserId }, tenantId },
+    });
+
+    if (!parent) {
+      throw new NotFoundException(&#x27;Parent not found&#x27;);
+    }
+
+    const teacher &#x3D; await this.teacherRepository.findOne({
+      where: { id: teacherId, tenantId },
+    });
+
+    if (!teacher) {
+      throw new NotFoundException(&#x27;Teacher not found&#x27;);
+    }
+
+    // const roomName &#x3D; &#x60;teacher-parent-${teacher.id}-${parent.id}&#x60;;
+
+    const participants &#x3D; [teacher.id, parent.id].sort((a, b) &#x3D;&gt; a.localeCompare(b));
+const roomName &#x3D; &#x60;teacher-parent-${participants[0]}-${participants[1]}&#x60;;
+
+    
+    const room &#x3D; await this.chatRoomRepository.findOne({
+      where: { name: roomName },
+      relations: [&#x27;messages&#x27;],
+    });
+
+    return room;
+  }
+}</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'ParentChatService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

@@ -1,0 +1,1080 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>skool documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">skool documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content class">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Classes</li>
+  <li class="breadcrumb-item" >StudentTestResolver</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/student/assignment/resolvers/student-test.resolver.ts</code>
+        </p>
+
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getMyTestById" >getMyTestById</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getMyTestCounts" >getMyTestCounts</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getMyTests" >getMyTests</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getMyTestsByStatus" >getMyTestsByStatus</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getMyUpcomingTests" >getMyUpcomingTests</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(studentTestService: <a href="../injectables/StudentTestProvider.html" target="_self">StudentTestProvider</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="11" class="link-to-prism">src/student/assignment/resolvers/student-test.resolver.ts:11</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>studentTestService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/StudentTestProvider.html" target="_self" >StudentTestProvider</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getMyTestById"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getMyTestById</b></span>
+                        <a href="#getMyTestById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getMyTestById(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, student: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Query(undefined, {name: &#x27;getMyTestById&#x27;, description: &#x27;Get a single test by ID for the logged-in student&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="121"
+                                    class="link-to-prism">src/student/assignment/resolvers/student-test.resolver.ts:121</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Query: Get a single test by ID for the logged-in student
+Student must be in a grade level that the test is assigned to</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-html">query GetMyTestById {
+  getMyTestById(id: &quot;2a778ba8-f64a-4a72-9f39-6c8726d2006e&quot;) {
+    id
+    title
+    subject { id name }
+    gradeLevels { id gradeLevel { name } }
+    date
+    startTime
+    endTime
+    duration
+    totalMarks
+    status
+    instructions
+    resourceUrl
+    teacher {
+      id
+      fullName
+      email
+      department
+    }
+    questions {
+      id
+      text
+      imageUrls
+      type
+      marks
+      order
+      isAIGenerated
+      options {
+        id
+        text
+        imageUrl
+        order
+      }
+    }
+    referenceMaterials {
+      id
+      fileUrl
+      fileType
+      fileSize
+      createdAt
+    }
+    createdAt
+    updatedAt
+  }
+}</code></pre></div></div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>student</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Test.html" target="_self" >Promise&lt;Test&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getMyTestCounts"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getMyTestCounts</b></span>
+                        <a href="#getMyTestCounts"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getMyTestCounts(student: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Query(undefined, {name: &#x27;getMyTestCounts&#x27;, description: &#x27;Get test counts by status for the logged-in student&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="146"
+                                    class="link-to-prism">src/student/assignment/resolvers/student-test.resolver.ts:146</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Query: Get test counts by status for the logged-in student
+Returns total, pending, active, and completed test counts</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-html">query GetMyTestCounts {
+  getMyTestCounts {
+    total
+    pending
+    active
+    completed
+  }
+}</code></pre></div></div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>student</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../entitys/Test.html" target="_self" >Promise&lt;TestCountsOutput&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getMyTests"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getMyTests</b></span>
+                        <a href="#getMyTests"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getMyTests(student: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Query(undefined, {name: &#x27;getMyTests&#x27;, description: &#x27;Get all tests/assignments for the logged-in student based on their grade level&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="61"
+                                    class="link-to-prism">src/student/assignment/resolvers/student-test.resolver.ts:61</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Query: Get all tests/assignments for the logged-in student
+Returns tests that are assigned to the student&#39;s grade level</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-html">query GetMyTests {
+  getMyTests {
+    id
+    title
+    subject { id name }
+    gradeLevels { id gradeLevel { name } }
+    date
+    startTime
+    endTime
+    duration
+    totalMarks
+    status
+    instructions
+    resourceUrl
+    teacher { id fullName email }
+    questions {
+      id
+      text
+      type
+      marks
+      order
+      options {
+        id
+        text
+        order
+      }
+    }
+    referenceMaterials {
+      id
+      fileUrl
+      fileType
+      fileSize
+    }
+    createdAt
+    updatedAt
+  }
+}</code></pre></div></div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>student</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Test.html" target="_self" >Promise&lt;Test[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getMyTestsByStatus"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getMyTestsByStatus</b></span>
+                        <a href="#getMyTestsByStatus"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getMyTestsByStatus(status: "pending" | "active" | "completed", student: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Query(undefined, {name: &#x27;getMyTestsByStatus&#x27;, description: &#x27;Get tests filtered by status for the logged-in student&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="208"
+                                    class="link-to-prism">src/student/assignment/resolvers/student-test.resolver.ts:208</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Query: Get tests filtered by status for the logged-in student
+Status can be: &#39;pending&#39;, &#39;active&#39;, or &#39;completed&#39;</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-html">query GetMyTestsByStatus {
+  getMyTestsByStatus(status: &quot;active&quot;) {
+    id
+    title
+    subject { id name }
+    date
+    startTime
+    duration
+    totalMarks
+    status
+    questions {
+      id
+      text
+      marks
+    }
+  }
+}</code></pre></div></div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>status</td>
+                                            <td>
+                                                        <code>&quot;pending&quot; | &quot;active&quot; | &quot;completed&quot;</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>student</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Test.html" target="_self" >Promise&lt;Test[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getMyUpcomingTests"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getMyUpcomingTests</b></span>
+                        <a href="#getMyUpcomingTests"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getMyUpcomingTests(student: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Query(undefined, {name: &#x27;getMyUpcomingTests&#x27;, description: &#x27;Get upcoming tests (within next 7 days) for the logged-in student&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="175"
+                                    class="link-to-prism">src/student/assignment/resolvers/student-test.resolver.ts:175</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Query: Get upcoming tests (within next 7 days) for the logged-in student
+Only returns tests with &#39;pending&#39; or &#39;active&#39; status</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-html">query GetMyUpcomingTests {
+  getMyUpcomingTests {
+    id
+    title
+    subject { id name }
+    date
+    startTime
+    duration
+    totalMarks
+    status
+    teacher { fullName }
+  }
+}</code></pre></div></div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>student</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Test.html" target="_self" >Promise&lt;Test[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+
+
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Args, ID, Query, Resolver } from &#x27;@nestjs/graphql&#x27;;
+import { UseGuards } from &#x27;@nestjs/common&#x27;;
+import { ActiveUserData } from &#x27;src/admin/auth/interface/active-user.interface&#x27;;
+import { AuthenticationGuard } from &#x27;src/admin/auth/guards/fdfdf/authentication.guard&#x27;;
+import { Test } from &#x27;src/teacher/test/entities/test.entity&#x27;;
+import { StudentTestProvider } from &#x27;../providers/student-test.provider&#x27;;
+import { ActiveUser } from &#x27;src/admin/auth/decorator/active-user.decorator&#x27;;
+import { TestCountsOutput } from &#x27;../dtos/test-counts.output&#x27;;
+
+@Resolver(() &#x3D;&gt; Test)
+export class StudentTestResolver {
+  constructor(private readonly studentTestService: StudentTestProvider) {}
+
+  /**
+   * Query: Get all tests/assignments for the logged-in student
+   * Returns tests that are assigned to the student&#x27;s grade level
+   * 
+   * @example
+   * query GetMyTests {
+   *   getMyTests {
+   *     id
+   *     title
+   *     subject { id name }
+   *     gradeLevels { id gradeLevel { name } }
+   *     date
+   *     startTime
+   *     endTime
+   *     duration
+   *     totalMarks
+   *     status
+   *     instructions
+   *     resourceUrl
+   *     teacher { id fullName email }
+   *     questions {
+   *       id
+   *       text
+   *       type
+   *       marks
+   *       order
+   *       options {
+   *         id
+   *         text
+   *         order
+   *       }
+   *     }
+   *     referenceMaterials {
+   *       id
+   *       fileUrl
+   *       fileType
+   *       fileSize
+   *     }
+   *     createdAt
+   *     updatedAt
+   *   }
+   * }
+   */
+  @Query(() &#x3D;&gt; [Test], {
+    name: &#x27;getMyTests&#x27;,
+    description: &#x27;Get all tests/assignments for the logged-in student based on their grade level&#x27;,
+  })
+  async getMyTests(@ActiveUser() student: ActiveUserData): Promise&lt;Test[]&gt; {
+    return this.studentTestService.getStudentTests(student);
+  }
+
+  /**
+   * Query: Get a single test by ID for the logged-in student
+   * Student must be in a grade level that the test is assigned to
+   * 
+   * @example
+   * query GetMyTestById {
+   *   getMyTestById(id: &quot;2a778ba8-f64a-4a72-9f39-6c8726d2006e&quot;) {
+   *     id
+   *     title
+   *     subject { id name }
+   *     gradeLevels { id gradeLevel { name } }
+   *     date
+   *     startTime
+   *     endTime
+   *     duration
+   *     totalMarks
+   *     status
+   *     instructions
+   *     resourceUrl
+   *     teacher { 
+   *       id 
+   *       fullName 
+   *       email 
+   *       department 
+   *     }
+   *     questions {
+   *       id
+   *       text
+   *       imageUrls
+   *       type
+   *       marks
+   *       order
+   *       isAIGenerated
+   *       options {
+   *         id
+   *         text
+   *         imageUrl
+   *         order
+   *       }
+   *     }
+   *     referenceMaterials {
+   *       id
+   *       fileUrl
+   *       fileType
+   *       fileSize
+   *       createdAt
+   *     }
+   *     createdAt
+   *     updatedAt
+   *   }
+   * }
+   */
+  @Query(() &#x3D;&gt; Test, {
+    name: &#x27;getMyTestById&#x27;,
+    description: &#x27;Get a single test by ID for the logged-in student&#x27;,
+  })
+  async getMyTestById(
+    @Args(&#x27;id&#x27;, { type: () &#x3D;&gt; ID }) id: string,
+    @ActiveUser() student: ActiveUserData,
+  ): Promise&lt;Test&gt; {
+    return this.studentTestService.getStudentTestById(id, student);
+  }
+
+  /**
+   * Query: Get test counts by status for the logged-in student
+   * Returns total, pending, active, and completed test counts
+   * 
+   * @example
+   * query GetMyTestCounts {
+   *   getMyTestCounts {
+   *     total
+   *     pending
+   *     active
+   *     completed
+   *   }
+   * }
+   */
+  @Query(() &#x3D;&gt; TestCountsOutput, {
+    name: &#x27;getMyTestCounts&#x27;,
+    description: &#x27;Get test counts by status for the logged-in student&#x27;,
+  })
+  async getMyTestCounts(
+    @ActiveUser() student: ActiveUserData,
+  ): Promise&lt;TestCountsOutput&gt; {
+    return this.studentTestService.getStudentTestCounts(student);
+  }
+
+  /**
+   * Query: Get upcoming tests (within next 7 days) for the logged-in student
+   * Only returns tests with &#x27;pending&#x27; or &#x27;active&#x27; status
+   * 
+   * @example
+   * query GetMyUpcomingTests {
+   *   getMyUpcomingTests {
+   *     id
+   *     title
+   *     subject { id name }
+   *     date
+   *     startTime
+   *     duration
+   *     totalMarks
+   *     status
+   *     teacher { fullName }
+   *   }
+   * }
+   */
+  @Query(() &#x3D;&gt; [Test], {
+    name: &#x27;getMyUpcomingTests&#x27;,
+    description: &#x27;Get upcoming tests (within next 7 days) for the logged-in student&#x27;,
+  })
+  async getMyUpcomingTests(
+    @ActiveUser() student: ActiveUserData,
+  ): Promise&lt;Test[]&gt; {
+    return this.studentTestService.getUpcomingTests(student);
+  }
+
+  /**
+   * Query: Get tests filtered by status for the logged-in student
+   * Status can be: &#x27;pending&#x27;, &#x27;active&#x27;, or &#x27;completed&#x27;
+   * 
+   * @example
+   * query GetMyTestsByStatus {
+   *   getMyTestsByStatus(status: &quot;active&quot;) {
+   *     id
+   *     title
+   *     subject { id name }
+   *     date
+   *     startTime
+   *     duration
+   *     totalMarks
+   *     status
+   *     questions {
+   *       id
+   *       text
+   *       marks
+   *     }
+   *   }
+   * }
+   */
+  @Query(() &#x3D;&gt; [Test], {
+    name: &#x27;getMyTestsByStatus&#x27;,
+    description: &#x27;Get tests filtered by status for the logged-in student&#x27;,
+  })
+  async getMyTestsByStatus(
+    @Args(&#x27;status&#x27;, { type: () &#x3D;&gt; String }) status: &#x27;pending&#x27; | &#x27;active&#x27; | &#x27;completed&#x27;,
+    @ActiveUser() student: ActiveUserData,
+  ): Promise&lt;Test[]&gt; {
+    return this.studentTestService.getTestsByStatus(status, student);
+  }
+}</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'class';
+            var COMPODOC_CURRENT_PAGE_URL = 'StudentTestResolver.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

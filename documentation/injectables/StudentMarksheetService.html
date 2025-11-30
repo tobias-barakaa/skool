@@ -1,0 +1,1850 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>skool documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">skool documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >StudentMarksheetService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/student/marksheet/services/student-marksheet.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#logger" >logger</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#calculateGrade" >calculateGrade</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#calculateOverallStats" >calculateOverallStats</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#calculateSubjectPerformance" >calculateSubjectPerformance</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#calculateSubjectPerformances" >calculateSubjectPerformances</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#calculateTermPerformances" >calculateTermPerformances</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#determineGrade" >determineGrade</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getStudentMarks" >getStudentMarks</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getStudentRanking" >getStudentRanking</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getStudentReportCard" >getStudentReportCard</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getSubjectPerformance" >getSubjectPerformance</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#mapToStudentMarkDetail" >mapToStudentMarkDetail</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#verifyStudentAccess" >verifyStudentAccess</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(markRepository: Repository<AssessmentMark>, studentRepository: <a href="../interfaces/Student.html" target="_self">Repository&lt;Student&gt;</a>, assessmentRepository: <a href="../interfaces/Assessment.html" target="_self">Repository&lt;Assessment&gt;</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">src/student/marksheet/services/student-marksheet.service.ts:12</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>markRepository</td>
+                                                  
+                                                        <td>
+                                                                    <code>Repository&lt;AssessmentMark&gt;</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>studentRepository</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../interfaces/Student.html" target="_self" >Repository&lt;Student&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>assessmentRepository</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../interfaces/Assessment.html" target="_self" >Repository&lt;Assessment&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="calculateGrade"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>calculateGrade</b></span>
+                        <a href="#calculateGrade"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>calculateGrade(percentage: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="458"
+                                    class="link-to-prism">src/student/marksheet/services/student-marksheet.service.ts:458</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>percentage</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="calculateOverallStats"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>calculateOverallStats</b></span>
+                        <a href="#calculateOverallStats"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>calculateOverallStats(marks: AssessmentMark[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="435"
+                                    class="link-to-prism">src/student/marksheet/services/student-marksheet.service.ts:435</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>marks</td>
+                                            <td>
+                                                        <code>AssessmentMark[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>{ totalScore: any; maxPossibleScore: any; percentage: number; average: number; passedCount: any; failedCount: number; }</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="calculateSubjectPerformance"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>calculateSubjectPerformance</b></span>
+                        <a href="#calculateSubjectPerformance"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>calculateSubjectPerformance(marks: AssessmentMark[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="156"
+                                    class="link-to-prism">src/student/marksheet/services/student-marksheet.service.ts:156</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>marks</td>
+                                            <td>
+                                                        <code>AssessmentMark[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/SubjectPerformance.html" target="_self" >SubjectPerformance</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="calculateSubjectPerformances"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>calculateSubjectPerformances</b></span>
+                        <a href="#calculateSubjectPerformances"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>calculateSubjectPerformances(marks: AssessmentMark[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="390"
+                                    class="link-to-prism">src/student/marksheet/services/student-marksheet.service.ts:390</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>marks</td>
+                                            <td>
+                                                        <code>AssessmentMark[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../entitys/Subject.html" target="_self" >SubjectPerformance[]</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="calculateTermPerformances"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>calculateTermPerformances</b></span>
+                        <a href="#calculateTermPerformances"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>calculateTermPerformances(marks: AssessmentMark[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="356"
+                                    class="link-to-prism">src/student/marksheet/services/student-marksheet.service.ts:356</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>marks</td>
+                                            <td>
+                                                        <code>AssessmentMark[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../entitys/Term.html" target="_self" >TermPerformance[]</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="determineGrade"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>determineGrade</b></span>
+                        <a href="#determineGrade"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>determineGrade(average: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="236"
+                                    class="link-to-prism">src/student/marksheet/services/student-marksheet.service.ts:236</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>average</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getStudentMarks"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getStudentMarks</b></span>
+                        <a href="#getStudentMarks"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getStudentMarks(studentId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, filter: <a href="../classes/GetStudentMarksFilterDto.html" target="_self">GetStudentMarksFilterDto</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="23"
+                                    class="link-to-prism">src/student/marksheet/services/student-marksheet.service.ts:23</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>studentId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>filter</td>
+                                            <td>
+                                                            <code><a href="../classes/GetStudentMarksFilterDto.html" target="_self" >GetStudentMarksFilterDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;StudentMarkDetail[]&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getStudentRanking"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getStudentRanking</b></span>
+                        <a href="#getStudentRanking"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getStudentRanking(studentId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, academicYear: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, term: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="246"
+                                    class="link-to-prism">src/student/marksheet/services/student-marksheet.service.ts:246</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>studentId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>academicYear</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>term</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/Student.html" target="_self" >Promise&lt;StudentRanking&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getStudentReportCard"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getStudentReportCard</b></span>
+                        <a href="#getStudentReportCard"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getStudentReportCard(studentId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, academicYear: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="71"
+                                    class="link-to-prism">src/student/marksheet/services/student-marksheet.service.ts:71</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>studentId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>academicYear</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/Student.html" target="_self" >Promise&lt;StudentReportCard&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getSubjectPerformance"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getSubjectPerformance</b></span>
+                        <a href="#getSubjectPerformance"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getSubjectPerformance(studentId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, subjectId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, academicYear: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="114"
+                                    class="link-to-prism">src/student/marksheet/services/student-marksheet.service.ts:114</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>studentId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>subjectId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>academicYear</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../entitys/Subject.html" target="_self" >Promise&lt;SubjectPerformance&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="mapToStudentMarkDetail"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>mapToStudentMarkDetail</b></span>
+                        <a href="#mapToStudentMarkDetail"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>mapToStudentMarkDetail(mark: <a href="../classes/AssessmentMark.html" target="_self">AssessmentMark</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="185"
+                                    class="link-to-prism">src/student/marksheet/services/student-marksheet.service.ts:185</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>mark</td>
+                                            <td>
+                                                            <code><a href="../classes/AssessmentMark.html" target="_self" >AssessmentMark</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/StudentMarkDetail.html" target="_self" >StudentMarkDetail</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="verifyStudentAccess"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>verifyStudentAccess</b></span>
+                        <a href="#verifyStudentAccess"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>verifyStudentAccess(studentId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="301"
+                                    class="link-to-prism">src/student/marksheet/services/student-marksheet.service.ts:301</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>studentId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/Student.html" target="_self" >Promise&lt;Student&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="logger"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>logger</b></span>
+                        <a href="#logger"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new Logger(StudentMarksheetService.name)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">src/student/marksheet/services/student-marksheet.service.ts:12</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, Logger, NotFoundException, ForbiddenException } from &#x27;@nestjs/common&#x27;;
+import { InjectRepository } from &#x27;@nestjs/typeorm&#x27;;
+import { Repository } from &#x27;typeorm&#x27;;
+import { AssessmentMark } from &#x27;src/teacher/marksheet/entities/assessment_marks-entity&#x27;;
+import { Student } from &#x27;src/admin/student/entities/student.entity&#x27;;
+import { Assessment } from &#x27;src/teacher/marksheet/assessment/entity/assessment.entity&#x27;;
+import { GetStudentMarksFilterDto, StudentMarkDetail, StudentRanking, StudentReportCard, SubjectPerformance, TermPerformance } from &#x27;../dtos/get-student-marks.dto&#x27;;
+import { ActiveUserData } from &#x27;src/admin/auth/interface/active-user.interface&#x27;;
+
+@Injectable()
+export class StudentMarksheetService {
+  private readonly logger &#x3D; new Logger(StudentMarksheetService.name);
+
+  constructor(
+    @InjectRepository(AssessmentMark)
+    private readonly markRepository: Repository&lt;AssessmentMark&gt;,
+    @InjectRepository(Student)
+    private readonly studentRepository: Repository&lt;Student&gt;,
+    @InjectRepository(Assessment)
+    private readonly assessmentRepository: Repository&lt;Assessment&gt;,
+  ) {}
+
+  async getStudentMarks(
+    studentId: string,
+    filter: GetStudentMarksFilterDto,
+    currentUser: ActiveUserData,
+  ): Promise&lt;StudentMarkDetail[]&gt; {
+    this.logger.log(&#x60;Fetching marks for student ${studentId}&#x60;);
+
+    // Verify student access
+    await this.verifyStudentAccess(studentId, currentUser);
+
+    const queryBuilder &#x3D; this.markRepository
+      .createQueryBuilder(&#x27;mark&#x27;)
+      .leftJoinAndSelect(&#x27;mark.assessment&#x27;, &#x27;assessment&#x27;)
+      .leftJoinAndSelect(&#x27;assessment.tenantSubject&#x27;, &#x27;tenantSubject&#x27;)
+      .leftJoinAndSelect(&#x27;tenantSubject.subject&#x27;, &#x27;subject&#x27;)
+      .leftJoinAndSelect(&#x27;tenantSubject.customSubject&#x27;, &#x27;customSubject&#x27;)
+      .leftJoinAndSelect(&#x27;assessment.tenantGradeLevel&#x27;, &#x27;tenantGradeLevel&#x27;)
+      .leftJoinAndSelect(&#x27;tenantGradeLevel.gradeLevel&#x27;, &#x27;gradeLevel&#x27;)
+      .where(&#x27;mark.studentId &#x3D; :studentId&#x27;, { studentId })
+      .andWhere(&#x27;assessment.tenantId &#x3D; :tenantId&#x27;, { tenantId: currentUser.tenantId });
+
+    if (filter.academicYear) {
+      queryBuilder.andWhere(&#x27;assessment.academicYear &#x3D; :academicYear&#x27;, {
+        academicYear: filter.academicYear,
+      });
+    }
+
+    if (filter.term) {
+      queryBuilder.andWhere(&#x27;assessment.term &#x3D; :term&#x27;, { term: filter.term });
+    }
+
+    if (filter.tenantSubjectId) {
+      queryBuilder.andWhere(&#x27;assessment.tenantSubjectId &#x3D; :tenantSubjectId&#x27;, {
+        tenantSubjectId: filter.tenantSubjectId,
+      });
+    }
+
+    if (filter.assessmentType) {
+      queryBuilder.andWhere(&#x27;assessment.type &#x3D; :type&#x27;, { type: filter.assessmentType });
+    }
+
+    queryBuilder.orderBy(&#x27;assessment.createdAt&#x27;, &#x27;DESC&#x27;);
+
+    const marks &#x3D; await queryBuilder.getMany();
+
+    return marks.map((mark) &#x3D;&gt; this.mapToStudentMarkDetail(mark));
+  }
+
+  async getStudentReportCard(
+    studentId: string,
+    academicYear: string,
+    currentUser: ActiveUserData,
+  ): Promise&lt;StudentReportCard&gt; {
+    this.logger.log(&#x60;Generating report card for student ${studentId}&#x60;);
+
+    const student &#x3D; await this.verifyStudentAccess(studentId, currentUser);
+
+    const marks &#x3D; await this.markRepository
+      .createQueryBuilder(&#x27;mark&#x27;)
+      .leftJoinAndSelect(&#x27;mark.assessment&#x27;, &#x27;assessment&#x27;)
+      .leftJoinAndSelect(&#x27;assessment.tenantSubject&#x27;, &#x27;tenantSubject&#x27;)
+      .leftJoinAndSelect(&#x27;tenantSubject.subject&#x27;, &#x27;subject&#x27;)
+      .leftJoinAndSelect(&#x27;tenantSubject.customSubject&#x27;, &#x27;customSubject&#x27;)
+      .leftJoinAndSelect(&#x27;assessment.tenantGradeLevel&#x27;, &#x27;tenantGradeLevel&#x27;)
+      .leftJoinAndSelect(&#x27;tenantGradeLevel.gradeLevel&#x27;, &#x27;gradeLevel&#x27;)
+      .where(&#x27;mark.studentId &#x3D; :studentId&#x27;, { studentId })
+      .andWhere(&#x27;assessment.academicYear &#x3D; :academicYear&#x27;, { academicYear })
+      .andWhere(&#x27;assessment.tenantId &#x3D; :tenantId&#x27;, { tenantId: currentUser.tenantId })
+      .getMany();
+
+    if (marks.length &#x3D;&#x3D;&#x3D; 0) {
+      throw new NotFoundException(&#x27;No marks found for the specified academic year&#x27;);
+    }
+
+    const termPerformances &#x3D; this.calculateTermPerformances(marks);
+    const allSubjects &#x3D; this.calculateSubjectPerformances(marks);
+    const overallStats &#x3D; this.calculateOverallStats(marks);
+
+    return {
+      studentId: student.id,
+      studentName: student.user.name,
+      admissionNumber: student.admission_number,
+      gradeLevel: student.grade.gradeLevel.name,
+      overallAverage: overallStats.average,
+      overallGrade: this.calculateGrade(overallStats.average),
+      totalAssessments: marks.length,
+      termPerformances,
+      allSubjects,
+    };
+  }
+
+  async getSubjectPerformance(
+    studentId: string,
+    subjectId: string,
+    academicYear: string,
+    currentUser: ActiveUserData,
+  ): Promise&lt;SubjectPerformance&gt; {
+    this.logger.log(
+      &#x60;Fetching subject performance for student ${studentId}, subject ${subjectId}&#x60;,
+    );
+  
+    // ✅ Verify student access
+    await this.verifyStudentAccess(studentId, currentUser);
+  
+    // ✅ Properly join all required relations
+    const marks &#x3D; await this.markRepository
+      .createQueryBuilder(&#x27;mark&#x27;)
+      .leftJoinAndSelect(&#x27;mark.assessment&#x27;, &#x27;assessment&#x27;)
+      .leftJoinAndSelect(&#x27;assessment.tenantSubject&#x27;, &#x27;tenantSubject&#x27;)
+      .leftJoinAndSelect(&#x27;tenantSubject.subject&#x27;, &#x27;subject&#x27;)
+      .leftJoinAndSelect(&#x27;tenantSubject.customSubject&#x27;, &#x27;customSubject&#x27;)
+      .leftJoinAndSelect(&#x27;mark.student&#x27;, &#x27;student&#x27;)
+      .leftJoinAndSelect(&#x27;student.grade&#x27;, &#x27;tenantGradeLevel&#x27;)
+      .leftJoinAndSelect(&#x27;tenantGradeLevel.gradeLevel&#x27;, &#x27;gradeLevel&#x27;)
+      // ✅ Added missing joins for assessment’s grade level
+      .leftJoinAndSelect(&#x27;assessment.tenantGradeLevel&#x27;, &#x27;assessmentGradeLevel&#x27;)
+      .leftJoinAndSelect(&#x27;assessmentGradeLevel.gradeLevel&#x27;, &#x27;assessmentGrade&#x27;)
+      .where(&#x27;mark.studentId &#x3D; :studentId&#x27;, { studentId })
+      .andWhere(&#x27;assessment.tenantSubjectId &#x3D; :subjectId&#x27;, { subjectId })
+      .andWhere(&#x27;assessment.academicYear &#x3D; :academicYear&#x27;, { academicYear })
+      .andWhere(&#x27;assessment.tenantId &#x3D; :tenantId&#x27;, {
+        tenantId: currentUser.tenantId,
+      })
+      .getMany();
+  
+    if (!marks.length) {
+      throw new NotFoundException(&#x27;No marks found for this subject&#x27;);
+    }
+  
+    // ✅ Calculate and return performance
+    return this.calculateSubjectPerformance(marks);
+  }
+  
+  private calculateSubjectPerformance(marks: AssessmentMark[]): SubjectPerformance {
+    const assessment &#x3D; marks[0].assessment;
+    const subjectName &#x3D;
+      assessment.tenantSubject.subject?.name ||
+      assessment.tenantSubject.customSubject?.name ||
+      &#x27;Unknown Subject&#x27;;
+  
+    const totalScore &#x3D; marks.reduce((sum, m) &#x3D;&gt; sum + m.score, 0);
+    const maxPossibleScore &#x3D; marks.reduce(
+      (sum, m) &#x3D;&gt; sum + (m.assessment?.maxScore ?? 0),
+      0,
+    );
+    const percentage &#x3D;
+      maxPossibleScore &gt; 0 ? (totalScore / maxPossibleScore) * 100 : 0;
+    const average &#x3D; marks.length &gt; 0 ? totalScore / marks.length : 0;
+  
+    return {
+      subjectId: assessment.tenantSubjectId,
+      subjectName,
+      totalScore,
+      maxPossibleScore,
+      percentage,
+      average,
+      assessmentsCount: marks.length,
+      grade: this.calculateGrade(percentage),
+      marks: marks.map((m) &#x3D;&gt; this.mapToStudentMarkDetail(m)),
+    };
+  }
+  
+  private mapToStudentMarkDetail(mark: AssessmentMark): StudentMarkDetail {
+    const assessment &#x3D; mark.assessment;
+    const subjectName &#x3D;
+      assessment.tenantSubject.subject?.name ||
+      assessment.tenantSubject.customSubject?.name ||
+      &#x27;Unknown Subject&#x27;;
+  
+    const maxScore &#x3D; assessment.maxScore ?? 0;
+    const percentage &#x3D; maxScore &gt; 0 ? (mark.score / maxScore) * 100 : 0;
+  
+    const isPassed &#x3D;
+      assessment.cutoff !&#x3D;&#x3D; undefined &amp;&amp; assessment.cutoff !&#x3D;&#x3D; null
+        ? mark.score &gt;&#x3D; assessment.cutoff
+        : percentage &gt;&#x3D; 50;
+  
+    // ✅ Safe access with fallbacks
+    const gradeLevelName &#x3D;
+      assessment.tenantGradeLevel?.gradeLevel?.name ?? &#x27;Unknown Grade&#x27;;
+  
+    // Log any missing grade level for debugging
+    if (gradeLevelName &#x3D;&#x3D;&#x3D; &#x27;Unknown Grade&#x27;) {
+      this.logger.warn(
+        &#x60;⚠️ Missing gradeLevel for assessment ${assessment.id} in mark ${mark.id}&#x60;,
+      );
+    }
+  
+    return {
+      id: mark.id,
+      score: mark.score,
+      maxScore: maxScore,
+      percentage,
+      title: assessment.title,
+      type: assessment.type,
+      subject: subjectName,
+      gradeLevel: gradeLevelName,
+      cutoff: assessment.cutoff,
+      status: assessment.status,
+      term: assessment.term,
+      academicYear: assessment.academicYear,
+      date: assessment.date,
+      isPassed,
+      createdAt: mark.createdAt,
+    };
+  }
+  
+  
+
+ 
+  
+  
+  
+  private determineGrade(average: number): string {
+    if (average &gt;&#x3D; 80) return &#x27;A&#x27;;
+    if (average &gt;&#x3D; 70) return &#x27;B&#x27;;
+    if (average &gt;&#x3D; 60) return &#x27;C&#x27;;
+    if (average &gt;&#x3D; 50) return &#x27;D&#x27;;
+    if (average &gt;&#x3D; 40) return &#x27;E&#x27;;
+    return &#x27;F&#x27;;
+  }
+  
+
+  async getStudentRanking(
+    studentId: string,
+    academicYear: string,
+    term: number,
+    currentUser: ActiveUserData,
+  ): Promise&lt;StudentRanking&gt; {
+    this.logger.log(&#x60;Calculating ranking for student ${studentId}&#x60;);
+
+    const student &#x3D; await this.verifyStudentAccess(studentId, currentUser);
+
+    const studentsInGrade &#x3D; await this.studentRepository.find({
+      where: {
+        grade: { id: student.grade.id },
+        tenant_id: currentUser.tenantId,
+        isActive: true,
+      },
+    });
+
+    const studentIds &#x3D; studentsInGrade.map((s) &#x3D;&gt; s.id);
+
+    const averages &#x3D; await Promise.all(
+      studentIds.map(async (id) &#x3D;&gt; {
+        const marks &#x3D; await this.markRepository
+          .createQueryBuilder(&#x27;mark&#x27;)
+          .leftJoinAndSelect(&#x27;mark.assessment&#x27;, &#x27;assessment&#x27;)
+          .where(&#x27;mark.studentId &#x3D; :id&#x27;, { id })
+          .andWhere(&#x27;assessment.academicYear &#x3D; :academicYear&#x27;, { academicYear })
+          .andWhere(&#x27;assessment.term &#x3D; :term&#x27;, { term })
+          .andWhere(&#x27;assessment.tenantId &#x3D; :tenantId&#x27;, { tenantId: currentUser.tenantId })
+          .getMany();
+
+        const stats &#x3D; this.calculateOverallStats(marks);
+        return { studentId: id, average: stats.average };
+      }),
+    );
+
+    averages.sort((a, b) &#x3D;&gt; b.average - a.average);
+
+    const studentRankIndex &#x3D; averages.findIndex((a) &#x3D;&gt; a.studentId &#x3D;&#x3D;&#x3D; studentId);
+    const studentAverage &#x3D; averages[studentRankIndex]?.average || 0;
+    const classAverage &#x3D; averages.reduce((sum, a) &#x3D;&gt; sum + a.average, 0) / averages.length;
+    const topScore &#x3D; averages[0]?.average || 0;
+    const percentile &#x3D; ((averages.length - studentRankIndex) / averages.length * 100).toFixed(2);
+
+    return {
+      rank: studentRankIndex + 1,
+      totalStudents: averages.length,
+      studentAverage,
+      classAverage,
+      topScore,
+      percentile: &#x60;${percentile}%&#x60;,
+    };
+  }
+
+  // Helper methods
+  private async verifyStudentAccess(
+    studentId: string,
+    currentUser: ActiveUserData,
+  ): Promise&lt;Student&gt; {
+    const student &#x3D; await this.studentRepository.findOne({
+      where: { id: studentId },
+      relations: [&#x27;user&#x27;, &#x27;grade&#x27;, &#x27;grade.gradeLevel&#x27;],
+    });
+
+    if (!student) {
+      throw new NotFoundException(&#x27;Student not found&#x27;);
+    }
+
+    if (student.tenant_id !&#x3D;&#x3D; currentUser.tenantId) {
+      throw new ForbiddenException(&#x27;Access denied to this student&#x27;);
+    }
+
+    if ((currentUser as any).role &#x3D;&#x3D;&#x3D; &#x27;STUDENT&#x27; &amp;&amp; student.user_id !&#x3D;&#x3D; currentUser.sub) {
+      throw new ForbiddenException(&#x27;You can only access your own marks&#x27;);
+    }
+
+    return student;
+  }
+
+  // private mapToStudentMarkDetail(mark: AssessmentMark): StudentMarkDetail {
+  //   const assessment &#x3D; mark.assessment;
+  //   const subjectName &#x3D; assessment.tenantSubject.subject?.name || 
+  //                      assessment.tenantSubject.customSubject?.name || 
+  //                      &#x27;Unknown Subject&#x27;;
+    
+  //   const maxScore &#x3D; assessment.maxScore ?? 0;
+  //   const percentage &#x3D; maxScore &gt; 0 ? (mark.score / maxScore) * 100 : 0;
+  //   const isPassed &#x3D; (assessment.cutoff !&#x3D;&#x3D; undefined &amp;&amp; assessment.cutoff !&#x3D;&#x3D; null)
+  //     ? mark.score &gt;&#x3D; assessment.cutoff
+  //     : percentage &gt;&#x3D; 50;
+
+  //   return {
+  //     id: mark.id,
+  //     score: mark.score,
+  //     maxScore: maxScore,
+  //     percentage,
+  //     title: assessment.title,
+  //     type: assessment.type,
+  //     subject: subjectName,
+  //     gradeLevel: assessment.tenantGradeLevel.gradeLevel.name,
+  //     cutoff: assessment.cutoff,
+  //     status: assessment.status,
+  //     term: assessment.term,
+  //     academicYear: assessment.academicYear,
+  //     date: assessment.date,
+  //     isPassed,
+  //     createdAt: mark.createdAt,
+  //   };
+  // }
+
+  private calculateTermPerformances(marks: AssessmentMark[]): TermPerformance[] {
+    const termMap &#x3D; new Map&lt;string, AssessmentMark[]&gt;();
+
+    marks.forEach((mark) &#x3D;&gt; {
+      const key &#x3D; &#x60;${mark.assessment.term}-${mark.assessment.academicYear}&#x60;;
+      let termMarks &#x3D; termMap.get(key);
+      if (!termMarks) {
+        termMarks &#x3D; [];
+        termMap.set(key, termMarks);
+      }
+      termMarks.push(mark);
+    });
+
+    return Array.from(termMap.entries()).map(([key, termMarks]) &#x3D;&gt; {
+      const [term, academicYear] &#x3D; key.split(&#x27;-&#x27;);
+      const stats &#x3D; this.calculateOverallStats(termMarks);
+      const subjects &#x3D; this.calculateSubjectPerformances(termMarks);
+
+      return {
+        term: parseInt(term),
+        academicYear,
+        totalScore: stats.totalScore,
+        maxPossibleScore: stats.maxPossibleScore,
+        percentage: stats.percentage,
+        average: stats.average,
+        grade: this.calculateGrade(stats.average),
+        totalAssessments: termMarks.length,
+        passedAssessments: stats.passedCount,
+        failedAssessments: stats.failedCount,
+        subjects,
+      };
+    });
+  }
+
+  private calculateSubjectPerformances(marks: AssessmentMark[]): SubjectPerformance[] {
+    const subjectMap &#x3D; new Map&lt;string, AssessmentMark[]&gt;();
+
+    marks.forEach((mark) &#x3D;&gt; {
+      const subjectId &#x3D; mark.assessment.tenantSubjectId;
+      const list &#x3D; subjectMap.get(subjectId);
+      if (list) {
+        list.push(mark);
+      } else {
+        subjectMap.set(subjectId, [mark]);
+      }
+    });
+
+    return Array.from(subjectMap.entries()).map(([subjectId, subjectMarks]) &#x3D;&gt; 
+      this.calculateSubjectPerformance(subjectMarks)
+    );
+  }
+
+  // private calculateSubjectPerformance(marks: AssessmentMark[]): SubjectPerformance {
+  //   const assessment &#x3D; marks[0].assessment;
+  //   const subjectName &#x3D; assessment.tenantSubject.subject?.name || 
+  //                      assessment.tenantSubject.customSubject?.name || 
+  //                      &#x27;Unknown Subject&#x27;;
+
+  //   const totalScore &#x3D; marks.reduce((sum, m) &#x3D;&gt; sum + m.score, 0);
+  //   const maxPossibleScore &#x3D; marks.reduce((sum, m) &#x3D;&gt; sum + (m.assessment?.maxScore ?? 0), 0);
+  //   const percentage &#x3D; maxPossibleScore &gt; 0 ? (totalScore / maxPossibleScore) * 100 : 0;
+  //   const average &#x3D; marks.length &gt; 0 ? totalScore / marks.length : 0;
+
+  //   return {
+  //     subjectId: assessment.tenantSubjectId,
+  //     subjectName,
+  //     totalScore,
+  //     maxPossibleScore,
+  //     percentage,
+  //     average,
+  //     assessmentsCount: marks.length,
+  //     grade: this.calculateGrade(percentage),
+  //     marks: marks.map((m) &#x3D;&gt; this.mapToStudentMarkDetail(m)),
+  //   };
+  // }
+  
+
+
+
+  private calculateOverallStats(marks: AssessmentMark[]) {
+    const totalScore &#x3D; marks.reduce((sum, m) &#x3D;&gt; sum + m.score, 0);
+    const maxPossibleScore &#x3D; marks.reduce((sum, m) &#x3D;&gt; sum + (m.assessment?.maxScore ?? 0), 0);
+    const percentage &#x3D; maxPossibleScore &gt; 0 ? (totalScore / maxPossibleScore) * 100 : 0;
+    const average &#x3D; marks.length &gt; 0 ? totalScore / marks.length : 0;
+
+    const passedCount &#x3D; marks.filter((m) &#x3D;&gt; {
+      const cutoff &#x3D; m.assessment?.cutoff;
+      const maxScore &#x3D; m.assessment?.maxScore ?? 0;
+      if (cutoff !&#x3D;&#x3D; undefined &amp;&amp; cutoff !&#x3D;&#x3D; null) {
+        return m.score &gt;&#x3D; cutoff;
+      }
+      if (maxScore &gt; 0) {
+        return (m.score / maxScore) * 100 &gt;&#x3D; 50;
+      }
+      return false;
+    }).length;
+
+    const failedCount &#x3D; marks.length - passedCount;
+
+    return { totalScore, maxPossibleScore, percentage, average, passedCount, failedCount };
+  }
+
+  private calculateGrade(percentage: number): string {
+    if (percentage &gt;&#x3D; 90) return &#x27;A+&#x27;;
+    if (percentage &gt;&#x3D; 80) return &#x27;A&#x27;;
+    if (percentage &gt;&#x3D; 70) return &#x27;B+&#x27;;
+    if (percentage &gt;&#x3D; 60) return &#x27;B&#x27;;
+    if (percentage &gt;&#x3D; 50) return &#x27;C&#x27;;
+    if (percentage &gt;&#x3D; 40) return &#x27;D&#x27;;
+    return &#x27;F&#x27;;
+  }
+}
+
+
+
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'StudentMarksheetService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

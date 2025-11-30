@@ -1,5 +1,5 @@
 // src/users/services/users.service.ts
-import { BadRequestException, Injectable, Logger, RequestTimeoutException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, Logger, NotFoundException, RequestTimeoutException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
@@ -8,6 +8,7 @@ import { School } from '../../school/entities/school.entity';
 import { CreateUserInput } from '../dtos/create-user.input';
 import { SignupInput } from '../dtos/signUp-input';
 import { MembershipRole, UserTenantMembership } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
+import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 
 @Injectable()
 export class UsersService {
@@ -49,6 +50,38 @@ export class UsersService {
 
   async findAll(): Promise<User[]> {
     return this.userRepository.find({ relations: ['school'] });
+  };
+
+
+  async deleteUser(userIdToDelete: string, user: ActiveUserData): Promise<boolean> {
+   
+    const tenantId = user.tenantId;
+    const loggedInUser = user.sub;
+    if(!tenantId) {
+      throw new NotFoundException('Tenant not found')
+    }
+
+     if (loggedInUser) {
+    throw new ForbiddenException('You cannot delete yourself');
+  }
+    const targetUser = await this.userRepository.findOne({ where: { id: userIdToDelete } });
+    if (!targetUser) {
+      throw new NotFoundException('User not found');
+    }
+
+    // 2. Check if user belongs to the same tenant
+    const membership = await this.membershipRepository.findOne({
+      where: { userId: userIdToDelete, tenantId },
+    });
+
+    if (!membership || membership.tenantId !== tenantId) {
+      throw new ForbiddenException('Cannot delete user outside your tenant');
+    }
+
+    // 3. Delete user
+    await this.userRepository.delete(userIdToDelete);
+
+    return true;
   }
 
   async findUsersByTenant(

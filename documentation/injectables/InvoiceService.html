@@ -1,0 +1,1246 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>skool documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">skool documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >InvoiceService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/admin/finance/invoice/invoice.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#logger" >logger</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#findAllByTenant" >findAllByTenant</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#findById" >findById</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#findByStudent" >findByStudent</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#generateInvoiceNumber" >generateInvoiceNumber</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#generateInvoices" >generateInvoices</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#generateReceiptNumber" >generateReceiptNumber</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(invoiceRepo: <a href="../classes/Invoice.html" target="_self">Repository&lt;Invoice&gt;</a>, invoiceItemRepo: Repository<InvoiceItem>, paymentRepo: <a href="../classes/Payment.html" target="_self">Repository&lt;Payment&gt;</a>, studentRepo: <a href="../interfaces/Student.html" target="_self">Repository&lt;Student&gt;</a>, studentFeeAssignmentRepo: <a href="../interfaces/Student.html" target="_self">Repository&lt;StudentFeeAssignment&gt;</a>, studentFeeItemRepo: <a href="../interfaces/Student.html" target="_self">Repository&lt;StudentFeeItem&gt;</a>, dataSource: DataSource)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">src/admin/finance/invoice/invoice.service.ts:18</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>invoiceRepo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/Invoice.html" target="_self" >Repository&lt;Invoice&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>invoiceItemRepo</td>
+                                                  
+                                                        <td>
+                                                                    <code>Repository&lt;InvoiceItem&gt;</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>paymentRepo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/Payment.html" target="_self" >Repository&lt;Payment&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>studentRepo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../interfaces/Student.html" target="_self" >Repository&lt;Student&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>studentFeeAssignmentRepo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../interfaces/Student.html" target="_self" >Repository&lt;StudentFeeAssignment&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>studentFeeItemRepo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../interfaces/Student.html" target="_self" >Repository&lt;StudentFeeItem&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>dataSource</td>
+                                                  
+                                                        <td>
+                                                                    <code>DataSource</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findAllByTenant"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>findAllByTenant</b></span>
+                        <a href="#findAllByTenant"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findAllByTenant(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="300"
+                                    class="link-to-prism">src/admin/finance/invoice/invoice.service.ts:300</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Invoice.html" target="_self" >Promise&lt;Invoice[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findById"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>findById</b></span>
+                        <a href="#findById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findById(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="287"
+                                    class="link-to-prism">src/admin/finance/invoice/invoice.service.ts:287</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Invoice.html" target="_self" >Promise&lt;Invoice&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findByStudent"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>findByStudent</b></span>
+                        <a href="#findByStudent"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findByStudent(studentId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="272"
+                                    class="link-to-prism">src/admin/finance/invoice/invoice.service.ts:272</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>studentId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Invoice.html" target="_self" >Promise&lt;Invoice[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="generateInvoiceNumber"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>generateInvoiceNumber</b></span>
+                        <a href="#generateInvoiceNumber"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>generateInvoiceNumber(tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="310"
+                                    class="link-to-prism">src/admin/finance/invoice/invoice.service.ts:310</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;string&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="generateInvoices"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>generateInvoices</b></span>
+                        <a href="#generateInvoices"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>generateInvoices(input: <a href="../classes/CreateInvoiceInput.html" target="_self">CreateInvoiceInput</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="39"
+                                    class="link-to-prism">src/admin/finance/invoice/invoice.service.ts:39</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/CreateInvoiceInput.html" target="_self" >CreateInvoiceInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Invoice.html" target="_self" >Promise&lt;Invoice[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="generateReceiptNumber"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>generateReceiptNumber</b></span>
+                        <a href="#generateReceiptNumber"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>generateReceiptNumber(tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="330"
+                                    class="link-to-prism">src/admin/finance/invoice/invoice.service.ts:330</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;string&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="logger"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>logger</b></span>
+                        <a href="#logger"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new Logger(InvoiceService.name)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">src/admin/finance/invoice/invoice.service.ts:18</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, BadRequestException, NotFoundException, Logger } from &#x27;@nestjs/common&#x27;;
+import { InjectRepository } from &#x27;@nestjs/typeorm&#x27;;
+import { Repository, DataSource, In } from &#x27;typeorm&#x27;;
+import { Invoice, InvoiceStatus } from &#x27;./entities/invoice.entity&#x27;;
+import { Term } from &#x27;src/admin/academic_years/entities/terms.entity&#x27;;
+import { TenantGradeLevel } from &#x27;src/admin/school-type/entities/tenant-grade-level&#x27;;
+import { InvoiceItem } from &#x27;./entities/invoice.entity.item&#x27;;
+import { Payment } from &#x27;../payment/entities/payment.entity&#x27;;
+import { Student } from &#x27;src/admin/student/entities/student.entity&#x27;;
+import { StudentFeeAssignment } from &#x27;../fee-assignment/entities/student_fee_assignments.entity&#x27;;
+import { StudentFeeItem } from &#x27;../fee-assignment/entities/student_fee_items.entity&#x27;;
+import { CreateInvoiceInput } from &#x27;./dtos/create-invoice.input&#x27;;
+import { ActiveUserData } from &#x27;src/admin/auth/interface/active-user.interface&#x27;;
+
+
+@Injectable()
+export class InvoiceService {
+  private readonly logger &#x3D; new Logger(InvoiceService.name);
+
+  constructor(
+    @InjectRepository(Invoice)
+    private invoiceRepo: Repository&lt;Invoice&gt;,
+    @InjectRepository(InvoiceItem)
+    private invoiceItemRepo: Repository&lt;InvoiceItem&gt;,
+    @InjectRepository(Payment)
+    private paymentRepo: Repository&lt;Payment&gt;,
+    @InjectRepository(Student)
+    private studentRepo: Repository&lt;Student&gt;,
+    // @InjectRepository(Term)
+    // private termRepo: Repository&lt;Term&gt;,
+    @InjectRepository(StudentFeeAssignment)
+    private studentFeeAssignmentRepo: Repository&lt;StudentFeeAssignment&gt;,
+    @InjectRepository(StudentFeeItem)
+    private studentFeeItemRepo: Repository&lt;StudentFeeItem&gt;,
+    private dataSource: DataSource,
+  ) {}
+
+
+  async generateInvoices(
+    input: CreateInvoiceInput,
+    user: ActiveUserData,
+  ): Promise&lt;Invoice[]&gt; {
+    const { studentId, termId, tenantGradeLevelIds, issueDate, dueDate, notes } &#x3D; input;
+    const tenantId &#x3D; user.tenantId;
+
+    if(!tenantId) {
+      throw new NotFoundException(&#x27;Tenant ID is missing from the active user&#x27;);
+    }
+    const termRepo &#x3D; this.dataSource.getRepository(Term);
+
+    const term &#x3D; await termRepo.findOne({
+      where: { id: termId, tenantId },
+      relations: [&#x27;academicYear&#x27;],
+    });
+
+    if (!term) {
+      throw new NotFoundException(&#x60;Term with id ${termId} not found&#x60;);
+    }
+
+    const invoiceIssueDate &#x3D; issueDate ? new Date(issueDate) : new Date();
+    const invoiceDueDate &#x3D; dueDate ? new Date(dueDate) : new Date(term.endDate);
+
+    let students: Student[] &#x3D; [];
+
+    if (studentId) {
+      const student &#x3D; await this.studentRepo.findOne({
+        where: { id: studentId, tenant_id: tenantId, isActive: true },
+      });
+      if (!student) {
+        throw new NotFoundException(&#x60;Student with id ${studentId} not found&#x60;);
+      }
+      students &#x3D; [student];
+    } else if (tenantGradeLevelIds &amp;&amp; tenantGradeLevelIds.length &gt; 0) {
+      students &#x3D; await this.studentRepo.find({
+        where: {
+          tenant_id: tenantId,
+          grade: In(tenantGradeLevelIds),
+          isActive: true,
+        },
+      });
+    } else {
+      students &#x3D; await this.studentRepo.find({
+        where: {
+          tenant_id: tenantId,
+          isActive: true,
+        },
+      });
+    }
+
+    if (students.length &#x3D;&#x3D;&#x3D; 0) {
+      throw new BadRequestException(&#x27;No students found for invoice generation&#x27;);
+    }
+
+    this.logger.log(&#x60;Generating invoices for ${students.length} students&#x60;);
+
+    const generatedInvoices: Invoice[] &#x3D; [];
+
+    for (const student of students) {
+      const existingInvoice &#x3D; await this.invoiceRepo.findOne({
+        where: {
+          tenantId,
+          studentId: student.id,
+          termId: term.id,
+        },
+      });
+
+      if (existingInvoice) {
+        this.logger.warn(&#x60;Invoice already exists for student ${student.id} and term ${term.id}&#x60;);
+        continue;
+      }
+
+      const feeAssignments &#x3D; await this.studentFeeAssignmentRepo.find({
+        where: {
+          tenantId,
+          studentId: student.id,
+        },
+        relations: [&#x27;feeAssignment&#x27;, &#x27;feeAssignment.feeStructure&#x27;, &#x27;feeAssignment.feeStructure.terms&#x27;],
+      });
+
+      if (feeAssignments.length &#x3D;&#x3D;&#x3D; 0) {
+        this.logger.warn(&#x60;No fee assignments found for student ${student.id}&#x60;);
+        continue;
+      }
+
+      const relevantAssignment &#x3D; feeAssignments.find(assignment &#x3D;&gt; 
+        assignment.feeAssignment.feeStructure.terms.some(t &#x3D;&gt; t.id &#x3D;&#x3D;&#x3D; term.id)
+      );
+
+      if (!relevantAssignment) {
+        this.logger.warn(&#x60;No fee assignment for term ${term.id} found for student ${student.id}&#x60;);
+        continue;
+      }
+
+      const feeItems &#x3D; await this.studentFeeItemRepo.find({
+        where: {
+          tenantId,
+          studentFeeAssignmentId: relevantAssignment.id,
+          isActive: true,
+        },
+        relations: [&#x27;feeStructureItem&#x27;, &#x27;feeStructureItem.feeBucket&#x27;],
+      });
+
+      if (feeItems.length &#x3D;&#x3D;&#x3D; 0) {
+        this.logger.warn(&#x60;No fee items found for student ${student.id}&#x60;);
+        continue;
+      }
+
+      const invoiceNumber &#x3D; await this.generateInvoiceNumber(tenantId);
+      const totalAmount &#x3D; feeItems.reduce((sum, item) &#x3D;&gt; sum + Number(item.amount), 0);
+
+      const invoice &#x3D; this.invoiceRepo.create({
+        tenantId,
+        invoiceNumber,
+        studentId: student.id,
+        termId: term.id,
+        academicYearId: term.academicYearId,
+        issueDate: invoiceIssueDate,
+        dueDate: invoiceDueDate,
+        totalAmount,
+        paidAmount: 0,
+        balanceAmount: totalAmount,
+        status: InvoiceStatus.PENDING,
+        notes,
+      });
+
+      const savedInvoice &#x3D; await this.invoiceRepo.save(invoice);
+
+      
+
+      const invoiceItems &#x3D; feeItems.map(feeItem &#x3D;&gt; {
+        return this.invoiceItemRepo.create({
+          tenantId,
+          invoiceId: savedInvoice.id,
+          feeBucketId: feeItem.feeStructureItem.feeBucketId,
+          description: feeItem.feeStructureItem.feeBucket.name,
+          amount: feeItem.amount,
+          isMandatory: feeItem.isMandatory,
+        });
+      });
+
+      await this.invoiceItemRepo.save(invoiceItems);
+
+     
+      const completeInvoice &#x3D; await this.invoiceRepo.findOne({
+        where: { id: savedInvoice.id },
+        relations: [&#x27;student&#x27;,&#x27;student.user&#x27;, &#x27;term&#x27;, &#x27;academicYear&#x27;, &#x27;items&#x27;, &#x27;items.feeBucket&#x27;],
+      });
+      
+      if (completeInvoice) {
+        generatedInvoices.push(completeInvoice);
+      }
+
+
+      await this.studentFeeAssignmentRepo.update(
+        { id: relevantAssignment.id },
+        { hasInvoice: true }
+      );
+
+      this.logger.log(&#x60;Invoice ${invoiceNumber} generated for student ${student.id}&#x60;);
+    }
+
+    return generatedInvoices;
+  }
+
+  // async createPayment(
+  //   input: CreatePaymentInput,
+  //   user: ActiveUserData,
+  // ): Promise&lt;Payment&gt; {
+  //   const { invoiceId, amount, paymentMethod, transactionReference, paymentDate, notes } &#x3D; input;
+  //   const tenantId &#x3D; user.tenantId;
+
+  //   const invoice &#x3D; await this.invoiceRepo.findOne({
+  //     where: { id: invoiceId, tenantId },
+  //     relations: [&#x27;student&#x27;],
+  //   });
+
+  //   if (!invoice) {
+  //     throw new NotFoundException(&#x60;Invoice with id ${invoiceId} not found&#x60;);
+  //   }
+
+  //   if (amount &gt; invoice.balanceAmount) {
+  //     throw new BadRequestException(
+  //       &#x60;Payment amount (${amount}) exceeds balance amount (${invoice.balanceAmount})&#x60;
+  //     );
+  //   }
+
+  //   const receiptNumber &#x3D; await this.generateReceiptNumber(tenantId);
+
+  //   const payment &#x3D; this.paymentRepo.create({
+  //     tenantId,
+  //     receiptNumber,
+  //     invoiceId: invoice.id,
+  //     studentId: invoice.studentId,
+  //     amount,
+  //     paymentMethod,
+  //     transactionReference,
+  //     paymentDate: paymentDate ? new Date(paymentDate) : new Date(),
+  //     receivedBy: user.sub,
+  //     notes,
+  //   });
+
+  //   const savedPayment &#x3D; await this.paymentRepo.save(payment);
+
+  //   const newPaidAmount &#x3D; Number(invoice.paidAmount) + Number(amount);
+  //   const newBalanceAmount &#x3D; Number(invoice.totalAmount) - newPaidAmount;
+
+  //   let newStatus &#x3D; invoice.status;
+  //   if (newBalanceAmount &#x3D;&#x3D;&#x3D; 0) {
+  //     newStatus &#x3D; InvoiceStatus.PAID;
+  //   } else if (newPaidAmount &gt; 0 &amp;&amp; newBalanceAmount &gt; 0) {
+  //     newStatus &#x3D; InvoiceStatus.PARTIALLY_PAID;
+  //   }
+
+  //   await this.invoiceRepo.update(invoice.id, {
+  //     paidAmount: newPaidAmount,
+  //     balanceAmount: newBalanceAmount,
+  //     status: newStatus,
+  //   });
+
+  //   this.logger.log(&#x60;Payment ${receiptNumber} of ${amount} recorded for invoice ${invoice.invoiceNumber}&#x60;);
+
+  //   return this.paymentRepo.findOneOrFail({
+  //     where: { id: savedPayment.id },
+  //     relations: [&#x27;invoice&#x27;, &#x27;student&#x27;, &#x27;receivedByUser&#x27;],
+  //   });
+
+    
+  // }
+  
+
+
+  async findByStudent(studentId: string, user: ActiveUserData): Promise&lt;Invoice[]&gt; {
+    return await this.invoiceRepo.find({
+      where: {
+        studentId,
+        tenantId: user.tenantId,
+      },
+      relations: [&#x27;student&#x27;, &#x27;term&#x27;, &#x27;academicYear&#x27;, &#x27;items&#x27;, &#x27;items.feeBucket&#x27;, &#x27;payments&#x27;],
+      order: { createdAt: &#x27;DESC&#x27; },
+    });
+  }
+
+
+
+
+
+  async findById(id: string, user: ActiveUserData): Promise&lt;Invoice&gt; {
+    const invoice &#x3D; await this.invoiceRepo.findOne({
+      where: { id, tenantId: user.tenantId },
+      relations: [&#x27;student&#x27;,&#x27;student.user&#x27;, &#x27;term&#x27;, &#x27;academicYear&#x27;, &#x27;items&#x27;, &#x27;items.feeBucket&#x27;, &#x27;payments&#x27;, &#x27;payments.receivedByUser&#x27;],
+    });
+
+    if (!invoice) {
+      throw new NotFoundException(&#x60;Invoice with id ${id} not found&#x60;);
+    }
+
+    return invoice;
+  }
+
+  async findAllByTenant(user: ActiveUserData): Promise&lt;Invoice[]&gt; {
+    return await this.invoiceRepo.find({
+      where: { tenantId: user.tenantId },
+      // relations: [&#x27;student&#x27;, &#x27;term&#x27;, &#x27;academicYear&#x27;, &#x27;items&#x27;, &#x27;payments&#x27;],
+      relations: [&#x27;student&#x27;,&#x27;student.user&#x27;, &#x27;term&#x27;, &#x27;academicYear&#x27;, &#x27;items&#x27;, &#x27;items.feeBucket&#x27;, &#x27;payments&#x27;],
+
+      order: { createdAt: &#x27;DESC&#x27; },
+    });
+  }
+
+  private async generateInvoiceNumber(tenantId: string): Promise&lt;string&gt; {
+    const year &#x3D; new Date().getFullYear();
+    const prefix &#x3D; &#x60;INV-${year}-&#x60;;
+    
+    const lastInvoice &#x3D; await this.invoiceRepo
+      .createQueryBuilder(&#x27;invoice&#x27;)
+      .where(&#x27;invoice.tenantId &#x3D; :tenantId&#x27;, { tenantId })
+      .andWhere(&#x27;invoice.invoiceNumber LIKE :prefix&#x27;, { prefix: &#x60;${prefix}%&#x60; })
+      .orderBy(&#x27;invoice.createdAt&#x27;, &#x27;DESC&#x27;)
+      .getOne();
+
+    let nextNumber &#x3D; 1;
+    if (lastInvoice) {
+      const lastNumber &#x3D; parseInt(lastInvoice.invoiceNumber.split(&#x27;-&#x27;).pop() || &#x27;0&#x27;);
+      nextNumber &#x3D; lastNumber + 1;
+    }
+
+    return &#x60;${prefix}${nextNumber.toString().padStart(6, &#x27;0&#x27;)}&#x60;;
+  }
+
+  private async generateReceiptNumber(tenantId: string): Promise&lt;string&gt; {
+    const year &#x3D; new Date().getFullYear();
+    const prefix &#x3D; &#x60;RCT-${year}-&#x60;;
+    
+    const lastPayment &#x3D; await this.paymentRepo
+      .createQueryBuilder(&#x27;payment&#x27;)
+      .where(&#x27;payment.tenantId &#x3D; :tenantId&#x27;, { tenantId })
+      .andWhere(&#x27;payment.receiptNumber LIKE :prefix&#x27;, { prefix: &#x60;${prefix}%&#x60; })
+      .orderBy(&#x27;payment.createdAt&#x27;, &#x27;DESC&#x27;)
+      .getOne();
+
+    let nextNumber &#x3D; 1;
+    if (lastPayment) {
+      const lastNumber &#x3D; parseInt(lastPayment.receiptNumber.split(&#x27;-&#x27;).pop() || &#x27;0&#x27;);
+      nextNumber &#x3D; lastNumber + 1;
+    }
+
+    return &#x60;${prefix}${nextNumber.toString().padStart(6, &#x27;0&#x27;)}&#x60;;
+  }
+}
+
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'InvoiceService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

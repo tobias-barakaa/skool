@@ -87,4 +87,10 @@ export class UserTenantMembership {
   @Field()
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Column({ type: 'timestamptz', nullable: true })
+deletedAt: Date;
+
+@Column({ type: 'uuid', nullable: true })
+deletedBy: string;
 }

@@ -1,0 +1,2119 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>skool documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">skool documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >FeeStructureService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/admin/finance/fee-structure/fee-structure.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#createWithItems" >createWithItems</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#findAll" >findAll</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#findByGradeAndTerm" >findByGradeAndTerm</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#findOne" >findOne</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#findOneById" >findOneById</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#remove" >remove</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#update" >update</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#validateCoreEntities" >validateCoreEntities</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#validateGradeLevels" >validateGradeLevels</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(feeStructureRepository: <a href="../classes/FeeStructure.html" target="_self">Repository&lt;FeeStructure&gt;</a>, feeStructureItemRepository: Repository<FeeStructureItem>, dataSource: DataSource, feeBucketRepository: <a href="../classes/FeeBucket.html" target="_self">Repository&lt;FeeBucket&gt;</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/admin/finance/fee-structure/fee-structure.service.ts:16</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>feeStructureRepository</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/FeeStructure.html" target="_self" >Repository&lt;FeeStructure&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>feeStructureItemRepository</td>
+                                                  
+                                                        <td>
+                                                                    <code>Repository&lt;FeeStructureItem&gt;</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>dataSource</td>
+                                                  
+                                                        <td>
+                                                                    <code>DataSource</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>feeBucketRepository</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/FeeBucket.html" target="_self" >Repository&lt;FeeBucket&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createWithItems"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>createWithItems</b></span>
+                        <a href="#createWithItems"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createWithItems(input: <a href="../classes/CreateFeeStructureWithItemsInput.html" target="_self">CreateFeeStructureWithItemsInput</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="181"
+                                    class="link-to-prism">src/admin/finance/fee-structure/fee-structure.service.ts:181</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/CreateFeeStructureWithItemsInput.html" target="_self" >CreateFeeStructureWithItemsInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/FeeStructure.html" target="_self" >Promise&lt;FeeStructure&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findAll"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>findAll</b></span>
+                        <a href="#findAll"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findAll(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="849"
+                                    class="link-to-prism">src/admin/finance/fee-structure/fee-structure.service.ts:849</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/FeeStructure.html" target="_self" >Promise&lt;FeeStructure[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findByGradeAndTerm"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>findByGradeAndTerm</b></span>
+                        <a href="#findByGradeAndTerm"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findByGradeAndTerm(termId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, academicYearId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="893"
+                                    class="link-to-prism">src/admin/finance/fee-structure/fee-structure.service.ts:893</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>termId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>academicYearId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/FeeStructure.html" target="_self" >Promise&lt;FeeStructure | null&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findOne"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>findOne</b></span>
+                        <a href="#findOne"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findOne(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="880"
+                                    class="link-to-prism">src/admin/finance/fee-structure/fee-structure.service.ts:880</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/FeeStructure.html" target="_self" >Promise&lt;FeeStructure&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findOneById"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>findOneById</b></span>
+                        <a href="#findOneById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findOneById(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="917"
+                                    class="link-to-prism">src/admin/finance/fee-structure/fee-structure.service.ts:917</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/FeeStructure.html" target="_self" >Promise&lt;FeeStructure&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="remove"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>remove</b></span>
+                        <a href="#remove"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>remove(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="990"
+                                    class="link-to-prism">src/admin/finance/fee-structure/fee-structure.service.ts:990</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="update"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>update</b></span>
+                        <a href="#update"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>update(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, input: <a href="../classes/UpdateFeeStructureInput.html" target="_self">UpdateFeeStructureInput</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="937"
+                                    class="link-to-prism">src/admin/finance/fee-structure/fee-structure.service.ts:937</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/UpdateFeeStructureInput.html" target="_self" >UpdateFeeStructureInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/FeeStructure.html" target="_self" >Promise&lt;FeeStructure&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="validateCoreEntities"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>validateCoreEntities</b></span>
+                        <a href="#validateCoreEntities"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>validateCoreEntities(input: <a href="../classes/CreateFeeStructureWithItemsInput.html" target="_self">CreateFeeStructureWithItemsInput</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="532"
+                                    class="link-to-prism">src/admin/finance/fee-structure/fee-structure.service.ts:532</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/CreateFeeStructureWithItemsInput.html" target="_self" >CreateFeeStructureWithItemsInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="validateGradeLevels"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>validateGradeLevels</b></span>
+                        <a href="#validateGradeLevels"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>validateGradeLevels(gradeLevelIds: string[], tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="717"
+                                    class="link-to-prism">src/admin/finance/fee-structure/fee-structure.service.ts:717</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>gradeLevelIds</td>
+                                            <td>
+                                                        <code>string[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../miscellaneous/variables.html#Tenant" target="_self" >Promise&lt;TenantGradeLevel[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, NotFoundException, ConflictException, BadRequestException } from &#x27;@nestjs/common&#x27;;
+import { InjectRepository } from &#x27;@nestjs/typeorm&#x27;;
+import { Repository, DataSource, In, Not } from &#x27;typeorm&#x27;;
+import { FeeStructure } from &#x27;./entities/fee-structure.entity&#x27;;
+import { FeeStructureItem } from &#x27;../fee-structure-item/entities/fee-structure-item.entity&#x27;;
+import { ActiveUserData } from &#x27;src/admin/auth/interface/active-user.interface&#x27;;
+import { FeeBucket } from &#x27;../fee-bucket/entities/fee-bucket.entity&#x27;;
+import { AcademicYear } from &#x27;src/admin/academic_years/entities/academic_years.entity&#x27;;
+import { Term } from &#x27;src/admin/academic_years/entities/terms.entity&#x27;;
+import { GradeLevel } from &#x27;src/admin/level/entities/grade-level.entity&#x27;;
+import { TenantGradeLevel } from &#x27;src/admin/school-type/entities/tenant-grade-level&#x27;;
+import { UpdateFeeStructureInput } from &#x27;./dtos/update-fee-structure.input.dto&#x27;;
+import { CreateFeeStructureWithItemsInput } from &#x27;../fee-structure-item/dtos/create-fee-structure-item.dto&#x27;;
+
+@Injectable()
+export class FeeStructureService {
+  constructor(
+    @InjectRepository(FeeStructure)
+    private readonly feeStructureRepository: Repository&lt;FeeStructure&gt;,
+    @InjectRepository(FeeStructureItem)
+    private readonly feeStructureItemRepository: Repository&lt;FeeStructureItem&gt;,
+    private readonly dataSource: DataSource,
+    @InjectRepository(FeeBucket)
+    private readonly feeBucketRepository: Repository&lt;FeeBucket&gt;,
+    // @InjectRepository(AcademicYear)
+    // private readonly academicYearRepository: Repository&lt;AcademicYear&gt;,
+    // @InjectRepository(Term)
+    // private readonly termRepository: Repository&lt;Term&gt;,
+    // @InjectRepository(TenantGradeLevel)
+    // private readonly tenantGradeLevelRepository: Repository&lt;TenantGradeLevel&gt;
+
+
+  ) {}
+
+  // async create(input: CreateFeeStructureInput, user: ActiveUserData) {
+  //   const existingStructure &#x3D; await this.feeStructureRepository.findOne({
+  //     where: {
+  //       tenantId: user.tenantId,
+  //       academicYearId: input.academicYearId,
+  //       termId: input.termId,
+  //       name: input.name,
+  //     }
+  //   });
+  
+  //   if (existingStructure) {
+  //     throw new ConflictException(&#x27;Fee structure already exists for this combination&#x27;);
+  //   }
+  
+  //   await this.validateCoreEntities(input, user.tenantId);
+  
+  //   return await this.dataSource.transaction(async manager &#x3D;&gt; {
+  //     const feeStructure &#x3D; manager.create(FeeStructure, {
+  //       ...input,
+  //       tenantId: user.tenantId,
+  //     });
+  
+  //     const savedStructure &#x3D; await manager.save(feeStructure);
+  
+  //     return await manager.findOne(FeeStructure, {
+  //       where: { id: savedStructure.id },
+  //       relations: [&#x27;academicYear&#x27;, &#x27;term&#x27;]
+  //     });
+  //   });
+  // }
+  
+
+
+
+
+  // async createWithItems(
+  //   input: CreateFeeStructureWithItemsInput,
+  //   user: ActiveUserData,
+  // ): Promise&lt;FeeStructure&gt; {
+  //   const existingStructure &#x3D; await this.feeStructureRepository.findOne({
+  //     where: {
+  //       tenantId: user.tenantId,
+  //       academicYearId: input.academicYearId,
+  //       name: input.name,
+  //     },
+  //   });
+
+  //   if (existingStructure) {
+  //     throw new ConflictException(
+  //       &#x27;Fee structure already exists for this academic year and name&#x27;,
+  //     );
+  //   }
+
+  //   if(!user.tenantId) {
+  //     throw new NotFoundException(&#x27;Tenant ID is missing from the active user&#x27;);
+  //   }
+
+  //   await this.validateCoreEntities(input, user.tenantId);
+
+  //   let gradeLevels: TenantGradeLevel[] &#x3D; [];
+  //   if (input.gradeLevelIds?.length) {
+  //     gradeLevels &#x3D; await this.validateGradeLevels(
+  //       input.gradeLevelIds,
+  //       user.tenantId,
+  //     );
+  //   }
+
+  //   const termRepository &#x3D; this.dataSource.getRepository(Term);
+  //   const terms &#x3D; await termRepository.find({
+  //     where: {
+  //       id: In(input.termIds),
+  //       tenantId: user.tenantId,
+  //     },
+  //   });
+
+  //   if (terms.length !&#x3D;&#x3D; input.termIds.length) {
+  //     throw new NotFoundException(&#x27;One or more terms not found&#x27;);
+  //   }
+
+  //   if (input.items?.length) {
+  //     const bucketIds &#x3D; input.items.map(item &#x3D;&gt; item.feeBucketId);
+  //     const buckets &#x3D; await this.feeBucketRepository.find({
+  //       where: {
+  //         id: In(bucketIds),
+  //         tenantId: user.tenantId,
+  //         isActive: true,
+  //       },
+  //     });
+
+  //     if (buckets.length !&#x3D;&#x3D; bucketIds.length) {
+  //       throw new NotFoundException(&#x27;One or more fee buckets not found or inactive&#x27;);
+  //     }
+
+  //     const uniqueBuckets &#x3D; new Set(bucketIds);
+  //     if (uniqueBuckets.size !&#x3D;&#x3D; bucketIds.length) {
+  //       throw new BadRequestException(&#x27;Duplicate fee buckets in items&#x27;);
+  //     }
+
+  //     for (const item of input.items) {
+  //       if (item.amount &lt; 0) {
+  //         throw new BadRequestException(&#x27;Amount must be greater than or equal to 0&#x27;);
+  //       }
+  //     }
+  //   }
+
+  //   return await this.dataSource.transaction(async (manager) &#x3D;&gt; {
+  //     const feeStructure &#x3D; manager.create(FeeStructure, {
+  //       name: input.name,
+  //       academicYearId: input.academicYearId,
+  //       tenantId: user.tenantId,
+  //       terms,
+  //       gradeLevels,
+  //     });
+
+
+      
+  //     const savedStructure &#x3D; await manager.save(feeStructure);
+
+  //     if (input.items?.length) {
+  //       const itemsToCreate &#x3D; input.items.map(item &#x3D;&gt;
+  //         manager.create(FeeStructureItem, {
+  //           tenantId: user.tenantId,
+  //           feeStructureId: savedStructure.id,
+  //           feeBucketId: item.feeBucketId,
+  //           amount: item.amount,
+  //           isMandatory: item.isMandatory ?? true,
+  //         })
+  //       );
+
+  //       await manager.save(FeeStructureItem, itemsToCreate);
+  //     }
+
+  //     return await manager.findOneOrFail(FeeStructure, {
+  //       where: { id: savedStructure.id },
+  //       relations: [
+  //         &#x27;academicYear&#x27;,
+  //         &#x27;terms&#x27;,
+  //         &#x27;gradeLevels&#x27;,
+  //         &#x27;gradeLevels.gradeLevel&#x27;,
+  //         &#x27;gradeLevels.curriculum&#x27;,
+  //         &#x27;items&#x27;,
+  //         &#x27;items.feeBucket&#x27;,
+  //       ],
+  //     });
+  //   });
+  // }
+async createWithItems(
+  input: CreateFeeStructureWithItemsInput,
+  user: ActiveUserData,
+): Promise&lt;FeeStructure&gt; {
+  // Check for existing structure
+  const existingStructure &#x3D; await this.feeStructureRepository.findOne({
+    where: {
+      tenantId: user.tenantId,
+      academicYearId: input.academicYearId,
+      name: input.name,
+    },
+  });
+
+  if (existingStructure) {
+    throw new ConflictException(
+      &#x27;Fee structure already exists for this academic year and name&#x27;,
+    );
+  }
+
+  if (!user.tenantId) {
+    throw new NotFoundException(&#x27;Tenant ID is missing from the active user&#x27;);
+  }
+
+  // Validate academic year, terms, and grade levels
+  await this.validateCoreEntities(input, user.tenantId);
+
+  // Fetch grade levels
+  let gradeLevels: TenantGradeLevel[] &#x3D; [];
+  if (input.gradeLevelIds?.length) {
+    gradeLevels &#x3D; await this.validateGradeLevels(
+      input.gradeLevelIds,
+      user.tenantId,
+    );
+  }
+
+  // Collect all unique term IDs from items
+  const allTermIds &#x3D; new Set&lt;string&gt;();
+  if (input.items?.length) {
+    input.items.forEach(item &#x3D;&gt; {
+      item.termIds.forEach(termId &#x3D;&gt; allTermIds.add(termId));
+    });
+  }
+
+  // Fetch all terms that are referenced in items (already validated)
+  const termRepository &#x3D; this.dataSource.getRepository(Term);
+  const terms &#x3D; await termRepository.find({
+    where: {
+      id: In(Array.from(allTermIds)),
+      tenantId: user.tenantId,
+    },
+  });
+
+  // Create a map for easy term lookup
+  const termMap &#x3D; new Map(terms.map(term &#x3D;&gt; [term.id, term]));
+
+  // Validate fee buckets
+  if (input.items?.length) {
+    const bucketIds &#x3D; input.items.map(item &#x3D;&gt; item.feeBucketId);
+
+    const buckets &#x3D; await this.feeBucketRepository.find({
+      where: {
+        id: In(bucketIds),
+        tenantId: user.tenantId,
+        isActive: true,
+      },
+    });
+
+    if (buckets.length !&#x3D;&#x3D; bucketIds.length) {
+      throw new NotFoundException(&#x27;One or more fee buckets not found or inactive&#x27;);
+    }
+
+    // Validate amounts
+    for (const item of input.items) {
+      if (item.amount &lt; 0) {
+        throw new BadRequestException(&#x27;Amount must be greater than or equal to 0&#x27;);
+      }
+    }
+  }
+
+  // Transaction
+  return await this.dataSource.transaction(async (manager) &#x3D;&gt; {
+    // Create fee structure with all terms
+    const feeStructure &#x3D; manager.create(FeeStructure, {
+      name: input.name,
+      academicYearId: input.academicYearId,
+      tenantId: user.tenantId,
+      terms: terms,
+      gradeLevels,
+    });
+
+    const savedStructure &#x3D; await manager.save(feeStructure);
+
+    // Create items with their specific terms
+    if (input.items?.length) {
+      for (const itemInput of input.items) {
+        // Get the Term entities for this item
+        const itemTerms &#x3D; itemInput.termIds
+          .map(termId &#x3D;&gt; termMap.get(termId))
+          .filter(Boolean) as Term[];
+
+        const item &#x3D; manager.create(FeeStructureItem, {
+          tenantId: user.tenantId,
+          feeStructureId: savedStructure.id,
+          feeBucketId: itemInput.feeBucketId,
+          amount: itemInput.amount,
+          isMandatory: itemInput.isMandatory ?? true,
+          terms: itemTerms,
+        });
+
+        await manager.save(FeeStructureItem, item);
+      }
+    }
+
+    // Return with all relations
+    return await manager.findOneOrFail(FeeStructure, {
+      where: { id: savedStructure.id },
+      relations: [
+        &#x27;academicYear&#x27;,
+        &#x27;terms&#x27;,
+        &#x27;gradeLevels&#x27;,
+        &#x27;gradeLevels.gradeLevel&#x27;,
+        &#x27;gradeLevels.curriculum&#x27;,
+        &#x27;items&#x27;,
+        &#x27;items.feeBucket&#x27;,
+        &#x27;items.terms&#x27;,
+      ],
+    });
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
+//   async createWithItems(
+//   input: CreateFeeStructureWithItemsInput,
+//   user: ActiveUserData,
+// ) {
+//   const existingStructure &#x3D; await this.feeStructureRepository.findOne({
+//     where: {
+//       tenantId: user.tenantId,
+//       academicYearId: input.academicYearId,
+//       name: input.name,
+//     },
+//   });
+
+//   if (existingStructure) {
+//     throw new ConflictException(
+//       &#x27;Fee structure already exists for this academic year and name&#x27;,
+//     );
+//   }
+
+//   if(!user.tenantId) {
+//     throw new NotFoundException(&#x27;Tenant ID is missing from the active user&#x27;);
+//   }
+
+//   await this.validateCoreEntities(input, user.tenantId);
+
+//   // Fetch grade levels
+//   let gradeLevels: TenantGradeLevel[] &#x3D; [];
+//   if (input.gradeLevelIds?.length) {
+//     gradeLevels &#x3D; await this.validateGradeLevels(
+//       input.gradeLevelIds,
+//       user.tenantId,
+//     );
+//   }
+
+//   // Fetch terms
+//   const termRepository &#x3D; this.dataSource.getRepository(Term);
+//   const terms &#x3D; await termRepository.find({
+//     where: {
+//       id: In(input.termIds),
+//       tenantId: user.tenantId,
+//     },
+//   });
+
+//   if (terms.length !&#x3D;&#x3D; input.termIds.length) {
+//     throw new NotFoundException(&#x27;One or more terms not found&#x27;);
+//   }
+
+//   // Validate items
+//   if (input.items?.length) {
+//     const bucketIds &#x3D; input.items.map(item &#x3D;&gt; item.feeBucketId);
+//     const itemTermIds &#x3D; input.items.map(item &#x3D;&gt; item.termId);
+    
+//     // Validate that all item termIds are in the termIds array
+//     const invalidTerms &#x3D; itemTermIds.filter(termId &#x3D;&gt; !input.termIds.includes(termId));
+//     if (invalidTerms.length &gt; 0) {
+//       throw new BadRequestException(&#x27;Item terms must be in the fee structure terms list&#x27;);
+//     }
+
+//     const buckets &#x3D; await this.feeBucketRepository.find({
+//       where: {
+//         id: In(bucketIds),
+//         tenantId: user.tenantId,
+//         isActive: true,
+//       },
+//     });
+
+//     if (buckets.length !&#x3D;&#x3D; bucketIds.length) {
+//       throw new NotFoundException(&#x27;One or more fee buckets not found or inactive&#x27;);
+//     }
+
+//     const uniqueBuckets &#x3D; new Set(bucketIds);
+//     if (uniqueBuckets.size !&#x3D;&#x3D; bucketIds.length) {
+//       throw new BadRequestException(&#x27;Duplicate fee buckets in items&#x27;);
+//     }
+
+//     for (const item of input.items) {
+//       if (item.amount &lt; 0) {
+//         throw new BadRequestException(&#x27;Amount must be greater than or equal to 0&#x27;);
+//       }
+//     }
+//   }
+
+//   // Transaction starts here - terms and gradeLevels are in scope
+//   return await this.dataSource.transaction(async (manager) &#x3D;&gt; {
+//     const feeStructure &#x3D; manager.create(FeeStructure, {
+//       name: input.name,
+//       academicYearId: input.academicYearId,
+//       tenantId: user.tenantId,
+//       terms,          // ✅ Now in scope
+//       gradeLevels,    // ✅ Now in scope
+//     });
+
+//     const savedStructure &#x3D; await manager.save(feeStructure);
+
+//     if (input.items?.length) {
+//       const itemsToCreate &#x3D; input.items.map(item &#x3D;&gt;
+//         manager.create(FeeStructureItem, {
+//           tenantId: user.tenantId,
+//           feeStructureId: savedStructure.id,
+//           feeBucketId: item.feeBucketId,
+//           termId: item.termId,
+//           amount: item.amount,
+//           isMandatory: item.isMandatory ?? true,
+//         })
+//       );
+
+//       await manager.save(FeeStructureItem, itemsToCreate);
+//     }
+
+//     return await manager.findOneOrFail(FeeStructure, {
+//       where: { id: savedStructure.id },
+//       relations: [
+//         &#x27;academicYear&#x27;,
+//         &#x27;terms&#x27;,
+//         &#x27;gradeLevels&#x27;,
+//         &#x27;gradeLevels.gradeLevel&#x27;,
+//         &#x27;gradeLevels.curriculum&#x27;,
+//         &#x27;items&#x27;,
+//         &#x27;items.feeBucket&#x27;,
+//         &#x27;items.term&#x27;,
+//       ],
+//     });
+//   });
+// }
+//   async createWithItems(
+//   input: CreateFeeStructureWithItemsInput,
+//   user: ActiveUserData,
+// ): Promise&lt;FeeStructure&gt; {
+//   // ... existing validation code ...
+
+//   if (input.items?.length) {
+//     const bucketIds &#x3D; input.items.map(item &#x3D;&gt; item.feeBucketId);
+//     const itemTermIds &#x3D; input.items.map(item &#x3D;&gt; item.termId);
+    
+//     // Validate that all item termIds are in the termIds array
+//     const invalidTerms &#x3D; itemTermIds.filter(termId &#x3D;&gt; !input.termIds.includes(termId));
+//     if (invalidTerms.length &gt; 0) {
+//       throw new BadRequestException(&#x27;Item terms must be in the fee structure terms list&#x27;);
+//     }
+
+//     const buckets &#x3D; await this.feeBucketRepository.find({
+//       where: {
+//         id: In(bucketIds),
+//         tenantId: user.tenantId,
+//         isActive: true,
+//       },
+//     });
+
+//     if (buckets.length !&#x3D;&#x3D; bucketIds.length) {
+//       throw new NotFoundException(&#x27;One or more fee buckets not found or inactive&#x27;);
+//     }
+
+   
+//       if (buckets.length !&#x3D;&#x3D; bucketIds.length) {
+//         throw new NotFoundException(&#x27;One or more fee buckets not found or inactive&#x27;);
+//       }
+
+//       const uniqueBuckets &#x3D; new Set(bucketIds);
+//       if (uniqueBuckets.size !&#x3D;&#x3D; bucketIds.length) {
+//         throw new BadRequestException(&#x27;Duplicate fee buckets in items&#x27;);
+//       }
+
+//       for (const item of input.items) {
+//         if (item.amount &lt; 0) {
+//           throw new BadRequestException(&#x27;Amount must be greater than or equal to 0&#x27;);
+//         }
+//       }
+//     }
+  
+
+//   return await this.dataSource.transaction(async (manager) &#x3D;&gt; {
+//     const feeStructure &#x3D; manager.create(FeeStructure, {
+//       name: input.name,
+//       academicYearId: input.academicYearId,
+//       tenantId: user.tenantId,
+//       terms,
+//       gradeLevels,
+//     });
+
+//     const savedStructure &#x3D; await manager.save(feeStructure);
+
+//     if (input.items?.length) {
+//       const itemsToCreate &#x3D; input.items.map(item &#x3D;&gt;
+//         manager.create(FeeStructureItem, {
+//           tenantId: user.tenantId,
+//           feeStructureId: savedStructure.id,
+//           feeBucketId: item.feeBucketId,
+//           termId: item.termId, // ADD THIS
+//           amount: item.amount,
+//           isMandatory: item.isMandatory ?? true,
+//         })
+//       );
+
+//       await manager.save(FeeStructureItem, itemsToCreate);
+//     }
+
+//     return await manager.findOneOrFail(FeeStructure, {
+//       where: { id: savedStructure.id },
+//       relations: [
+//         &#x27;academicYear&#x27;,
+//         &#x27;terms&#x27;,
+//         &#x27;gradeLevels&#x27;,
+//         &#x27;gradeLevels.gradeLevel&#x27;,
+//         &#x27;gradeLevels.curriculum&#x27;,
+//         &#x27;items&#x27;,
+//         &#x27;items.feeBucket&#x27;,
+//         &#x27;items.term&#x27;, 
+//       ],
+//     });
+//   });
+// }
+
+private async validateCoreEntities(
+  input: CreateFeeStructureWithItemsInput,
+  tenantId: string,
+): Promise&lt;void&gt; {
+  const repo &#x3D; this.dataSource.getRepository.bind(this.dataSource);
+
+  // Validate Academic Year
+  const ayPromise &#x3D; repo(AcademicYear)
+    .findOne({
+      where: { id: input.academicYearId, tenantId },
+      select: [&#x27;id&#x27;],
+    })
+    .then((row) &#x3D;&gt; {
+      if (!row) {
+        throw new BadRequestException(
+          &#x60;Academic year ${input.academicYearId} not found or does not belong to your organisation.&#x60;,
+        );
+      }
+    });
+
+  // Collect all unique term IDs from items
+  const allTermIds &#x3D; new Set&lt;string&gt;();
+  if (input.items?.length) {
+    input.items.forEach(item &#x3D;&gt; {
+      item.termIds.forEach(termId &#x3D;&gt; allTermIds.add(termId));
+    });
+  }
+
+  // Validate Terms (only if there are items with terms)
+  let termPromise: Promise&lt;void&gt; &#x3D; Promise.resolve();
+  if (allTermIds.size &gt; 0) {
+    const termIdsArray &#x3D; Array.from(allTermIds);
+    termPromise &#x3D; repo(Term)
+      .find({
+        where: {
+          id: In(termIdsArray),
+          tenantId,
+        },
+        select: [&#x27;id&#x27;],
+      })
+      .then((rows) &#x3D;&gt; {
+        if (rows.length !&#x3D;&#x3D; termIdsArray.length) {
+          const found &#x3D; new Set(rows.map((r) &#x3D;&gt; r.id));
+          const missing &#x3D; termIdsArray.filter((id) &#x3D;&gt; !found.has(id));
+          throw new BadRequestException(
+            &#x60;Term(s) ${missing.join(&#x27;, &#x27;)} not found or do not belong to your organisation.&#x60;,
+          );
+        }
+      });
+  }
+
+  // Validate Grade Levels
+  let glPromise: Promise&lt;void&gt; &#x3D; Promise.resolve();
+  const glIds &#x3D; input.gradeLevelIds ?? [];
+
+  if (glIds.length) {
+    glPromise &#x3D; repo(TenantGradeLevel)
+      .find({
+        where: {
+          id: In(glIds),
+          tenant: { id: tenantId },
+        },
+        select: [&#x27;id&#x27;],
+      })
+      .then((rows) &#x3D;&gt; {
+        if (rows.length !&#x3D;&#x3D; glIds.length) {
+          const found &#x3D; new Set(rows.map((r) &#x3D;&gt; r.id));
+          const missing &#x3D; glIds.filter((id) &#x3D;&gt; !found.has(id));
+          throw new BadRequestException(
+            &#x60;Grade level(s) ${missing.join(&#x27;, &#x27;)} not found or do not belong to your organisation.&#x60;,
+          );
+        }
+      });
+  }
+
+  await Promise.all([ayPromise, termPromise, glPromise]);
+}
+  
+  // private async validateCoreEntities(
+  //   input: CreateFeeStructureWithItemsInput,
+  //   tenantId: string,
+  // ): Promise&lt;void&gt; {
+  //   const repo &#x3D; this.dataSource.getRepository.bind(this.dataSource);
+  
+  //   const ayPromise &#x3D; repo(AcademicYear)
+  //     .findOne({
+  //       where: { id: input.academicYearId, tenantId },
+  //       select: [&#x27;id&#x27;],
+  //     })
+  //     .then((row) &#x3D;&gt; {
+  //       if (!row) {
+  //         throw new BadRequestException(
+  //           &#x60;Academic year ${input.academicYearId} not found or does not belong to your organisation.&#x60;,
+  //         );
+  //       }
+  //     });
+  
+  //   const termPromise &#x3D; repo(Term)
+  //     .find({
+  //       where: {
+  //         id: In(input.termIds),
+  //         tenantId,
+  //       },
+  //       select: [&#x27;id&#x27;],
+  //     })
+  //     .then((rows) &#x3D;&gt; {
+  //       if (rows.length !&#x3D;&#x3D; input.termIds.length) {
+  //         const found &#x3D; new Set(rows.map((r) &#x3D;&gt; r.id));
+  //         const missing &#x3D; input.termIds.filter((id) &#x3D;&gt; !found.has(id));
+  //         throw new BadRequestException(
+  //           &#x60;Term(s) ${missing.join(&#x27;, &#x27;)} not found or do not belong to your organisation.&#x60;,
+  //         );
+  //       }
+  //     });
+  
+  //   let glPromise: Promise&lt;void&gt; &#x3D; Promise.resolve();
+  //   const glIds &#x3D; input.gradeLevelIds ?? []; 
+  
+  //   if (glIds.length) {
+  //     glPromise &#x3D; repo(TenantGradeLevel)
+  //       .find({
+  //         where: {
+  //           id: In(glIds),
+  //           tenant: { id: tenantId },
+  //         },
+  //         select: [&#x27;id&#x27;],
+  //       })
+  //       .then((rows) &#x3D;&gt; {
+  //         if (rows.length !&#x3D;&#x3D; glIds.length) {
+  //           const found &#x3D; new Set(rows.map((r) &#x3D;&gt; r.id));
+  //           const missing &#x3D; glIds.filter((id) &#x3D;&gt; !found.has(id));
+  //           throw new BadRequestException(
+  //             &#x60;Grade level(s) ${missing.join(&#x27;, &#x27;)} not found or do not belong to your organisation.&#x60;,
+  //           );
+  //         }
+  //       });
+  //   }
+  
+  //   await Promise.all([ayPromise, termPromise, glPromise]);
+  // }
+  
+  
+  // async create(input: CreateFeeStructureInput, user: ActiveUserData) {
+  //   const existingStructure &#x3D; await this.feeStructureRepository.findOne({
+  //     where: {
+  //       tenantId: user.tenantId,
+  //       academicYearId: input.academicYearId,
+  //       termId: input.termId,
+  //       name: input.name,
+  //     }
+  //   });
+
+  //   if (existingStructure) {
+  //     throw new ConflictException(&#x27;Fee structure already exists for this combination&#x27;);
+  //   }
+
+  //   await this.validateCoreEntities(input, user.tenantId);
+    
+  //   let gradeLevels: TenantGradeLevel[] &#x3D; [];
+  //   if (input.gradeLevelIds &amp;&amp; input.gradeLevelIds.length &gt; 0) {
+  //     gradeLevels &#x3D; await this.validateGradeLevels(input.gradeLevelIds, user.tenantId);
+  //   }
+
+  //   return await this.dataSource.transaction(async manager &#x3D;&gt; {
+  //     const feeStructure &#x3D; manager.create(FeeStructure, {
+  //       name: input.name,
+  //       academicYearId: input.academicYearId,
+  //       termId: input.termId,
+  //       tenantId: user.tenantId,
+  //     });
+
+  //     const savedStructure &#x3D; await manager.save(feeStructure);
+
+  //     if (gradeLevels.length &gt; 0) {
+  //       savedStructure.gradeLevels &#x3D; gradeLevels;
+  //       await manager.save(savedStructure);
+  //     }
+
+  //     return await manager.findOne(FeeStructure, {
+  //       where: { id: savedStructure.id },
+  //       relations: [&#x27;academicYear&#x27;, &#x27;term&#x27;, &#x27;gradeLevels&#x27;]
+  //     });
+  //   });
+  // }
+
+  private async validateGradeLevels(gradeLevelIds: string[], tenantId: string): Promise&lt;TenantGradeLevel[]&gt; {
+   
+
+    const gradeLevels &#x3D; await this.dataSource.getRepository(TenantGradeLevel).createQueryBuilder(&#x27;tenantGradeLevel&#x27;)
+  .where(&#x27;tenantGradeLevel.id IN (:...gradeLevelIds) AND tenantGradeLevel.tenantId &#x3D; :tenantId&#x27;, { gradeLevelIds, tenantId })
+  .getMany();
+
+    if (gradeLevels.length !&#x3D;&#x3D; gradeLevelIds.length) {
+      throw new BadRequestException(&#x27;One or more grade levels not found or do not belong to your tenant&#x27;);
+    }
+
+    return gradeLevels;
+  }
+
+  
+  
+
+  // private async validateCoreEntities(
+  //   input: CreateFeeStructureInput,
+  //   tenantId: string,
+  // ): Promise&lt;void&gt; {
+  //   const repo &#x3D; this.dataSource.getRepository.bind(this.dataSource);
+  
+  //   const ayPromise &#x3D; repo(AcademicYear)
+  //     .findOne({ where: { id: input.academicYearId, tenantId }, select: [&#x27;id&#x27;] })
+  //     .then((row) &#x3D;&gt; {
+  //       if (!row)
+  //         throw new BadRequestException(
+  //           &#x60;Academic-year ${input.academicYearId} not found or does not belong to your organisation.&#x60;,
+  //         );
+  //     });
+  
+  //     const termPromise &#x3D; repo(Term).find({
+  //       where: {
+  //         id: In(input.termIds),
+  //         tenantId,   
+  //       },
+  //       select: [&#x27;id&#x27;],
+  //     })
+  //     .then((rows: any) &#x3D;&gt; {
+  //       if (rows.length !&#x3D;&#x3D; input.termIds.length) {
+  //         const found &#x3D; new Set(rows.map((r) &#x3D;&gt; r.id));
+  //         const missing &#x3D; input.termIds.filter((id) &#x3D;&gt; !found.has(id));
+  //         throw new BadRequestException(
+  //           &#x60;Term(s) ${missing.join(&#x27;, &#x27;)} not found or do not belong to your organisation.&#x60;,
+  //         );
+  //       }
+  //     });
+  
+  //     let glPromise: Promise&lt;void&gt; &#x3D; Promise.resolve();
+  //     const glIds &#x3D; input.gradeLevelIds;          
+  //     if (glIds?.length) {
+  //       glPromise &#x3D; repo(TenantGradeLevel).find({
+  //         where: {
+  //           id: In(glIds),
+  //           tenant: { id: tenantId }, 
+  //         },
+  //         relations: [&#x27;tenant&#x27;],
+  //         select: [&#x27;id&#x27;],
+  //       }).then((rows:any) &#x3D;&gt; {
+  //           if (rows.length !&#x3D;&#x3D; glIds.length) {
+  //             const found &#x3D; new Set(rows.map((r) &#x3D;&gt; r.id));
+  //             const missing &#x3D; glIds.filter((id) &#x3D;&gt; !found.has(id));
+  //             throw new BadRequestException(
+  //               &#x60;Grade-level(s) ${missing.join(&#x27;, &#x27;)} not found or do not belong to your organisation.&#x60;,
+  //             );
+  //           }
+  //         });
+  //       }
+  //   }
+      
+
+  // private async validateCoreEntities&lt;T extends Partial&lt;CreateFeeStructureInput&gt;&gt;(
+  //   input: T,
+  //   tenantId: string,
+  // ): Promise&lt;void&gt; {
+  
+  //   const validationPromises: Promise&lt;void&gt;[] &#x3D; [];
+  
+  //   const academicYearRepository &#x3D; this.dataSource.getRepository(AcademicYear)
+  //   validationPromises.push(
+  //     academicYearRepository.findOne({
+  //       where: { id: input.academicYearId, tenantId },
+  //       select: [&#x27;id&#x27;]
+  //     }).then(result &#x3D;&gt; {
+  //       if (!result) {
+  //         throw new BadRequestException(&#x60;Academic year with ID ${input.academicYearId} not found or doesn&#x27;t belong to your organization&#x60;);
+  //       }
+  //     })
+  //   );
+  
+  //   const termRepository &#x3D; this.dataSource.getRepository(Term)
+  //   validationPromises.push(
+  //     termRepository.findOne({
+  //       where: { id: input.termId, tenantId },
+  //       select: [&#x27;id&#x27;]
+  //     }).then(result &#x3D;&gt; {
+  //       if (!result) {
+  //         throw new BadRequestException(&#x60;Term with ID ${input.termId} not found or doesn&#x27;t belong to your organization&#x60;);
+  //       }
+  //     })
+  //   );
+
+  
+
+  
+  //   await Promise.all(validationPromises);
+  // }
+
+
+
+//     const tenantGradeLevelRepository &#x3D; this.dataSource.getRepository(TenantGradeLevel);
+
+// validationPromises.push(
+//   tenantGradeLevelRepository
+//     .findOne({
+//       where: {
+//         tenant: { id: tenantId },
+//         isActive: true
+
+//       },
+//       relations: [&#x27;gradeLevel&#x27;],
+//     })
+//     .then((row) &#x3D;&gt; {
+//       if (!row) {
+//         throw new BadRequestException(
+//           &#x60;Grade level ${input.termId} is not enabled for your organisation&#x60;,
+//         );
+//       }
+//     })
+// );
+
+async findAll(user: ActiveUserData): Promise&lt;FeeStructure[]&gt; {
+  return this.feeStructureRepository
+    .createQueryBuilder(&#x27;fs&#x27;)
+    .leftJoinAndSelect(&#x27;fs.academicYear&#x27;, &#x27;ay&#x27;)
+    .leftJoinAndSelect(&#x27;fs.terms&#x27;, &#x27;terms&#x27;)
+    .leftJoinAndSelect(&#x27;fs.gradeLevels&#x27;, &#x27;gl&#x27;)
+    .leftJoinAndSelect(&#x27;gl.gradeLevel&#x27;, &#x27;grade&#x27;)
+    .leftJoinAndSelect(&#x27;fs.items&#x27;, &#x27;items&#x27;)
+    .leftJoinAndSelect(&#x27;items.feeBucket&#x27;, &#x27;feeBucket&#x27;)
+    .where(&#x27;fs.tenantId &#x3D; :tenantId&#x27;, { tenantId: user.tenantId })
+    .andWhere(&#x27;fs.isActive &#x3D; :isActive&#x27;, { isActive: true })
+    .orderBy(&#x27;fs.createdAt&#x27;, &#x27;DESC&#x27;)
+    .getMany();
+}
+
+
+// async findAll(user: ActiveUserData): Promise&lt;FeeStructure[]&gt; {
+//   return this.feeStructureRepository.find({
+//     where: { tenantId: user.tenantId, isActive: true },
+//     relations: [
+//       &#x27;academicYear&#x27;,
+//       &#x27;terms&#x27;,              
+//       &#x27;items&#x27;,
+//       &#x27;items.feeBucket&#x27;,
+//       &#x27;gradeLevels&#x27;,        
+//     ],
+//     order: { createdAt: &#x27;DESC&#x27; },
+//   });
+// }
+
+
+  async findOne(id: string, user: ActiveUserData): Promise&lt;FeeStructure&gt; {
+    const feeStructure &#x3D; await this.feeStructureRepository.findOne({
+      where: { id, tenantId: user.tenantId },
+      relations: [&#x27;items&#x27;, &#x27;items.feeBucket&#x27;, &#x27;academicYear&#x27;, &#x27;term&#x27;, &#x27;gradeLevel&#x27;]
+    });
+
+    if (!feeStructure) {
+      throw new NotFoundException(&#x27;Fee structure not found&#x27;);
+    }
+
+    return feeStructure;
+  }
+
+  async findByGradeAndTerm(
+    termId: string,
+    academicYearId: string,
+    user: ActiveUserData,
+  ): Promise&lt;FeeStructure | null&gt; {
+    return this.feeStructureRepository
+      .createQueryBuilder(&#x27;fs&#x27;)
+      .leftJoinAndSelect(&#x27;fs.academicYear&#x27;, &#x27;academicYear&#x27;)
+      .leftJoinAndSelect(&#x27;fs.terms&#x27;, &#x27;term&#x27;)
+      .leftJoinAndSelect(&#x27;fs.items&#x27;, &#x27;items&#x27;)
+      .leftJoinAndSelect(&#x27;items.feeBucket&#x27;, &#x27;feeBucket&#x27;)
+      .leftJoinAndSelect(&#x27;fs.gradeLevels&#x27;, &#x27;gradeLevels&#x27;)
+      .where(&#x27;fs.tenantId &#x3D; :tenantId&#x27;, { tenantId: user.tenantId })
+      .andWhere(&#x27;fs.academicYearId &#x3D; :academicYearId&#x27;, { academicYearId })
+      .andWhere(&#x27;fs.isActive &#x3D; true&#x27;)
+      .andWhere(&#x27;term.id &#x3D; :termId&#x27;, { termId })
+      .getOne();
+  }
+  
+  
+  
+
+
+
+  async findOneById(id: string, user: ActiveUserData): Promise&lt;FeeStructure&gt; {
+    const fs &#x3D; await this.feeStructureRepository.findOne({
+      where: { id, tenantId: user.tenantId },
+      relations: [
+        &#x27;academicYear&#x27;,
+        &#x27;term&#x27;,
+        &#x27;items&#x27;,
+        &#x27;items.feeBucket&#x27;,
+      ],
+    });
+    if (!fs) throw new NotFoundException(&#x27;Fee structure not found&#x27;);
+    return fs;
+  }
+  
+  // async remove(id: string, user: ActiveUserData): Promise&lt;boolean&gt; {
+  //   const fs &#x3D; await this.findOneById(id, user);        
+  //   await this.feeStructureRepository.remove(fs);       
+  //   return true;
+  // }
+  
+  async update(
+    id: string,
+    input: UpdateFeeStructureInput,
+    user: ActiveUserData,
+  ): Promise&lt;FeeStructure&gt; {
+    await this.findOneById(id, user);
+  
+    return this.dataSource.transaction(async (mgr) &#x3D;&gt; {
+      const updateData: Partial&lt;FeeStructure&gt; &#x3D; {};
+  
+      if (input.name !&#x3D;&#x3D; undefined) updateData.name &#x3D; input.name;
+      if (input.isActive !&#x3D;&#x3D; undefined) updateData.isActive &#x3D; input.isActive;
+  
+      await mgr.update(FeeStructure, id, updateData);
+      if(!user.tenantId) {
+        throw new NotFoundException(&#x27;Tenant ID is missing from the active user&#x27;);
+      }
+      if (input.gradeLevelIds &amp;&amp; input.gradeLevelIds.length &gt; 0) {
+        const newGradeLevels &#x3D; await this.validateGradeLevels(
+          input.gradeLevelIds,
+          user.tenantId,
+        );
+  
+        const feeStructureToUpdate &#x3D; await mgr.findOne(FeeStructure, {
+          where: { id },
+          relations: [&#x27;gradeLevels&#x27;],
+        });
+  
+        if (!feeStructureToUpdate) throw new Error(&#x27;Fee structure not found&#x27;);
+  
+        const existing: TenantGradeLevel[] &#x3D; feeStructureToUpdate.gradeLevels ?? [];
+  
+        const mergedMap &#x3D; new Map&lt;string, TenantGradeLevel&gt;();
+        for (const gl of existing) mergedMap.set(gl.id, gl);
+        for (const gl of newGradeLevels) mergedMap.set(gl.id, gl);
+  
+        feeStructureToUpdate.gradeLevels &#x3D; Array.from(mergedMap.values());
+  
+        await mgr.save(feeStructureToUpdate);
+      }
+  
+      const feeStructure &#x3D; await mgr.findOne(FeeStructure, {
+        where: { id },
+        relations: [&#x27;academicYear&#x27;, &#x27;term&#x27;, &#x27;gradeLevels&#x27;],
+      });
+  
+      if (!feeStructure) throw new Error(&#x27;Fee structure not found&#x27;);
+      return feeStructure;
+    });
+  }
+  
+  
+
+  async remove(id: string, user: ActiveUserData): Promise&lt;boolean&gt; {
+    const fs &#x3D; await this.feeStructureRepository.findOneByOrFail({
+      id,
+      tenantId: user.tenantId,
+    });
+  
+    await this.feeStructureRepository.remove(fs);
+  
+    return true; 
+  }
+  
+
+}
+
+
+
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'FeeStructureService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

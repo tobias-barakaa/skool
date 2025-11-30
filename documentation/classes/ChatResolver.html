@@ -1,0 +1,3331 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>skool documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">skool documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content class">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Classes</li>
+  <li class="breadcrumb-item" >ChatResolver</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/messaging/chat.resolver.ts</code>
+        </p>
+
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#broadcastToAllParents" >broadcastToAllParents</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#broadcastToAllSchoolParents" >broadcastToAllSchoolParents</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#broadcastToAllStudents" >broadcastToAllStudents</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#broadcastToEntireSchool" >broadcastToEntireSchool</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#broadcastToGradeLevelParents" >broadcastToGradeLevelParents</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#broadcastToGradeLevels" >broadcastToGradeLevels</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#deleteTeacherMessage" >deleteTeacherMessage</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getChatHistory" >getChatHistory</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getReadMessages" >getReadMessages</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getUnreadCountForRoom" >getUnreadCountForRoom</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getUnreadMessageCount" >getUnreadMessageCount</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getUnreadMessages" >getUnreadMessages</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getUnreadRooms" >getUnreadRooms</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getUserChatRooms" >getUserChatRooms</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getUserLastSeen" >getUserLastSeen</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#isUserOnline" >isUserOnline</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#markMessageAsRead" >markMessageAsRead</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#markMessagesAsRead" >markMessagesAsRead</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#messageAdded" >messageAdded</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#sendMessageFromParentToTeacher" >sendMessageFromParentToTeacher</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#sendMessageToParent" >sendMessageToParent</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#sendMessageToStudent" >sendMessageToStudent</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#userTyping" >userTyping</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(pubSub, chatService: <a href="../injectables/ChatService.html" target="_self">ChatService</a>, redisChatProvider: <a href="../injectables/RedisChatProvider.html" target="_self">RedisChatProvider</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/messaging/chat.resolver.ts:16</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>pubSub</td>
+                                                  
+                                                        <td>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>chatService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ChatService.html" target="_self" >ChatService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>redisChatProvider</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/RedisChatProvider.html" target="_self" >RedisChatProvider</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="broadcastToAllParents"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>broadcastToAllParents</b></span>
+                        <a href="#broadcastToAllParents"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>broadcastToAllParents(input: <a href="../classes/BroadcastMessageInput.html" target="_self">BroadcastMessageInput</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Mutation(undefined, {description: &#x27;Broadcast a message to all parents in the school&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="161"
+                                    class="link-to-prism">src/messaging/chat.resolver.ts:161</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Broadcast message to all pa    ChatProvider,
+rents in the school</p>
+<p>Example:
+mutation {
+  broadcastToAllParents(input: {
+    recipientType: &quot;PARENT&quot;
+    subject: &quot;Parent Meeting&quot;
+    message: &quot;Annual parent meeting scheduled for next Friday&quot;
+  }) {
+    id
+    message
+    createdAt
+  }
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/BroadcastMessageInput.html" target="_self" >BroadcastMessageInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="broadcastToAllSchoolParents"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>broadcastToAllSchoolParents</b></span>
+                        <a href="#broadcastToAllSchoolParents"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>broadcastToAllSchoolParents(input: <a href="../classes/BroadcastMessageInput.html" target="_self">BroadcastMessageInput</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Mutation(undefined, {description: &#x27;Broadcast message to all parents in the entire school&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="534"
+                                    class="link-to-prism">src/messaging/chat.resolver.ts:534</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Broadcast to entire school parents</p>
+<p>mutation {
+  broadcastToAllSchoolParents(input: {
+    recipientType: &quot;PARENT&quot;
+    subject: &quot;Parent Meeting&quot;
+    message: &quot;Annual meeting next Friday&quot;
+  }) {
+    id
+    message
+    createdAt
+  }
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/BroadcastMessageInput.html" target="_self" >BroadcastMessageInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="broadcastToAllStudents"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>broadcastToAllStudents</b></span>
+                        <a href="#broadcastToAllStudents"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>broadcastToAllStudents(input: <a href="../classes/BroadcastMessageInput.html" target="_self">BroadcastMessageInput</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Mutation(undefined, {description: &#x27;Broadcast a message to all students in the school&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="124"
+                                    class="link-to-prism">src/messaging/chat.resolver.ts:124</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Broadcast message to all students in the school</p>
+<p>Example:
+mutation {
+  broadcastToAllStudents(input: {
+    recipientType: &quot;STUDENT&quot;
+    subject: &quot;School Announcement&quot;
+    message: &quot;Classes will resume on Monday&quot;
+  }) {
+    id
+    message
+    createdAt
+  }
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/BroadcastMessageInput.html" target="_self" >BroadcastMessageInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="broadcastToEntireSchool"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>broadcastToEntireSchool</b></span>
+                        <a href="#broadcastToEntireSchool"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>broadcastToEntireSchool(input: <a href="../classes/BroadcastMessageInput.html" target="_self">BroadcastMessageInput</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Mutation(undefined, {description: &#x27;Broadcast message to all students in the entire school&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="500"
+                                    class="link-to-prism">src/messaging/chat.resolver.ts:500</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Broadcast to entire school (all students)</p>
+<p>mutation {
+  broadcastToEntireSchool(input: {
+    recipientType: &quot;STUDENT&quot;
+    subject: &quot;School Closure&quot;
+    message: &quot;School will be closed tomorrow&quot;
+  }) {
+    id
+    message
+    createdAt
+  }
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/BroadcastMessageInput.html" target="_self" >BroadcastMessageInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="broadcastToGradeLevelParents"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>broadcastToGradeLevelParents</b></span>
+                        <a href="#broadcastToGradeLevelParents"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>broadcastToGradeLevelParents(input: <a href="../classes/BroadcastToGradeLevelsInput.html" target="_self">BroadcastToGradeLevelsInput</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Mutation(undefined, {description: &#x27;Broadcast message to parents of students in specific grade levels&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="604"
+                                    class="link-to-prism">src/messaging/chat.resolver.ts:604</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Broadcast to parents of specific grade levels</p>
+<p>mutation {
+  broadcastToGradeLevelParents(input: {
+    recipientType: &quot;PARENT&quot;
+    subject: &quot;Grade 10 Parent Meeting&quot;
+    message: &quot;Meeting scheduled for Friday&quot;
+    gradeLevelIds: [&quot;grade-uuid-1&quot;]
+  }) {
+    id
+    message
+    createdAt
+  }
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/BroadcastToGradeLevelsInput.html" target="_self" >BroadcastToGradeLevelsInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="broadcastToGradeLevels"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>broadcastToGradeLevels</b></span>
+                        <a href="#broadcastToGradeLevels"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>broadcastToGradeLevels(input: <a href="../classes/BroadcastToGradeLevelsInput.html" target="_self">BroadcastToGradeLevelsInput</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Mutation(undefined, {description: &#x27;Broadcast message to students in specific grade levels&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="569"
+                                    class="link-to-prism">src/messaging/chat.resolver.ts:569</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Broadcast to specific grade levels (students)</p>
+<p>mutation {
+  broadcastToGradeLevels(input: {
+    recipientType: &quot;STUDENT&quot;
+    subject: &quot;Grade 10 Exam Schedule&quot;
+    message: &quot;Exams start next Monday&quot;
+    gradeLevelIds: [&quot;grade-uuid-1&quot;, &quot;grade-uuid-2&quot;]
+  }) {
+    id
+    message
+    createdAt
+  }
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/BroadcastToGradeLevelsInput.html" target="_self" >BroadcastToGradeLevelsInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="deleteTeacherMessage"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>deleteTeacherMessage</b></span>
+                        <a href="#deleteTeacherMessage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>deleteTeacherMessage(messageId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Mutation(undefined, {description: &#x27;Delete a message sent by the current teacher&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="62"
+                                    class="link-to-prism">src/messaging/chat.resolver.ts:62</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>messageId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getChatHistory"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getChatHistory</b></span>
+                        <a href="#getChatHistory"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getChatHistory(chatRoomId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, limit: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, offset: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Query(undefined, {description: &#x27;Get chat history for a specific room with pagination&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="276"
+                                    class="link-to-prism">src/messaging/chat.resolver.ts:276</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Get chat history for a specific room</p>
+<p>query {
+  getChatHistory(chatRoomId: &quot;room-uuid&quot;, limit: 50, offset: 0) {
+    id
+    message
+    subject
+    senderId
+    senderType
+    isRead
+    createdAt
+    chatRoom {
+      id
+      name
+    }
+  }
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>chatRoomId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>limit</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>offset</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getReadMessages"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getReadMessages</b></span>
+                        <a href="#getReadMessages"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getReadMessages(limit: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Query(undefined, {description: &#x27;Get all read messages for the current user&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="663"
+                                    class="link-to-prism">src/messaging/chat.resolver.ts:663</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Get read messages for current user</p>
+<p>query {
+  getReadMessages(limit: 50) {
+    id
+    message
+    subject
+    createdAt
+  }
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>limit</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getUnreadCountForRoom"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getUnreadCountForRoom</b></span>
+                        <a href="#getUnreadCountForRoom"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getUnreadCountForRoom(chatRoomId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Query(undefined, {description: &#x27;Get unread message count for a specific room&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="343"
+                                    class="link-to-prism">src/messaging/chat.resolver.ts:343</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Get unread count for a specific room</p>
+<p>Example:
+query {
+  getUnreadCountForRoom(chatRoomId: &quot;room-uuid&quot;)
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>chatRoomId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;number&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getUnreadMessageCount"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getUnreadMessageCount</b></span>
+                        <a href="#getUnreadMessageCount"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getUnreadMessageCount(currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Query(undefined, {description: &#x27;Get total unread message count for the current user&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="326"
+                                    class="link-to-prism">src/messaging/chat.resolver.ts:326</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Get total unread message count for the current user</p>
+<p>Example:
+query {
+  getUnreadMessageCount
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;number&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getUnreadMessages"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getUnreadMessages</b></span>
+                        <a href="#getUnreadMessages"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getUnreadMessages(currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Query(undefined, {description: &#x27;Get all unread messages for the current user&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="642"
+                                    class="link-to-prism">src/messaging/chat.resolver.ts:642</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Get unread messages for current user</p>
+<p>query {
+  getUnreadMessages {
+    id
+    message
+    subject
+    senderId
+    senderType
+    createdAt
+    isRead
+    chatRoom {
+      id
+      name
+    }
+  }
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getUnreadRooms"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getUnreadRooms</b></span>
+                        <a href="#getUnreadRooms"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getUnreadRooms(currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Query(undefined, {description: &#x27;Get all room IDs that have unread messages for the current user&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="364"
+                                    class="link-to-prism">src/messaging/chat.resolver.ts:364</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Get all rooms with unread messages</p>
+<p>Example:
+query {
+  getUnreadRooms
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;string[]&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getUserChatRooms"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getUserChatRooms</b></span>
+                        <a href="#getUserChatRooms"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getUserChatRooms(currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Query(undefined, {description: &#x27;Get all chat rooms for the current user&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="309"
+                                    class="link-to-prism">src/messaging/chat.resolver.ts:309</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Get all chat rooms for the current user</p>
+<p>Example:
+query {
+  getUserChatRooms {
+    id
+    name
+    type
+    participantIds
+    createdAt
+    updatedAt
+  }
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatRoom.html" target="_self" >Promise&lt;ChatRoom[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getUserLastSeen"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getUserLastSeen</b></span>
+                        <a href="#getUserLastSeen"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getUserLastSeen(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Query(undefined, {nullable: true, description: &#x27;Get user last seen timestamp&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="396"
+                                    class="link-to-prism">src/messaging/chat.resolver.ts:396</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Get user&#39;s last seen timestamp</p>
+<p>Example:
+query {
+  getUserLastSeen(userId: &quot;user-uuid&quot;)
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;string | null&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isUserOnline"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>isUserOnline</b></span>
+                        <a href="#isUserOnline"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>isUserOnline(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Query(undefined, {description: &#x27;Check if a specific user is currently online&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="381"
+                                    class="link-to-prism">src/messaging/chat.resolver.ts:381</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Check if a user is currently online</p>
+<p>Example:
+query {
+  isUserOnline(userId: &quot;user-uuid&quot;)
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="markMessageAsRead"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>markMessageAsRead</b></span>
+                        <a href="#markMessageAsRead"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>markMessageAsRead(messageId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Mutation(undefined, {description: &#x27;Mark a single message as read&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="680"
+                                    class="link-to-prism">src/messaging/chat.resolver.ts:680</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Mark single message as read</p>
+<p>mutation {
+  markMessageAsRead(messageId: &quot;msg-uuid&quot;)
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>messageId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="markMessagesAsRead"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>markMessagesAsRead</b></span>
+                        <a href="#markMessagesAsRead"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>markMessagesAsRead(chatRoomId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Mutation(undefined, {description: &#x27;Mark all messages in a chat room as read&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="188"
+                                    class="link-to-prism">src/messaging/chat.resolver.ts:188</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Mark all messages in a chat room as read</p>
+<p>Example:
+mutation {
+  markMessagesAsRead(chatRoomId: &quot;room-uuid&quot;)
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>chatRoomId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="messageAdded"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>messageAdded</b></span>
+                        <a href="#messageAdded"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>messageAdded()</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Subscription(undefined, {description: &#x27;Subscribe to new messages in real-time&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="427"
+                                    class="link-to-prism">src/messaging/chat.resolver.ts:427</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Subscribe to new messages in real-time</p>
+<p>Example:
+subscription {
+  messageAdded {
+    id
+    message
+    subject
+    senderId
+    senderType
+    createdAt
+    chatRoom {
+      id
+      name
+    }
+  }
+}</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="sendMessageFromParentToTeacher"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>sendMessageFromParentToTeacher</b></span>
+                        <a href="#sendMessageFromParentToTeacher"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>sendMessageFromParentToTeacher(input: <a href="../classes/SendMessageFromParentToTeacherInput.html" target="_self">SendMessageFromParentToTeacherInput</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Mutation(undefined, {description: &#x27;Send a message from parent to teacher about their child&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="238"
+                                    class="link-to-prism">src/messaging/chat.resolver.ts:238</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Send message from parent to teacher</p>
+<p>Example:
+mutation {
+  sendMessageFromParentToTeacher(input: {
+    recipientId: &quot;teacher-uuid&quot;
+    recipientType: &quot;TEACHER&quot;
+    studentId: &quot;student-uuid&quot;
+    subject: &quot;Question about homework&quot;
+    message: &quot;Could you explain the math assignment?&quot;
+  }) {
+    id
+    message
+    createdAt
+  }
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/SendMessageFromParentToTeacherInput.html" target="_self" >SendMessageFromParentToTeacherInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="sendMessageToParent"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>sendMessageToParent</b></span>
+                        <a href="#sendMessageToParent"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>sendMessageToParent(input: <a href="../classes/SendMessageFromTeacherToParentInput.html" target="_self">SendMessageFromTeacherToParentInput</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Mutation(undefined, {description: &#x27;Send a message from teacher to a specific parent&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="92"
+                                    class="link-to-prism">src/messaging/chat.resolver.ts:92</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Send message from teacher to a specific parent</p>
+<p>mutation {
+  sendMessageToParent(input: {
+    recipientId: &quot;parent-uuid&quot;
+    recipientType: &quot;PARENT&quot;
+    subject: &quot;Student Progress Update&quot;
+    message: &quot;Your child is doing excellent work!&quot;
+  }) {
+    id
+    message
+    createdAt
+  }
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/SendMessageFromTeacherToParentInput.html" target="_self" >SendMessageFromTeacherToParentInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="sendMessageToStudent"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>sendMessageToStudent</b></span>
+                        <a href="#sendMessageToStudent"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>sendMessageToStudent(input: <a href="../classes/SendMessageInput.html" target="_self">SendMessageInput</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Mutation(undefined, {description: &#x27;Send a message from teacher to a specific student&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="44"
+                                    class="link-to-prism">src/messaging/chat.resolver.ts:44</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>mutation {
+  sendMessageToStudent(input: {
+    recipientId: &quot;student-uuid&quot;
+    recipientType: &quot;STUDENT&quot;
+    subject: &quot;Assignment Reminder&quot;
+    message: &quot;Please submit your homework by tomorrow.&quot;
+    imageUrl: &quot;<a href="https://example.com/image.jpg">https://example.com/image.jpg</a>&quot;
+  }) {
+    id
+    message
+    subject
+    createdAt
+    chatRoom { id name }
+  }
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/SendMessageInput.html" target="_self" >SendMessageInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="userTyping"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>userTyping</b></span>
+                        <a href="#userTyping"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>userTyping(roomId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Subscription(undefined, {description: &#x27;Subscribe to typing indicators for a room&#x27;, resolve: payload &#x3D;&gt; payload})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="448"
+                                    class="link-to-prism">src/messaging/chat.resolver.ts:448</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Subscribe to typing indicators for a specific room</p>
+<p>Example:
+subscription {
+  userTyping(roomId: &quot;room-uuid&quot;) {
+    userId
+    isTyping
+  }
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>roomId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+
+
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Resolver, Mutation, Query, Args, Subscription, Int } from &#x27;@nestjs/graphql&#x27;;
+import { Inject, UseGuards } from &#x27;@nestjs/common&#x27;;
+import { PubSub, PubSubEngine } from &#x27;graphql-subscriptions&#x27;;
+import { ChatService } from &#x27;./providers/chat.service&#x27;;
+import { RedisChatProvider } from &#x27;./providers/redis-chat.provider&#x27;;
+import { ChatMessage } from &#x27;./entities/chat-message.entity&#x27;;
+import { BroadcastMessageInput, BroadcastToGradeLevelsInput, SendMessageFromTeacherToParentInput, SendMessageInput, TypingIndicator } from &#x27;./dtos/send-message.input&#x27;;
+import { ActiveUser } from &#x27;src/admin/auth/decorator/active-user.decorator&#x27;;
+import { ActiveUserData } from &#x27;src/admin/auth/interface/active-user.interface&#x27;;
+import { ChatRoom } from &#x27;./entities/chat-room.entity&#x27;;
+import { SendMessageFromParentToTeacherInput } from &#x27;./dtos/send-message-from-parent-to-teacher.input&#x27;;
+
+// const pubSub &#x3D; new PubSub() as PubSubEngine;
+
+@Resolver()
+export class ChatResolver {
+  constructor(
+    @Inject(&#x27;PUB_SUB&#x27;) private readonly pubSub, 
+    private readonly chatService: ChatService,
+    private readonly redisChatProvider: RedisChatProvider,
+  ) {}
+
+  /**
+ 
+   * mutation {
+   *   sendMessageToStudent(input: {
+   *     recipientId: &quot;student-uuid&quot;
+   *     recipientType: &quot;STUDENT&quot;
+   *     subject: &quot;Assignment Reminder&quot;
+   *     message: &quot;Please submit your homework by tomorrow.&quot;
+   *     imageUrl: &quot;https://example.com/image.jpg&quot;
+   *   }) {
+   *     id
+   *     message
+   *     subject
+   *     createdAt
+   *     chatRoom { id name }
+   *   }
+   * }
+   */
+  @Mutation(() &#x3D;&gt; ChatMessage, {
+    description: &#x27;Send a message from teacher to a specific student&#x27;,
+  })
+  async sendMessageToStudent(
+    @Args(&#x27;input&#x27;) input: SendMessageInput,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;ChatMessage&gt; {
+    const message &#x3D; await this.chatService.sendMessageToStudent(
+      currentUser.sub,
+      currentUser,
+      input,
+    );
+
+    this.pubSub.publish(&#x27;messageAdded&#x27;, { messageAdded: message });
+    return message;
+  }
+
+
+  @Mutation(() &#x3D;&gt; Boolean, {
+    description: &#x27;Delete a message sent by the current teacher&#x27;,
+  })
+  async deleteTeacherMessage(
+    @Args(&#x27;messageId&#x27;) messageId: string,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;boolean&gt; {
+    return await this.chatService.deleteMessage(
+      currentUser,
+      messageId,
+    );
+  }
+  
+
+  /**
+   * Send message from teacher to a specific parent
+  
+   * mutation {
+   *   sendMessageToParent(input: {
+   *     recipientId: &quot;parent-uuid&quot;
+   *     recipientType: &quot;PARENT&quot;
+   *     subject: &quot;Student Progress Update&quot;
+   *     message: &quot;Your child is doing excellent work!&quot;
+   *   }) {
+   *     id
+   *     message
+   *     createdAt
+   *   }
+   * }
+   */
+  @Mutation(() &#x3D;&gt; ChatMessage, {
+    description: &#x27;Send a message from teacher to a specific parent&#x27;,
+  })
+  async sendMessageToParent(
+    @Args(&#x27;input&#x27;) input: SendMessageFromTeacherToParentInput,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;ChatMessage&gt; {
+    const message &#x3D; await this.chatService.sendMessageToParent(
+      currentUser,
+      input,
+    );
+
+    this.pubSub.publish(&#x27;messageAdded&#x27;, { messageAdded: message });
+    return message;
+  }
+
+  /**
+   * Broadcast message to all students in the school
+   * 
+   * Example:
+   * mutation {
+   *   broadcastToAllStudents(input: {
+   *     recipientType: &quot;STUDENT&quot;
+   *     subject: &quot;School Announcement&quot;
+   *     message: &quot;Classes will resume on Monday&quot;
+   *   }) {
+   *     id
+   *     message
+   *     createdAt
+   *   }
+   * }
+   */
+  @Mutation(() &#x3D;&gt; [ChatMessage], {
+    description: &#x27;Broadcast a message to all students in the school&#x27;,
+  })
+  async broadcastToAllStudents(
+    @Args(&#x27;input&#x27;) input: BroadcastMessageInput,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;ChatMessage[]&gt; {
+    const messages &#x3D; await this.chatService.broadcastToAllStudents(
+      currentUser,
+      input,
+    );
+
+    // Publish each message for real-time updates
+    messages.forEach((message) &#x3D;&gt; {
+      this.pubSub.publish(&#x27;messageAdded&#x27;, { messageAdded: message });
+    });
+
+    return messages;
+  }
+
+  /**
+   * Broadcast message to all pa    ChatProvider,
+rents in the school
+   * 
+   * Example:
+   * mutation {
+   *   broadcastToAllParents(input: {
+   *     recipientType: &quot;PARENT&quot;
+   *     subject: &quot;Parent Meeting&quot;
+   *     message: &quot;Annual parent meeting scheduled for next Friday&quot;
+   *   }) {
+   *     id
+   *     message
+   *     createdAt
+   *   }
+   * }
+   */
+  @Mutation(() &#x3D;&gt; [ChatMessage], {
+    description: &#x27;Broadcast a message to all parents in the school&#x27;,
+  })
+  async broadcastToAllParents(
+    @Args(&#x27;input&#x27;) input: BroadcastMessageInput,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;ChatMessage[]&gt; {
+    const messages &#x3D; await this.chatService.broadcastToAllParents(
+      currentUser,
+      input,
+    );
+
+    messages.forEach((message) &#x3D;&gt; {
+      this.pubSub.publish(&#x27;messageAdded&#x27;, { messageAdded: message });
+    });
+
+    return messages;
+  }
+
+  /**
+   * Mark all messages in a chat room as read
+   * 
+   * Example:
+   * mutation {
+   *   markMessagesAsRead(chatRoomId: &quot;room-uuid&quot;)
+   * }
+   */
+  @Mutation(() &#x3D;&gt; Boolean, {
+    description: &#x27;Mark all messages in a chat room as read&#x27;,
+  })
+  async markMessagesAsRead(
+    @Args(&#x27;chatRoomId&#x27;) chatRoomId: string,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;boolean&gt; {
+    return await this.chatService.markMessagesAsRead(
+      currentUser,
+      chatRoomId,
+    );
+  }
+  
+  
+
+  /**
+   * Send message from parent to teacher
+   * 
+   * Example:
+   * mutation {
+   *   sendMessageFromParentToTeacher(input: {
+   *     recipientId: &quot;teacher-uuid&quot;
+   *     recipientType: &quot;TEACHER&quot;
+   *     studentId: &quot;student-uuid&quot;
+   *     subject: &quot;Question about homework&quot;
+   *     message: &quot;Could you explain the math assignment?&quot;
+   *   }) {
+   *     id
+   *     message
+   *     createdAt
+   *   }
+   * }
+   */
+  // @Mutation(() &#x3D;&gt; ChatMessage, {
+  //   description: &#x27;Send a message from parent to teacher about their child&#x27;,
+  // })
+  // async sendMessageFromParentToTeacher(
+  //   @Args(&#x27;input&#x27;) input: SendMessageInput &amp; { studentId: string },
+  //   @ActiveUser() currentUser: ActiveUserData,
+  // ): Promise&lt;ChatMessage&gt; {
+  //   const message &#x3D; await this.chatService.sendMessageFromParentToTeacher(
+  //     currentUser.sub,
+  //     currentUser,
+  //     input,
+  //   );
+
+  //   this.pubSub.publish(&#x27;messageAdded&#x27;, { messageAdded: message });
+  //   return message;
+  // }
+
+  @Mutation(() &#x3D;&gt; ChatMessage, {
+    description: &#x27;Send a message from parent to teacher about their child&#x27;,
+  })
+  async sendMessageFromParentToTeacher(
+    @Args(&#x27;input&#x27;, { type: () &#x3D;&gt; SendMessageFromParentToTeacherInput })
+    input: SendMessageFromParentToTeacherInput,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;ChatMessage&gt; {
+    const message &#x3D; await this.chatService.sendMessageFromParentToTeacher(
+      currentUser,
+      input,
+    );
+  
+    this.pubSub.publish(&#x27;messageAdded&#x27;, { messageAdded: message });
+    return message;
+  }
+
+  // &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D; QUERIES &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
+
+  /**
+   * Get chat history for a specific room
+   
+   * query {
+   *   getChatHistory(chatRoomId: &quot;room-uuid&quot;, limit: 50, offset: 0) {
+   *     id
+   *     message
+   *     subject
+   *     senderId
+   *     senderType
+   *     isRead
+   *     createdAt
+   *     chatRoom {
+   *       id
+   *       name
+   *     }
+   *   }
+   * }
+   */
+  @Query(() &#x3D;&gt; [ChatMessage], {
+    description: &#x27;Get chat history for a specific room with pagination&#x27;,
+  })
+  async getChatHistory(
+    @Args(&#x27;chatRoomId&#x27;) chatRoomId: string,
+    @Args(&#x27;limit&#x27;, { type: () &#x3D;&gt; Int, defaultValue: 50 }) limit: number,
+    @Args(&#x27;offset&#x27;, { type: () &#x3D;&gt; Int, defaultValue: 0 }) offset: number,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;ChatMessage[]&gt; {
+    return await this.chatService.getChatHistory(
+      currentUser,
+      chatRoomId,
+      limit,
+      offset,
+    );
+  }
+
+  /**
+   * Get all chat rooms for the current user
+   * 
+   * Example:
+   * query {
+   *   getUserChatRooms {
+   *     id
+   *     name
+   *     type
+   *     participantIds
+   *     createdAt
+   *     updatedAt
+   *   }
+   * }
+   */
+ // File: chat.resolver.ts or similar
+@Query(() &#x3D;&gt; [ChatRoom], {
+  description: &#x27;Get all chat rooms for the current user&#x27;,
+})
+async getUserChatRooms(
+  @ActiveUser() currentUser: ActiveUserData,
+): Promise&lt;ChatRoom[]&gt; {
+  return await this.chatService.getUserChatRooms(currentUser.sub); // This now calls the updated service
+}
+
+  /**
+   * Get total unread message count for the current user
+   * 
+   * Example:
+   * query {
+   *   getUnreadMessageCount
+   * }
+   */
+  @Query(() &#x3D;&gt; Int, {
+    description: &#x27;Get total unread message count for the current user&#x27;,
+  })
+  async getUnreadMessageCount(
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;number&gt; {
+    return await this.chatService.getUnreadCount(currentUser.sub);
+  }
+
+  /**
+   * Get unread count for a specific room
+   * 
+   * Example:
+   * query {
+   *   getUnreadCountForRoom(chatRoomId: &quot;room-uuid&quot;)
+   * }
+   */
+  @Query(() &#x3D;&gt; Int, {
+    description: &#x27;Get unread message count for a specific room&#x27;,
+  })
+  async getUnreadCountForRoom(
+    @Args(&#x27;chatRoomId&#x27;) chatRoomId: string,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;number&gt; {
+    return await this.redisChatProvider.getUnreadCount(
+      currentUser.sub,
+      chatRoomId,
+    );
+  }
+
+  /**
+   * Get all rooms with unread messages
+   * 
+   * Example:
+   * query {
+   *   getUnreadRooms
+   * }
+   */
+  @Query(() &#x3D;&gt; [String], {
+    description: &#x27;Get all room IDs that have unread messages for the current user&#x27;,
+  })
+  async getUnreadRooms(
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;string[]&gt; {
+    return await this.redisChatProvider.getUnreadRooms(currentUser.sub);
+  }
+
+  /**
+   * Check if a user is currently online
+   * 
+   * Example:
+   * query {
+   *   isUserOnline(userId: &quot;user-uuid&quot;)
+   * }
+   */
+  @Query(() &#x3D;&gt; Boolean, {
+    description: &#x27;Check if a specific user is currently online&#x27;,
+  })
+  async isUserOnline(
+    @Args(&#x27;userId&#x27;) userId: string,
+  ): Promise&lt;boolean&gt; {
+    return await this.redisChatProvider.isUserOnline(userId);
+  }
+
+  /**
+   * Get user&#x27;s last seen timestamp
+   * 
+   * Example:
+   * query {
+   *   getUserLastSeen(userId: &quot;user-uuid&quot;)
+   * }
+   */
+  @Query(() &#x3D;&gt; String, { nullable: true, description: &#x27;Get user last seen timestamp&#x27; })
+  async getUserLastSeen(
+    @Args(&#x27;userId&#x27;) userId: string,
+  ): Promise&lt;string | null&gt; {
+    const timestamp &#x3D; await this.redisChatProvider.getUserLastSeen(userId);
+    return timestamp ? new Date(timestamp).toISOString() : null;
+  }
+
+  // &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D; SUBSCRIPTIONS &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
+
+  /**
+   * Subscribe to new messages in real-time
+   * 
+   * Example:
+   * subscription {
+   *   messageAdded {
+   *     id
+   *     message
+   *     subject
+   *     senderId
+   *     senderType
+   *     createdAt
+   *     chatRoom {
+   *       id
+   *       name
+   *     }
+   *   }
+   * }
+   */
+  @Subscription(() &#x3D;&gt; ChatMessage, {
+    description: &#x27;Subscribe to new messages in real-time&#x27;,
+  })
+  messageAdded() {
+    return this.pubSub.asyncIterator(&#x27;messageAdded&#x27;);
+    // return (this.pubSub as PubSub).asyncIterator(&#x27;messageAdded&#x27;);
+
+  }
+
+  /**
+   * Subscribe to typing indicators for a specific room
+   * 
+   * Example:
+   * subscription {
+   *   userTyping(roomId: &quot;room-uuid&quot;) {
+   *     userId
+   *     isTyping
+   *   }
+   * }
+   */
+  @Subscription(() &#x3D;&gt; TypingIndicator, {
+    description: &#x27;Subscribe to typing indicators for a room&#x27;,
+    resolve: (payload) &#x3D;&gt; payload,
+  })
+  userTyping(@Args(&#x27;roomId&#x27;) roomId: string) {
+    return this.pubSub.asyncIterator(&#x60;typing:${roomId}&#x60;);
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * Broadcast to entire school (all students)
+ * 
+ * mutation {
+ *   broadcastToEntireSchool(input: {
+ *     recipientType: &quot;STUDENT&quot;
+ *     subject: &quot;School Closure&quot;
+ *     message: &quot;School will be closed tomorrow&quot;
+ *   }) {
+ *     id
+ *     message
+ *     createdAt
+ *   }
+ * }
+ */
+@Mutation(() &#x3D;&gt; [ChatMessage], {
+  description: &#x27;Broadcast message to all students in the entire school&#x27;,
+})
+async broadcastToEntireSchool(
+  @Args(&#x27;input&#x27;) input: BroadcastMessageInput,
+  @ActiveUser() currentUser: ActiveUserData,
+): Promise&lt;ChatMessage[]&gt; {
+  const messages &#x3D; await this.chatService.broadcastToEntireSchool(
+    currentUser,
+    input,
+  );
+
+  messages.forEach((message) &#x3D;&gt; {
+    this.pubSub.publish(&#x27;messageAdded&#x27;, { messageAdded: message });
+  });
+
+  return messages;
+}
+
+/**
+ * Broadcast to entire school parents
+ * 
+ * mutation {
+ *   broadcastToAllSchoolParents(input: {
+ *     recipientType: &quot;PARENT&quot;
+ *     subject: &quot;Parent Meeting&quot;
+ *     message: &quot;Annual meeting next Friday&quot;
+ *   }) {
+ *     id
+ *     message
+ *     createdAt
+ *   }
+ * }
+ */
+@Mutation(() &#x3D;&gt; [ChatMessage], {
+  description: &#x27;Broadcast message to all parents in the entire school&#x27;,
+})
+async broadcastToAllSchoolParents(
+  @Args(&#x27;input&#x27;) input: BroadcastMessageInput,
+  @ActiveUser() currentUser: ActiveUserData,
+): Promise&lt;ChatMessage[]&gt; {
+  const messages &#x3D; await this.chatService.broadcastToAllSchoolParents(
+    currentUser,
+    input,
+  );
+
+  messages.forEach((message) &#x3D;&gt; {
+    this.pubSub.publish(&#x27;messageAdded&#x27;, { messageAdded: message });
+  });
+
+  return messages;
+}
+
+/**
+ * Broadcast to specific grade levels (students)
+ * 
+ * mutation {
+ *   broadcastToGradeLevels(input: {
+ *     recipientType: &quot;STUDENT&quot;
+ *     subject: &quot;Grade 10 Exam Schedule&quot;
+ *     message: &quot;Exams start next Monday&quot;
+ *     gradeLevelIds: [&quot;grade-uuid-1&quot;, &quot;grade-uuid-2&quot;]
+ *   }) {
+ *     id
+ *     message
+ *     createdAt
+ *   }
+ * }
+ */
+@Mutation(() &#x3D;&gt; [ChatMessage], {
+  description: &#x27;Broadcast message to students in specific grade levels&#x27;,
+})
+async broadcastToGradeLevels(
+  @Args(&#x27;input&#x27;) input: BroadcastToGradeLevelsInput,
+  @ActiveUser() currentUser: ActiveUserData,
+): Promise&lt;ChatMessage[]&gt; {
+  const messages &#x3D; await this.chatService.broadcastToGradeLevels(
+    currentUser,
+    input,
+  );
+
+  messages.forEach((message) &#x3D;&gt; {
+    this.pubSub.publish(&#x27;messageAdded&#x27;, { messageAdded: message });
+  });
+
+  return messages;
+}
+
+/**
+ * Broadcast to parents of specific grade levels
+ * 
+ * mutation {
+ *   broadcastToGradeLevelParents(input: {
+ *     recipientType: &quot;PARENT&quot;
+ *     subject: &quot;Grade 10 Parent Meeting&quot;
+ *     message: &quot;Meeting scheduled for Friday&quot;
+ *     gradeLevelIds: [&quot;grade-uuid-1&quot;]
+ *   }) {
+ *     id
+ *     message
+ *     createdAt
+ *   }
+ * }
+ */
+@Mutation(() &#x3D;&gt; [ChatMessage], {
+  description: &#x27;Broadcast message to parents of students in specific grade levels&#x27;,
+})
+async broadcastToGradeLevelParents(
+  @Args(&#x27;input&#x27;) input: BroadcastToGradeLevelsInput,
+  @ActiveUser() currentUser: ActiveUserData,
+): Promise&lt;ChatMessage[]&gt; {
+  const messages &#x3D; await this.chatService.broadcastToGradeLevelParents(
+    currentUser,
+    input,
+  );
+
+  messages.forEach((message) &#x3D;&gt; {
+    this.pubSub.publish(&#x27;messageAdded&#x27;, { messageAdded: message });
+  });
+
+  return messages;
+}
+
+/**
+ * Get unread messages for current user
+ * 
+ * query {
+ *   getUnreadMessages {
+ *     id
+ *     message
+ *     subject
+ *     senderId
+ *     senderType
+ *     createdAt
+ *     isRead
+ *     chatRoom {
+ *       id
+ *       name
+ *     }
+ *   }
+ * }
+ */
+@Query(() &#x3D;&gt; [ChatMessage], {
+  description: &#x27;Get all unread messages for the current user&#x27;,
+})
+async getUnreadMessages(
+  @ActiveUser() currentUser: ActiveUserData,
+): Promise&lt;ChatMessage[]&gt; {
+  return await this.chatService.getUnreadMessages(currentUser.sub);
+}
+
+/**
+ * Get read messages for current user
+ * 
+ * query {
+ *   getReadMessages(limit: 50) {
+ *     id
+ *     message
+ *     subject
+ *     createdAt
+ *   }
+ * }
+ */
+@Query(() &#x3D;&gt; [ChatMessage], {
+  description: &#x27;Get all read messages for the current user&#x27;,
+})
+async getReadMessages(
+  @Args(&#x27;limit&#x27;, { type: () &#x3D;&gt; Int, defaultValue: 50 }) limit: number,
+  @ActiveUser() currentUser: ActiveUserData,
+): Promise&lt;ChatMessage[]&gt; {
+  return await this.chatService.getReadMessages(currentUser.sub, limit);
+}
+
+/**
+ * Mark single message as read
+ * 
+ * mutation {
+ *   markMessageAsRead(messageId: &quot;msg-uuid&quot;)
+ * }
+ */
+@Mutation(() &#x3D;&gt; Boolean, {
+  description: &#x27;Mark a single message as read&#x27;,
+})
+async markMessageAsRead(
+  @Args(&#x27;messageId&#x27;) messageId: string,
+  @ActiveUser() currentUser: ActiveUserData,
+): Promise&lt;boolean&gt; {
+  return await this.chatService.markMessageAsRead(
+    currentUser.sub,
+    messageId,
+  );
+}
+
+
+
+
+
+
+
+
+
+}</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'class';
+            var COMPODOC_CURRENT_PAGE_URL = 'ChatResolver.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

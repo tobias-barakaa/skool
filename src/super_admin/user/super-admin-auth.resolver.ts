@@ -14,6 +14,8 @@ import { SkipTenant } from 'src/admin/auth/decorator/skip-tenant.decorator';
 import { Public } from 'src/admin/auth/decorator/public.decorator';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
+import { Roles } from 'src/admin/auth/decorator/roles.decorator';
+import { MembershipRole } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
 
 @Resolver()
 export class SuperAdminAuthResolver {
@@ -43,7 +45,9 @@ async superAdminSignup(@Args('input') input: SuperAdminSignupInput) {
 }
 
 
-// @SkipTenant()
+
+
+@Roles(MembershipRole.SUPER_ADMIN)
   @Query(() => [User])
   async getAllUsers(@ActiveUser() user: ActiveUserData) {
     console.log(user,'this is the user please')

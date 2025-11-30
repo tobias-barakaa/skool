@@ -6,6 +6,8 @@ import { GenerateTokenProvider } from 'src/admin/auth/providers/generate-token.p
 import { SuperAdminSignupInput } from '../dtos/super-admin-signup.input';
 import { UserAlreadyExistsException } from 'src/admin/common/exceptions/business.exception';
 import { TokenProvider } from 'src/admin/auth/providers/token.provider';
+import { Roles } from 'src/iam/decorators/roles.decorator';
+import { UserTenantMembership } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
 
 @Injectable()
 export class SuperAdminAuthService {
@@ -60,7 +62,7 @@ export class SuperAdminAuthService {
   }
 
 
-// admin/users/user.service.ts
+@Roles()
 async getAllUsers(): Promise<User[]> {
     const userRepository = this.dataSource.getRepository(User);
     return userRepository.find({

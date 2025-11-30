@@ -1,0 +1,3001 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>skool documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">skool documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >ChatService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/messaging/providers/chat.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#logger" >logger</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#broadcastToAllParents" >broadcastToAllParents</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#broadcastToAllSchoolParents" >broadcastToAllSchoolParents</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#broadcastToAllStudents" >broadcastToAllStudents</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#broadcastToEntireSchool" >broadcastToEntireSchool</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#broadcastToGradeLevelParents" >broadcastToGradeLevelParents</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#broadcastToGradeLevels" >broadcastToGradeLevels</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#deleteMessage" >deleteMessage</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getChatHistory" >getChatHistory</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getOrCreateChatRoom" >getOrCreateChatRoom</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getReadMessages" >getReadMessages</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getUnreadCount" >getUnreadCount</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getUnreadMessages" >getUnreadMessages</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getUserChatRooms" >getUserChatRooms</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#markMessageAsRead" >markMessageAsRead</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#markMessagesAsRead" >markMessagesAsRead</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#sendMessageFromParentToTeacher" >sendMessageFromParentToTeacher</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#sendMessageToParent" >sendMessageToParent</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#sendMessageToStudent" >sendMessageToStudent</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(chatRoomRepository: <a href="../classes/ChatRoom.html" target="_self">Repository&lt;ChatRoom&gt;</a>, chatMessageRepository: <a href="../classes/ChatMessage.html" target="_self">Repository&lt;ChatMessage&gt;</a>, studentRepository: <a href="../interfaces/Student.html" target="_self">Repository&lt;Student&gt;</a>, parentRepository: <a href="../classes/Parent.html" target="_self">Repository&lt;Parent&gt;</a>, teacherRepository: <a href="../classes/Teacher.html" target="_self">Repository&lt;Teacher&gt;</a>, parentStudentRepository: <a href="../interfaces/Student.html" target="_self">Repository&lt;ParentStudent&gt;</a>, redisChatProvider: <a href="../injectables/RedisChatProvider.html" target="_self">RedisChatProvider</a>, dataSource: DataSource)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/messaging/providers/chat.service.ts:19</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>chatRoomRepository</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/ChatRoom.html" target="_self" >Repository&lt;ChatRoom&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>chatMessageRepository</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/ChatMessage.html" target="_self" >Repository&lt;ChatMessage&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>studentRepository</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../interfaces/Student.html" target="_self" >Repository&lt;Student&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>parentRepository</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/Parent.html" target="_self" >Repository&lt;Parent&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>teacherRepository</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/Teacher.html" target="_self" >Repository&lt;Teacher&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>parentStudentRepository</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../interfaces/Student.html" target="_self" >Repository&lt;ParentStudent&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>redisChatProvider</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/RedisChatProvider.html" target="_self" >RedisChatProvider</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>dataSource</td>
+                                                  
+                                                        <td>
+                                                                    <code>DataSource</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="broadcastToAllParents"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>broadcastToAllParents</b></span>
+                        <a href="#broadcastToAllParents"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>broadcastToAllParents(currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, input: <a href="../classes/BroadcastMessageInput.html" target="_self">BroadcastMessageInput</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="301"
+                                    class="link-to-prism">src/messaging/providers/chat.service.ts:301</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Broadcast message to all parents in tenant</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/BroadcastMessageInput.html" target="_self" >BroadcastMessageInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="broadcastToAllSchoolParents"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>broadcastToAllSchoolParents</b></span>
+                        <a href="#broadcastToAllSchoolParents"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>broadcastToAllSchoolParents(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, input: <a href="../classes/BroadcastMessageInput.html" target="_self">BroadcastMessageInput</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="624"
+                                    class="link-to-prism">src/messaging/providers/chat.service.ts:624</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Broadcast to all school parents</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/BroadcastMessageInput.html" target="_self" >BroadcastMessageInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="broadcastToAllStudents"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>broadcastToAllStudents</b></span>
+                        <a href="#broadcastToAllStudents"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>broadcastToAllStudents(currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, input: <a href="../classes/BroadcastMessageInput.html" target="_self">BroadcastMessageInput</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="238"
+                                    class="link-to-prism">src/messaging/providers/chat.service.ts:238</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Broadcast message to all students in tenant</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/BroadcastMessageInput.html" target="_self" >BroadcastMessageInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="broadcastToEntireSchool"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>broadcastToEntireSchool</b></span>
+                        <a href="#broadcastToEntireSchool"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>broadcastToEntireSchool(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, input: <a href="../classes/BroadcastMessageInput.html" target="_self">BroadcastMessageInput</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="557"
+                                    class="link-to-prism">src/messaging/providers/chat.service.ts:557</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/BroadcastMessageInput.html" target="_self" >BroadcastMessageInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="broadcastToGradeLevelParents"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>broadcastToGradeLevelParents</b></span>
+                        <a href="#broadcastToGradeLevelParents"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>broadcastToGradeLevelParents(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, input: <a href="../classes/BroadcastToGradeLevelsInput.html" target="_self">BroadcastToGradeLevelsInput</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="762"
+                                    class="link-to-prism">src/messaging/providers/chat.service.ts:762</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Broadcast to parents of specific grade levels</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/BroadcastToGradeLevelsInput.html" target="_self" >BroadcastToGradeLevelsInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="broadcastToGradeLevels"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>broadcastToGradeLevels</b></span>
+                        <a href="#broadcastToGradeLevels"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>broadcastToGradeLevels(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, input: <a href="../classes/BroadcastToGradeLevelsInput.html" target="_self">BroadcastToGradeLevelsInput</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="691"
+                                    class="link-to-prism">src/messaging/providers/chat.service.ts:691</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Broadcast to specific grade levels (students)</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/BroadcastToGradeLevelsInput.html" target="_self" >BroadcastToGradeLevelsInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="deleteMessage"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>deleteMessage</b></span>
+                        <a href="#deleteMessage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>deleteMessage(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, messageId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, options?: literal type)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="194"
+                                    class="link-to-prism">src/messaging/providers/chat.service.ts:194</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>messageId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>options</td>
+                                            <td>
+                                                        <code>literal type</code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getChatHistory"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getChatHistory</b></span>
+                        <a href="#getChatHistory"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getChatHistory(currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, chatRoomId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, limit: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, offset: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="364"
+                                    class="link-to-prism">src/messaging/providers/chat.service.ts:364</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>chatRoomId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>limit</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>50</code>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>offset</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>0</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getOrCreateChatRoom"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getOrCreateChatRoom</b></span>
+                        <a href="#getOrCreateChatRoom"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getOrCreateChatRoom(name: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, type: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, participantIds: string[], tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="470"
+                                    class="link-to-prism">src/messaging/providers/chat.service.ts:470</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Get or create chat room</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>name</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>type</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>participantIds</td>
+                                            <td>
+                                                        <code>string[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatRoom.html" target="_self" >Promise&lt;ChatRoom&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getReadMessages"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getReadMessages</b></span>
+                        <a href="#getReadMessages"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getReadMessages(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, limit: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="893"
+                                    class="link-to-prism">src/messaging/providers/chat.service.ts:893</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Get all read messages for a user</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>limit</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>50</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getUnreadCount"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getUnreadCount</b></span>
+                        <a href="#getUnreadCount"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getUnreadCount(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="439"
+                                    class="link-to-prism">src/messaging/providers/chat.service.ts:439</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Get unread message count for user</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;number&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getUnreadMessages"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getUnreadMessages</b></span>
+                        <a href="#getUnreadMessages"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getUnreadMessages(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="860"
+                                    class="link-to-prism">src/messaging/providers/chat.service.ts:860</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Get all unread messages for a user</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getUserChatRooms"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getUserChatRooms</b></span>
+                        <a href="#getUserChatRooms"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getUserChatRooms(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="447"
+                                    class="link-to-prism">src/messaging/providers/chat.service.ts:447</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Get all chat rooms for a user</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatRoom.html" target="_self" >Promise&lt;ChatRoom[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="markMessageAsRead"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>markMessageAsRead</b></span>
+                        <a href="#markMessageAsRead"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>markMessageAsRead(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, messageId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="925"
+                                    class="link-to-prism">src/messaging/providers/chat.service.ts:925</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Mark a single message as read</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>messageId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="markMessagesAsRead"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>markMessagesAsRead</b></span>
+                        <a href="#markMessagesAsRead"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>markMessagesAsRead(currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, chatRoomId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="412"
+                                    class="link-to-prism">src/messaging/providers/chat.service.ts:412</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Mark messages as read</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>chatRoomId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="sendMessageFromParentToTeacher"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>sendMessageFromParentToTeacher</b></span>
+                        <a href="#sendMessageFromParentToTeacher"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>sendMessageFromParentToTeacher(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, input)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="495"
+                                    class="link-to-prism">src/messaging/providers/chat.service.ts:495</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Send message from parent to teacher about their child</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="sendMessageToParent"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>sendMessageToParent</b></span>
+                        <a href="#sendMessageToParent"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>sendMessageToParent(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, input: <a href="../classes/SendMessageFromTeacherToParentInput.html" target="_self">SendMessageFromTeacherToParentInput</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="114"
+                                    class="link-to-prism">src/messaging/providers/chat.service.ts:114</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Send message from teacher to a specific parent</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/SendMessageFromTeacherToParentInput.html" target="_self" >SendMessageFromTeacherToParentInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="sendMessageToStudent"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>sendMessageToStudent</b></span>
+                        <a href="#sendMessageToStudent"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>sendMessageToStudent(teacherUserId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, input: <a href="../classes/SendMessageInput.html" target="_self">SendMessageInput</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="42"
+                                    class="link-to-prism">src/messaging/providers/chat.service.ts:42</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Send message from teacher to a specific student</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>teacherUserId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/SendMessageInput.html" target="_self" >SendMessageInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="logger"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>logger</b></span>
+                        <a href="#logger"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new Logger(ChatService.name)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/messaging/providers/chat.service.ts:19</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, NotFoundException, BadRequestException, Logger, ForbiddenException } from &#x27;@nestjs/common&#x27;;
+import { InjectRepository } from &#x27;@nestjs/typeorm&#x27;;
+import { Repository, In, DataSource, Not } from &#x27;typeorm&#x27;;
+import { ChatRoom } from &#x27;../entities/chat-room.entity&#x27;;
+import { ChatMessage } from &#x27;../entities/chat-message.entity&#x27;;
+import { RedisChatProvider } from &#x27;./redis-chat.provider&#x27;;
+import { Student } from &#x27;src/admin/student/entities/student.entity&#x27;;
+import { Teacher } from &#x27;src/admin/teacher/entities/teacher.entity&#x27;;
+import { ParentStudent } from &#x27;src/admin/parent/entities/parent-student.entity&#x27;;
+import { Parent } from &#x27;src/admin/parent/entities/parent.entity&#x27;;
+import { BroadcastMessageInput, BroadcastToGradeLevelsInput, SendMessageFromTeacherToParentInput, SendMessageInput } from &#x27;../dtos/send-message.input&#x27;;
+import { ActiveUserData } from &#x27;src/admin/auth/interface/active-user.interface&#x27;;
+import { NotFound } from &#x27;@aws-sdk/client-s3&#x27;;
+
+
+
+@Injectable()
+export class ChatService {
+  private readonly logger &#x3D; new Logger(ChatService.name);
+
+  constructor(
+    @InjectRepository(ChatRoom)
+    private readonly chatRoomRepository: Repository&lt;ChatRoom&gt;,
+    @InjectRepository(ChatMessage)
+    private readonly chatMessageRepository: Repository&lt;ChatMessage&gt;,
+    @InjectRepository(Student)
+    private readonly studentRepository: Repository&lt;Student&gt;,
+    @InjectRepository(Parent)
+    private readonly parentRepository: Repository&lt;Parent&gt;,
+    @InjectRepository(Teacher)
+    private readonly teacherRepository: Repository&lt;Teacher&gt;,
+    @InjectRepository(ParentStudent)
+    private readonly parentStudentRepository: Repository&lt;ParentStudent&gt;,
+    private readonly redisChatProvider: RedisChatProvider,
+    private readonly dataSource: DataSource,
+  ) {}
+
+  
+  /**
+   * Send message from teacher to a specific student
+   */
+  async sendMessageToStudent(
+    teacherUserId: string,
+    user: ActiveUserData,
+    input: SendMessageInput,
+  ): Promise&lt;ChatMessage&gt; {
+    const tenantId &#x3D; user.tenantId;
+    if(!tenantId) {
+      throw new NotFoundException(&quot;Tenant not found&quot;);
+    }
+    const teacher &#x3D; await this.teacherRepository.findOne({
+      where: { user: { id: teacherUserId }, tenantId: user.tenantId },
+    });
+
+    console.log(teacher, &#x27;this is teacher.....&#x27;)
+
+    if (!teacher) {
+      throw new NotFoundException(&#x27;Teacher not found&#x27;);
+    }
+
+    // Get student and their user_id
+    const student &#x3D; await this.studentRepository.findOne({
+      where: { id: input.recipientId, tenant_id: user.tenantId },
+      relations: [&#x27;user&#x27;],
+    });
+
+    if (!student) {
+      throw new NotFoundException(&#x27;Student not found&#x27;);
+    }
+
+    // Create or get chat room between teacher and student
+    const chatRoom &#x3D; await this.getOrCreateChatRoom(
+      &#x60;teacher-student-${teacher.id}-${student.id}&#x60;,
+      &#x27;DIRECT&#x27;,
+      [teacherUserId, student.user_id],
+      tenantId,
+    );
+
+    // Create message
+    const message &#x3D; this.chatMessageRepository.create({
+      senderId: teacherUserId,
+      senderType: &#x27;TEACHER&#x27;,
+      subject: input.subject,
+      message: input.message,
+      imageUrl: input.imageUrl,
+      chatRoomId: chatRoom.id,
+      isRead: false,
+    });
+
+    const savedMessage &#x3D; await this.chatMessageRepository.save(message);
+
+
+// Reload with relations
+const found &#x3D; await this.chatMessageRepository.findOne({
+  where: { id: savedMessage.id },
+  relations: [&#x27;chatRoom&#x27;],
+});
+
+const messageWithRoom: ChatMessage &#x3D; found ?? Object.assign(savedMessage, { chatRoom });
+
+// Cache in Redis
+await this.redisChatProvider.cacheMessage(messageWithRoom);
+
+// Track unread count
+await this.redisChatProvider.incrementUnreadCount(student.user_id, chatRoom.id);
+
+return messageWithRoom;
+
+  }
+
+  /**
+   * Send message from teacher to a specific parent
+   */
+  async sendMessageToParent(
+    user: ActiveUserData,
+    input: SendMessageFromTeacherToParentInput,
+  ): Promise&lt;ChatMessage&gt; {
+    // Get teacher by user_id
+    const teacherUserId &#x3D; user.sub;
+    const tenantId &#x3D; user.tenantId;
+    if(!tenantId) {
+      throw new NotFoundException(&quot;Tenant not found&quot;);
+    }
+    const teacher &#x3D; await this.teacherRepository.findOne({
+      where: { user: { id: teacherUserId }, tenantId },
+      relations: [&#x27;user&#x27;],
+    });
+
+    if (!teacher) {
+      throw new NotFoundException(&#x27;Teacher not found&#x27;);
+    }
+
+    // Get parent by ID
+    const parent &#x3D; await this.parentRepository.findOne({
+      where: { id: input.recipientId, tenantId },
+      relations: [&#x27;user&#x27;],
+    });
+
+    if (!parent || !parent.user) {
+      throw new NotFoundException(&#x27;Parent not found or not linked to user&#x27;);
+    }
+
+    // Verify teacher actually teaches this parent&#x27;s child (optional but good)
+    const relationship &#x3D; await this.parentStudentRepository.findOne({
+      where: { parentId: parent.id, studentId: input.studentId, tenantId },
+    });
+
+    if (!relationship) {
+      throw new BadRequestException(&#x27;This parent is not linked to the selected student&#x27;);
+    }
+
+    // Generate consistent room name
+    const participants &#x3D; [teacher.id, parent.id].sort((a, b) &#x3D;&gt; a.localeCompare(b));
+    const roomName &#x3D; &#x60;teacher-parent-${participants[0]}-${participants[1]}&#x60;;
+
+    // Create or fetch chatroom
+    const chatRoom &#x3D; await this.getOrCreateChatRoom(
+      roomName,
+      &#x27;DIRECT&#x27;,
+      [teacherUserId, parent.user.id],
+      tenantId,
+    );
+
+    // Create message
+    const message &#x3D; this.chatMessageRepository.create({
+      senderId: teacherUserId,
+      senderType: &#x27;TEACHER&#x27;,
+      subject: input.subject,
+      message: input.message,
+      imageUrl: input.imageUrl,
+      chatRoomId: chatRoom.id,
+      isRead: false,
+    });
+
+    const savedMessage &#x3D; await this.chatMessageRepository.save(message);
+
+    const found &#x3D; await this.chatMessageRepository.findOne({
+      where: { id: savedMessage.id },
+      relations: [&#x27;chatRoom&#x27;],
+    });
+
+    const messageWithRoom &#x3D; found ?? Object.assign(savedMessage, { chatRoom });
+
+    // Cache and increment unread count for parent
+    await this.redisChatProvider.cacheMessage(messageWithRoom);
+    await this.redisChatProvider.incrementUnreadCount(parent.user.id, chatRoom.id);
+
+    return messageWithRoom;
+  }
+
+
+
+
+  async deleteMessage(
+    user: ActiveUserData,
+    messageId: string,
+    options?: { hard?: boolean },
+  ): Promise&lt;boolean&gt; {
+    // 1️⃣ Find message with room
+    const message &#x3D; await this.chatMessageRepository.findOne({
+      where: { id: messageId },
+      relations: [&#x27;chatRoom&#x27;],
+    });
+  
+    if (!message) {
+      throw new NotFoundException(&#x27;Message not found&#x27;);
+    }
+  
+    // 2️⃣ Check that the current user is allowed to delete it
+    if (message.senderId !&#x3D;&#x3D; user.sub) {
+      throw new ForbiddenException(&#x27;You can only delete your own messages&#x27;);
+    }
+  
+    // 3️⃣ Optionally hard delete
+    if (options?.hard) {
+      await this.chatMessageRepository.delete({ id: messageId });
+  
+      // Clean Redis cache
+      await this.redisChatProvider.removeCachedMessage(messageId);
+      return true;
+    }
+  
+    // 4️⃣ Otherwise mark as deleted (soft delete)
+    await this.chatMessageRepository.update(
+      { id: messageId },
+      { deleted: true },
+    );
+  
+    // Optionally remove from Redis visible list
+    await this.redisChatProvider.markMessageDeleted(messageId, message.chatRoomId);
+  
+    return true;
+  }
+      
+  /**
+   * Broadcast message to all students in tenant
+   */
+  async broadcastToAllStudents(
+    currentUser: ActiveUserData,
+    input: BroadcastMessageInput,
+  ): Promise&lt;ChatMessage[]&gt; {
+    const teacherUserId &#x3D; currentUser.sub;
+    const tenantId &#x3D; currentUser.tenantId;
+    if(!tenantId) {
+      throw new NotFoundException(&quot;Tenant not found&quot;);
+    }
+    const teacher &#x3D; await this.teacherRepository.findOne({
+      where: { user: { id: teacherUserId }, tenantId },
+    });
+
+    if (!teacher) {
+      throw new NotFoundException(&#x27;Teacher not found&#x27;);
+    }
+
+    const students &#x3D; await this.studentRepository.find({
+      where: { tenant_id: tenantId, isActive: true },
+      relations: [&#x27;user&#x27;],
+    });
+
+    if (students.length &#x3D;&#x3D;&#x3D; 0) {
+      throw new BadRequestException(&#x27;No active students found&#x27;);
+    }
+
+    const messages: ChatMessage[] &#x3D; [];
+
+    for (const student of students) {
+      try {
+        const chatRoom &#x3D; await this.getOrCreateChatRoom(
+          &#x60;teacher-student-${teacher.id}-${student.id}&#x60;,
+          &#x27;DIRECT&#x27;,
+          [teacherUserId, student.user_id],
+          tenantId,
+        );
+
+        const message &#x3D; this.chatMessageRepository.create({
+          senderId: teacherUserId,
+          senderType: &#x27;TEACHER&#x27;,
+          subject: input.subject,
+          message: input.message,
+          imageUrl: input.imageUrl,
+          chatRoomId: chatRoom.id,
+          isRead: false,
+        });
+
+        const savedMessage &#x3D; await this.chatMessageRepository.save(message);
+        await this.redisChatProvider.cacheMessage(savedMessage);
+        await this.redisChatProvider.incrementUnreadCount(student.user_id, chatRoom.id);
+        
+        messages.push(savedMessage);
+      } catch (error) {
+        this.logger.error(&#x60;Failed to send message to student ${student.id}:&#x60;, error);
+      }
+    }
+
+    return messages;
+  }
+
+  /**
+   * Broadcast message to all parents in tenant
+   */
+  async broadcastToAllParents(
+    currentUser: ActiveUserData,
+    input: BroadcastMessageInput,
+  ): Promise&lt;ChatMessage[]&gt; {
+    const teacherUserId &#x3D; currentUser.sub;
+    const tenantId &#x3D; currentUser.tenantId;
+    if (!tenantId) {
+      throw new NotFoundException(&quot;Tenant not found&quot;);
+    }
+    const teacher &#x3D; await this.teacherRepository.findOne({
+      where: { user: { id: teacherUserId }, tenantId },
+    });
+
+    if (!teacher) {
+      throw new NotFoundException(&#x27;Teacher not found&#x27;);
+    }
+
+    const parents &#x3D; await this.parentRepository.find({
+      where: { tenantId, isActive: true },
+      relations: [&#x27;user&#x27;],
+    });
+
+    if (parents.length &#x3D;&#x3D;&#x3D; 0) {
+      throw new BadRequestException(&#x27;No active parents found&#x27;);
+    }
+
+    const messages: ChatMessage[] &#x3D; [];
+
+    for (const parent of parents) {
+      if (!parent.user) continue;
+
+      try {
+        const chatRoom &#x3D; await this.getOrCreateChatRoom(
+          &#x60;teacher-parent-${teacher.id}-${parent.id}&#x60;,
+          &#x27;DIRECT&#x27;,
+          [teacherUserId, parent.user.id],
+          tenantId,
+        );
+
+        const message &#x3D; this.chatMessageRepository.create({
+          senderId: teacherUserId,
+          senderType: &#x27;TEACHER&#x27;,
+          subject: input.subject,
+          message: input.message,
+          imageUrl: input.imageUrl,
+          chatRoomId: chatRoom.id,
+          isRead: false,
+        });
+
+        const savedMessage &#x3D; await this.chatMessageRepository.save(message);
+        await this.redisChatProvider.cacheMessage(savedMessage);
+        await this.redisChatProvider.incrementUnreadCount(parent.user.id, chatRoom.id);
+        
+        messages.push(savedMessage);
+      } catch (error) {
+        this.logger.error(&#x60;Failed to send message to parent ${parent.id}:&#x60;, error);
+      }
+    }
+
+    return messages;
+  }
+
+
+  async getChatHistory(
+    currentUser: ActiveUserData,
+    chatRoomId: string,
+    limit: number &#x3D; 50,
+    offset: number &#x3D; 0,
+  ): Promise&lt;ChatMessage[]&gt; {
+    // 1. Verify that the user is a participant
+    const room &#x3D; await this.chatRoomRepository.findOne({
+      where: { id: chatRoomId },
+    });
+  
+    if (!room || !room.participantIds.includes(currentUser.sub)) {
+      throw new NotFoundException(&#x27;Chat room not found or access denied&#x27;);
+    }
+  
+    // 2. Try cache first (only when we want the first page)
+    if (offset &#x3D;&#x3D;&#x3D; 0) {
+      const cachedMessages &#x3D; await this.redisChatProvider.getRecentMessages(chatRoomId);
+      if (cachedMessages.length &gt; 0) {
+        return cachedMessages.slice(0, limit).map(msg &#x3D;&gt; ({
+          ...msg,
+          createdAt: msg.createdAt ? new Date(msg.createdAt) : new Date(),
+          chatRoom: room, // &lt;-- guarantees non-nullable field
+        }));
+      }
+    }
+  
+    // 3. Fallback to database
+    const messages &#x3D; await this.chatMessageRepository.find({
+      where: { chatRoomId },
+      order: { createdAt: &#x27;DESC&#x27; },
+      take: limit,
+      skip: offset,
+      relations: [&#x27;chatRoom&#x27;], // TypeORM will populate chatRoom
+    });
+  
+    // 4. Ensure createdAt is a Date instance
+    return messages.map(msg &#x3D;&gt; ({
+      ...msg,
+      createdAt: msg.createdAt instanceof Date ? msg.createdAt : new Date(msg.createdAt),
+    }));
+  }
+
+
+
+  /**
+   * Mark messages as read
+   */
+  async markMessagesAsRead(
+    currentUser: ActiveUserData,
+    chatRoomId: string,
+  ): Promise&lt;boolean&gt; {
+    const userId &#x3D; currentUser.sub;
+    const room &#x3D; await this.chatRoomRepository.findOne({
+      where: { id: chatRoomId },
+    });
+
+    if (!room || !room.participantIds.includes(userId)) {
+      throw new NotFoundException(&#x27;Chat room not found or access denied&#x27;);
+    }
+
+    await this.chatMessageRepository.update(
+      { chatRoomId, isRead: false, senderId: In([...room.participantIds.filter(id &#x3D;&gt; id !&#x3D;&#x3D; userId)]) },
+      { isRead: true },
+    );
+
+    // Clear unread count in Redis
+    await this.redisChatProvider.clearUnreadCount(userId, chatRoomId);
+
+    return true;
+  }
+
+  /**
+   * Get unread message count for user
+   */
+  async getUnreadCount(userId: string): Promise&lt;number&gt; {
+    return await this.redisChatProvider.getTotalUnreadCount(userId);
+  }
+
+  /**
+   * Get all chat rooms for a user
+   */
+ // File: student-chat.service.ts or similar
+async getUserChatRooms(userId: string): Promise&lt;ChatRoom[]&gt; {
+  const rooms &#x3D; await this.chatRoomRepository
+    .createQueryBuilder(&#x27;room&#x27;)
+    .leftJoinAndSelect(&#x27;room.messages&#x27;, &#x27;message&#x27;, &#x27;message.deleted &#x3D; false&#x27;) // &lt;-- ADD THIS LINE
+    .where(&#x27;room.participantIds LIKE :userIdPattern&#x27;, {
+      userIdPattern: &#x60;%${userId}%&#x60;,
+    })
+    .orderBy(&#x27;room.updatedAt&#x27;, &#x27;DESC&#x27;)
+    .addOrderBy(&#x27;message.createdAt&#x27;, &#x27;ASC&#x27;) // &lt;-- ADD THIS LINE for message ordering
+    .getMany();
+
+  // Optional: Filter rooms with no messages, depending on your business logic.
+  // The student&#x27;s side had this: return rooms.filter(room &#x3D;&gt; room.messages.length &gt; 0);
+  // If you want teachers to see rooms even without messages, return rooms directly.
+  return rooms;
+}
+
+  
+  
+
+  /**
+   * Get or create chat room
+   */
+  private async getOrCreateChatRoom(
+    name: string,
+    type: string,
+    participantIds: string[],
+    tenantId: string,
+  ): Promise&lt;ChatRoom&gt; {
+    let room &#x3D; await this.chatRoomRepository.findOne({
+      where: { name },
+    });
+
+    if (!room) {
+      room &#x3D; this.chatRoomRepository.create({
+        name,
+        type,
+        participantIds,
+      });
+      room &#x3D; await this.chatRoomRepository.save(room);
+    }
+
+    return room;
+  }
+
+  /**
+   * Send message from parent to teacher about their child
+   */
+  async sendMessageFromParentToTeacher(
+    user: ActiveUserData,
+    input: SendMessageInput &amp; { studentId: string },
+  ): Promise&lt;ChatMessage&gt; {
+    const parentUserId &#x3D; user.sub;
+    const tenantId &#x3D; user.tenantId;
+    if(!tenantId) {
+      throw new NotFoundException(&quot;Tenant Not Found&quot;)
+    }
+    const parent &#x3D; await this.parentRepository.findOne({
+      where: { user: { id: parentUserId }, tenantId },
+    });
+
+    if (!parent) {
+      throw new NotFoundException(&#x27;Parent not found&#x27;);
+    }
+
+    // Verify parent-student relationship
+    const relationship &#x3D; await this.parentStudentRepository.findOne({
+      where: { parentId: parent.id, studentId: input.studentId, tenantId },
+    });
+
+    if (!relationship) {
+      throw new BadRequestException(&#x27;You are not linked to this student&#x27;);
+    }
+
+    const teacher &#x3D; await this.teacherRepository.findOne({
+      where: { id: input.recipientId, tenantId },
+      relations: [&#x27;user&#x27;],
+    });
+
+    if (!teacher || !teacher.user) {
+      throw new NotFoundException(&#x27;Teacher not found&#x27;);
+    }
+
+    const chatRoom &#x3D; await this.getOrCreateChatRoom(
+      &#x60;parent-teacher-${parent.id}-${teacher.id}&#x60;,
+      &#x27;DIRECT&#x27;,
+      [parentUserId, teacher.user.id],
+      tenantId,
+    );
+
+    const message &#x3D; this.chatMessageRepository.create({
+      senderId: parentUserId,
+      senderType: &#x27;PARENT&#x27;,
+      subject: input.subject,
+      message: input.message,
+      imageUrl: input.imageUrl,
+      chatRoomId: chatRoom.id,
+      isRead: false,
+    });
+
+    const savedMessage &#x3D; await this.chatMessageRepository.save(message);
+    await this.redisChatProvider.cacheMessage(savedMessage);
+    await this.redisChatProvider.incrementUnreadCount(teacher.user.id, chatRoom.id);
+
+    return savedMessage;
+  }
+
+
+
+
+  async broadcastToEntireSchool(
+    user: ActiveUserData,
+    input: BroadcastMessageInput,
+  ): Promise&lt;ChatMessage[]&gt; {
+    const teacherUserId &#x3D; user.sub;
+    const tenantId &#x3D; user.tenantId;
+
+    if(!tenantId) {
+      throw new NotFoundException(&quot;Tenant not found&quot;);
+    }
+
+    const teacher &#x3D; await this.teacherRepository.findOne({
+      where: { user: { id: teacherUserId }, tenantId },
+    });
+  
+    if (!teacher) {
+      throw new NotFoundException(&#x27;Teacher not found&#x27;);
+    }
+  
+    // Get ALL students in the tenant regardless of grade
+    const students &#x3D; await this.studentRepository.find({
+      where: { tenant_id: tenantId, isActive: true },
+      relations: [&#x27;user&#x27;],
+    });
+  
+    if (students.length &#x3D;&#x3D;&#x3D; 0) {
+      throw new BadRequestException(&#x27;No active students found in school&#x27;);
+    }
+  
+    const messages: ChatMessage[] &#x3D; [];
+  
+    for (const student of students) {
+      try {
+        const chatRoom &#x3D; await this.getOrCreateChatRoom(
+          &#x60;teacher-student-${teacher.id}-${student.id}&#x60;,
+          &#x27;DIRECT&#x27;,
+          [teacherUserId, student.user_id],
+          tenantId,
+        );
+  
+        const message &#x3D; this.chatMessageRepository.create({
+          senderId: teacherUserId,
+          senderType: &#x27;TEACHER&#x27;,
+          subject: input.subject,
+          message: input.message,
+          imageUrl: input.imageUrl,
+          chatRoomId: chatRoom.id,
+          isRead: false,
+        });
+  
+        const savedMessage &#x3D; await this.chatMessageRepository.save(message);
+        await this.redisChatProvider.cacheMessage(savedMessage);
+        await this.redisChatProvider.incrementUnreadCount(student.user_id, chatRoom.id);
+        
+        messages.push(savedMessage);
+      } catch (error) {
+        this.logger.error(&#x60;Failed to send message to student ${student.id}:&#x60;, error);
+      }
+    }
+  
+    this.logger.log(&#x60;Broadcast sent to ${messages.length} students in entire school&#x60;);
+    return messages;
+  }
+  
+  /**
+   * Broadcast to all school parents
+   */
+  async broadcastToAllSchoolParents(
+    user: ActiveUserData,
+    input: BroadcastMessageInput,
+  ): Promise&lt;ChatMessage[]&gt; {
+    const teacherUserId &#x3D; user.sub;
+    const tenantId &#x3D; user.tenantId;
+    if (!tenantId) {
+      throw new NotFoundException(&quot;Tenant not found&quot;);
+    }
+    const teacher &#x3D; await this.teacherRepository.findOne({
+      where: { user: { id: teacherUserId }, tenantId },
+    });
+  
+    if (!teacher) {
+      throw new NotFoundException(&#x27;Teacher not found&#x27;);
+    }
+  
+    // Get ALL parents in the tenant
+    const parents &#x3D; await this.parentRepository.find({
+      where: { tenantId, isActive: true },
+      relations: [&#x27;user&#x27;],
+    });
+  
+    if (parents.length &#x3D;&#x3D;&#x3D; 0) {
+      throw new BadRequestException(&#x27;No active parents found in school&#x27;);
+    }
+  
+    const messages: ChatMessage[] &#x3D; [];
+  
+    for (const parent of parents) {
+      if (!parent.user) continue;
+  
+      try {
+        const chatRoom &#x3D; await this.getOrCreateChatRoom(
+          &#x60;teacher-parent-${teacher.id}-${parent.id}&#x60;,
+          &#x27;DIRECT&#x27;,
+          [teacherUserId, parent.user.id],
+          tenantId,
+        );
+  
+        const message &#x3D; this.chatMessageRepository.create({
+          senderId: teacherUserId,
+          senderType: &#x27;TEACHER&#x27;,
+          subject: input.subject,
+          message: input.message,
+          imageUrl: input.imageUrl,
+          chatRoomId: chatRoom.id,
+          isRead: false,
+        });
+  
+        const savedMessage &#x3D; await this.chatMessageRepository.save(message);
+        await this.redisChatProvider.cacheMessage(savedMessage);
+        await this.redisChatProvider.incrementUnreadCount(parent.user.id, chatRoom.id);
+        
+        messages.push(savedMessage);
+      } catch (error) {
+        this.logger.error(&#x60;Failed to send message to parent ${parent.id}:&#x60;, error);
+      }
+    }
+  
+    this.logger.log(&#x60;Broadcast sent to ${messages.length} parents in entire school&#x60;);
+    return messages;
+  }
+  
+  /**
+   * Broadcast to specific grade levels (students)
+   */
+  async broadcastToGradeLevels(
+    user: ActiveUserData,
+    input: BroadcastToGradeLevelsInput,
+  ): Promise&lt;ChatMessage[]&gt; {
+    const teacherUserId &#x3D; user.sub;
+    const tenantId &#x3D; user.tenantId;
+    if(!tenantId) {
+      throw new NotFoundException(&quot;Tenant not found&quot;);
+    }
+    const teacher &#x3D; await this.teacherRepository.findOne({
+      where: { user: { id: teacherUserId }, tenantId },
+    });
+  
+    if (!teacher) {
+      throw new NotFoundException(&#x27;Teacher not found&#x27;);
+    }
+  
+    // Get students in specified grade levels
+    const students &#x3D; await this.studentRepository
+      .createQueryBuilder(&#x27;student&#x27;)
+      .leftJoinAndSelect(&#x27;student.user&#x27;, &#x27;user&#x27;)
+      .leftJoinAndSelect(&#x27;student.grade&#x27;, &#x27;grade&#x27;)
+      .where(&#x27;student.tenant_id &#x3D; :tenantId&#x27;, { tenantId })
+      .andWhere(&#x27;student.isActive &#x3D; :isActive&#x27;, { isActive: true })
+      .andWhere(&#x27;grade.id IN (:...gradeLevelIds)&#x27;, { 
+        gradeLevelIds: input.gradeLevelIds 
+      })
+      .getMany();
+  
+    if (students.length &#x3D;&#x3D;&#x3D; 0) {
+      throw new BadRequestException(&#x27;No active students found in specified grade levels&#x27;);
+    }
+  
+    const messages: ChatMessage[] &#x3D; [];
+  
+    for (const student of students) {
+      try {
+        const chatRoom &#x3D; await this.getOrCreateChatRoom(
+          &#x60;teacher-student-${teacher.id}-${student.id}&#x60;,
+          &#x27;DIRECT&#x27;,
+          [teacherUserId, student.user_id],
+          tenantId,
+        );
+  
+        const message &#x3D; this.chatMessageRepository.create({
+          senderId: teacherUserId,
+          senderType: &#x27;TEACHER&#x27;,
+          subject: input.subject,
+          message: input.message,
+          imageUrl: input.imageUrl,
+          chatRoomId: chatRoom.id,
+          isRead: false,
+        });
+  
+        const savedMessage &#x3D; await this.chatMessageRepository.save(message);
+        await this.redisChatProvider.cacheMessage(savedMessage);
+        await this.redisChatProvider.incrementUnreadCount(student.user_id, chatRoom.id);
+        
+        messages.push(savedMessage);
+      } catch (error) {
+        this.logger.error(&#x60;Failed to send message to student ${student.id}:&#x60;, error);
+      }
+    }
+  
+    this.logger.log(&#x60;Broadcast sent to ${messages.length} students in grade levels&#x60;);
+    return messages;
+  }
+  
+  /**
+   * Broadcast to parents of specific grade levels
+   */
+  async broadcastToGradeLevelParents(
+    user: ActiveUserData,
+    input: BroadcastToGradeLevelsInput,
+  ): Promise&lt;ChatMessage[]&gt; {
+    const teacherUserId &#x3D; user.sub;
+    const tenantId &#x3D; user.tenantId;
+    if (!tenantId) {
+      throw new NotFoundException(&quot;Tenant not found&quot;);
+    }
+    const teacher &#x3D; await this.teacherRepository.findOne({
+      where: { user: { id: teacherUserId }, tenantId },
+    });
+  
+    if (!teacher) {
+      throw new NotFoundException(&#x27;Teacher not found&#x27;);
+    }
+  
+    // Get students in specified grade levels, then their parents
+    const students &#x3D; await this.studentRepository
+      .createQueryBuilder(&#x27;student&#x27;)
+      .leftJoinAndSelect(&#x27;student.grade&#x27;, &#x27;grade&#x27;)
+      .where(&#x27;student.tenant_id &#x3D; :tenantId&#x27;, { tenantId })
+      .andWhere(&#x27;student.isActive &#x3D; :isActive&#x27;, { isActive: true })
+      .andWhere(&#x27;grade.id IN (:...gradeLevelIds)&#x27;, { 
+        gradeLevelIds: input.gradeLevelIds 
+      })
+      .getMany();
+  
+    if (students.length &#x3D;&#x3D;&#x3D; 0) {
+      throw new BadRequestException(&#x27;No students found in specified grade levels&#x27;);
+    }
+  
+    // Get parent-student relationships for these students
+    const studentIds &#x3D; students.map(s &#x3D;&gt; s.id);
+    const parentStudentRelations &#x3D; await this.parentStudentRepository.find({
+      where: { 
+        studentId: In(studentIds),
+        tenantId 
+      },
+      relations: [&#x27;parent&#x27;, &#x27;parent.user&#x27;],
+    });
+  
+    // Get unique parents
+    const uniqueParents &#x3D; new Map&lt;string, Parent&gt;();
+    parentStudentRelations.forEach(rel &#x3D;&gt; {
+      if (rel.parent &amp;&amp; rel.parent.user &amp;&amp; rel.parent.isActive) {
+        uniqueParents.set(rel.parent.id, rel.parent);
+      }
+    });
+  
+    if (uniqueParents.size &#x3D;&#x3D;&#x3D; 0) {
+      throw new BadRequestException(&#x27;No active parents found for specified grade levels&#x27;);
+    }
+  
+    const messages: ChatMessage[] &#x3D; [];
+  
+    for (const parent of uniqueParents.values()) {
+      try {
+        const parentUserId &#x3D; parent.user?.id;
+        if (!parentUserId) {
+          this.logger.warn(&#x60;Parent ${parent.id} has no linked user, skipping&#x60;);
+          continue;
+        }
+
+        const chatRoom &#x3D; await this.getOrCreateChatRoom(
+          &#x60;teacher-parent-${teacher.id}-${parent.id}&#x60;,
+          &#x27;DIRECT&#x27;,
+          [teacherUserId, parentUserId],
+          tenantId,
+        );
+  
+        const message &#x3D; this.chatMessageRepository.create({
+          senderId: teacherUserId,
+          senderType: &#x27;TEACHER&#x27;,
+          subject: input.subject,
+          message: input.message,
+          imageUrl: input.imageUrl,
+          chatRoomId: chatRoom.id,
+          isRead: false,
+        });
+  
+        const savedMessage &#x3D; await this.chatMessageRepository.save(message);
+        await this.redisChatProvider.cacheMessage(savedMessage);
+        await this.redisChatProvider.incrementUnreadCount(parentUserId, chatRoom.id);
+        
+        messages.push(savedMessage);
+      } catch (error) {
+        this.logger.error(&#x60;Failed to send message to parent ${parent.id}:&#x60;, error);
+      }
+    }
+  
+    this.logger.log(&#x60;Broadcast sent to ${messages.length} parents in grade levels&#x60;);
+    return messages;
+  }
+  
+  /**
+   * Get all unread messages for a user
+   */
+  async getUnreadMessages(userId: string): Promise&lt;ChatMessage[]&gt; {
+    // Get all chat rooms where user is a participant
+    const rooms &#x3D; await this.chatRoomRepository
+      .createQueryBuilder(&#x27;room&#x27;)
+      .where(&#x27;room.participantIds LIKE :userIdPattern&#x27;, {
+        userIdPattern: &#x60;%${userId}%&#x60;,
+      })
+      .getMany();
+  
+    const roomIds &#x3D; rooms.map(r &#x3D;&gt; r.id);
+  
+    if (roomIds.length &#x3D;&#x3D;&#x3D; 0) {
+      return [];
+    }
+  
+    // Get unread messages from these rooms
+    const unreadMessages &#x3D; await this.chatMessageRepository.find({
+      where: {
+        chatRoomId: In(roomIds),
+        isRead: false,
+        deleted: false,
+        senderId: Not(userId), // Don&#x27;t include own messages
+      },
+      relations: [&#x27;chatRoom&#x27;],
+      order: { createdAt: &#x27;DESC&#x27; },
+    });
+  
+    return unreadMessages;
+  }
+  
+  /**
+   * Get all read messages for a user
+   */
+  async getReadMessages(userId: string, limit: number &#x3D; 50): Promise&lt;ChatMessage[]&gt; {
+    const rooms &#x3D; await this.chatRoomRepository
+      .createQueryBuilder(&#x27;room&#x27;)
+      .where(&#x27;room.participantIds LIKE :userIdPattern&#x27;, {
+        userIdPattern: &#x60;%${userId}%&#x60;,
+      })
+      .getMany();
+  
+    const roomIds &#x3D; rooms.map(r &#x3D;&gt; r.id);
+  
+    if (roomIds.length &#x3D;&#x3D;&#x3D; 0) {
+      return [];
+    }
+  
+    const readMessages &#x3D; await this.chatMessageRepository.find({
+      where: {
+        chatRoomId: In(roomIds),
+        isRead: true,
+        deleted: false,
+        senderId: Not(userId),
+      },
+      relations: [&#x27;chatRoom&#x27;],
+      order: { createdAt: &#x27;DESC&#x27; },
+      take: limit,
+    });
+  
+    return readMessages;
+  }
+  
+  /**
+   * Mark a single message as read
+   */
+  async markMessageAsRead(userId: string, messageId: string): Promise&lt;boolean&gt; {
+    const message &#x3D; await this.chatMessageRepository.findOne({
+      where: { id: messageId },
+      relations: [&#x27;chatRoom&#x27;],
+    });
+  
+    if (!message) {
+      throw new NotFoundException(&#x27;Message not found&#x27;);
+    }
+  
+    // Verify user is a participant in the chat room
+    if (!message.chatRoom.participantIds.includes(userId)) {
+      throw new ForbiddenException(&#x27;You do not have access to this message&#x27;);
+    }
+  
+    // Don&#x27;t mark own messages as read
+    if (message.senderId &#x3D;&#x3D;&#x3D; userId) {
+      return true;
+    }
+  
+    await this.chatMessageRepository.update(
+      { id: messageId },
+      { isRead: true }
+    );
+  
+    // Decrement unread count in Redis
+    await this.redisChatProvider.decrementUnreadCount(userId, message.chatRoomId);
+  
+    return true;
+  }
+  
+}
+
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'ChatService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

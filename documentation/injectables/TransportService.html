@@ -1,0 +1,2334 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>skool documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">skool documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >TransportService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/admin/transport/transport.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#logger" >logger</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#assignBulkTransportStudents" >assignBulkTransportStudents</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#assignTransportStudent" >assignTransportStudent</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#createRoute" >createRoute</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#deleteRoute" >deleteRoute</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#findAllRoutes" >findAllRoutes</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#findAssignments" >findAssignments</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#findRoutes" >findRoutes</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#findRoutesByTenant" >findRoutesByTenant</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getAssignmentsByRoute" >getAssignmentsByRoute</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#getTenantId" >getTenantId</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getTransportAssignments" >getTransportAssignments</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#removeBulkTransportAssignments" >removeBulkTransportAssignments</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#removeRoute" >removeRoute</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#removeTransportAssignment" >removeTransportAssignment</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#updateAssignment" >updateAssignment</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#updateRoute" >updateRoute</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#updateTransportAssignment" >updateTransportAssignment</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(routeRepo: Repository<TransportRoute>, assignmentRepo: <a href="../entitys/TransportAssignment.html" target="_self">Repository&lt;TransportAssignment&gt;</a>, studentRepo: <a href="../interfaces/Student.html" target="_self">Repository&lt;Student&gt;</a>, dataSource: DataSource)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">src/admin/transport/transport.service.ts:21</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>routeRepo</td>
+                                                  
+                                                        <td>
+                                                                    <code>Repository&lt;TransportRoute&gt;</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>assignmentRepo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../entitys/TransportAssignment.html" target="_self" >Repository&lt;TransportAssignment&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>studentRepo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../interfaces/Student.html" target="_self" >Repository&lt;Student&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>dataSource</td>
+                                                  
+                                                        <td>
+                                                                    <code>DataSource</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="assignBulkTransportStudents"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>assignBulkTransportStudents</b></span>
+                        <a href="#assignBulkTransportStudents"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>assignBulkTransportStudents(input: <a href="../classes/BulkTransportAssignmentInput.html" target="_self">BulkTransportAssignmentInput</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="174"
+                                    class="link-to-prism">src/admin/transport/transport.service.ts:174</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/BulkTransportAssignmentInput.html" target="_self" >BulkTransportAssignmentInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../entitys/TransportAssignment.html" target="_self" >Promise&lt;TransportAssignment[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="assignTransportStudent"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>assignTransportStudent</b></span>
+                        <a href="#assignTransportStudent"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>assignTransportStudent(input: <a href="../classes/AssignTransportInput.html" target="_self">AssignTransportInput</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="117"
+                                    class="link-to-prism">src/admin/transport/transport.service.ts:117</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/AssignTransportInput.html" target="_self" >AssignTransportInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../entitys/TransportAssignment.html" target="_self" >Promise&lt;TransportAssignment&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createRoute"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>createRoute</b></span>
+                        <a href="#createRoute"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createRoute(input: <a href="../classes/CreateTransportRouteInput.html" target="_self">CreateTransportRouteInput</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="42"
+                                    class="link-to-prism">src/admin/transport/transport.service.ts:42</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/CreateTransportRouteInput.html" target="_self" >CreateTransportRouteInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;TransportRoute&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="deleteRoute"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>deleteRoute</b></span>
+                        <a href="#deleteRoute"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>deleteRoute(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="81"
+                                    class="link-to-prism">src/admin/transport/transport.service.ts:81</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findAllRoutes"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>findAllRoutes</b></span>
+                        <a href="#findAllRoutes"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findAllRoutes(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="86"
+                                    class="link-to-prism">src/admin/transport/transport.service.ts:86</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;TransportRoute[]&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findAssignments"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>findAssignments</b></span>
+                        <a href="#findAssignments"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findAssignments(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="108"
+                                    class="link-to-prism">src/admin/transport/transport.service.ts:108</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../entitys/TransportAssignment.html" target="_self" >Promise&lt;TransportAssignment[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findRoutes"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>findRoutes</b></span>
+                        <a href="#findRoutes"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findRoutes(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="99"
+                                    class="link-to-prism">src/admin/transport/transport.service.ts:99</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;TransportRoute[]&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findRoutesByTenant"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>findRoutesByTenant</b></span>
+                        <a href="#findRoutesByTenant"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findRoutesByTenant(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="94"
+                                    class="link-to-prism">src/admin/transport/transport.service.ts:94</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;TransportRoute[]&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAssignmentsByRoute"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getAssignmentsByRoute</b></span>
+                        <a href="#getAssignmentsByRoute"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getAssignmentsByRoute(routeId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="502"
+                                    class="link-to-prism">src/admin/transport/transport.service.ts:502</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>routeId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getTenantId"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>getTenantId</b></span>
+                        <a href="#getTenantId"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getTenantId(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="36"
+                                    class="link-to-prism">src/admin/transport/transport.service.ts:36</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getTransportAssignments"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getTransportAssignments</b></span>
+                        <a href="#getTransportAssignments"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getTransportAssignments(filters: literal type, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="440"
+                                    class="link-to-prism">src/admin/transport/transport.service.ts:440</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Get all transport assignments with filtering options</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>filters</td>
+                                            <td>
+                                                        <code>literal type</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;literal type&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="removeBulkTransportAssignments"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>removeBulkTransportAssignments</b></span>
+                        <a href="#removeBulkTransportAssignments"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>removeBulkTransportAssignments(input: literal type, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="310"
+                                    class="link-to-prism">src/admin/transport/transport.service.ts:310</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                        <code>literal type</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;number&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="removeRoute"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>removeRoute</b></span>
+                        <a href="#removeRoute"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>removeRoute(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="75"
+                                    class="link-to-prism">src/admin/transport/transport.service.ts:75</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="removeTransportAssignment"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>removeTransportAssignment</b></span>
+                        <a href="#removeTransportAssignment"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>removeTransportAssignment(input: <a href="../classes/RemoveTransportAssignmentInput.html" target="_self">RemoveTransportAssignmentInput</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="273"
+                                    class="link-to-prism">src/admin/transport/transport.service.ts:273</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/RemoveTransportAssignmentInput.html" target="_self" >RemoveTransportAssignmentInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateAssignment"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>updateAssignment</b></span>
+                        <a href="#updateAssignment"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>updateAssignment(input: <a href="../classes/UpdateTransportAssignmentInput.html" target="_self">UpdateTransportAssignmentInput</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="491"
+                                    class="link-to-prism">src/admin/transport/transport.service.ts:491</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/UpdateTransportAssignmentInput.html" target="_self" >UpdateTransportAssignmentInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../entitys/TransportAssignment.html" target="_self" >Promise&lt;TransportAssignment&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateRoute"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>updateRoute</b></span>
+                        <a href="#updateRoute"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>updateRoute(input: <a href="../classes/UpdateTransportRouteInput.html" target="_self">UpdateTransportRouteInput</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="58"
+                                    class="link-to-prism">src/admin/transport/transport.service.ts:58</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/UpdateTransportRouteInput.html" target="_self" >UpdateTransportRouteInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;TransportRoute&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateTransportAssignment"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>updateTransportAssignment</b></span>
+                        <a href="#updateTransportAssignment"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>updateTransportAssignment(input: <a href="../classes/UpdateTransportAssignmentInput.html" target="_self">UpdateTransportAssignmentInput</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="356"
+                                    class="link-to-prism">src/admin/transport/transport.service.ts:356</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/UpdateTransportAssignmentInput.html" target="_self" >UpdateTransportAssignmentInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../entitys/TransportAssignment.html" target="_self" >Promise&lt;TransportAssignment&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="logger"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>logger</b></span>
+                        <a href="#logger"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new Logger(TransportService.name)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">src/admin/transport/transport.service.ts:21</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable,Logger, NotFoundException, BadRequestException, ConflictException } from &#x27;@nestjs/common&#x27;;
+import { InjectRepository } from &#x27;@nestjs/typeorm&#x27;;
+import { DataSource, QueryFailedError, Repository } from &#x27;typeorm&#x27;;
+import { TransportRoute } from &#x27;./entities/transport_routes.entity&#x27;;
+import { TransportAssignment } from &#x27;./entities/transport_assignment.entity&#x27;;
+import { CreateTransportRouteInput } from &#x27;./dtos/create-transport-route.input&#x27;;
+import { UpdateTransportRouteInput } from &#x27;./dtos/update-transport-route.input&#x27;;
+import { AssignTransportInput, RemoveTransportAssignmentInput } from &#x27;./dtos/assign-transport.input&#x27;;
+import { Student } from &#x27;../student/entities/student.entity&#x27;;
+import { Roles } from &#x27;src/iam/decorators/roles.decorator&#x27;;
+import { MembershipRole } from &#x27;../user-tenant-membership/entities/user-tenant-membership.entity&#x27;;
+import { CreateTransportAssignmentInput } from &#x27;./dtos/transport-assign.input&#x27;;
+import { BulkTransportAssignmentInput } from &#x27;./dtos/bulk-assign-transport.input&#x27;;
+import { UpdateTransportAssignmentInput } from &#x27;./dtos/update-assignment-transport.input&#x27;;
+import { In } from &#x27;typeorm&#x27;;
+import { ActiveUserData } from &#x27;../auth/interface/active-user.interface&#x27;;
+
+
+@Injectable()
+export class TransportService {
+  private readonly logger &#x3D; new Logger(TransportService.name);
+  constructor(
+    @InjectRepository(TransportRoute)
+    private routeRepo: Repository&lt;TransportRoute&gt;,
+
+    @InjectRepository(TransportAssignment)
+    private assignmentRepo: Repository&lt;TransportAssignment&gt;,
+
+    @InjectRepository(Student)
+    private studentRepo: Repository&lt;Student&gt;,
+
+    private readonly dataSource: DataSource,
+  ) {}
+
+
+  private getTenantId(user: ActiveUserData): string {
+    if (!user.tenantId) {
+      throw new BadRequestException(&#x27;Tenant ID is missing from the active user&#x27;);
+    };
+    return user.tenantId;
+  }
+  async createRoute(input: CreateTransportRouteInput, user: ActiveUserData): Promise&lt;TransportRoute&gt; {
+    const existing &#x3D; await this.routeRepo.findOne({
+      where: { name: input.name, tenantId: this.getTenantId(user) },
+    });
+  
+    if (existing) {
+      throw new ConflictException(&#x60;A transport route with the name &quot;${input.name}&quot; already exists.&#x60;);
+
+    }
+  
+    const route &#x3D; this.routeRepo.create({ ...input, tenantId: this.getTenantId(user) });
+    return this.routeRepo.save(route);
+  }
+  
+
+
+  async updateRoute(input: UpdateTransportRouteInput, user: ActiveUserData): Promise&lt;TransportRoute&gt; {
+    const tenantId &#x3D; this.getTenantId(user);
+    const route &#x3D; await this.routeRepo.findOne({
+      where: { id: input.id, tenantId },
+    });
+  
+    if (!route) {
+      throw new NotFoundException(&#x27;Transport route not found&#x27;);
+    }
+  
+    if (input.name !&#x3D;&#x3D; undefined) route.name &#x3D; input.name;
+    if (input.fee !&#x3D;&#x3D; undefined) route.fee &#x3D; input.fee;
+    if (input.billingCycleLabel !&#x3D;&#x3D; undefined) route.billingCycleLabel &#x3D; input.billingCycleLabel;
+  
+    return this.routeRepo.save(route);
+  }
+  
+  async removeRoute(id: string, user: ActiveUserData): Promise&lt;boolean&gt; {
+    const result &#x3D; await this.routeRepo.delete({ id, tenantId: this.getTenantId(user) });
+    return (result.affected ?? 0) &gt; 0;
+  }
+  
+
+  async deleteRoute(id: string, user: ActiveUserData): Promise&lt;boolean&gt; {
+    const res &#x3D; await this.routeRepo.delete({ id, tenantId: this.getTenantId(user) });
+    return (res.affected ?? 0) &gt; 0;
+  }
+
+  async findAllRoutes(user: ActiveUserData): Promise&lt;TransportRoute[]&gt; {
+    const tenantId &#x3D; this.getTenantId(user);
+    return this.routeRepo.find({
+      where: { tenantId },
+      order: { createdAt: &#x27;DESC&#x27; },
+    });
+  }
+
+  async findRoutesByTenant(user: ActiveUserData): Promise&lt;TransportRoute[]&gt; {
+    const tenantId &#x3D; this.getTenantId(user);
+    return this.routeRepo.find({ where: { tenantId } });
+  }
+
+  async findRoutes(user: ActiveUserData): Promise&lt;TransportRoute[]&gt; {
+    const tenantId &#x3D; this.getTenantId(user);
+    return this.routeRepo.find({
+      where: { tenantId },
+      relations: [&#x27;assignments&#x27;, &#x27;assignments.student&#x27;, &#x27;assignments.student.user&#x27;],
+    });
+  };
+
+
+  async findAssignments(user: ActiveUserData): Promise&lt;TransportAssignment[]&gt; {
+    const tenantId &#x3D; this.getTenantId(user);
+    return this.assignmentRepo.find({
+      where: { tenantId },
+      relations: [&#x27;route&#x27;, &#x27;student&#x27;, &#x27;student.user&#x27;],
+      order: { assignedAt: &#x27;DESC&#x27; },
+    });
+  }
+  
+  async assignTransportStudent(
+    input: AssignTransportInput,
+    user: ActiveUserData,
+  ): Promise&lt;TransportAssignment&gt; {
+    const tenantId &#x3D; this.getTenantId(user);
+    this.logger.debug(&#x27;Starting single student assignment&#x27;, { input, tenantId });
+  
+    const student &#x3D; await this.studentRepo.findOne({
+      where: { id: input.studentId, tenant_id: tenantId },
+      relations: [&#x27;user&#x27;],
+    });
+    if (!student)
+      throw new NotFoundException(
+        &#x60;Student with ID ${input.studentId} not found in your organisation&#x60;,
+      );
+  
+    const route &#x3D; await this.routeRepo.findOne({
+      where: { id: input.routeId, tenantId },
+    });
+    if (!route)
+      throw new NotFoundException(
+        &#x60;Transport route with ID ${input.routeId} not found in your organisation&#x60;,
+      );
+  
+    const existing &#x3D; await this.assignmentRepo.exist({
+      where: {
+        studentId: input.studentId,
+        routeId: input.routeId,
+        tenantId,
+        status: &#x27;ACTIVE&#x27;,
+      },
+    });
+    if (existing)
+      throw new ConflictException(
+        &#x60;Student ${student.user?.name ?? student.admission_number} is already assigned to route ${route.name}&#x60;,
+      );
+  
+    // create &amp; return … no try/catch needed
+    const assignment &#x3D; this.assignmentRepo.create({
+      studentId: input.studentId,
+      routeId: input.routeId,
+      pickupPoint: input.pickupPoint,
+      tenantId,
+      status: &#x27;ACTIVE&#x27;,
+    });
+    const saved &#x3D; await this.assignmentRepo.save(assignment);
+  
+    return this.assignmentRepo
+      .createQueryBuilder(&#x27;a&#x27;)
+      .leftJoinAndSelect(&#x27;a.student&#x27;, &#x27;s&#x27;)
+      .leftJoinAndSelect(&#x27;s.user&#x27;, &#x27;u&#x27;)
+      .leftJoinAndSelect(&#x27;a.route&#x27;, &#x27;r&#x27;)
+      .where(&#x27;a.id &#x3D; :id AND a.tenantId &#x3D; :tenantId&#x27;, { id: saved.id, tenantId })
+      .getOneOrFail(); 
+  }
+
+  
+  async assignBulkTransportStudents(input: BulkTransportAssignmentInput, user: ActiveUserData): Promise&lt;TransportAssignment[]&gt; {
+    // this.logger.debug(&#x27;Starting bulk student assignment&#x27;, { input, tenantId });
+
+    try {
+    
+      const route &#x3D; await this.routeRepo.findOne({
+        where: { id: input.routeId, tenantId: this.getTenantId(user) }
+      });
+
+      if (!route) {
+        throw new NotFoundException(&#x60;Transport route with ID ${input.routeId} not found in your organization&#x60;);
+      }
+
+      let students: Student[];
+      if (input.studentIds &amp;&amp; input.studentIds.length &gt; 0) {
+        students &#x3D; await this.studentRepo.find({
+          where: {
+            id: In(input.studentIds),
+            tenant_id: this.getTenantId(user),
+          },
+          relations: [&#x27;user&#x27;]
+        });
+
+        if (students.length !&#x3D;&#x3D; input.studentIds.length) {
+          const foundIds &#x3D; students.map(s &#x3D;&gt; s.id);
+          const notFoundIds &#x3D; input.studentIds.filter(id &#x3D;&gt; !foundIds.includes(id));
+          throw new NotFoundException(&#x60;Students not found: ${notFoundIds.join(&#x27;, &#x27;)}&#x60;);
+        }
+      } else {
+        students &#x3D; await this.studentRepo.find({
+          where: { tenant_id: this.getTenantId(user) },
+          relations: [&#x27;user&#x27;]
+        });
+      }
+
+      if (students.length &#x3D;&#x3D;&#x3D; 0) {
+        throw new BadRequestException(&#x27;No students found to assign&#x27;);
+      }
+
+      const existingAssignments &#x3D; await this.assignmentRepo.find({
+        where: {
+          routeId: input.routeId,
+          studentId: In(students.map(s &#x3D;&gt; s.id)),
+          tenantId: this.getTenantId(user),
+          status: &#x27;ACTIVE&#x27;
+        },
+        relations: [&#x27;student&#x27;, &#x27;student.user&#x27;]
+      });
+
+      if (existingAssignments.length &gt; 0) {
+        const alreadyAssigned &#x3D; existingAssignments
+          .map(a &#x3D;&gt; a.student?.user?.name || a.student?.admission_number || &#x27;Unknown&#x27;)
+          .join(&#x27;, &#x27;);
+        throw new ConflictException(&#x60;The following students are already assigned to this route: ${alreadyAssigned}&#x60;);
+      }
+
+    
+      const assignments &#x3D; students.map((student) &#x3D;&gt;
+        this.assignmentRepo.create({
+          routeId: input.routeId,
+          studentId: student.id,
+          tenantId: this.getTenantId(user),
+          status: &#x27;ACTIVE&#x27;,
+          pickupPoint: input.pickupPoint,
+        })
+      );
+
+      const savedAssignments &#x3D; await this.assignmentRepo.save(assignments);
+
+      const results &#x3D; await this.assignmentRepo
+        .createQueryBuilder(&#x27;assignment&#x27;)
+        .leftJoinAndSelect(&#x27;assignment.student&#x27;, &#x27;student&#x27;)
+        .leftJoinAndSelect(&#x27;student.user&#x27;, &#x27;user&#x27;)
+        .leftJoinAndSelect(&#x27;assignment.route&#x27;, &#x27;route&#x27;)
+        .where(&#x27;assignment.id IN (:...ids) AND assignment.tenantId &#x3D; :tenantId&#x27;, {
+          ids: savedAssignments.map(a &#x3D;&gt; a.id),
+          tenantId: this.getTenantId(user),
+        })
+        .getMany();
+
+      this.logger.log(&#x60;Successfully assigned ${results.length} students to route ${route.name}&#x60;);
+      return results;
+
+    } catch (error) {
+      this.logger.error(&#x27;Failed to bulk assign students to route&#x27;, { error: error.message, input, tenantId: this.getTenantId(user), });
+      
+      if (error instanceof NotFoundException || error instanceof ConflictException || error instanceof BadRequestException) {
+        throw error;
+      }
+      
+      if (error instanceof QueryFailedError) {
+        throw new BadRequestException(&#x27;Database operation failed during bulk assignment&#x27;);
+      }
+      
+      throw new BadRequestException(&#x60;Failed to bulk assign students: ${error.message}&#x60;);
+    }
+  }
+
+ 
+  async removeTransportAssignment(input: RemoveTransportAssignmentInput, user: ActiveUserData): Promise&lt;boolean&gt; {
+    this.logger.debug(&#x27;Starting transport assignment removal&#x27;, { input, user });
+
+    try {
+      const assignment &#x3D; await this.assignmentRepo.findOne({
+        where: {
+          studentId: input.studentId,
+          routeId: input.routeId,
+          tenantId: this.getTenantId(user),
+          status: &#x27;ACTIVE&#x27;
+        },
+        relations: [&#x27;student&#x27;, &#x27;student.user&#x27;, &#x27;route&#x27;]
+      });
+
+      if (!assignment) {
+        throw new NotFoundException(&#x27;Active transport assignment not found for this student and route&#x27;);
+      }
+
+      assignment.status &#x3D; &#x27;INACTIVE&#x27;;
+      assignment.vacatedAt &#x3D; new Date();
+      
+      await this.assignmentRepo.save(assignment);
+
+      this.logger.log(&#x60;Successfully removed student ${assignment.student?.user?.name} from route ${assignment.route?.name}&#x60;);
+      return true;
+
+    } catch (error) {
+      this.logger.error(&#x27;Failed to remove transport assignment&#x27;, { error: error.message, input, tenantId: this.getTenantId(user) });
+      
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      
+      throw new BadRequestException(&#x60;Failed to remove transport assignment: ${error.message}&#x60;);
+    }
+  }
+
+  async removeBulkTransportAssignments(input: { studentIds: string[]; routeId?: string }, user: ActiveUserData): Promise&lt;number&gt; {
+    this.logger.debug(&#x27;Starting bulk transport assignment removal&#x27;, { input, tenantId: this.getTenantId(user) });
+
+    try {
+      const whereCondition: any &#x3D; {
+        studentId: In(input.studentIds),
+        tenantId: this.getTenantId(user),
+        status: &#x27;ACTIVE&#x27;
+      };
+
+      if (input.routeId) {
+        whereCondition.routeId &#x3D; input.routeId;
+      }
+
+      const assignments &#x3D; await this.assignmentRepo.find({
+        where: whereCondition,
+        relations: [&#x27;student&#x27;, &#x27;student.user&#x27;, &#x27;route&#x27;]
+      });
+
+      if (assignments.length &#x3D;&#x3D;&#x3D; 0) {
+        throw new NotFoundException(&#x27;No active transport assignments found for the specified students&#x27;);
+      }
+
+      const updatedAssignments &#x3D; assignments.map(assignment &#x3D;&gt; ({
+        ...assignment,
+        status: &#x27;INACTIVE&#x27; as const,
+        vacatedAt: new Date()
+      }));
+
+      await this.assignmentRepo.save(updatedAssignments);
+
+      this.logger.log(&#x60;Successfully removed ${assignments.length} transport assignments&#x60;);
+      return assignments.length;
+
+    } catch (error) {
+      this.logger.error(&#x27;Failed to bulk remove transport assignments&#x27;, { error: error.message, input, tenantId: this.getTenantId(user) });
+      
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      
+      throw new BadRequestException(&#x60;Failed to bulk remove transport assignments: ${error.message}&#x60;);
+    }
+  }
+
+ 
+  async updateTransportAssignment(input: UpdateTransportAssignmentInput, tenantId: string): Promise&lt;TransportAssignment&gt; {
+    this.logger.debug(&#x27;Starting transport assignment update&#x27;, { input, tenantId });
+
+    try {
+      const assignment &#x3D; await this.assignmentRepo.findOne({
+        where: {
+          id: input.assignmentId,
+          tenantId,
+          status: &#x27;ACTIVE&#x27;
+        },
+        relations: [&#x27;student&#x27;, &#x27;student.user&#x27;, &#x27;route&#x27;]
+      });
+
+      if (!assignment) {
+        throw new NotFoundException(&#x27;Active transport assignment not found&#x27;);
+      }
+
+      // If changing route, validate new route exists
+      if (input.newRouteId &amp;&amp; input.newRouteId !&#x3D;&#x3D; assignment.routeId) {
+        const newRoute &#x3D; await this.routeRepo.findOne({
+          where: { id: input.newRouteId, tenantId }
+        });
+
+        if (!newRoute) {
+          throw new NotFoundException(&#x60;New transport route with ID ${input.newRouteId} not found&#x60;);
+        }
+
+        // Check for existing assignment to new route
+        const existingNewAssignment &#x3D; await this.assignmentRepo.findOne({
+          where: {
+            studentId: assignment.studentId,
+            routeId: input.newRouteId,
+            tenantId,
+            status: &#x27;ACTIVE&#x27;
+          }
+        });
+
+        if (existingNewAssignment) {
+          throw new ConflictException(&#x27;Student is already assigned to the new route&#x27;);
+        }
+
+        assignment.routeId &#x3D; input.newRouteId;
+      }
+
+      // Update pickup point if provided
+      if (input.pickupPoint !&#x3D;&#x3D; undefined) {
+        assignment.pickupPoint &#x3D; input.pickupPoint;
+      }
+
+      const updatedAssignment &#x3D; await this.assignmentRepo.save(assignment);
+
+      // Fetch with updated relations
+      const result &#x3D; await this.assignmentRepo
+        .createQueryBuilder(&#x27;assignment&#x27;)
+        .leftJoinAndSelect(&#x27;assignment.student&#x27;, &#x27;student&#x27;)
+        .leftJoinAndSelect(&#x27;student.user&#x27;, &#x27;user&#x27;)
+        .leftJoinAndSelect(&#x27;assignment.route&#x27;, &#x27;route&#x27;)
+        .where(&#x27;assignment.id &#x3D; :id AND assignment.tenantId &#x3D; :tenantId&#x27;, {
+          id: updatedAssignment.id,
+          tenantId
+        })
+        .getOne();
+
+      if (!result) {
+        throw new Error(&#x27;Failed to retrieve updated assignment&#x27;);
+      }
+
+      // this.logger.log(&#x60;Successfully updated transport assignment for student ${result.student?.user?.name}&#x60;);
+      return result;
+
+    } catch (error) {
+      // this.logger.error(&#x27;Failed to update transport assignment&#x27;, { error: error.message, input, tenantId });
+      
+      if (error instanceof NotFoundException || error instanceof ConflictException) {
+        throw error;
+      }
+      
+      throw new BadRequestException(&#x60;Failed to update transport assignment: ${error.message}&#x60;);
+    }
+  }
+
+  /**
+   * Get all transport assignments with filtering options
+   */
+  async getTransportAssignments(filters: {
+    routeId?: string;
+    studentId?: string;
+    status?: &#x27;ACTIVE&#x27; | &#x27;INACTIVE&#x27;;
+    limit?: number;
+    offset?: number;
+  }, tenantId: string): Promise&lt;{ assignments: TransportAssignment[]; total: number }&gt; {
+    try {
+      const queryBuilder &#x3D; this.assignmentRepo
+        .createQueryBuilder(&#x27;assignment&#x27;)
+        .leftJoinAndSelect(&#x27;assignment.student&#x27;, &#x27;student&#x27;)
+        .leftJoinAndSelect(&#x27;student.user&#x27;, &#x27;user&#x27;)
+        .leftJoinAndSelect(&#x27;assignment.route&#x27;, &#x27;route&#x27;)
+        .where(&#x27;assignment.tenantId &#x3D; :tenantId&#x27;, { tenantId });
+
+      if (filters.routeId) {
+        queryBuilder.andWhere(&#x27;assignment.routeId &#x3D; :routeId&#x27;, { routeId: filters.routeId });
+      }
+
+      if (filters.studentId) {
+        queryBuilder.andWhere(&#x27;assignment.studentId &#x3D; :studentId&#x27;, { studentId: filters.studentId });
+      }
+
+      if (filters.status) {
+        queryBuilder.andWhere(&#x27;assignment.status &#x3D; :status&#x27;, { status: filters.status });
+      }
+
+      const total &#x3D; await queryBuilder.getCount();
+
+      if (filters.limit) {
+        queryBuilder.limit(filters.limit);
+      }
+
+      if (filters.offset) {
+        queryBuilder.offset(filters.offset);
+      }
+
+      const assignments &#x3D; await queryBuilder
+        .orderBy(&#x27;assignment.createdAt&#x27;, &#x27;DESC&#x27;)
+        .getMany();
+
+      return { assignments, total };
+
+    } catch (error) {
+      // this.logger.error(&#x27;Failed to get transport assignments&#x27;, { error: error.message, filters, tenantId });
+      throw new BadRequestException(&#x60;Failed to retrieve transport assignments: ${error.message}&#x60;);
+    }
+
+  }
+
+
+  async updateAssignment(input: UpdateTransportAssignmentInput, user: ActiveUserData): Promise&lt;TransportAssignment&gt; {
+    const assignment &#x3D; await this.assignmentRepo.findOne({
+      where: { id: input.assignmentId, tenantId: user.tenantId },
+    });
+
+    if (!assignment) throw new NotFoundException(&#x27;Assignment not found&#x27;);
+
+    Object.assign(assignment, input);
+    return this.assignmentRepo.save(assignment);
+  }
+
+  async getAssignmentsByRoute(routeId: string, user: ActiveUserData) {
+    return this.assignmentRepo.find({
+      where: { routeId, tenantId: user.tenantId },
+      relations: [&#x27;student&#x27;, &#x27;route&#x27;],
+    });
+  }
+
+  // async assignStudent(
+  //   input: AssignTransportInput,
+  //   tenantId: string,
+  // ): Promise&lt;TransportAssignment&gt; {
+  //   const assignment &#x3D; this.assignmentRepo.create({
+  //     ...input,
+  //     tenantId,
+  //     status: &#x27;ACTIVE&#x27;,
+  //   });
+  //   return this.assignmentRepo.save(assignment);
+  // }
+
+  // async updateAssignment(input: UpdateTransportAssignmentInput, tenantId: string): Promise&lt;TransportAssignment&gt; {
+  //   const assignment &#x3D; await this.assignmentRepo.findOne({
+  //     where: { id: input.id, tenantId },
+  //     relations: [&#x27;route&#x27;, &#x27;student&#x27;, &#x27;student.user&#x27;],
+  //   });
+  //   if (!assignment) throw new NotFoundException(&#x27;Assignment not found&#x27;);
+
+  //   if (typeof input.pickupPoint !&#x3D;&#x3D; &#x27;undefined&#x27;) assignment.pickupPoint &#x3D; input.pickupPoint;
+
+  //   if (typeof input.status !&#x3D;&#x3D; &#x27;undefined&#x27;) {
+  //     assignment.status &#x3D; input.status;
+  //     if (input.status &#x3D;&#x3D;&#x3D; &#x27;INACTIVE&#x27; &amp;&amp; !assignment.vacatedAt) {
+  //       assignment.vacatedAt &#x3D; new Date();
+  //     }
+  //     if (input.status &#x3D;&#x3D;&#x3D; &#x27;ACTIVE&#x27;) {
+  //       assignment.vacatedAt &#x3D; undefined;
+  //     }
+  //   }
+
+  //   return this.assignmentRepo.save(assignment);
+  // }
+
+  // async unassignById(id: string, tenantId: string): Promise&lt;boolean&gt; {
+  //   const assignment &#x3D; await this.assignmentRepo.findOne({ where: { id, tenantId } });
+  //   if (!assignment) return false;
+  //   assignment.status &#x3D; &#x27;INACTIVE&#x27;;
+  //   assignment.vacatedAt &#x3D; new Date();
+  //   await this.assignmentRepo.save(assignment);
+  //   return true;
+  // }
+
+  // async getAssignmentsByRoute(routeId: string, tenantId: string): Promise&lt;TransportAssignment[]&gt; {
+  //   return this.assignmentRepo.find({
+  //     where: { routeId, tenantId },
+  //     relations: [&#x27;route&#x27;, &#x27;student&#x27;, &#x27;student.user&#x27;],
+  //   });
+  // }
+
+  // async getAssignmentsByStudent(studentId: string, tenantId: string): Promise&lt;TransportAssignment[]&gt; {
+  //   return this.assignmentRepo.find({
+  //     where: { studentId, tenantId },
+  //     relations: [&#x27;route&#x27;, &#x27;student&#x27;, &#x27;student.user&#x27;],
+  //   });
+  // }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'TransportService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

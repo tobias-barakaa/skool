@@ -1,0 +1,1179 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>skool documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">skool documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >StudentsService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/admin/student/providers/student.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#logger" >logger</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#createStudent" >createStudent</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#findStudentsByTenant" >findStudentsByTenant</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getAllStudentsByTenant" >getAllStudentsByTenant</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getGradeLevelsWithStreamsForTenant" >getGradeLevelsWithStreamsForTenant</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getStudentsByTenantGradeLevel" >getStudentsByTenantGradeLevel</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getStudentsForTenant" >getStudentsForTenant</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#revokeStudent" >revokeStudent</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(usersCreateStudentProvider: <a href="../injectables/UsersCreateStudentProvider.html" target="_self">UsersCreateStudentProvider</a>, schoolConfigRepo: Repository<SchoolConfig>, studentRepository: <a href="../interfaces/Student.html" target="_self">Repository&lt;Student&gt;</a>, membershipRepository: <a href="../s/Tenant.html" target="_self">Repository&lt;UserTenantMembership&gt;</a>, studentQueryProvider: <a href="../injectables/StudentQueryProvider.html" target="_self">StudentQueryProvider</a>, schoolSetupGuardService: <a href="../injectables/SchoolSetupGuardService.html" target="_self">SchoolSetupGuardService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/admin/student/providers/student.service.ts:19</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>usersCreateStudentProvider</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/UsersCreateStudentProvider.html" target="_self" >UsersCreateStudentProvider</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>schoolConfigRepo</td>
+                                                  
+                                                        <td>
+                                                                    <code>Repository&lt;SchoolConfig&gt;</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>studentRepository</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../interfaces/Student.html" target="_self" >Repository&lt;Student&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>membershipRepository</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../miscellaneous/variables.html#Tenant" target="_self" >Repository&lt;UserTenantMembership&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>studentQueryProvider</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/StudentQueryProvider.html" target="_self" >StudentQueryProvider</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>schoolSetupGuardService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/SchoolSetupGuardService.html" target="_self" >SchoolSetupGuardService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createStudent"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>createStudent</b></span>
+                        <a href="#createStudent"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createStudent(createStudentInput: <a href="../classes/CreateStudentInput.html" target="_self">CreateStudentInput</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="37"
+                                    class="link-to-prism">src/admin/student/providers/student.service.ts:37</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>createStudentInput</td>
+                                            <td>
+                                                            <code><a href="../classes/CreateStudentInput.html" target="_self" >CreateStudentInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/Student.html" target="_self" >Promise&lt;CreateStudentResponse&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findStudentsByTenant"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>findStudentsByTenant</b></span>
+                        <a href="#findStudentsByTenant"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findStudentsByTenant(tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="156"
+                                    class="link-to-prism">src/admin/student/providers/student.service.ts:156</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/Student.html" target="_self" >Promise&lt;Student[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAllStudentsByTenant"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getAllStudentsByTenant</b></span>
+                        <a href="#getAllStudentsByTenant"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getAllStudentsByTenant(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="169"
+                                    class="link-to-prism">src/admin/student/providers/student.service.ts:169</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/Student.html" target="_self" >Promise&lt;Student[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getGradeLevelsWithStreamsForTenant"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getGradeLevelsWithStreamsForTenant</b></span>
+                        <a href="#getGradeLevelsWithStreamsForTenant"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getGradeLevelsWithStreamsForTenant(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="110"
+                                    class="link-to-prism">src/admin/student/providers/student.service.ts:110</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;any[]&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getStudentsByTenantGradeLevel"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getStudentsByTenantGradeLevel</b></span>
+                        <a href="#getStudentsByTenantGradeLevel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getStudentsByTenantGradeLevel(tenantGradeLevelId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="186"
+                                    class="link-to-prism">src/admin/student/providers/student.service.ts:186</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>tenantGradeLevelId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/Student.html" target="_self" >Promise&lt;Student[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getStudentsForTenant"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getStudentsForTenant</b></span>
+                        <a href="#getStudentsForTenant"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getStudentsForTenant(currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="75"
+                                    class="link-to-prism">src/admin/student/providers/student.service.ts:75</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/Student.html" target="_self" >Promise&lt;StudentLoginInfo[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="revokeStudent"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>revokeStudent</b></span>
+                        <a href="#revokeStudent"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>revokeStudent(studentId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="196"
+                                    class="link-to-prism">src/admin/student/providers/student.service.ts:196</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>studentId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;literal type&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="logger"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>logger</b></span>
+                        <a href="#logger"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new Logger(StudentsService.name)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">src/admin/student/providers/student.service.ts:19</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { BadRequestException, ForbiddenException, Injectable, Logger, NotFoundException } from &#x27;@nestjs/common&#x27;;
+import { InjectRepository } from &#x27;@nestjs/typeorm&#x27;;
+import { ActiveUserData } from &#x27;src/admin/auth/interface/active-user.interface&#x27;;
+import { Repository } from &#x27;typeorm&#x27;;
+import { CreateStudentInput } from &#x27;../dtos/create-student-input.dto&#x27;;
+import { CreateStudentResponse } from &#x27;../dtos/student-response.dto&#x27;;
+import { Student } from &#x27;../entities/student.entity&#x27;;
+import { StudentQueryProvider } from &#x27;./student-query.provider&#x27;;
+import { UsersCreateStudentProvider } from &#x27;./student.create.provider&#x27;;
+import { SchoolConfig } from &#x27;src/admin/school-type/entities/school-config.entity&#x27;;
+import { MembershipRole, UserTenantMembership } from &#x27;src/admin/user-tenant-membership/entities/user-tenant-membership.entity&#x27;;
+import { SchoolSetupGuardService } from &#x27;src/admin/config/school-config.guard&#x27;;
+import { StudentLoginInfo } from &#x27;../dtos/student-login-info.output&#x27;;
+
+
+@Injectable()
+export class StudentsService {
+  private readonly logger &#x3D; new Logger(StudentsService.name);
+
+  constructor(
+    private readonly usersCreateStudentProvider: UsersCreateStudentProvider,
+
+    @InjectRepository(SchoolConfig)
+    private readonly schoolConfigRepo: Repository&lt;SchoolConfig&gt;,
+
+    @InjectRepository(Student)
+    private readonly studentRepository: Repository&lt;Student&gt;,
+
+    @InjectRepository(UserTenantMembership)
+    private readonly membershipRepository: Repository&lt;UserTenantMembership&gt;,
+
+    private readonly studentQueryProvider: StudentQueryProvider,
+    private readonly schoolSetupGuardService: SchoolSetupGuardService,
+  ) {}
+
+  async createStudent(
+    createStudentInput: CreateStudentInput,
+    currentUser: ActiveUserData,
+  ): Promise&lt;CreateStudentResponse&gt; {
+    const membership &#x3D; await this.membershipRepository.findOne({
+      where: {
+        userId: currentUser.sub,
+        role: MembershipRole.SCHOOL_ADMIN,
+      },
+      relations: [&#x27;tenant&#x27;],
+    });
+
+    if (!membership) {
+      throw new ForbiddenException(&#x27;Only school admins can create students&#x27;);
+    }
+
+    await this.schoolSetupGuardService.validateSchoolIsConfigured(
+      membership.tenantId,
+    );
+
+    const isValidGrade &#x3D;
+      await this.schoolSetupGuardService.validateGradeLevelBelongsToTenant(
+        membership.tenantId,
+        createStudentInput.tenantGradeLevelId,
+      );
+
+    if (!isValidGrade) {
+      throw new BadRequestException(
+        &#x60;Grade level with ID ${createStudentInput.tenantGradeLevelId} is not part of the configured school for this tenant&#x60;,
+      );
+    }
+
+    return this.usersCreateStudentProvider.createStudent(
+      createStudentInput,
+      currentUser,
+    );
+  }
+
+  async getStudentsForTenant(currentUser: ActiveUserData): Promise&lt;StudentLoginInfo[]&gt; {
+
+     const membership &#x3D; await this.membershipRepository.findOne({
+          where: {
+            userId: currentUser.sub,
+            role: MembershipRole.SCHOOL_ADMIN,
+          },
+        });
+
+        if (!membership) {
+          throw new ForbiddenException(&#x27;Only school admins can create students&#x27;);
+        }
+
+        const tenantId &#x3D; membership.tenantId;
+
+        await this.schoolSetupGuardService.validateSchoolIsConfigured(tenantId);
+
+    const students &#x3D; await this.studentRepository.find({
+      where: { tenant_id: tenantId, isActive: true },
+      relations: [&#x27;user&#x27;, &#x27;grade&#x27;, &#x27;grade.gradeLevel&#x27;],
+    });
+
+    return students.map((student) &#x3D;&gt; ({
+      id: student.id,
+      email: student.user.email,
+      name: student.user.name,
+      admission_number: student.admission_number,
+      grade: student.grade.gradeLevel.name,
+    }));
+  }
+
+  // async getAllStudentsByTenant(tenantId: string): Promise&lt;Student[]&gt; {
+  //   return this.studentQueryProvider.findAllByTenant(tenantId);
+  // }
+
+  async getGradeLevelsWithStreamsForTenant(user: ActiveUserData): Promise&lt;any[]&gt; {
+    const tenantId &#x3D; user.tenantId;
+    const schoolConfig &#x3D; await this.schoolConfigRepo
+      .createQueryBuilder(&#x27;config&#x27;)
+      .leftJoin(&#x27;config.selectedLevels&#x27;, &#x27;schoolLevel&#x27;)
+      .leftJoin(&#x27;schoolLevel.gradeLevels&#x27;, &#x27;gradeLevel&#x27;)
+      .leftJoin(&#x27;gradeLevel.streams&#x27;, &#x27;stream&#x27;)
+      .addSelect([
+        &#x27;schoolLevel.id&#x27;,
+        &#x27;schoolLevel.name&#x27;,
+        &#x27;gradeLevel.id&#x27;,
+        &#x27;gradeLevel.name&#x27;,
+        &#x27;stream.id&#x27;,
+        &#x27;stream.name&#x27;,
+      ])
+      .where(&#x27;config.tenantId &#x3D; :tenantId&#x27;, { tenantId })
+      .getRawMany();
+
+    // Group data into structure: gradeLevels: [{ id, name, streams: [] }]
+    const gradeMap &#x3D; new Map&lt;
+      string,
+      { id: string; name: string; streams: any[] }
+    &gt;();
+
+    for (const row of schoolConfig) {
+      const gradeId &#x3D; row[&#x27;gradeLevel_id&#x27;];
+      if (!gradeMap.has(gradeId)) {
+        gradeMap.set(gradeId, {
+          id: gradeId,
+          name: row[&#x27;gradeLevel_name&#x27;],
+          streams: [],
+        });
+      }
+
+      const streamId &#x3D; row[&#x27;stream_id&#x27;];
+      if (streamId) {
+        gradeMap.get(gradeId)!.streams.push({
+          id: streamId,
+          name: row[&#x27;stream_name&#x27;],
+        });
+      }
+    }
+
+    return Array.from(gradeMap.values());
+  }
+
+  async findStudentsByTenant(tenantId: string): Promise&lt;Student[]&gt; {
+    return this.studentRepository.find({
+      where: {
+        user: {
+          memberships: {
+            tenantId: tenantId,
+          },
+        },
+      },
+      relations: [&#x27;user&#x27;],
+    });
+  }
+
+  async getAllStudentsByTenant(user: ActiveUserData): Promise&lt;Student[]&gt; {
+    return this.studentRepository.find({
+      where: {
+        tenant_id: user.tenantId,
+        isActive: true,
+      },
+      relations: [
+        &#x27;user&#x27;,
+        &#x27;grade&#x27;,               
+        &#x27;grade.gradeLevel&#x27;,    
+        &#x27;grade.curriculum&#x27;,   
+        &#x27;stream&#x27;,              
+      ],
+      order: { createdAt: &#x27;ASC&#x27; },
+    });
+  }
+
+  async getStudentsByTenantGradeLevel(
+    tenantGradeLevelId: string,
+    user: ActiveUserData,
+  ): Promise&lt;Student[]&gt; {
+    return this.usersCreateStudentProvider.getStudentsByTenantGradeLevel(
+      tenantGradeLevelId,
+      user,
+    );
+  }
+
+  async revokeStudent(
+    studentId: string,
+    currentUser: ActiveUserData,
+  ): Promise&lt;{ message: string }&gt; {
+    const membership &#x3D; await this.membershipRepository.findOne({
+      where: {
+        userId: currentUser.sub,
+        tenantId: currentUser.tenantId,
+        role: MembershipRole.SCHOOL_ADMIN,
+      },
+    });
+
+    if (!membership) {
+      throw new ForbiddenException(&#x27;Only school admins can revoke students&#x27;);
+    }
+
+    const student &#x3D; await this.studentRepository.findOne({
+      where: { id: studentId },
+      relations: [&#x27;user&#x27;],
+    });
+
+    if (!student) {
+      throw new NotFoundException(&#x27;Student not found&#x27;);
+    }
+
+    student.isActive &#x3D; false;
+    await this.studentRepository.save(student);
+
+    return { message: &#x27;Student revoked successfully&#x27; };
+  }
+}
+
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'StudentsService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

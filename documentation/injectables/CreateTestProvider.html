@@ -1,0 +1,742 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>skool documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">skool documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >CreateTestProvider</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/teacher/test/providers/create-test.provider.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#createTest" >createTest</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#deleteTest" >deleteTest</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(dataSource: DataSource, schoolSetupGuardService: <a href="../injectables/SchoolSetupGuardService.html" target="_self">SchoolSetupGuardService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">src/teacher/test/providers/create-test.provider.ts:17</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>dataSource</td>
+                                                  
+                                                        <td>
+                                                                    <code>DataSource</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>schoolSetupGuardService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/SchoolSetupGuardService.html" target="_self" >SchoolSetupGuardService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createTest"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>createTest</b></span>
+                        <a href="#createTest"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createTest(dto: <a href="../classes/CreateTestInput.html" target="_self">CreateTestInput</a>, teacher: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="24"
+                                    class="link-to-prism">src/teacher/test/providers/create-test.provider.ts:24</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>dto</td>
+                                            <td>
+                                                            <code><a href="../classes/CreateTestInput.html" target="_self" >CreateTestInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>teacher</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Test.html" target="_self" >Promise&lt;Test&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="deleteTest"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>deleteTest</b></span>
+                        <a href="#deleteTest"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>deleteTest(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, teacher: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="192"
+                                    class="link-to-prism">src/teacher/test/providers/create-test.provider.ts:192</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>teacher</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, BadRequestException, NotFoundException } from &#x27;@nestjs/common&#x27;;
+import { DataSource, In } from &#x27;typeorm&#x27;;
+import { Test } from &#x27;../entities/test.entity&#x27;;
+import { Question } from &#x27;../entities/question.entity&#x27;;
+import { Option } from &#x27;../entities/option.entity&#x27;;
+import { ReferenceMaterial } from &#x27;../entities/reference-material.entity&#x27;;
+import { CreateTestInput } from &#x27;../dtos/create-test-input.dto&#x27;;
+import { ActiveUserData } from &#x27;src/admin/auth/interface/active-user.interface&#x27;;
+import { User } from &#x27;src/admin/users/entities/user.entity&#x27;;
+import { TenantGradeLevel } from &#x27;src/admin/school-type/entities/tenant-grade-level&#x27;;
+import { TenantSubject } from &#x27;src/admin/school-type/entities/tenant-specific-subject&#x27;;
+import { Tenant } from &#x27;src/admin/tenants/entities/tenant.entity&#x27;;
+import { SchoolSetupGuardService } from &#x27;src/admin/config/school-config.guard&#x27;;
+
+
+@Injectable()
+export class CreateTestProvider {
+  constructor(private readonly dataSource: DataSource,
+
+        private readonly schoolSetupGuardService: SchoolSetupGuardService,
+  ) {}
+
+
+async createTest(
+  dto: CreateTestInput,
+  teacher: ActiveUserData,
+): Promise&lt;Test&gt; {
+
+
+      if (!teacher.tenantId) {
+        throw new BadRequestException(&#x27;Tenant ID is required&#x27;);
+      }
+      await this.schoolSetupGuardService.validateSchoolIsConfigured(teacher.tenantId);
+
+    const qr &#x3D; this.dataSource.createQueryRunner();
+    await qr.connect();
+    await qr.startTransaction();
+
+    try {
+      console.log(&#x27;&#x3D;&#x3D;&#x3D; DEBUG: Starting createTest &#x3D;&#x3D;&#x3D;&#x27;);
+      console.log(&#x27;Teacher info:&#x27;, {
+        sub: teacher.sub,
+        tenantId: teacher.tenantId,
+        email: teacher.email,
+      });
+      console.log(&#x27;DTO grade level IDs:&#x27;, dto.tenantGradeLevelIds);
+      console.log(&#x27;DTO subject ID:&#x27;, dto.tenantSubjectId);
+
+      // 1. Ensure teacher user exists
+      const teacherUser &#x3D; await qr.manager.findOne(User, {
+        where: { id: teacher.sub },
+      });
+      console.log(&#x27;Found teacher user:&#x27;, !!teacherUser);
+      if (!teacherUser) throw new BadRequestException(&#x27;User not found&#x27;);
+
+      // 2. Debug: Check if tenant exists
+      const tenantExists &#x3D; await qr.manager.findOne(Tenant, {
+        where: { id: teacher.tenantId },
+      });
+      console.log(&#x27;Tenant exists:&#x27;, !!tenantExists);
+      if (!tenantExists) {
+        throw new BadRequestException(&#x27;Tenant not found&#x27;);
+      }
+
+      // 3. Validate grade levels belong to tenant (with better debugging)
+      console.log(&#x27;&#x3D;&#x3D;&#x3D; DEBUG: Checking grade levels &#x3D;&#x3D;&#x3D;&#x27;);
+
+      // First, let&#x27;s see what grade levels exist for this tenant
+      const allTenantGradeLevels &#x3D; await qr.manager.find(TenantGradeLevel, {
+        where: { tenant: { id: teacher.tenantId } },
+        select: [&#x27;id&#x27;, &#x27;tenant&#x27;],
+      });
+      console.log(&#x27;All grade levels for tenant:&#x27;, allTenantGradeLevels);
+
+      // Now try with the specific IDs
+      const tenantGradeLevels &#x3D; await qr.manager.find(TenantGradeLevel, {
+        where: {
+          id: In(dto.tenantGradeLevelIds),
+          tenant: { id: teacher.tenantId },
+        },
+        select: [&#x27;id&#x27;],
+      });
+      console.log(&#x27;Found matching grade levels:&#x27;, tenantGradeLevels);
+      console.log(&#x27;Expected count:&#x27;, dto.tenantGradeLevelIds.length, &#x27;Actual count:&#x27;, tenantGradeLevels.length);
+
+      if (tenantGradeLevels.length !&#x3D;&#x3D; dto.tenantGradeLevelIds.length) {
+        const foundIds &#x3D; tenantGradeLevels.map(gl &#x3D;&gt; gl.id);
+        const missingIds &#x3D; dto.tenantGradeLevelIds.filter(id &#x3D;&gt; !foundIds.includes(id));
+        console.log(&#x27;Missing grade level IDs:&#x27;, missingIds);
+        throw new BadRequestException(&#x60;Grade levels not found: ${missingIds.join(&#x27;, &#x27;)}&#x60;);
+      }
+
+      // 4. Validate tenant subject (with better debugging)
+      console.log(&#x27;&#x3D;&#x3D;&#x3D; DEBUG: Checking subject &#x3D;&#x3D;&#x3D;&#x27;);
+
+      // First, let&#x27;s see what subjects exist for this tenant
+      const allTenantSubjects &#x3D; await qr.manager.find(TenantSubject, {
+        where: { tenant: { id: teacher.tenantId } },
+        select: [&#x27;id&#x27;],
+      });
+      console.log(&#x27;All subjects for tenant:&#x27;, allTenantSubjects);
+
+      const tenantSubject &#x3D; await qr.manager.findOne(TenantSubject, {
+        where: {
+          id: dto.tenantSubjectId,
+          tenant: { id: teacher.tenantId }
+        },
+      });
+      console.log(&#x27;Found subject:&#x27;, !!tenantSubject);
+      if (!tenantSubject) {
+        throw new BadRequestException(&#x60;Subject not found: ${dto.tenantSubjectId}&#x60;);
+      }
+
+      // 5. Create the test
+      console.log(&#x27;&#x3D;&#x3D;&#x3D; DEBUG: Creating test &#x3D;&#x3D;&#x3D;&#x27;);
+      const test &#x3D; qr.manager.create(Test, {
+        title: dto.title,
+        subject: tenantSubject,
+        gradeLevels: tenantGradeLevels,
+        date: new Date(dto.date),
+        startTime: dto.startTime,
+        endTime: dto.endTime,
+        duration: dto.duration,
+        totalMarks: dto.totalMarks,
+        resourceUrl: dto.resourceUrl,
+        instructions: dto.instructions,
+        teacher: teacherUser,
+      });
+
+      const savedTest &#x3D; await qr.manager.save(Test, test);
+      console.log(&#x27;Test saved with ID:&#x27;, savedTest.id);
+
+      // 6. Add questions (if any)
+      if (dto.questions?.length) {
+        console.log(&#x27;&#x3D;&#x3D;&#x3D; DEBUG: Adding questions &#x3D;&#x3D;&#x3D;&#x27;);
+        for (const [index, qInput] of dto.questions.entries()) {
+          console.log(&#x60;Creating question ${index + 1}:&#x60;, {
+            text: qInput.text.substring(0, 50) + &#x27;...&#x27;,
+            type: qInput.type,
+            marks: qInput.marks,
+            optionsCount: qInput.options?.length || 0,
+          });
+
+          const question &#x3D; qr.manager.create(Question, {
+            ...qInput,
+            test: savedTest,
+          });
+          const savedQuestion &#x3D; await qr.manager.save(Question, question);
+
+          if (qInput.options?.length) {
+            for (const [optIndex, oInput] of qInput.options.entries()) {
+              console.log(&#x60;  Creating option ${optIndex + 1}: ${oInput.text} (correct: ${oInput.isCorrect})&#x60;);
+              const option &#x3D; qr.manager.create(Option, {
+                ...oInput,
+                question: savedQuestion,
+              });
+              await qr.manager.save(Option, option);
+            }
+          }
+        }
+      }
+
+      // 7. Add reference materials (if any)
+      if (dto.referenceMaterials?.length) {
+        console.log(&#x27;&#x3D;&#x3D;&#x3D; DEBUG: Adding reference materials &#x3D;&#x3D;&#x3D;&#x27;);
+        for (const [index, rmInput] of dto.referenceMaterials.entries()) {
+          console.log(&#x60;Creating reference material ${index + 1}:&#x60;, {
+            fileType: rmInput.fileType,
+            fileSize: rmInput.fileSize,
+          });
+          const material &#x3D; qr.manager.create(ReferenceMaterial, {
+            ...rmInput,
+            test: savedTest,
+          });
+          await qr.manager.save(ReferenceMaterial, material);
+        }
+      }
+
+      await qr.commitTransaction();
+      console.log(&#x27;&#x3D;&#x3D;&#x3D; DEBUG: Transaction committed successfully &#x3D;&#x3D;&#x3D;&#x27;);
+      return savedTest;
+    } catch (err) {
+      console.error(&#x27;&#x3D;&#x3D;&#x3D; DEBUG: Error occurred, rolling back &#x3D;&#x3D;&#x3D;&#x27;, err);
+      await qr.rollbackTransaction();
+      throw err;
+    } finally {
+      await qr.release();
+    }
+  }
+
+
+  async deleteTest(id: string, teacher: ActiveUserData): Promise&lt;boolean&gt; {
+    const queryRunner &#x3D; this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      // First, verify the test exists and belongs to the teacher
+      const test &#x3D; await queryRunner.manager.findOne(Test, {
+        where: { id, teacher: { id: teacher.sub } },
+        relations: [&#x27;questions&#x27;, &#x27;questions.options&#x27;, &#x27;referenceMaterials&#x27;],
+      });
+
+      if (!test) {
+        throw new NotFoundException(
+          &#x60;Test with id ${id} not found or you don&#x27;t have permission to delete it&#x60;,
+        );
+      }
+
+      // Delete related data in the correct order to avoid foreign key constraints
+
+      // 1. Delete options
+      if (test.questions?.length) {
+        for (const question of test.questions) {
+          if (question.options?.length) {
+            await queryRunner.manager.delete(&#x27;Option&#x27;, {
+              question: { id: question.id },
+            });
+          }
+        }
+      }
+
+      // 2. Delete questions
+      if (test.questions?.length) {
+        await queryRunner.manager.delete(&#x27;Question&#x27;, { test: { id: test.id } });
+      }
+
+      // 3. Delete reference materials
+      if (test.referenceMaterials?.length) {
+        await queryRunner.manager.delete(&#x27;ReferenceMaterial&#x27;, {
+          test: { id: test.id },
+        });
+      }
+
+      // 4. Delete the test itself
+      await queryRunner.manager.delete(&#x27;Test&#x27;, { id: test.id });
+
+      await queryRunner.commitTransaction();
+      return true;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+
+      console.error(&#x27;Test deletion error:&#x27;, error);
+
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+
+      throw new BadRequestException(
+        &#x60;Failed to delete test: ${error.message || error}&#x60;,
+      );
+    } finally {
+      await queryRunner.release();
+    }
+  }
+}
+
+
+
+
+// {
+//    &quot;Authorization&quot;: &quot;Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiOTM0NTg2ZS0yMmYzLTQ5MmQtYjUwMS1iZTI5YWU1ZjE4ZDQiLCJlbWFpbCI6InRvYmlhc2JhcmFrYW5AZ21haWwuY29tIiwidGVuYW50SWQiOiJlZDJjMDIxOC03NTA4LTRmODctYjZkNC1lNTk4ZTAwNjUxYjgiLCJzdWJkb21haW4iOiJub3RuZG93MSIsIm1lbWJlcnNoaXBJZCI6IjZiMTc0NzZmLWFhZWEtNDYxNi04YzFhLTljZjkwZTYwOGY5OSIsImlhdCI6MTc1NTU5NjA1MCwiZXhwIjoxNzU1OTU2MDUwLCJhdWQiOiJsb2NhbGhvc3Q6MzAwMCIsImlzcyI6ImxvY2FsaG9zdDozMDAwIn0.0xtgYRuYvxYM8bF03sVpKvAquW-8n5Ab9FQsn47nMJI&quot;
+//  }
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'CreateTestProvider.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

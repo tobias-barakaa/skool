@@ -1,0 +1,876 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>skool documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">skool documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >SchoolLevelSettingService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/admin/school-level-setting/providers/school-level-setting.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#configureLevelsByNames" >configureLevelsByNames</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getAvailableLevelsForSchool" >getAvailableLevelsForSchool</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getSchoolLevelConfiguration" >getSchoolLevelConfiguration</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#removeLevelFromSchool" >removeLevelFromSchool</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(settingRepo: Repository<SchoolLevelSetting>, schoolRepo: <a href="../classes/School.html" target="_self">Repository&lt;School&gt;</a>, levelRepo: <a href="../classes/Level.html" target="_self">Repository&lt;Level&gt;</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="11" class="link-to-prism">src/admin/school-level-setting/providers/school-level-setting.service.ts:11</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>settingRepo</td>
+                                                  
+                                                        <td>
+                                                                    <code>Repository&lt;SchoolLevelSetting&gt;</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>schoolRepo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/School.html" target="_self" >Repository&lt;School&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>levelRepo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/Level.html" target="_self" >Repository&lt;Level&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="configureLevelsByNames"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>configureLevelsByNames</b></span>
+                        <a href="#configureLevelsByNames"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>configureLevelsByNames(subdomain: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, levelNames: string[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="21"
+                                    class="link-to-prism">src/admin/school-level-setting/providers/school-level-setting.service.ts:21</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>subdomain</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>levelNames</td>
+                                            <td>
+                                                        <code>string[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;SchoolLevelSetting&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAvailableLevelsForSchool"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getAvailableLevelsForSchool</b></span>
+                        <a href="#getAvailableLevelsForSchool"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getAvailableLevelsForSchool(subdomain: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="183"
+                                    class="link-to-prism">src/admin/school-level-setting/providers/school-level-setting.service.ts:183</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>subdomain</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Level.html" target="_self" >Promise&lt;Level[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getSchoolLevelConfiguration"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getSchoolLevelConfiguration</b></span>
+                        <a href="#getSchoolLevelConfiguration"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getSchoolLevelConfiguration(subdomain: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="159"
+                                    class="link-to-prism">src/admin/school-level-setting/providers/school-level-setting.service.ts:159</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>subdomain</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;SchoolLevelSetting | null&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="removeLevelFromSchool"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>removeLevelFromSchool</b></span>
+                        <a href="#removeLevelFromSchool"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>removeLevelFromSchool(subdomain: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, levelName: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="207"
+                                    class="link-to-prism">src/admin/school-level-setting/providers/school-level-setting.service.ts:207</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>subdomain</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>levelName</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;SchoolLevelSetting&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &#x27;@nestjs/common&#x27;;
+import { InjectRepository } from &#x27;@nestjs/typeorm&#x27;;
+import { Repository } from &#x27;typeorm&#x27;;
+import { SchoolLevelSetting } from &#x27;../entities/school-level-setting.entity&#x27;;
+import { School } from &#x27;../../school/entities/school.entity&#x27;;
+import { Level } from &#x27;../../level/entities/level.entities&#x27;;
+import { BusinessException } from &#x27;src/admin/common/exceptions/business.exception&#x27;;
+
+@Injectable()
+export class SchoolLevelSettingService {
+  constructor(
+    @InjectRepository(SchoolLevelSetting)
+    private readonly settingRepo: Repository&lt;SchoolLevelSetting&gt;,
+    @InjectRepository(School)
+    private readonly schoolRepo: Repository&lt;School&gt;,
+    @InjectRepository(Level)
+    private readonly levelRepo: Repository&lt;Level&gt;,
+  ) {}
+
+  async configureLevelsByNames(subdomain: string, levelNames: string[]): Promise&lt;SchoolLevelSetting&gt; {
+    try {
+      console.log(&#x27;🔍 Starting configureLevelsByNames with:&#x27;, { subdomain, levelNames });
+
+      // Find the school by subdomain
+      const school &#x3D; await this.schoolRepo.findOne({
+        where: { subdomain },
+        relations: [&#x27;schoolType&#x27;] // Make sure to load the school type
+      });
+
+      console.log(&#x27;🏫 Found school:&#x27;, school ? {
+        id: school.schoolId,
+        name: school.schoolName,
+        subdomain: school.subdomain,
+        schoolType: school.schoolType?.name
+      } : &#x27;NOT FOUND&#x27;);
+
+      if (!school) {
+        throw new BusinessException(
+          &#x60;School with subdomain &#x27;${subdomain}&#x27; not found.&#x60;,
+          &#x27;SCHOOL_NOT_FOUND&#x27;
+        );
+      }
+
+      if (!school.schoolType) {
+        throw new BusinessException(
+          &#x60;School &#x27;${school.schoolName}&#x27; does not have a school type assigned.&#x60;,
+          &#x27;NO_SCHOOL_TYPE&#x27;
+        );
+      }
+
+      if (!levelNames || levelNames.length &#x3D;&#x3D;&#x3D; 0) {
+        throw new BusinessException(
+          &#x27;At least one level name must be provided.&#x27;,
+          &#x27;NO_LEVELS_PROVIDED&#x27;
+        );
+      }
+
+      console.log(&#x27;🔍 Searching for levels with names:&#x27;, levelNames);
+      console.log(&#x27;🎯 School type ID:&#x27;, school.schoolType.id);
+
+
+
+      // First, let&#x27;s check what levels exist for this school type
+      const allLevelsForSchoolType &#x3D; await this.levelRepo.find({
+        where: { schoolType: { id: school.schoolType.id } },
+        relations: [&#x27;schoolType&#x27;]
+      });
+
+      console.log(&#x27;📚 All available levels for this school type:&#x27;,
+        allLevelsForSchoolType.map(l &#x3D;&gt; l.name)
+      );
+
+      console.log(&#x27;📚 Levels in this schoolType:&#x27;, allLevelsForSchoolType.map(l &#x3D;&gt; &#x60;${l.name} [${l.schoolType?.name}]&#x60;));
+
+
+
+      const levels &#x3D; await this.levelRepo
+        .createQueryBuilder(&quot;level&quot;)
+        .leftJoinAndSelect(&quot;level.schoolType&quot;, &quot;schoolType&quot;)
+        .where(&quot;LOWER(level.name) IN (:...names)&quot;, {
+          names: levelNames.map(name &#x3D;&gt; name.toLowerCase()),
+        })
+        .andWhere(&quot;level.schoolTypeId &#x3D; :schoolTypeId&quot;, {
+          schoolTypeId: school.schoolType.id
+        })
+        .getMany();
+
+      console.log(&#x27;✅ Found matching levels:&#x27;, levels.map(l &#x3D;&gt; ({ id: l.id, name: l.name })));
+
+    if (levels.length &#x3D;&#x3D;&#x3D; 0) {
+      throw new BusinessException(
+        &#x60;No levels found with the provided names for ${school.schoolType.name} curriculum.&#x60;,
+        &#x27;LEVELS_NOT_FOUND&#x27;
+      );
+    }
+
+    // Check if all requested levels were found
+    const foundLevelNames &#x3D; levels.map(l &#x3D;&gt; l.name.toLowerCase());
+    const missingLevels &#x3D; levelNames.filter(name &#x3D;&gt;
+      !foundLevelNames.includes(name.toLowerCase())
+    );
+
+
+
+    if (missingLevels.length &gt; 0) {
+      throw new BusinessException(
+        &#x60;The following levels are not available for ${school.schoolType.name} curriculum: ${missingLevels.join(&#x27;, &#x27;)}&#x60;,
+        &#x27;INVALID_LEVELS_SELECTED&#x27;
+      );
+    }
+
+    // Find or create school level setting
+    let setting &#x3D; await this.settingRepo.findOne({
+      where: { school: { schoolId: school.schoolId } },
+      relations: [&#x27;selectedLevels&#x27;, &#x27;school&#x27;, &#x27;school.schoolType&#x27;],
+    });
+
+    if (setting) {
+      // Update existing setting - replace selected levels
+      setting.selectedLevels &#x3D; levels;
+      setting.updatedAt &#x3D; new Date();
+    } else {
+      // Create new setting
+      setting &#x3D; this.settingRepo.create({
+        school,
+        selectedLevels: levels,
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+    }
+
+    const savedSetting &#x3D; await this.settingRepo.save(setting);
+
+    // Return with full relations loaded
+    const result &#x3D; await this.settingRepo.findOne({
+      where: { id: savedSetting.id },
+      relations: [&#x27;selectedLevels&#x27;, &#x27;school&#x27;, &#x27;school.schoolType&#x27;],
+    });
+
+    if (!result) {
+      throw new BusinessException(
+        &#x60;Failed to retrieve the saved school level setting.&#x60;,
+        &#x27;SETTING_NOT_FOUND&#x27;
+      );
+    }
+
+    return result;
+  } catch (error) {
+        console.error(&#x27;❌ Error in configureLevelsByNames:&#x27;, error);
+        throw new BusinessException(
+            &#x60;Failed to configure levels for school with subdomain &#x27;${subdomain}&#x27;: ${error.message}&#x60;,
+            &#x27;CONFIGURE_LEVELS_FAILED&#x27;
+        );
+    }
+  }
+
+  async getSchoolLevelConfiguration(subdomain: string): Promise&lt;SchoolLevelSetting | null&gt; {
+    const school &#x3D; await this.schoolRepo.findOne({
+      where: { subdomain },
+      relations: [&#x27;schoolType&#x27;]
+    });
+
+    if (!school) {
+      throw new BusinessException(
+        &#x60;School with subdomain &#x27;${subdomain}&#x27; not found.&#x60;,
+        &#x27;SCHOOL_NOT_FOUND&#x27;
+      );
+    }
+
+    const setting &#x3D; await this.settingRepo.findOne({
+      where: {
+        school: { schoolId: school.schoolId },
+        isActive: true
+      },
+      relations: [&#x27;selectedLevels&#x27;, &#x27;school&#x27;,&#x27;selectedLevels.subjects&#x27;, &#x27;selectedLevels.gradeLevels&#x27;,&#x27;school.schoolType&#x27;],
+    });
+
+    return setting;
+  }
+
+  async getAvailableLevelsForSchool(subdomain: string): Promise&lt;Level[]&gt; {
+    const school &#x3D; await this.schoolRepo.findOne({
+      where: { subdomain },
+      relations: [&#x27;schoolType&#x27;]
+    });
+
+    if (!school) {
+      throw new BusinessException(
+        &#x60;School with subdomain &#x27;${subdomain}&#x27; not found.&#x60;,
+        &#x27;SCHOOL_NOT_FOUND&#x27;
+      );
+    }
+
+    // Get all levels available for this school&#x27;s curriculum type
+    const availableLevels &#x3D; await this.levelRepo.find({
+      where: { schoolType: { id: school.schoolType.id } },
+      relations: [&#x27;schoolType&#x27;],
+      order: { name: &#x27;ASC&#x27; }
+    });
+
+    return availableLevels;
+  }
+
+
+  async removeLevelFromSchool(subdomain: string, levelName: string): Promise&lt;SchoolLevelSetting&gt; {
+    const setting &#x3D; await this.getSchoolLevelConfiguration(subdomain);
+
+    if (!setting) {
+      throw new BusinessException(
+        &#x27;No level configuration found for this school.&#x27;,
+        &#x27;NO_CONFIGURATION_FOUND&#x27;
+      );
+    }
+
+    const updatedLevels &#x3D; setting.selectedLevels.filter(
+      level &#x3D;&gt; level.name.toLowerCase() !&#x3D;&#x3D; levelName.toLowerCase()
+    );
+
+    if (updatedLevels.length &#x3D;&#x3D;&#x3D; setting.selectedLevels.length) {
+      throw new BusinessException(
+        &#x60;Level &#x27;${levelName}&#x27; is not currently selected for this school.&#x60;,
+        &#x27;LEVEL_NOT_SELECTED&#x27;
+      );
+    }
+
+    if (updatedLevels.length &#x3D;&#x3D;&#x3D; 0) {
+      throw new BusinessException(
+        &#x27;Cannot remove the last level. At least one level must be configured.&#x27;,
+        &#x27;CANNOT_REMOVE_LAST_LEVEL&#x27;
+      );
+    }
+
+    setting.selectedLevels &#x3D; updatedLevels;
+    setting.updatedAt &#x3D; new Date();
+
+    return this.settingRepo.save(setting);
+  }
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'SchoolLevelSettingService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

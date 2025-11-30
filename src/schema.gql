@@ -1358,6 +1358,7 @@ type Mutation {
   deleteTimetableBreak(id: String!): Boolean!
   deleteTimetableEntry(id: String!): Boolean!
   deleteTransportRoute(id: ID!): Boolean!
+  deleteUser(userId: String!): Boolean!
 
   """Email receipt to student/parent"""
   emailReceipt(emailAddress: String!, paymentId: ID!): Boolean!

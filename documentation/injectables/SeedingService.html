@@ -1,0 +1,2153 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>skool documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">skool documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >SeedingService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/admin/school-type/seeds/school-type.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#createAllUniqueSubjects" >createAllUniqueSubjects</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#createCBCCurriculumSubjects" >createCBCCurriculumSubjects</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#createHomeschoolCurriculumSubjects" >createHomeschoolCurriculumSubjects</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#createIGCSECurriculumSubjects" >createIGCSECurriculumSubjects</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#createMadrasaCurriculumSubjects" >createMadrasaCurriculumSubjects</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#findSubjectByName" >findSubjectByName</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#generateSubjectCode" >generateSubjectCode</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#seedAllSchoolTypes" >seedAllSchoolTypes</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#seedCBCSchool" >seedCBCSchool</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#seedHomeschoolSystem" >seedHomeschoolSystem</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#seedInternationalSchool" >seedInternationalSchool</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#seedMadrasaSchool" >seedMadrasaSchool</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(schoolTypeRepo: Repository<SchoolType>, curriculumRepo: <a href="../classes/Curriculum.html" target="_self">Repository&lt;Curriculum&gt;</a>, gradeLevelRepo: Repository<GradeLevel>, subjectRepo: <a href="../classes/Subject.html" target="_self">Repository&lt;Subject&gt;</a>, levelRepo: <a href="../classes/Level.html" target="_self">Repository&lt;Level&gt;</a>, curriculumSubjectRepo: Repository<CurriculumSubject>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/admin/school-type/seeds/school-type.ts:14</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>schoolTypeRepo</td>
+                                                  
+                                                        <td>
+                                                                    <code>Repository&lt;SchoolType&gt;</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>curriculumRepo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/Curriculum.html" target="_self" >Repository&lt;Curriculum&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>gradeLevelRepo</td>
+                                                  
+                                                        <td>
+                                                                    <code>Repository&lt;GradeLevel&gt;</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>subjectRepo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/Subject.html" target="_self" >Repository&lt;Subject&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>levelRepo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/Level.html" target="_self" >Repository&lt;Level&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>curriculumSubjectRepo</td>
+                                                  
+                                                        <td>
+                                                                    <code>Repository&lt;CurriculumSubject&gt;</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createAllUniqueSubjects"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>createAllUniqueSubjects</b></span>
+                        <a href="#createAllUniqueSubjects"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createAllUniqueSubjects()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="76"
+                                    class="link-to-prism">src/admin/school-type/seeds/school-type.ts:76</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Subject.html" target="_self" >Promise&lt;Subject[]&gt;</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createCBCCurriculumSubjects"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>createCBCCurriculumSubjects</b></span>
+                        <a href="#createCBCCurriculumSubjects"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createCBCCurriculumSubjects(curricula: <a href="../classes/Curriculum.html" target="_self">Curriculum[]</a>, allSubjects: <a href="../classes/Subject.html" target="_self">Subject[]</a>, allGradeLevels: GradeLevel[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="459"
+                                    class="link-to-prism">src/admin/school-type/seeds/school-type.ts:459</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>curricula</td>
+                                            <td>
+                                                            <code><a href="../classes/Curriculum.html" target="_self" >Curriculum[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>allSubjects</td>
+                                            <td>
+                                                            <code><a href="../classes/Subject.html" target="_self" >Subject[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>allGradeLevels</td>
+                                            <td>
+                                                        <code>GradeLevel[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createHomeschoolCurriculumSubjects"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>createHomeschoolCurriculumSubjects</b></span>
+                        <a href="#createHomeschoolCurriculumSubjects"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createHomeschoolCurriculumSubjects(curricula: <a href="../classes/Curriculum.html" target="_self">Curriculum[]</a>, allSubjects: <a href="../classes/Subject.html" target="_self">Subject[]</a>, allGradeLevels: GradeLevel[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="723"
+                                    class="link-to-prism">src/admin/school-type/seeds/school-type.ts:723</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>curricula</td>
+                                            <td>
+                                                            <code><a href="../classes/Curriculum.html" target="_self" >Curriculum[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>allSubjects</td>
+                                            <td>
+                                                            <code><a href="../classes/Subject.html" target="_self" >Subject[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>allGradeLevels</td>
+                                            <td>
+                                                        <code>GradeLevel[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createIGCSECurriculumSubjects"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>createIGCSECurriculumSubjects</b></span>
+                        <a href="#createIGCSECurriculumSubjects"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createIGCSECurriculumSubjects(curricula: <a href="../classes/Curriculum.html" target="_self">Curriculum[]</a>, allSubjects: <a href="../classes/Subject.html" target="_self">Subject[]</a>, allGradeLevels: GradeLevel[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="556"
+                                    class="link-to-prism">src/admin/school-type/seeds/school-type.ts:556</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>curricula</td>
+                                            <td>
+                                                            <code><a href="../classes/Curriculum.html" target="_self" >Curriculum[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>allSubjects</td>
+                                            <td>
+                                                            <code><a href="../classes/Subject.html" target="_self" >Subject[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>allGradeLevels</td>
+                                            <td>
+                                                        <code>GradeLevel[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createMadrasaCurriculumSubjects"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>createMadrasaCurriculumSubjects</b></span>
+                        <a href="#createMadrasaCurriculumSubjects"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createMadrasaCurriculumSubjects(curricula: <a href="../classes/Curriculum.html" target="_self">Curriculum[]</a>, allSubjects: <a href="../classes/Subject.html" target="_self">Subject[]</a>, allGradeLevels: GradeLevel[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="642"
+                                    class="link-to-prism">src/admin/school-type/seeds/school-type.ts:642</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>curricula</td>
+                                            <td>
+                                                            <code><a href="../classes/Curriculum.html" target="_self" >Curriculum[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>allSubjects</td>
+                                            <td>
+                                                            <code><a href="../classes/Subject.html" target="_self" >Subject[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>allGradeLevels</td>
+                                            <td>
+                                                        <code>GradeLevel[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findSubjectByName"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>findSubjectByName</b></span>
+                        <a href="#findSubjectByName"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findSubjectByName(subjects: <a href="../classes/Subject.html" target="_self">Subject[]</a>, name: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="221"
+                                    class="link-to-prism">src/admin/school-type/seeds/school-type.ts:221</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>subjects</td>
+                                            <td>
+                                                            <code><a href="../classes/Subject.html" target="_self" >Subject[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>name</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Subject.html" target="_self" >Subject | undefined</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="generateSubjectCode"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>generateSubjectCode</b></span>
+                        <a href="#generateSubjectCode"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>generateSubjectCode(name: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="182"
+                                    class="link-to-prism">src/admin/school-type/seeds/school-type.ts:182</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>name</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="seedAllSchoolTypes"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>seedAllSchoolTypes</b></span>
+                        <a href="#seedAllSchoolTypes"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>seedAllSchoolTypes()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="25"
+                                    class="link-to-prism">src/admin/school-type/seeds/school-type.ts:25</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="seedCBCSchool"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>seedCBCSchool</b></span>
+                        <a href="#seedCBCSchool"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>seedCBCSchool(cbcSchool: <a href="../classes/SchoolType.html" target="_self">SchoolType</a>, allSubjects: <a href="../classes/Subject.html" target="_self">Subject[]</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="228"
+                                    class="link-to-prism">src/admin/school-type/seeds/school-type.ts:228</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>cbcSchool</td>
+                                            <td>
+                                                            <code><a href="../classes/SchoolType.html" target="_self" >SchoolType</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>allSubjects</td>
+                                            <td>
+                                                            <code><a href="../classes/Subject.html" target="_self" >Subject[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="seedHomeschoolSystem"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>seedHomeschoolSystem</b></span>
+                        <a href="#seedHomeschoolSystem"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>seedHomeschoolSystem(homeschoolType: <a href="../classes/SchoolType.html" target="_self">SchoolType</a>, allSubjects: <a href="../classes/Subject.html" target="_self">Subject[]</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="404"
+                                    class="link-to-prism">src/admin/school-type/seeds/school-type.ts:404</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>homeschoolType</td>
+                                            <td>
+                                                            <code><a href="../classes/SchoolType.html" target="_self" >SchoolType</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>allSubjects</td>
+                                            <td>
+                                                            <code><a href="../classes/Subject.html" target="_self" >Subject[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="seedInternationalSchool"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>seedInternationalSchool</b></span>
+                        <a href="#seedInternationalSchool"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>seedInternationalSchool(internationalSchool: <a href="../classes/SchoolType.html" target="_self">SchoolType</a>, allSubjects: <a href="../classes/Subject.html" target="_self">Subject[]</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="289"
+                                    class="link-to-prism">src/admin/school-type/seeds/school-type.ts:289</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>internationalSchool</td>
+                                            <td>
+                                                            <code><a href="../classes/SchoolType.html" target="_self" >SchoolType</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>allSubjects</td>
+                                            <td>
+                                                            <code><a href="../classes/Subject.html" target="_self" >Subject[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="seedMadrasaSchool"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>seedMadrasaSchool</b></span>
+                        <a href="#seedMadrasaSchool"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>seedMadrasaSchool(madrasaSchool: <a href="../classes/SchoolType.html" target="_self">SchoolType</a>, allSubjects: <a href="../classes/Subject.html" target="_self">Subject[]</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="346"
+                                    class="link-to-prism">src/admin/school-type/seeds/school-type.ts:346</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>madrasaSchool</td>
+                                            <td>
+                                                            <code><a href="../classes/SchoolType.html" target="_self" >SchoolType</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>allSubjects</td>
+                                            <td>
+                                                            <code><a href="../classes/Subject.html" target="_self" >Subject[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &quot;@nestjs/common&quot;;
+import { InjectRepository } from &quot;@nestjs/typeorm&quot;;
+import { SchoolType } from &quot;../entities/school-type&quot;;
+import { Repository } from &quot;typeorm&quot;;
+import { Subject } from &quot;src/admin/subject/entities/subject.entity&quot;;
+import { SubjectType } from &quot;src/admin/subject/enums/subject.type.enum&quot;;
+import { Curriculum } from &quot;src/admin/curriculum/entities/curicula.entity&quot;;
+import { CurriculumSubject } from &quot;src/admin/curriculum/entities/curriculum_subjects.entity&quot;;
+import { GradeLevel } from &quot;src/admin/level/entities/grade-level.entity&quot;;
+import { Level } from &quot;src/admin/level/entities/level.entities&quot;;
+
+
+@Injectable()
+export class SeedingService {
+  constructor(
+    @InjectRepository(SchoolType) private schoolTypeRepo: Repository&lt;SchoolType&gt;,
+    @InjectRepository(Curriculum) private curriculumRepo: Repository&lt;Curriculum&gt;,
+    @InjectRepository(GradeLevel) private gradeLevelRepo: Repository&lt;GradeLevel&gt;,
+    @InjectRepository(Subject) private subjectRepo: Repository&lt;Subject&gt;,
+    @InjectRepository(Level) private levelRepo: Repository&lt;Level&gt;,
+
+    @InjectRepository(CurriculumSubject) private curriculumSubjectRepo: Repository&lt;CurriculumSubject&gt;,
+  ) {}
+
+  async seedAllSchoolTypes(): Promise&lt;void&gt; {
+    console.log(&#x27;Starting comprehensive school seeding...&#x27;);
+
+    const allSubjects &#x3D; await this.createAllUniqueSubjects();
+
+    // STEP 1: Seed SchoolTypes only (no levels yet)
+    
+    const cbcSchoolType &#x3D; await this.schoolTypeRepo.save({ name: &#x27;CBC&#x27;, code: &#x27;CBC&#x27; });
+    const internationalSchool &#x3D; await this.schoolTypeRepo.save({ name: &#x27;International&#x27;, code: &#x27;INTL&#x27; });
+    const madrasaSchool &#x3D; await this.schoolTypeRepo.save({ name: &#x27;Madrasa&#x27;, code: &#x27;MDR&#x27; });
+    const homeschoolType &#x3D; await this.schoolTypeRepo.save({ name: &#x27;Homeschool&#x27;, code: &#x27;HMS&#x27; });
+
+    // STEP 2: Seed Levels (reference schoolType in each)
+    await this.levelRepo.save([
+      { name: &#x27;Pre-Primary&#x27;, schoolType: cbcSchoolType },
+      { name: &#x27;Lower Primary&#x27;, schoolType: cbcSchoolType },
+      { name: &#x27;Upper Primary&#x27;, schoolType: cbcSchoolType },
+      { name: &#x27;Junior Secondary&#x27;, schoolType: cbcSchoolType },
+      { name: &#x27;Senior Secondary&#x27;, schoolType: cbcSchoolType },
+
+      { name: &#x27;IGCSE Early Years&#x27;, schoolType: internationalSchool },
+      { name: &#x27;IGCSE Primary&#x27;, schoolType: internationalSchool },
+      { name: &#x27;IGCSE Lower Secondary&#x27;, schoolType: internationalSchool },
+      { name: &#x27;IGCSE Upper Secondary&#x27;, schoolType: internationalSchool },
+      { name: &#x27;A Level&#x27;, schoolType: internationalSchool },
+
+      { name: &#x27;Madrasa Beginners&#x27;, schoolType: madrasaSchool },
+      { name: &#x27;Madrasa Lower&#x27;, schoolType: madrasaSchool },
+      { name: &#x27;Madrasa Upper&#x27;, schoolType: madrasaSchool },
+      { name: &#x27;Madrasa Secondary&#x27;, schoolType: madrasaSchool },
+      { name: &#x27;Madrasa Advanced Alim&#x27;, schoolType: madrasaSchool },
+
+      { name: &#x27;Homeschool Early Years&#x27;, schoolType: homeschoolType },
+      { name: &#x27;Homeschool Lower Primary&#x27;, schoolType: homeschoolType },
+      { name: &#x27;Homeschool Upper Primary&#x27;, schoolType: homeschoolType },
+      { name: &#x27;Homeschool Junior Secondary&#x27;, schoolType: homeschoolType },
+      { name: &#x27;Homeschool Senior Secondary&#x27;, schoolType: homeschoolType }
+    ]);
+
+    // STEP 3: Seed each school’s full structure
+
+    await this.seedCBCSchool(cbcSchoolType, allSubjects);
+    await this.seedInternationalSchool(internationalSchool, allSubjects);
+    await this.seedMadrasaSchool(madrasaSchool,allSubjects);
+    await this.seedHomeschoolSystem(homeschoolType, allSubjects);
+
+    console.log(&#x27;✅ All school types and levels seeded successfully!&#x27;);
+  }
+
+
+  // Creates all unique subjects across all school systems
+  private async createAllUniqueSubjects(): Promise&lt;Subject[]&gt; {
+    const uniqueSubjects &#x3D; new Map&lt;string, { name: string; code: string }&gt;();
+
+    // Helper function to add subject with generated code
+    const addSubject &#x3D; (name: string, customCode?: string) &#x3D;&gt; {
+      const code &#x3D; customCode || this.generateSubjectCode(name);
+      if (!uniqueSubjects.has(code)) {
+        uniqueSubjects.set(code, { name, code });
+      }
+    };
+
+    // CBC Subjects
+    const cbcSubjects &#x3D; [
+      &quot;Language Activities&quot;, &quot;Mathematical Activities&quot;, &quot;Environmental Activities&quot;,
+      &quot;Psychomotor and Creative Activities&quot;, &quot;Religious Education Activities&quot;,
+      &quot;Literacy&quot;, &quot;Kiswahili Language Activities&quot;, &quot;English Language Activities&quot;,
+      &quot;Indigenous Language Activities&quot;, &quot;Hygiene and Nutrition Activities&quot;,
+      &quot;Movement and Creative Activities&quot;, &quot;English&quot;, &quot;Kiswahili&quot;, &quot;Mathematics&quot;,
+      &quot;Science and Technology&quot;, &quot;Agriculture and Nutrition&quot;, &quot;Social Studies&quot;,
+      &quot;Religious Education (CRE, IRE, HRE)&quot;, &quot;Creative Arts&quot;, &quot;Physical and Health Education&quot;,
+      &quot;Optional Foreign Languages (e.g. French, Arabic, Mandarin)&quot;, &quot;Kiswahili or Kenya Sign Language&quot;,
+      &quot;Integrated Science&quot;, &quot;Agriculture&quot;, &quot;Religious Education&quot;, &quot;Health Education&quot;,
+      &quot;Life Skills Education&quot;, &quot;Pre-Technical and Pre-Career Education&quot;, &quot;Sports and Physical Education&quot;,
+      &quot;Visual Arts&quot;, &quot;Performing Arts&quot;, &quot;Home Science&quot;, &quot;Computer Science&quot;,
+      &quot;Foreign Languages (German, French, Mandarin, Arabic)&quot;, &quot;Indigenous Languages&quot;,
+      &quot;Kenyan Sign Language&quot;, &quot;Community Service Learning&quot;, &quot;Physical Education&quot;,
+      &quot;Mathematics / Advanced Math&quot;, &quot;Biology&quot;, &quot;Chemistry&quot;, &quot;Physics&quot;, &quot;General Science&quot;,
+      &quot;Drawing and Design&quot;, &quot;Aviation Technology&quot;, &quot;Building and Construction&quot;,
+      &quot;Electrical Technology&quot;, &quot;Metal Technology&quot;, &quot;Power Mechanics&quot;, &quot;Wood Technology&quot;,
+      &quot;Media Technology&quot;, &quot;Marine and Fisheries Technology&quot;, &quot;Literature in English&quot;,
+      &quot;Advanced English&quot;, &quot;Kiswahili Kipevu&quot;, &quot;History and Citizenship&quot;, &quot;Geography&quot;,
+      &quot;Business Studies&quot;, &quot;Religious Studies (CRE, IRE, HRE)&quot;, &quot;Music and Dance&quot;,
+      &quot;Fine Art&quot;, &quot;Theatre and Film&quot;, &quot;Sports and Recreation&quot;, &quot;Creative Writing&quot;
+    ];
+
+    // IGCSE Subjects
+    const igcseSubjects &#x3D; [
+      &quot;Personal, Social and Emotional Development&quot;, &quot;Communication and Language&quot;,
+      &quot;Understanding the World&quot;, &quot;Expressive Arts and Design&quot;, &quot;Physical Development&quot;,
+      &quot;Global Perspectives&quot;, &quot;ICT Starters&quot;, &quot;Art and Design&quot;, &quot;Music&quot;, &quot;Religious Education&quot;,
+      &quot;History&quot;, &quot;Modern Foreign Languages (e.g. French, German, Mandarin)&quot;,
+      &quot;ICT / Computer Science&quot;, &quot;Religious Studies&quot;, &quot;English Language&quot;, &quot;English Literature&quot;,
+      &quot;Business Studies&quot;, &quot;Economics&quot;, &quot;Accounting&quot;, &quot;Design and Technology&quot;, &quot;Drama&quot;,
+      &quot;Foreign Languages (French, German, Arabic, Mandarin, etc.)&quot;, &quot;Computer Science&quot;,
+      &quot;Business&quot;, &quot;Psychology&quot;, &quot;Sociology&quot;, &quot;Law&quot;, &quot;Media Studies&quot;, &quot;Drama and Theatre&quot;,
+      &quot;French&quot;, &quot;German&quot;, &quot;Arabic&quot;, &quot;Mandarin&quot;, &quot;Global Perspectives &amp; Research&quot;,
+      &quot;Further Math&quot;
+    ];
+
+    // Madrasa Subjects
+    const madrasaSubjects &#x3D; [
+      &quot;Qur&#x27;an Recitation (Juz Amma)&quot;, &quot;Qaida (Arabic Alphabet)&quot;, &quot;Basic Duas (Supplications)&quot;,
+      &quot;Short Surahs (Fatiha to Nas)&quot;, &quot;Salah Movements (Physical Practice)&quot;,
+      &quot;Adab (Islamic Manners)&quot;, &quot;Simple Arabic Vocabulary&quot;, &quot;Qur&#x27;an Memorization (Juz 1–5)&quot;,
+      &quot;Tajweed Basics&quot;, &quot;Arabic Reading &amp; Writing&quot;, &quot;Seerah (Prophet Muhammad&#x27;s Life)&quot;,
+      &quot;Fiqh Basics (Purity, Wudhu, Prayer)&quot;, &quot;Aqeedah (Pillars of Faith)&quot;, &quot;Daily Duas&quot;,
+      &quot;Hadith Memorization (40 Nawawi)&quot;, &quot;Qur&#x27;an Memorization (Juz 6–15)&quot;, &quot;Tajweed Advanced&quot;,
+      &quot;Arabic Grammar (Nahw &amp; Sarf Basics)&quot;, &quot;Fiqh (Prayer, Fasting, Zakat, Hajj)&quot;,
+      &quot;Aqeedah (Names &amp; Attributes of Allah)&quot;, &quot;Seerah (Makkan &amp; Madinan Period)&quot;,
+      &quot;Hadith Interpretation&quot;, &quot;Islamic History (Sahaba &amp; Khilafah)&quot;, &quot;Islamic Etiquette (Adab)&quot;,
+      &quot;Qur&#x27;an Memorization (Juz 16–30)&quot;, &quot;Tafsir (Selected Surahs)&quot;,
+      &quot;Advanced Arabic Reading &amp; Composition&quot;, &quot;Fiqh (Madh-hab Introduction)&quot;,
+      &quot;Usool al-Fiqh (Jurisprudence Principles)&quot;, &quot;Aqeedah (Tawheed vs Shirk)&quot;,
+      &quot;Hadith Sciences&quot;, &quot;Islamic Morals &amp; Ethics&quot;, &quot;Public Speaking / Khutbah Practice&quot;,
+      &quot;Islamic Leadership &amp; Da&#x27;wah&quot;, &quot;Comparative Religion&quot;, &quot;Islamic Banking &amp; Finance&quot;,
+      &quot;Arabic Calligraphy&quot;, &quot;Advanced Tafsir (Ibn Kathir, Jalalayn)&quot;,
+      &quot;Uloom al-Hadith (Science of Hadith)&quot;, &quot;Usool al-Tafsir&quot;, &quot;Arabic Rhetoric (Balagha)&quot;,
+      &quot;Advanced Nahw &amp; Sarf&quot;, &quot;Islamic Jurisprudence (Detailed Fiqh)&quot;,
+      &quot;Comparative Fiqh (Shafi&#x27;i, Hanafi, etc.)&quot;, &quot;Philosophical Theology (Kalam)&quot;,
+      &quot;Fatwa Writing &amp; Research&quot;, &quot;Khutbah Training &amp; Da&#x27;wah Methodology&quot;
+    ];
+
+    // Homeschool Subjects
+    const homeschoolSubjects &#x3D; [
+      &quot;Literacy (Reading &amp; Phonics)&quot;, &quot;Numeracy (Counting &amp; Basic Math)&quot;,
+      &quot;Creative Arts (Drawing, Coloring, Singing)&quot;, &quot;Life Skills (Toileting, Dressing, Manners)&quot;,
+      &quot;Religious Foundations (Optional)&quot;, &quot;Nature &amp; Environment Awareness&quot;,
+      &quot;Story Time / Read-Alouds&quot;, &quot;English Language&quot;, &quot;Kiswahili / Indigenous Language&quot;,
+      &quot;Environmental Studies / Science Basics&quot;, &quot;Religious Education (Christian / Islamic / Other)&quot;,
+      &quot;Life Skills&quot;, &quot;Creative Arts &amp; Crafts&quot;, &quot;Reading Comprehension&quot;,
+      &quot;Storytelling &amp; Narration&quot;, &quot;Kiswahili / KSL&quot;, &quot;Science &amp; Technology&quot;,
+      &quot;Social Studies (Kenya &amp; the World)&quot;, &quot;Creative &amp; Performing Arts&quot;,
+      &quot;Digital Literacy / ICT&quot;, &quot;Home Science / Cooking&quot;, &quot;Pre-Tech Studies&quot;,
+      &quot;Computer Science&quot;, &quot;Visual/Performing Arts&quot;, &quot;Foreign Language (French, Arabic, etc.)&quot;,
+      &quot;Coding &amp; Robotics&quot;, &quot;Service Learning&quot;, &quot;Advanced Math&quot;, &quot;Literature&quot;,
+      &quot;Photography&quot;
+    ];
+
+    // Add all subjects
+    [...cbcSubjects, ...igcseSubjects, ...madrasaSubjects, ...homeschoolSubjects]
+      .forEach(subject &#x3D;&gt; addSubject(subject));
+
+    // Create subjects in database
+    const subjectsToCreate &#x3D; Array.from(uniqueSubjects.values());
+    return await this.subjectRepo.save(subjectsToCreate);
+  }
+
+  // Generate subject code from name
+  // private generateSubjectCode(name: string): string {
+  //   return name
+  //     .replace(/[^a-zA-Z0-9\s]/g, &#x27;&#x27;) // Remove special characters
+  //     .split(&#x27; &#x27;)
+  //     .map(word &#x3D;&gt; word.substring(0, 3).toUpperCase())
+  //     .join(&#x27;_&#x27;)
+  //     .substring(0, 20); // Limit length
+  // }
+private generateSubjectCode(name: string): string {
+  // clean unwanted chars
+  const clean &#x3D; name.replace(/[^a-zA-Z0-9\s]/g, &#x27;&#x27;).trim();
+
+  const words &#x3D; clean.split(/\s+/);
+
+  // 1. ONE WORD → first 3 letters
+  if (words.length &#x3D;&#x3D;&#x3D; 1) {
+    return words[0].substring(0, 3).toUpperCase();
+  }
+
+  // 2. TWO WORDS → first letter of each + next meaningful letter(s)
+  if (words.length &#x3D;&#x3D;&#x3D; 2) {
+    const [w1, w2] &#x3D; words;
+
+    const first &#x3D; w1[0];
+    const second &#x3D; w2[0];
+
+    // find next meaningful letter from first word
+    const next &#x3D; w1.length &gt; 1 ? w1[1] : &#x27;&#x27;;
+
+    return (first + second + next).toUpperCase();
+  }
+
+  // 3. MORE THAN TWO WORDS → use first two words only (your examples match this)
+  const [w1, w2] &#x3D; words;
+
+  const first &#x3D; w1[0];
+  const second &#x3D; w2[0];
+  const next &#x3D; w1.length &gt; 1 ? w1[1] : &#x27;&#x27;;
+
+  return (first + second + next).toUpperCase();
+}
+
+  // // Find subject by name
+  // private findSubjectByName(subjects: Subject[], name: string): Subject | undefined {
+  //   return subjects.find(s &#x3D;&gt; s.name &#x3D;&#x3D;&#x3D; name);
+  // }
+
+  private findSubjectByName(subjects: Subject[], name: string): Subject | undefined {
+  const generatedCode &#x3D; this.generateSubjectCode(name);
+  return subjects.find(s &#x3D;&gt; s.code &#x3D;&#x3D;&#x3D; generatedCode);
+}
+
+  // CBC School Seeding
+
+  async seedCBCSchool(
+    cbcSchool: SchoolType, // 👈 receives SchoolType from main seeder
+    allSubjects: Subject[]
+  ): Promise&lt;void&gt; {
+
+
+    const cbcCurricula &#x3D; await this.curriculumRepo.save([
+      
+      { name: &#x27;PrePrimary&#x27;, code: &#x27;PP&#x27;, display_name: &#x27;Pre-Primary&#x27;, schoolType: cbcSchool },
+      { name: &#x27;LowerPrimary&#x27;, code: &#x27;LP&#x27;, display_name: &#x27;Lower Primary&#x27;, schoolType: cbcSchool },
+      { name: &#x27;UpperPrimary&#x27;, code: &#x27;UP&#x27;, display_name: &#x27;Upper Primary&#x27;, schoolType: cbcSchool },
+      { name: &#x27;JuniorSecondary&#x27;, code: &#x27;JS&#x27;, display_name: &#x27;Junior Secondary&#x27;, schoolType: cbcSchool },
+      { name: &#x27;SeniorSecondary&#x27;, code: &#x27;SS&#x27;, display_name: &#x27;Senior Secondary&#x27;, schoolType: cbcSchool }
+    ]);
+
+    // 1. Fetch SchoolLevels
+// 1. Fetch Levels (not SchoolLevels anymore)
+const prePrimary &#x3D; await this.levelRepo.findOneByOrFail({ name: &#x27;Pre-Primary&#x27; });
+const lowerPrimary &#x3D; await this.levelRepo.findOneByOrFail({ name: &#x27;Lower Primary&#x27; });
+const upperPrimary &#x3D; await this.levelRepo.findOneByOrFail({ name: &#x27;Upper Primary&#x27; });
+const juniorSecondary &#x3D; await this.levelRepo.findOneByOrFail({ name: &#x27;Junior Secondary&#x27; });
+const seniorSecondary &#x3D; await this.levelRepo.findOneByOrFail({ name: &#x27;Senior Secondary&#x27; });
+
+
+// 2. Save GradeLevels with level field
+await this.gradeLevelRepo.save([
+  // Pre-Primary
+  { name: &#x27;Playgroup&#x27;, code: &#x27;PG&#x27;, order: 0, curriculum: cbcCurricula[0], level: prePrimary },
+
+  { name: &#x27;PP1&#x27;, code: &#x27;PP1&#x27;, order: 1, curriculum: cbcCurricula[0], level: prePrimary },
+  { name: &#x27;PP2&#x27;, code: &#x27;PP2&#x27;, order: 2, curriculum: cbcCurricula[0], level: prePrimary },
+
+  // Lower Primary
+  { name: &#x27;Grade 1&#x27;, code: &#x27;G1&#x27;, order: 3, curriculum: cbcCurricula[1], level: lowerPrimary },
+  { name: &#x27;Grade 2&#x27;, code: &#x27;G2&#x27;, order: 4, curriculum: cbcCurricula[1], level: lowerPrimary },
+  { name: &#x27;Grade 3&#x27;, code: &#x27;G3&#x27;, order: 5, curriculum: cbcCurricula[1], level: lowerPrimary },
+
+  // Upper Primary
+  { name: &#x27;Grade 4&#x27;, code: &#x27;G4&#x27;, order: 6, curriculum: cbcCurricula[2], level: upperPrimary },
+  { name: &#x27;Grade 5&#x27;, code: &#x27;G5&#x27;, order: 7, curriculum: cbcCurricula[2], level: upperPrimary },
+  { name: &#x27;Grade 6&#x27;, code: &#x27;G6&#x27;, order: 8, curriculum: cbcCurricula[2], level: upperPrimary },
+
+  // Junior Secondary
+  { name: &#x27;Grade 7&#x27;, code: &#x27;G7&#x27;, order: 9, curriculum: cbcCurricula[3], level: juniorSecondary },
+  { name: &#x27;Grade 8&#x27;, code: &#x27;G8&#x27;, order: 10, curriculum: cbcCurricula[3], level: juniorSecondary },
+  { name: &#x27;Grade 9&#x27;, code: &#x27;G9&#x27;, order: 11, curriculum: cbcCurricula[3], level: juniorSecondary },
+
+  // Senior Secondary
+  { name: &#x27;Grade 10&#x27;, code: &#x27;G10&#x27;, order: 12, curriculum: cbcCurricula[4], level: seniorSecondary },
+  { name: &#x27;Grade 11&#x27;, code: &#x27;G11&#x27;, order: 13, curriculum: cbcCurricula[4], level: seniorSecondary },
+  { name: &#x27;Grade 12&#x27;, code: &#x27;G12&#x27;, order: 14, curriculum: cbcCurricula[4], level: seniorSecondary }
+]);
+
+
+        const allGradeLevels &#x3D; await this.gradeLevelRepo.find({
+  relations: [&#x27;curriculum&#x27;],
+});
+        await this.createCBCCurriculumSubjects(cbcCurricula, allSubjects, allGradeLevels);
+
+  }
+
+  async seedInternationalSchool(internationalSchool: SchoolType, allSubjects: Subject[]): Promise&lt;void&gt; {
+
+
+
+    const curricula &#x3D; await this.curriculumRepo.save([
+      { name: &#x27;IGCSE_EarlyYears&#x27;, code: &#x27;IGCSE_EY&#x27;, display_name: &#x27;IGCSE Early Years&#x27;, schoolType: internationalSchool },
+      { name: &#x27;IGCSE_Primary&#x27;, code: &#x27;IGCSE_P&#x27;, display_name: &#x27;IGCSE Primary&#x27;, schoolType: internationalSchool },
+      { name: &#x27;IGCSE_LowerSecondary&#x27;, code: &#x27;IGCSE_LS&#x27;, display_name: &#x27;IGCSE Lower Secondary&#x27;, schoolType: internationalSchool },
+      { name: &#x27;IGCSE_UpperSecondary&#x27;, code: &#x27;IGCSE_US&#x27;, display_name: &#x27;IGCSE Upper Secondary&#x27;, schoolType: internationalSchool },
+      { name: &#x27;A_Level&#x27;, code: &#x27;A_LVL&#x27;, display_name: &#x27;A Level&#x27;, schoolType: internationalSchool }
+    ]);
+
+      // 2. Fetch level entities
+  const earlyYears &#x3D; await this.levelRepo.findOneByOrFail({ name: &#x27;IGCSE Early Years&#x27; });
+  const primary &#x3D; await this.levelRepo.findOneByOrFail({ name: &#x27;IGCSE Primary&#x27; });
+  const lowerSecondary &#x3D; await this.levelRepo.findOneByOrFail({ name: &#x27;IGCSE Lower Secondary&#x27; });
+  const upperSecondary &#x3D; await this.levelRepo.findOneByOrFail({ name: &#x27;IGCSE Upper Secondary&#x27; });
+  const aLevel &#x3D; await this.levelRepo.findOneByOrFail({ name: &#x27;A Level&#x27; });
+
+    // Create grade levels
+    await this.gradeLevelRepo.save([
+      // Early Years
+      { name: &#x27;Nursery&#x27;, code: &#x27;NUR&#x27;, order: 1, curriculum: curricula[0], level: earlyYears },
+      { name: &#x27;Reception&#x27;, code: &#x27;REC&#x27;, order: 2, curriculum: curricula[0], level: earlyYears },
+
+      // Primary
+      { name: &#x27;Year 1&#x27;, code: &#x27;Y1&#x27;, order: 3, curriculum: curricula[1], level: primary },
+      { name: &#x27;Year 2&#x27;, code: &#x27;Y2&#x27;, order: 4, curriculum: curricula[1], level: primary },
+      { name: &#x27;Year 3&#x27;, code: &#x27;Y3&#x27;, order: 5, curriculum: curricula[1], level: primary },
+      { name: &#x27;Year 4&#x27;, code: &#x27;Y4&#x27;, order: 6, curriculum: curricula[1], level: primary },
+      { name: &#x27;Year 5&#x27;, code: &#x27;Y5&#x27;, order: 7, curriculum: curricula[1], level: primary },
+      { name: &#x27;Year 6&#x27;, code: &#x27;Y6&#x27;, order: 8, curriculum: curricula[1], level: primary },
+
+      // Lower Secondary
+      { name: &#x27;Year 7&#x27;, code: &#x27;Y7&#x27;, order: 9, curriculum: curricula[2], level: lowerSecondary },
+      { name: &#x27;Year 8&#x27;, code: &#x27;Y8&#x27;, order: 10, curriculum: curricula[2], level: lowerSecondary },
+      { name: &#x27;Year 9&#x27;, code: &#x27;Y9&#x27;, order: 11, curriculum: curricula[2], level: lowerSecondary },
+
+      // Upper Secondary
+      { name: &#x27;Year 10&#x27;, code: &#x27;Y10&#x27;, order: 12, curriculum: curricula[3], level: upperSecondary },
+      { name: &#x27;Year 11&#x27;, code: &#x27;Y11&#x27;, order: 13, curriculum: curricula[3], level: upperSecondary },
+
+      // A Level
+      { name: &#x27;Year 12&#x27;, code: &#x27;Y12&#x27;, order: 14, curriculum: curricula[4], level: aLevel },
+      { name: &#x27;Year 13&#x27;, code: &#x27;Y13&#x27;, order: 15, curriculum: curricula[4], level: aLevel },
+    ]);
+
+
+
+    const allGradeLevels &#x3D; await this.gradeLevelRepo.find({
+  relations: [&#x27;curriculum&#x27;],
+});
+    await this.createIGCSECurriculumSubjects(curricula, allSubjects, allGradeLevels);
+
+  }
+
+  // Madrasa School Seeding
+  async seedMadrasaSchool(madrasaSchool:SchoolType, allSubjects:Subject[]): Promise&lt;void&gt; {
+
+
+    const madrasaCurricula &#x3D; await this.curriculumRepo.save([
+      { name: &#x27;Madrasa_Beginners&#x27;, code: &#x27;MDR_BEG&#x27;, display_name: &#x27;Madrasa Beginners&#x27;, schoolType: madrasaSchool },
+      { name: &#x27;Madrasa_Lower&#x27;, code: &#x27;MDR_LOW&#x27;, display_name: &#x27;Madrasa Lower&#x27;, schoolType: madrasaSchool },
+      { name: &#x27;Madrasa_Upper&#x27;, code: &#x27;MDR_UP&#x27;, display_name: &#x27;Madrasa Upper&#x27;, schoolType: madrasaSchool },
+      { name: &#x27;Madrasa_Secondary&#x27;, code: &#x27;MDR_SEC&#x27;, display_name: &#x27;Madrasa Secondary&#x27;, schoolType: madrasaSchool },
+      { name: &#x27;Madrasa_AdvancedAlim&#x27;, code: &#x27;MDR_ALM&#x27;, display_name: &#x27;Madrasa Advanced Alim&#x27;, schoolType: madrasaSchool }
+    ]);
+
+
+    const beginners &#x3D; await this.levelRepo.findOneByOrFail({ name: &#x27;Madrasa Beginners&#x27; });
+const lower &#x3D; await this.levelRepo.findOneByOrFail({ name: &#x27;Madrasa Lower&#x27; });
+const upper &#x3D; await this.levelRepo.findOneByOrFail({ name: &#x27;Madrasa Upper&#x27; });
+const secondary &#x3D; await this.levelRepo.findOneByOrFail({ name: &#x27;Madrasa Secondary&#x27; });
+const advancedAlim &#x3D; await this.levelRepo.findOneByOrFail({ name: &#x27;Madrasa Advanced Alim&#x27; });
+
+
+    // Create grade levels
+    await this.gradeLevelRepo.save([
+      // Beginners
+        // Beginners
+        { name: &#x27;Duksi 1&#x27;, code: &#x27;DUK1&#x27;, order: 1, curriculum: madrasaCurricula[0], level: beginners },
+        { name: &#x27;Duksi 2&#x27;, code: &#x27;DUK2&#x27;, order: 2, curriculum: madrasaCurricula[0], level: beginners },
+        { name: &#x27;Duksi 3&#x27;, code: &#x27;DUK3&#x27;, order: 3, curriculum: madrasaCurricula[0], level: beginners },
+
+        // Lower
+        { name: &#x27;Level 1&#x27;, code: &#x27;L1&#x27;, order: 4, curriculum: madrasaCurricula[1], level: lower },
+        { name: &#x27;Level 2&#x27;, code: &#x27;L2&#x27;, order: 5, curriculum: madrasaCurricula[1], level: lower },
+        { name: &#x27;Level 3&#x27;, code: &#x27;L3&#x27;, order: 6, curriculum: madrasaCurricula[1], level: lower },
+
+        // Upper
+        { name: &#x27;Level 4&#x27;, code: &#x27;L4&#x27;, order: 7, curriculum: madrasaCurricula[2], level: upper },
+        { name: &#x27;Level 5&#x27;, code: &#x27;L5&#x27;, order: 8, curriculum: madrasaCurricula[2], level: upper },
+        { name: &#x27;Level 6&#x27;, code: &#x27;L6&#x27;, order: 9, curriculum: madrasaCurricula[2], level: upper },
+
+        // Secondary
+        { name: &#x27;Level 7&#x27;, code: &#x27;L7&#x27;, order: 10, curriculum: madrasaCurricula[3], level: secondary },
+        { name: &#x27;Level 8&#x27;, code: &#x27;L8&#x27;, order: 11, curriculum: madrasaCurricula[3], level: secondary },
+        { name: &#x27;Level 9&#x27;, code: &#x27;L9&#x27;, order: 12, curriculum: madrasaCurricula[3], level: secondary },
+
+        // Advanced Alim
+        { name: &#x27;Alim Year 1&#x27;, code: &#x27;ALM1&#x27;, order: 13, curriculum: madrasaCurricula[4], level: advancedAlim },
+        { name: &#x27;Alim Year 2&#x27;, code: &#x27;ALM2&#x27;, order: 14, curriculum: madrasaCurricula[4], level: advancedAlim },
+        { name: &#x27;Alim Year 3&#x27;, code: &#x27;ALM3&#x27;, order: 15, curriculum: madrasaCurricula[4], level: advancedAlim },
+        { name: &#x27;Final Year&#x27;, code: &#x27;FIN&#x27;, order: 16, curriculum: madrasaCurricula[4], level: advancedAlim }
+      ]);
+
+
+    const allGradeLevels &#x3D; await this.gradeLevelRepo.find({
+  relations: [&#x27;curriculum&#x27;],
+});
+    await this.createMadrasaCurriculumSubjects(madrasaCurricula, allSubjects, allGradeLevels);
+
+  }
+
+  // Homeschool System Seeding
+  async seedHomeschoolSystem(homeschoolType:SchoolType, allSubjects: Subject[]): Promise&lt;void&gt; {
+
+
+    const homeschoolCurricula &#x3D; await this.curriculumRepo.save([
+      { name: &#x27;Homeschool_EarlyYears&#x27;, code: &#x27;HMS_EY&#x27;, display_name: &#x27;Homeschool Early Years&#x27;, schoolType: homeschoolType },
+      { name: &#x27;Homeschool_LowerPrimary&#x27;, code: &#x27;HMS_LP&#x27;, display_name: &#x27;Homeschool Lower Primary&#x27;, schoolType: homeschoolType },
+      { name: &#x27;Homeschool_UpperPrimary&#x27;, code: &#x27;HMS_UP&#x27;, display_name: &#x27;Homeschool Upper Primary&#x27;, schoolType: homeschoolType },
+      { name: &#x27;Homeschool_JuniorSecondary&#x27;, code: &#x27;HMS_JS&#x27;, display_name: &#x27;Homeschool Junior Secondary&#x27;, schoolType: homeschoolType },
+      { name: &#x27;Homeschool_SeniorSecondary&#x27;, code: &#x27;HMS_SS&#x27;, display_name: &#x27;Homeschool Senior Secondary&#x27;, schoolType: homeschoolType }
+    ]);
+
+    // 1. Fetch Levels (assumes Level table already seeded)
+const earlyYears &#x3D; await this.levelRepo.findOneByOrFail({ name: &#x27;Homeschool Early Years&#x27; });
+const lowerPrimary &#x3D; await this.levelRepo.findOneByOrFail({ name: &#x27;Homeschool Lower Primary&#x27; });
+const upperPrimary &#x3D; await this.levelRepo.findOneByOrFail({ name: &#x27;Homeschool Upper Primary&#x27; });
+const juniorSecondary &#x3D; await this.levelRepo.findOneByOrFail({ name: &#x27;Homeschool Junior Secondary&#x27; });
+const seniorSecondary &#x3D; await this.levelRepo.findOneByOrFail({ name: &#x27;Homeschool Senior Secondary&#x27; });
+
+
+
+// 2. Save GradeLevels with level field
+await this.gradeLevelRepo.save([
+  // Early Years
+  { name: &#x27;Pre-K&#x27;, code: &#x27;PRK&#x27;, order: 1, curriculum: homeschoolCurricula[0], level: earlyYears },
+  { name: &#x27;Kindergarten&#x27;, code: &#x27;KIN&#x27;, order: 2, curriculum: homeschoolCurricula[0], level: earlyYears },
+
+  // Lower Primary
+  { name: &#x27;Grade 1&#x27;, code: &#x27;HG1&#x27;, order: 3, curriculum: homeschoolCurricula[1], level: lowerPrimary },
+  { name: &#x27;Grade 2&#x27;, code: &#x27;HG2&#x27;, order: 4, curriculum: homeschoolCurricula[1], level: lowerPrimary },
+  { name: &#x27;Grade 3&#x27;, code: &#x27;HG3&#x27;, order: 5, curriculum: homeschoolCurricula[1], level: lowerPrimary },
+
+  // Upper Primary
+  { name: &#x27;Grade 4&#x27;, code: &#x27;HG4&#x27;, order: 6, curriculum: homeschoolCurricula[2], level: upperPrimary },
+  { name: &#x27;Grade 5&#x27;, code: &#x27;HG5&#x27;, order: 7, curriculum: homeschoolCurricula[2], level: upperPrimary },
+  { name: &#x27;Grade 6&#x27;, code: &#x27;HG6&#x27;, order: 8, curriculum: homeschoolCurricula[2], level: upperPrimary },
+
+  // Junior Secondary
+  { name: &#x27;Grade 7&#x27;, code: &#x27;HG7&#x27;, order: 9, curriculum: homeschoolCurricula[3], level: juniorSecondary },
+  { name: &#x27;Grade 8&#x27;, code: &#x27;HG8&#x27;, order: 10, curriculum: homeschoolCurricula[3], level: juniorSecondary },
+  { name: &#x27;Grade 9&#x27;, code: &#x27;HG9&#x27;, order: 11, curriculum: homeschoolCurricula[3], level: juniorSecondary },
+
+  // Senior Secondary
+  { name: &#x27;Grade 10&#x27;, code: &#x27;HG10&#x27;, order: 12, curriculum: homeschoolCurricula[4], level: seniorSecondary },
+  { name: &#x27;Grade 11&#x27;, code: &#x27;HG11&#x27;, order: 13, curriculum: homeschoolCurricula[4], level: seniorSecondary },
+  { name: &#x27;Grade 12&#x27;, code: &#x27;HG12&#x27;, order: 14, curriculum: homeschoolCurricula[4], level: seniorSecondary }
+]);
+
+    const allGradeLevels &#x3D; await this.gradeLevelRepo.find({
+  relations: [&#x27;curriculum&#x27;],
+});
+
+    await this.createHomeschoolCurriculumSubjects(homeschoolCurricula, allSubjects, allGradeLevels);
+  }
+
+  // CBC Curriculum Subjects Creation
+  private async createCBCCurriculumSubjects(curricula: Curriculum[], allSubjects: Subject[], allGradeLevels: GradeLevel[]): Promise&lt;void&gt; {
+    const toSave: CurriculumSubject[] &#x3D; [];
+
+    const mapSubjects &#x3D; async (
+      curriculumIndex: number,
+      subjectNames: string[],
+      subjectType: SubjectType
+    ) &#x3D;&gt; {
+      const curriculum &#x3D; curricula[curriculumIndex];
+      // const grades &#x3D; allGradeLevels.filter(g &#x3D;&gt; g.curriculum.id &#x3D;&#x3D;&#x3D; curriculum.id);
+      const grades &#x3D; allGradeLevels.filter(g &#x3D;&gt; g.curriculum?.id &#x3D;&#x3D;&#x3D; curriculum.id);
+
+
+      for (const name of subjectNames) {
+        const subject &#x3D; this.findSubjectByName(allSubjects, name);
+        if (!subject) continue;
+
+        const curriculumSubject &#x3D; this.curriculumSubjectRepo.create({
+          subject,
+          curriculum,
+          subjectType,
+          isCompulsory: true,
+          totalMarks: 100,
+          passingMarks: 40,
+          creditHours: 3,
+          availableGrades: grades,
+        });
+
+        toSave.push(curriculumSubject);
+      }
+    };
+
+    // Pre-Primary
+    await mapSubjects(0, [
+      &quot;Language Activities&quot;, &quot;Mathematical Activities&quot;, &quot;Environmental Activities&quot;,
+      &quot;Psychomotor and Creative Activities&quot;, &quot;Religious Education Activities&quot;
+    ], SubjectType.CORE);
+
+    // Lower Primary
+    await mapSubjects(1, [
+      &quot;Literacy&quot;, &quot;Kiswahili Language Activities&quot;, &quot;English Language Activities&quot;,
+      &quot;Indigenous Language Activities&quot;, &quot;Mathematical Activities&quot;, &quot;Environmental Activities&quot;,
+      &quot;Hygiene and Nutrition Activities&quot;, &quot;Religious Education Activities&quot;, &quot;Movement and Creative Activities&quot;
+    ], SubjectType.CORE);
+
+    // Upper Primary
+    await mapSubjects(2, [
+      &quot;English&quot;, &quot;Kiswahili&quot;, &quot;Mathematics&quot;, &quot;Science and Technology&quot;,
+      &quot;Agriculture and Nutrition&quot;, &quot;Social Studies&quot;, &quot;Religious Education (CRE, IRE, HRE)&quot;,
+      &quot;Creative Arts&quot;, &quot;Physical and Health Education&quot;
+    ], SubjectType.CORE);
+
+    await mapSubjects(2, [
+      &quot;Optional Foreign Languages (e.g. French, Arabic, Mandarin)&quot;
+    ], SubjectType.ELECTIVE);
+
+    // Junior Secondary
+    await mapSubjects(3, [
+      &quot;English&quot;, &quot;Kiswahili or Kenya Sign Language&quot;, &quot;Mathematics&quot;, &quot;Integrated Science&quot;,
+      &quot;Social Studies&quot;, &quot;Agriculture&quot;, &quot;Religious Education&quot;, &quot;Health Education&quot;,
+      &quot;Life Skills Education&quot;, &quot;Pre-Technical and Pre-Career Education&quot;, &quot;Sports and Physical Education&quot;
+    ], SubjectType.CORE);
+
+    await mapSubjects(3, [
+      &quot;Visual Arts&quot;, &quot;Performing Arts&quot;, &quot;Home Science&quot;, &quot;Computer Science&quot;,
+      &quot;Foreign Languages (German, French, Mandarin, Arabic)&quot;, &quot;Indigenous Languages&quot;, &quot;Kenyan Sign Language&quot;
+    ], SubjectType.ELECTIVE);
+
+    // Senior Secondary – Core
+    await mapSubjects(4, [
+      &quot;English&quot;, &quot;Kiswahili or Kenya Sign Language&quot;, &quot;Community Service Learning&quot;, &quot;Physical Education&quot;
+    ], SubjectType.CORE);
+
+    // Senior Secondary – STEM
+    await mapSubjects(4, [
+      &quot;Mathematics / Advanced Math&quot;, &quot;Biology&quot;, &quot;Chemistry&quot;, &quot;Physics&quot;, &quot;General Science&quot;,
+      &quot;Agriculture&quot;, &quot;Computer Science&quot;, &quot;Home Science&quot;, &quot;Drawing and Design&quot;, &quot;Aviation Technology&quot;,
+      &quot;Building and Construction&quot;, &quot;Electrical Technology&quot;, &quot;Metal Technology&quot;, &quot;Power Mechanics&quot;,
+      &quot;Wood Technology&quot;, &quot;Media Technology&quot;, &quot;Marine and Fisheries Technology&quot;
+    ], SubjectType.ELECTIVE);
+
+    // Senior Secondary – Social Sciences
+    await mapSubjects(4, [
+      &quot;Literature in English&quot;, &quot;Advanced English&quot;, &quot;Indigenous Languages&quot;, &quot;Kiswahili Kipevu&quot;,
+      &quot;History and Citizenship&quot;, &quot;Geography&quot;, &quot;Business Studies&quot;, &quot;Religious Studies (CRE, IRE, HRE)&quot;,
+      &quot;Foreign Languages (German, French, Mandarin, Arabic)&quot;, &quot;Kenyan Sign Language&quot;
+    ], SubjectType.ELECTIVE);
+
+    // Senior Secondary – Arts &amp; Sports
+    await mapSubjects(4, [
+      &quot;Music and Dance&quot;, &quot;Fine Art&quot;, &quot;Theatre and Film&quot;, &quot;Sports and Recreation&quot;, &quot;Creative Writing&quot;
+    ], SubjectType.ELECTIVE);
+
+    await this.curriculumSubjectRepo.save(toSave);
+  }
+
+  // IGCSE Curriculum Subjects Creation
+  private async createIGCSECurriculumSubjects(
+    curricula: Curriculum[],
+    allSubjects: Subject[],
+    allGradeLevels: GradeLevel[]
+  ): Promise&lt;void&gt; {
+    const toSave: CurriculumSubject[] &#x3D; [];
+
+    const mapSubjects &#x3D; async (
+      curriculumIndex: number,
+      subjectNames: string[],
+      subjectType: SubjectType
+    ) &#x3D;&gt; {
+      const curriculum &#x3D; curricula[curriculumIndex];
+      const grades &#x3D; allGradeLevels.filter(g &#x3D;&gt; g.curriculum.id &#x3D;&#x3D;&#x3D; curriculum.id);
+
+      for (const name of subjectNames) {
+        const subject &#x3D; this.findSubjectByName(allSubjects, name);
+        if (!subject) continue;
+
+        const curriculumSubject &#x3D; this.curriculumSubjectRepo.create({
+          subject,
+          curriculum,
+          subjectType,
+          isCompulsory: subjectType &#x3D;&#x3D;&#x3D; SubjectType.CORE || subjectType &#x3D;&#x3D;&#x3D; SubjectType.COMPULSORY,
+          totalMarks: 100,
+          passingMarks: 40,
+          creditHours: 3,
+          availableGrades: grades,
+        });
+
+        toSave.push(curriculumSubject);
+      }
+    };
+
+    // Early Years
+    await mapSubjects(0, [
+      &quot;Personal, Social and Emotional Development&quot;, &quot;Communication and Language&quot;,
+      &quot;Literacy&quot;, &quot;Mathematics&quot;, &quot;Understanding the World&quot;,
+      &quot;Expressive Arts and Design&quot;, &quot;Physical Development&quot;
+    ], SubjectType.CORE);
+
+    // Primary
+    await mapSubjects(1, [
+      &quot;English&quot;, &quot;Mathematics&quot;, &quot;Science&quot;, &quot;Global Perspectives&quot;, &quot;ICT Starters&quot;,
+      &quot;Art and Design&quot;, &quot;Music&quot;, &quot;Physical Education&quot;, &quot;Religious Education&quot;, &quot;History&quot;, &quot;Geography&quot;
+    ], SubjectType.CORE);
+
+    await mapSubjects(1, [
+      &quot;Modern Foreign Languages (e.g. French, German, Mandarin)&quot;
+    ], SubjectType.ELECTIVE);
+
+    // Lower Secondary
+    await mapSubjects(2, [
+      &quot;English&quot;, &quot;Mathematics&quot;, &quot;Science&quot;, &quot;ICT / Computer Science&quot;, &quot;History&quot;,
+      &quot;Geography&quot;, &quot;Global Perspectives&quot;, &quot;Art and Design&quot;, &quot;Music&quot;, &quot;Physical Education&quot;,
+      &quot;Religious Studies&quot;, &quot;Modern Foreign Languages (e.g. French, German, Mandarin)&quot;
+    ], SubjectType.CORE);
+
+    // Upper Secondary
+    await mapSubjects(3, [
+      &quot;English Language&quot;, &quot;English Literature&quot;, &quot;Mathematics&quot;,
+      &quot;Biology&quot;, &quot;Chemistry&quot;, &quot;Physics&quot;, &quot;ICT / Computer Science&quot;
+    ], SubjectType.CORE);
+
+    await mapSubjects(3, [
+      &quot;Business Studies&quot;, &quot;Economics&quot;, &quot;Accounting&quot;, &quot;History&quot;, &quot;Geography&quot;,
+      &quot;Art and Design&quot;, &quot;Design and Technology&quot;, &quot;Drama&quot;, &quot;Music&quot;, &quot;Religious Studies&quot;,
+      &quot;Global Perspectives&quot;, &quot;Physical Education&quot;,
+      &quot;Foreign Languages (French, German, Arabic, Mandarin, etc.)&quot;
+    ], SubjectType.ELECTIVE);
+
+    // A Level
+    await mapSubjects(4, [
+      &quot;English Language or Literature&quot;, &quot;Mathematics or Further Math (for STEM students)&quot;
+    ], SubjectType.COMPULSORY);
+
+    await mapSubjects(4, [
+      &quot;Biology&quot;, &quot;Chemistry&quot;, &quot;Physics&quot;, &quot;Computer Science&quot;, &quot;Economics&quot;, &quot;Business&quot;,
+      &quot;Accounting&quot;, &quot;Geography&quot;, &quot;History&quot;, &quot;Psychology&quot;, &quot;Sociology&quot;, &quot;Law&quot;,
+      &quot;Art and Design&quot;, &quot;Media Studies&quot;, &quot;Drama and Theatre&quot;, &quot;Music&quot;, &quot;Physical Education&quot;,
+      &quot;French&quot;, &quot;German&quot;, &quot;Arabic&quot;, &quot;Mandarin&quot;, &quot;Global Perspectives &amp; Research&quot;
+    ], SubjectType.ELECTIVE);
+
+    await this.curriculumSubjectRepo.save(toSave);
+  }
+
+  private async createMadrasaCurriculumSubjects(
+    curricula: Curriculum[],
+    allSubjects: Subject[],
+    allGradeLevels: GradeLevel[]
+  ): Promise&lt;void&gt; {
+    const toSave: CurriculumSubject[] &#x3D; [];
+
+    const mapSubjects &#x3D; async (
+      curriculumIndex: number,
+      subjectNames: string[],
+      subjectType: SubjectType
+    ) &#x3D;&gt; {
+      const curriculum &#x3D; curricula[curriculumIndex];
+      const grades &#x3D; allGradeLevels.filter(g &#x3D;&gt; g.curriculum.id &#x3D;&#x3D;&#x3D; curriculum.id);
+
+      for (const name of subjectNames) {
+        const subject &#x3D; this.findSubjectByName(allSubjects, name);
+        if (!subject) continue;
+
+        const curriculumSubject &#x3D; this.curriculumSubjectRepo.create({
+          subject,
+          curriculum,
+          subjectType,
+          isCompulsory: subjectType &#x3D;&#x3D;&#x3D; SubjectType.CORE || subjectType &#x3D;&#x3D;&#x3D; SubjectType.COMPULSORY,
+          totalMarks: 100,
+          passingMarks: 40,
+          creditHours: 3,
+          availableGrades: grades
+        });
+
+        toSave.push(curriculumSubject);
+      }
+    };
+
+    // Beginners
+    await mapSubjects(0, [
+      &quot;Qur&#x27;an Recitation (Juz Amma)&quot;, &quot;Qaida (Arabic Alphabet)&quot;, &quot;Basic Duas (Supplications)&quot;,
+      &quot;Short Surahs (Fatiha to Nas)&quot;, &quot;Salah Movements (Physical Practice)&quot;,
+      &quot;Adab (Islamic Manners)&quot;, &quot;Simple Arabic Vocabulary&quot;
+    ], SubjectType.CORE);
+
+    // Lower
+    await mapSubjects(1, [
+      &quot;Qur&#x27;an Memorization (Juz 1–5)&quot;, &quot;Tajweed Basics&quot;, &quot;Arabic Reading &amp; Writing&quot;,
+      &quot;Seerah (Prophet Muhammad&#x27;s Life)&quot;, &quot;Fiqh Basics (Purity, Wudhu, Prayer)&quot;,
+      &quot;Aqeedah (Pillars of Faith)&quot;, &quot;Daily Duas&quot;, &quot;Hadith Memorization (40 Nawawi)&quot;
+    ], SubjectType.CORE);
+
+    // Upper
+    await mapSubjects(2, [
+      &quot;Qur&#x27;an Memorization (Juz 6–15)&quot;, &quot;Tajweed Advanced&quot;, &quot;Arabic Grammar (Nahw &amp; Sarf Basics)&quot;,
+      &quot;Fiqh (Prayer, Fasting, Zakat, Hajj)&quot;, &quot;Aqeedah (Names &amp; Attributes of Allah)&quot;,
+      &quot;Seerah (Makkan &amp; Madinan Period)&quot;, &quot;Hadith Interpretation&quot;, &quot;Islamic History (Sahaba &amp; Khilafah)&quot;,
+      &quot;Islamic Etiquette (Adab)&quot;
+    ], SubjectType.CORE);
+
+    // Secondary core
+    await mapSubjects(3, [
+      &quot;Qur&#x27;an Memorization (Juz 16–30)&quot;, &quot;Tafsir (Selected Surahs)&quot;,
+      &quot;Advanced Arabic Reading &amp; Composition&quot;, &quot;Fiqh (Madh-hab Introduction)&quot;,
+      &quot;Usool al-Fiqh (Jurisprudence Principles)&quot;, &quot;Aqeedah (Tawheed vs Shirk)&quot;,
+      &quot;Hadith Sciences&quot;, &quot;Islamic Morals &amp; Ethics&quot;, &quot;Public Speaking / Khutbah Practice&quot;
+    ], SubjectType.CORE);
+
+    // Secondary electives
+    await mapSubjects(3, [
+      &quot;Islamic Leadership &amp; Da&#x27;wah&quot;, &quot;Comparative Religion&quot;, &quot;Islamic Banking &amp; Finance&quot;, &quot;Arabic Calligraphy&quot;
+    ], SubjectType.ELECTIVE);
+
+    // Alim
+    await mapSubjects(4, [
+      &quot;Advanced Tafsir (Ibn Kathir, Jalalayn)&quot;, &quot;Uloom al-Hadith (Science of Hadith)&quot;,
+      &quot;Usool al-Tafsir&quot;, &quot;Arabic Rhetoric (Balagha)&quot;, &quot;Advanced Nahw &amp; Sarf&quot;,
+      &quot;Islamic Jurisprudence (Detailed Fiqh)&quot;, &quot;Comparative Fiqh (Shafi&#x27;i, Hanafi, etc.)&quot;,
+      &quot;Philosophical Theology (Kalam)&quot;, &quot;Fatwa Writing &amp; Research&quot;, &quot;Khutbah Training &amp; Da&#x27;wah Methodology&quot;
+    ], SubjectType.CORE);
+
+    await this.curriculumSubjectRepo.save(toSave);
+  }
+
+
+  private async createHomeschoolCurriculumSubjects(
+    curricula: Curriculum[],
+    allSubjects: Subject[],
+    allGradeLevels: GradeLevel[]
+  ): Promise&lt;void&gt; {
+    const toSave: CurriculumSubject[] &#x3D; [];
+
+    const mapSubjects &#x3D; async (
+      curriculumIndex: number,
+      subjectNames: string[],
+      subjectType: SubjectType
+    ) &#x3D;&gt; {
+      const curriculum &#x3D; curricula[curriculumIndex];
+      const grades &#x3D; allGradeLevels.filter(g &#x3D;&gt; g.curriculum.id &#x3D;&#x3D;&#x3D; curriculum.id);
+
+
+      for (const name of subjectNames) {
+        const subject &#x3D; this.findSubjectByName(allSubjects, name);
+        if (!subject) continue;
+
+        const curriculumSubject &#x3D; this.curriculumSubjectRepo.create({
+          subject,
+          curriculum,
+          subjectType,
+          isCompulsory: subjectType &#x3D;&#x3D;&#x3D; SubjectType.CORE || subjectType &#x3D;&#x3D;&#x3D; SubjectType.COMPULSORY,
+          totalMarks: 100,
+          passingMarks: 40,
+          creditHours: 3,
+          availableGrades: grades
+        });
+
+        toSave.push(curriculumSubject);
+      }
+    };
+
+    // Early Years
+    await mapSubjects(0, [
+      &quot;Literacy (Reading &amp; Phonics)&quot;, &quot;Numeracy (Counting &amp; Basic Math)&quot;,
+      &quot;Creative Arts (Drawing, Coloring, Singing)&quot;, &quot;Life Skills (Toileting, Dressing, Manners)&quot;,
+      &quot;Religious Foundations (Optional)&quot;, &quot;Nature &amp; Environment Awareness&quot;, &quot;Story Time / Read-Alouds&quot;
+    ], SubjectType.CORE);
+
+    // Lower Primary
+    await mapSubjects(1, [
+      &quot;English Language&quot;, &quot;Kiswahili / Indigenous Language&quot;, &quot;Mathematics&quot;,
+      &quot;Environmental Studies / Science Basics&quot;, &quot;Religious Education (Christian / Islamic / Other)&quot;,
+      &quot;Life Skills&quot;, &quot;Creative Arts &amp; Crafts&quot;, &quot;Reading Comprehension&quot;, &quot;Storytelling &amp; Narration&quot;
+    ], SubjectType.CORE);
+
+    // Upper Primary
+    await mapSubjects(2, [
+      &quot;English&quot;, &quot;Kiswahili / KSL&quot;, &quot;Mathematics&quot;, &quot;Science &amp; Technology&quot;,
+      &quot;Social Studies (Kenya &amp; the World)&quot;, &quot;Religious Education&quot;, &quot;Creative &amp; Performing Arts&quot;,
+      &quot;Physical Education&quot;, &quot;Digital Literacy / ICT&quot;, &quot;Home Science / Cooking&quot;
+    ], SubjectType.CORE);
+
+    // Junior Secondary core
+    await mapSubjects(3, [
+      &quot;English&quot;, &quot;Kiswahili / KSL&quot;, &quot;Mathematics&quot;, &quot;Integrated Science&quot;,
+      &quot;Social Studies&quot;, &quot;Agriculture&quot;, &quot;Religious Education&quot;, &quot;Life Skills&quot;,
+      &quot;Pre-Tech Studies&quot;, &quot;Physical Education&quot;
+    ], SubjectType.CORE);
+
+    // Junior Secondary optional
+    await mapSubjects(3, [
+      &quot;Computer Science&quot;, &quot;Visual/Performing Arts&quot;, &quot;Home Science&quot;,
+      &quot;Foreign Language (French, Arabic, etc.)&quot;, &quot;Coding &amp; Robotics&quot;
+    ], SubjectType.ELECTIVE);
+
+    // Senior Secondary core
+    await mapSubjects(4, [
+      &quot;English&quot;, &quot;Mathematics&quot;, &quot;Religious Studies&quot;, &quot;Physical Education&quot;, &quot;Service Learning&quot;
+    ], SubjectType.CORE);
+
+    // Senior Secondary STEM
+    await mapSubjects(4, [
+      &quot;Biology&quot;, &quot;Chemistry&quot;, &quot;Physics&quot;, &quot;Computer Science&quot;, &quot;Advanced Math&quot;
+    ], SubjectType.ELECTIVE);
+
+    // Senior Secondary Humanities
+    await mapSubjects(4, [
+      &quot;Geography&quot;, &quot;History&quot;, &quot;Business Studies&quot;, &quot;Literature&quot;, &quot;Sociology&quot;, &quot;Economics&quot;
+    ], SubjectType.ELECTIVE);
+
+    // Senior Secondary Creative Pathway
+    await mapSubjects(4, [
+      &quot;Fine Art&quot;, &quot;Music&quot;, &quot;Film and Theatre&quot;, &quot;Creative Writing&quot;, &quot;Photography&quot;
+    ], SubjectType.ELECTIVE);
+
+    await this.curriculumSubjectRepo.save(toSave);
+  }
+
+}</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'SeedingService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

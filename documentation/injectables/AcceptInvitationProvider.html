@@ -1,0 +1,1104 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>skool documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">skool documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >AcceptInvitationProvider</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/admin/invitation/providers/accept-invitation.provider.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#logger" >logger</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#acceptInvitation" >acceptInvitation</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#createMembership" >createMembership</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#createUserFromInvitation" >createUserFromInvitation</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#findAndValidateInvitation" >findAndValidateInvitation</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#linkTeacherToUser" >linkTeacherToUser</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(invitationRepository: Repository<UserInvitation>, userRepository: <a href="../classes/User.html" target="_self">Repository&lt;User&gt;</a>, membershipRepository: <a href="../s/Tenant.html" target="_self">Repository&lt;UserTenantMembership&gt;</a>, generateTokensProvider: <a href="../injectables/GenerateTokenProvider.html" target="_self">GenerateTokenProvider</a>, hashPassword: <a href="../injectables/HashingProvider.html" target="_self">HashingProvider</a>, teacherRepository: <a href="../classes/Teacher.html" target="_self">Repository&lt;Teacher&gt;</a>, tokenPair: <a href="../injectables/TokenProvider.html" target="_self">TokenProvider</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/admin/invitation/providers/accept-invitation.provider.ts:44</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>invitationRepository</td>
+                                                  
+                                                        <td>
+                                                                    <code>Repository&lt;UserInvitation&gt;</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>userRepository</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/User.html" target="_self" >Repository&lt;User&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>membershipRepository</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../miscellaneous/variables.html#Tenant" target="_self" >Repository&lt;UserTenantMembership&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>generateTokensProvider</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/GenerateTokenProvider.html" target="_self" >GenerateTokenProvider</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>hashPassword</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/HashingProvider.html" target="_self" >HashingProvider</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>teacherRepository</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/Teacher.html" target="_self" >Repository&lt;Teacher&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>tokenPair</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/TokenProvider.html" target="_self" >TokenProvider</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="acceptInvitation"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>acceptInvitation</b></span>
+                        <a href="#acceptInvitation"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>acceptInvitation(token: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, password: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, customTeacherLinkFn?: (user?: <a href="../classes/User.html">User</a>,invitation?: <a href="../classes/UserInvitation.html">UserInvitation</a>) => void)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="62"
+                                    class="link-to-prism">src/admin/invitation/providers/accept-invitation.provider.ts:62</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>token</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>password</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>customTeacherLinkFn</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/function" target="_blank" >function</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/AcceptInvitationResult.html" target="_self" >Promise&lt;AcceptInvitationResult&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createMembership"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>createMembership</b></span>
+                        <a href="#createMembership"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createMembership(user: <a href="../classes/User.html" target="_self">User</a>, invitation: <a href="../classes/UserInvitation.html" target="_self">UserInvitation</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="228"
+                                    class="link-to-prism">src/admin/invitation/providers/accept-invitation.provider.ts:228</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../classes/User.html" target="_self" >User</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>invitation</td>
+                                            <td>
+                                                            <code><a href="../classes/UserInvitation.html" target="_self" >UserInvitation</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../miscellaneous/variables.html#Tenant" target="_self" >Promise&lt;UserTenantMembership&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createUserFromInvitation"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>createUserFromInvitation</b></span>
+                        <a href="#createUserFromInvitation"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createUserFromInvitation(invitation: <a href="../classes/UserInvitation.html" target="_self">UserInvitation</a>, password: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="189"
+                                    class="link-to-prism">src/admin/invitation/providers/accept-invitation.provider.ts:189</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>invitation</td>
+                                            <td>
+                                                            <code><a href="../classes/UserInvitation.html" target="_self" >UserInvitation</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>password</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/User.html" target="_self" >Promise&lt;User&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findAndValidateInvitation"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>findAndValidateInvitation</b></span>
+                        <a href="#findAndValidateInvitation"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findAndValidateInvitation(token: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="121"
+                                    class="link-to-prism">src/admin/invitation/providers/accept-invitation.provider.ts:121</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>token</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;UserInvitation&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="linkTeacherToUser"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>linkTeacherToUser</b></span>
+                        <a href="#linkTeacherToUser"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>linkTeacherToUser(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, invitation: <a href="../classes/UserInvitation.html" target="_self">UserInvitation</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="148"
+                                    class="link-to-prism">src/admin/invitation/providers/accept-invitation.provider.ts:148</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>invitation</td>
+                                            <td>
+                                                            <code><a href="../classes/UserInvitation.html" target="_self" >UserInvitation</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="logger"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>logger</b></span>
+                        <a href="#logger"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new Logger(AcceptInvitationProvider.name)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="44" class="link-to-prism">src/admin/invitation/providers/accept-invitation.provider.ts:44</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  Logger,
+} from &#x27;@nestjs/common&#x27;;
+import { InjectRepository } from &#x27;@nestjs/typeorm&#x27;;
+import { Repository } from &#x27;typeorm&#x27;;
+import { User } from &#x27;src/admin/users/entities/user.entity&#x27;;
+import {
+  UserInvitation,
+  InvitationStatus,
+  InvitationType,
+} from &#x27;../entities/user-iInvitation.entity&#x27;;
+import {
+  UserTenantMembership,
+  MembershipRole,
+  MembershipStatus,
+} from &#x27;src/admin/user-tenant-membership/entities/user-tenant-membership.entity&#x27;;
+import { GenerateTokenProvider } from &#x27;src/admin/auth/providers/generate-token.provider&#x27;;
+import { HashingProvider } from &#x27;src/admin/auth/providers/hashing.provider&#x27;;
+import { Teacher } from &#x27;src/admin/teacher/entities/teacher.entity&#x27;;
+import { TokenProvider } from &#x27;src/admin/auth/providers/token.provider&#x27;;
+
+export interface AcceptInvitationResult {
+  message: string;
+  user: {
+    id: string;
+    email: string;
+    name: string;
+  };
+  tokens: {
+    accessToken: string;
+    refreshToken: string;
+  };
+  invitation: UserInvitation;
+  membership: UserTenantMembership;
+  role: MembershipRole;
+}
+@Injectable()
+export class AcceptInvitationProvider {
+  private readonly logger &#x3D; new Logger(AcceptInvitationProvider.name);
+
+  constructor(
+    @InjectRepository(UserInvitation)
+    private invitationRepository: Repository&lt;UserInvitation&gt;,
+    @InjectRepository(User)
+    private userRepository: Repository&lt;User&gt;,
+    @InjectRepository(UserTenantMembership)
+    private membershipRepository: Repository&lt;UserTenantMembership&gt;,
+    private readonly generateTokensProvider: GenerateTokenProvider,
+    private readonly hashPassword: HashingProvider,
+    @InjectRepository(Teacher)
+    private teacherRepository: Repository&lt;Teacher&gt;,
+
+
+        private readonly tokenPair: TokenProvider
+  ) {}
+
+  async acceptInvitation(
+    token: string,
+    password: string,
+    customTeacherLinkFn?: (
+      user: User,
+      invitation: UserInvitation,
+    ) &#x3D;&gt; Promise&lt;void&gt;,
+  ): Promise&lt;AcceptInvitationResult&gt; {
+    // Find and validate invitation
+    const invitation &#x3D; await this.findAndValidateInvitation(token);
+
+    // Get or create user
+    let user &#x3D; await this.userRepository.findOne({
+      where: { email: invitation.email },
+    });
+
+    if (!user) {
+      user &#x3D; await this.createUserFromInvitation(invitation, password);
+    }
+
+    // Create membership
+    const membership &#x3D; await this.createMembership(user, invitation);
+
+    // Handle teacher-specific logic
+    if (customTeacherLinkFn) {
+      await customTeacherLinkFn(user, invitation);
+    }
+
+    // Mark invitation as accepted
+    await this.invitationRepository.update(invitation.id, {
+      status: InvitationStatus.ACCEPTED,
+    });
+
+    // Generate tokens
+    const tokens &#x3D; await this.tokenPair.generateTenantUserTokens(
+      user,
+      membership,
+      invitation.tenant,
+    );
+
+    return {
+      message: &#x27;Invitation accepted successfully&#x27;,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+      },
+      tokens: {
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+      },
+      invitation,
+      membership,
+      role: membership.role,
+    };
+  }
+
+  
+
+  private async findAndValidateInvitation(
+    token: string,
+  ): Promise&lt;UserInvitation&gt; {
+    const invitation &#x3D; await this.invitationRepository.findOne({
+      where: {
+        token,
+        status: InvitationStatus.PENDING,
+      },
+      relations: [&#x27;tenant&#x27;, &#x27;invitedBy&#x27;],
+    });
+
+    if (!invitation) {
+      throw new NotFoundException(&#x27;Invalid or expired invitation&#x27;);
+    }
+
+    if (invitation.expiresAt &lt; new Date()) {
+      await this.invitationRepository.update(invitation.id, {
+        status: InvitationStatus.EXPIRED,
+      });
+      throw new BadRequestException(&#x27;Invitation has expired&#x27;);
+    }
+
+    return invitation;
+  }
+
+  // This method is in AcceptInvitationProvider
+
+  private async linkTeacherToUser(
+    userId: string,
+    invitation: UserInvitation,
+  ): Promise&lt;void&gt; {
+    try {
+      const teacher &#x3D; await this.teacherRepository.findOne({
+        where: {
+          email: invitation.email,
+          tenantId: invitation.tenantId,
+        },
+      });
+
+      if (!teacher) {
+        this.logger.error(
+          &#x60;Teacher profile not found for email: ${invitation.email}, tenant: ${invitation.tenantId}&#x60;,
+        );
+        throw new BadRequestException(&#x27;Teacher profile not found&#x27;);
+      }
+
+      teacher.user &#x3D; { id: userId } as User;
+
+      teacher.isActive &#x3D; true;
+      teacher.hasCompletedProfile &#x3D; true;
+
+
+      this.logger.log(&#x60;Linking teacher ${teacher.id} to user ${userId}&#x60;);
+
+      await this.teacherRepository.save(teacher);
+
+      this.logger.log(
+        &#x60;Successfully linked teacher profile ${teacher.id} to user ${userId}&#x60;,
+      );
+    } catch (error) {
+      this.logger.error(
+        &#x60;Failed to link teacher to user ${userId}:&#x60;,
+        error.message,
+      );
+      throw error;
+    }
+  }
+
+  private async createUserFromInvitation(
+    invitation: UserInvitation,
+    password: string,
+  ): Promise&lt;User&gt; {
+    try {
+      const userData &#x3D; invitation.userData as any;
+
+      // Validate required data
+      if (!userData?.fullName) {
+        throw new BadRequestException(
+          &#x27;Invitation data is incomplete - missing name&#x27;,
+        );
+      }
+
+      const hashedPassword &#x3D; await this.hashPassword.hashPassword(password);
+
+      const user &#x3D; this.userRepository.create({
+        email: invitation.email,
+        password: hashedPassword,
+        name: userData.fullName,
+        schoolUrl: invitation.tenant.subdomain,
+      });
+
+      const savedUser &#x3D; await this.userRepository.save(user);
+
+      this.logger.log(
+        &#x60;Created user from invitation: ${savedUser.id} (${savedUser.email})&#x60;,
+      );
+
+      return savedUser;
+    } catch (error) {
+      this.logger.error(
+        &#x60;Failed to create user from invitation:&#x60;,
+        error.message,
+      );
+      throw error;
+    }
+  }
+
+  private async createMembership(
+    user: User,
+    invitation: UserInvitation,
+  ): Promise&lt;UserTenantMembership&gt; {
+    try {
+      const membership &#x3D; this.membershipRepository.create({
+        user,
+        tenant: invitation.tenant,
+        role: invitation.role as MembershipRole,
+        status: MembershipStatus.ACTIVE,
+        joinedAt: new Date(),
+      });
+
+      const savedMembership &#x3D; await this.membershipRepository.save(membership)
+
+      this.logger.log(
+        &#x60;Created membership for user ${user.id} in tenant ${invitation.tenant.id} with role ${invitation.role}&#x60;,
+      );
+
+      return savedMembership;
+    } catch (error) {
+      this.logger.error(&#x60;Failed to create membership:&#x60;, error.message);
+      throw error;
+    }
+  }
+}
+
+
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'AcceptInvitationProvider.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

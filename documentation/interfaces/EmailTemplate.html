@@ -1,0 +1,883 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>skool documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">skool documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content interface">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Interfaces</li>
+  <li class="breadcrumb-item"
+  >
+  EmailTemplate</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/admin/email/providers/email.service.ts</code>
+        </p>
+
+
+
+
+        <section data-compodoc="block-index">
+            <h3 id="index">Index</h3>
+            <table class="table table-sm table-bordered index-table">
+                <tbody>
+                    <tr>
+                        <td class="col-md-4">
+                            <h6><b>Properties</b></h6>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="col-md-4">
+                            <ul class="index-list">
+                                <li>
+                                        <a href="#html" 
+>
+                                            html
+                                        </a>
+                                </li>
+                                <li>
+                                        <a href="#subject" 
+>
+                                            subject
+                                        </a>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+
+            <section data-compodoc="block-properties">
+                <h3 id="inputs">Properties</h3>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="html"></a>
+                                        <span class="name "><b>html</b>
+                                            <a href="#html">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>html:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+                    <table class="table table-sm table-bordered">
+                        <tbody>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <a name="subject"></a>
+                                        <span class="name "><b>subject</b>
+                                            <a href="#subject">
+                                                <span class="icon ion-ios-link"></span>
+                                            </a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-md-4">
+                                        <code>subject:         <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+</code>
+                                    </td>
+                                </tr>
+
+
+                                    <tr>
+                                        <td class="col-md-4">
+                                            <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                                        </td>
+                                    </tr>
+
+
+
+
+
+                        </tbody>
+                    </table>
+            </section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Inject, Injectable, Logger } from &#x27;@nestjs/common&#x27;;
+import { ConfigType } from &#x27;@nestjs/config&#x27;;
+import { InjectRepository } from &#x27;@nestjs/typeorm&#x27;;
+import { Resend } from &#x27;resend&#x27;;
+import { Tenant } from &#x27;src/admin/tenants/entities/tenant.entity&#x27;;
+import { Repository } from &#x27;typeorm&#x27;;
+import resendConfig from &#x27;../config/resend.config&#x27;;
+
+interface BaseEmailData {
+  recipientName: string;
+  schoolName: string;
+  inviterName?: string;
+  tenantId: string;
+}
+
+interface TeacherInvitationData extends BaseEmailData {
+  email: string;
+  invitationToken: string;
+}
+
+interface ParentInvitationData extends BaseEmailData {
+  email: string;
+  invitationToken: string;
+  students: {
+    id: string;
+    name: string;
+    admissionNumber: string;
+    grade: string;
+  }[];
+}
+
+interface StaffInvitationData extends BaseEmailData {
+  email: string;
+  invitationToken: string;
+  staffRole: string;
+}
+
+interface PasswordResetData {
+  email: string;
+  userName: string;
+  schoolName: string;
+  resetToken: string;
+  tenantId: string;
+}
+
+interface EmailTemplate {
+  subject: string;
+  html: string;
+}
+
+@Injectable()
+export class EmailService {
+  private resend: Resend;
+  private readonly logger &#x3D; new Logger(EmailService.name);
+
+  constructor(
+    @Inject(resendConfig.KEY)
+    private readonly resendConfiguration: ConfigType&lt;typeof resendConfig&gt;,
+    @InjectRepository(Tenant)
+    private readonly tenantRepository: Repository&lt;Tenant&gt;,
+  ) {
+    this.resend &#x3D; new Resend(this.resendConfiguration.apiKey);
+  }
+
+  private async getTenantSubdomain(tenantId: string): Promise&lt;string&gt; {
+    const tenant &#x3D; await this.tenantRepository.findOne({
+      where: { id: tenantId },
+      select: [&#x27;subdomain&#x27;],
+    });
+
+    if (!tenant) {
+      throw new Error(&#x60;Tenant with ID ${tenantId} not found&#x60;);
+    }
+
+    return tenant.subdomain;
+  }
+
+
+
+  async sendReceiptEmail(
+    to: string,
+    data: {
+      recipientName: string;
+      schoolName: string;
+      receiptNumber: string;
+      amount: number;
+      paymentMethod: string;
+      paymentDate: string;
+      invoiceNumber?: string;
+      balanceAmount?: number;
+      pdfUrl: string;
+    }
+  ) {
+    const template &#x3D; this.buildReceiptTemplate(data);
+  
+    const { error } &#x3D; await this.resend.emails.send({
+      from: this.resendConfiguration.fromEmail || &#x27;noreply@squl.co.ke&#x27;,
+      to,
+      subject: template.subject,
+      html: template.html,
+      // attachments: [
+      //   {
+      //     filename: &#x60;receipt-${data.receiptNumber}.pdf&#x60;,
+      //     path: data.pdfUrl,
+      //   },
+      // ],
+    });
+  
+    if (error) {
+      this.logger.error(&#x60;Failed to send receipt to ${to}&#x60;, error);
+      throw new Error(&#x27;Failed to send receipt email&#x27;);
+    }
+  
+    this.logger.log(&#x60;Receipt ${data.receiptNumber} emailed to ${to}&#x60;);
+  }
+
+
+  // private async sendEmail(to: string, template: EmailTemplate): Promise&lt;any&gt; {
+  //   const { data, error } &#x3D; await this.resend.emails.send({
+  //     from: this.resendConfiguration.fromEmail || &#x27;noreply@squl.co.ke&#x27;,
+  //     to,
+  //     subject: template.subject,
+  //     html: template.html,
+  //   });
+
+  //   if (error) {
+  //     console.error(&#x27;Resend error:&#x27;, error);
+  //     throw new Error(&#x27;Failed to send email&#x27;);
+  //   }
+
+  //   return data;
+  // }
+
+
+
+
+
+
+
+
+
+
+
+  private getBaseEmailTemplate(content: string, schoolName: string): string {
+    return &#x60;
+      &lt;div style&#x3D;&quot;font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;&quot;&gt;
+        &lt;div style&#x3D;&quot;background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;&quot;&gt;
+          &lt;h1 style&#x3D;&quot;color: white; margin: 0; font-size: 28px;&quot;&gt;Welcome to ${schoolName}!&lt;/h1&gt;
+        &lt;/div&gt;
+
+        &lt;div style&#x3D;&quot;background: white; padding: 30px; border-radius: 0 0 10px 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);&quot;&gt;
+          ${content}
+
+          &lt;div style&#x3D;&quot;border-top: 2px solid #f1f3f4; padding-top: 20px; margin-top: 30px;&quot;&gt;
+            &lt;p style&#x3D;&quot;color: #333; margin-bottom: 5px;&quot;&gt;
+              Best regards,&lt;br&gt;
+              &lt;strong&gt;The ${schoolName} Team&lt;/strong&gt;
+            &lt;/p&gt;
+          &lt;/div&gt;
+
+          &lt;div style&#x3D;&quot;text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;&quot;&gt;
+            &lt;p style&#x3D;&quot;color: #999; font-size: 12px; margin: 0;&quot;&gt;
+              This is an automated message. Please do not reply to this email.
+            &lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &#x60;;
+  }
+
+  private getInvitationButton(
+    url: string,
+    text: string,
+    color: string &#x3D; &#x27;#667eea&#x27;,
+  ): string {
+    return &#x60;
+      &lt;div style&#x3D;&quot;text-align: center; margin: 35px 0;&quot;&gt;
+        &lt;a href&#x3D;&quot;${url}&quot;
+           style&#x3D;&quot;background: linear-gradient(135deg, ${color} 0%, #764ba2 100%);
+                  color: white;
+                  padding: 15px 40px;
+                  text-decoration: none;
+                  border-radius: 25px;
+                  display: inline-block;
+                  font-weight: bold;
+                  font-size: 16px;
+                  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+                  transition: all 0.3s ease;&quot;&gt;
+          ${text}
+        &lt;/a&gt;
+      &lt;/div&gt;
+    &#x60;;
+  }
+
+  private getExpirationNotice(days: number): string {
+    return &#x60;
+      &lt;div style&#x3D;&quot;background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 8px; margin: 25px 0;&quot;&gt;
+        &lt;p style&#x3D;&quot;color: #856404; margin: 0; font-size: 14px;&quot;&gt;
+          &lt;strong&gt;⏰ Important:&lt;/strong&gt; This invitation will expire in ${days} days. Please accept it as soon as possible.
+        &lt;/p&gt;
+      &lt;/div&gt;
+    &#x60;;
+  }
+
+  private getInstructionSteps(steps: string[]): string {
+    const stepsList &#x3D; steps.map((step, index) &#x3D;&gt; &#x60;&lt;li&gt;${step}&lt;/li&gt;&#x60;).join(&#x27;&#x27;);
+    return &#x60;
+      &lt;div style&#x3D;&quot;background: #e8f4f8; padding: 20px; border-radius: 8px; margin: 25px 0;&quot;&gt;
+        &lt;h3 style&#x3D;&quot;color: #333; margin-top: 0; font-size: 16px;&quot;&gt;Getting Started:&lt;/h3&gt;
+        &lt;ol style&#x3D;&quot;color: #555; margin: 10px 0; padding-left: 20px; line-height: 1.6;&quot;&gt;
+          ${stepsList}
+        &lt;/ol&gt;
+      &lt;/div&gt;
+    &#x60;;
+  }
+
+  // Template builders
+  private async buildTeacherInvitationTemplate(
+    data: TeacherInvitationData,
+  ): Promise&lt;EmailTemplate&gt; {
+    const subdomain &#x3D; await this.getTenantSubdomain(data.tenantId);
+    const invitationUrl &#x3D; &#x60;https://${subdomain}.squl.co.ke/signup?token&#x3D;${data.invitationToken}&#x60;;
+
+    const steps &#x3D; [
+      &#x27;Click the invitation link below to accept&#x27;,
+      &#x27;Set up your password&#x27;,
+      &#x27;Review and update your profile information&#x27;,
+      &#x27;Start using the school management system&#x27;,
+    ];
+
+    const content &#x3D; &#x60;
+      &lt;p style&#x3D;&quot;font-size: 18px; color: #333; margin-bottom: 20px;&quot;&gt;Dear ${data.recipientName},&lt;/p&gt;
+
+      &lt;p style&#x3D;&quot;color: #555; line-height: 1.6; margin-bottom: 20px;&quot;&gt;
+        You have been invited by &lt;strong&gt;${data.inviterName}&lt;/strong&gt; to join &lt;strong&gt;${data.schoolName}&lt;/strong&gt; as a teacher.
+       ${data.invitationToken}
+
+      &lt;/p&gt;
+
+      ${this.getInstructionSteps(steps)}
+      ${this.getInvitationButton(invitationUrl, &#x27;Accept Teacher Invitation&#x27;)}
+      ${this.getExpirationNotice(7)}
+    &#x60;;
+
+    return {
+      subject: &#x60;Invitation to Join ${data.schoolName} as a Teacher&#x60;,
+      html: this.getBaseEmailTemplate(content, data.schoolName),
+    };
+  }
+
+
+
+  private buildReceiptTemplate(
+    data: {
+      recipientName: string;
+      schoolName: string;
+      receiptNumber: string;
+      amount: number;
+      paymentMethod: string;
+      paymentDate: string;
+      invoiceNumber?: string;
+      balanceAmount?: number;
+    }
+  ): EmailTemplate {
+    const content &#x3D; &#x60;
+      &lt;p style&#x3D;&quot;font-size: 18px; color: #333; margin-bottom: 20px;&quot;&gt;Dear ${data.recipientName},&lt;/p&gt;
+      
+      &lt;p style&#x3D;&quot;color: #555; line-height: 1.6; margin-bottom: 20px;&quot;&gt;
+        This is to confirm receipt of your payment to &lt;strong&gt;${data.schoolName}&lt;/strong&gt;.
+      &lt;/p&gt;
+  
+      &lt;div style&#x3D;&quot;background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;&quot;&gt;
+        &lt;h3 style&#x3D;&quot;margin: 0 0 15px; color: #333;&quot;&gt;Receipt Details:&lt;/h3&gt;
+        &lt;ul style&#x3D;&quot;color: #555; padding-left: 20px; line-height: 1.6;&quot;&gt;
+          &lt;li&gt;&lt;strong&gt;Receipt Number:&lt;/strong&gt; ${data.receiptNumber}&lt;/li&gt;
+          &lt;li&gt;&lt;strong&gt;Amount Paid:&lt;/strong&gt; ${data.amount}&lt;/li&gt;
+          &lt;li&gt;&lt;strong&gt;Payment Method:&lt;/strong&gt; ${data.paymentMethod}&lt;/li&gt;
+          &lt;li&gt;&lt;strong&gt;Payment Date:&lt;/strong&gt; ${data.paymentDate}&lt;/li&gt;
+          ${data.invoiceNumber ? &#x60;&lt;li&gt;&lt;strong&gt;Invoice:&lt;/strong&gt; ${data.invoiceNumber}&lt;/li&gt;&#x60; : &#x27;&#x27;}
+          ${data.balanceAmount !&#x3D; null ? &#x60;&lt;li&gt;&lt;strong&gt;Balance Remaining:&lt;/strong&gt; ${data.balanceAmount}&lt;/li&gt;&#x60; : &#x27;&#x27;}
+        &lt;/ul&gt;
+      &lt;/div&gt;
+  
+     
+    &#x60;;
+  
+
+  //   &lt;p style&#x3D;&quot;color: #555; margin-bottom: 20px;&quot;&gt;
+  //   Please find the detailed receipt attached as PDF.
+  // &lt;/p&gt;
+    return {
+      subject: &#x60;Payment Receipt - ${data.receiptNumber}&#x60;,
+      html: this.getBaseEmailTemplate(content, data.schoolName),
+    };
+  }
+  
+
+
+
+  private async buildParentInvitationTemplate(
+    data: ParentInvitationData,
+  ): Promise&lt;EmailTemplate&gt; {
+    const subdomain &#x3D; await this.getTenantSubdomain(data.tenantId);
+    const invitationUrl &#x3D; &#x60;https://${subdomain}.squl.co.ke/signup?token&#x3D;${data.invitationToken}&#x60;;
+
+    const studentNames &#x3D; data.students.map((s) &#x3D;&gt; s.name).join(&#x27;, &#x27;);
+    const studentDetails &#x3D; data.students
+      .map(
+        (s) &#x3D;&gt;
+          &#x60;&lt;li&gt;&lt;strong&gt;${s.name}&lt;/strong&gt; (Grade: ${s.grade}, Admission: ${s.admissionNumber})&lt;/li&gt;&#x60;,
+      )
+      .join(&#x27;&#x27;);
+
+    const steps &#x3D; [
+      &#x27;Click the invitation link below&#x27;,
+      &#x27;Set up your password&#x27;,
+      &#x27;Review and update your profile information&#x27;,
+      &quot;Start monitoring your child&#x27;s academic journey&quot;,
+    ];
+
+    const parentFeatures &#x3D; [
+      &quot;Your child&#x27;s academic progress and grades&quot;,
+      &#x27;Fee statements and payment history&#x27;,
+      &#x27;School announcements and communication&#x27;,
+      &#x27;Teacher-parent communication portal&#x27;,
+      &#x27;School calendar and events&#x27;,
+    ];
+
+    const content &#x3D; &#x60;
+      &lt;p style&#x3D;&quot;font-size: 18px; color: #333; margin-bottom: 20px;&quot;&gt;Dear ${data.recipientName},&lt;/p&gt;
+
+      &lt;p style&#x3D;&quot;color: #555; line-height: 1.6; margin-bottom: 20px;&quot;&gt;
+        You have been invited by &lt;strong&gt;${data.inviterName}&lt;/strong&gt; to join &lt;strong&gt;${data.schoolName}&lt;/strong&gt; as a parent.
+      &lt;/p&gt;
+
+      &lt;div style&#x3D;&quot;background: #e8f5e8; padding: 20px; border-radius: 8px; margin: 25px 0;&quot;&gt;
+        &lt;h3 style&#x3D;&quot;color: #333; margin-top: 0; font-size: 16px;&quot;&gt;Your Child(ren):&lt;/h3&gt;
+        &lt;ul style&#x3D;&quot;color: #555; margin: 10px 0; padding-left: 20px;&quot;&gt;
+          ${studentDetails}
+        &lt;/ul&gt;
+      &lt;/div&gt;
+
+      &lt;div style&#x3D;&quot;background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 25px 0;&quot;&gt;
+        &lt;h3 style&#x3D;&quot;color: #333; margin-top: 0; font-size: 16px;&quot;&gt;As a parent, you will have access to:&lt;/h3&gt;
+        &lt;ul style&#x3D;&quot;color: #555; margin: 10px 0; padding-left: 20px;&quot;&gt;
+          ${parentFeatures.map((feature) &#x3D;&gt; &#x60;&lt;li&gt;${feature}&lt;/li&gt;&#x60;).join(&#x27;&#x27;)}
+        &lt;/ul&gt;
+      &lt;/div&gt;
+
+      ${this.getInstructionSteps(steps)}
+      ${this.getInvitationButton(invitationUrl, &#x27;Accept Parent Invitation&#x27;, &#x27;#27ae60&#x27;)}
+      ${this.getExpirationNotice(7)}
+    &#x60;;
+
+    return {
+      subject: &#x60;Invitation to Join ${data.schoolName} - Parent of ${studentNames}&#x60;,
+      html: this.getBaseEmailTemplate(content, data.schoolName),
+    };
+  }
+
+  private async buildStaffInvitationTemplate(
+    data: StaffInvitationData,
+  ): Promise&lt;EmailTemplate&gt; {
+    const subdomain &#x3D; await this.getTenantSubdomain(data.tenantId);
+    const invitationUrl &#x3D; &#x60;https://${subdomain}.squl.co.ke/signup?token&#x3D;${data.invitationToken}&#x60;;
+
+    const formattedRole &#x3D; data.staffRole
+      ? data.staffRole
+          .replace(/_/g, &#x27; &#x27;)
+          .toLowerCase()
+          .replace(/\b\w/g, (l) &#x3D;&gt; l.toUpperCase())
+      : &#x27;Staff Member&#x27;;
+
+    const steps &#x3D; [
+      &#x27;Click the invitation link below to accept&#x27;,
+      &#x27;Create your secure password&#x27;,
+      &#x27;Complete your staff profile&#x27;,
+      &#x27;Access your dashboard and start managing school operations&#x27;,
+    ];
+
+    const content &#x3D; &#x60;
+      &lt;p style&#x3D;&quot;font-size: 18px; color: #333; margin-bottom: 20px;&quot;&gt;Dear ${data.recipientName},&lt;/p&gt;
+
+      &lt;p style&#x3D;&quot;color: #555; line-height: 1.6; margin-bottom: 20px;&quot;&gt;
+        You have been invited by &lt;strong&gt;${data.inviterName}&lt;/strong&gt; to join &lt;strong&gt;${data.schoolName}&lt;/strong&gt; as a &lt;strong&gt;${formattedRole}&lt;/strong&gt;.
+      &lt;/p&gt;
+
+      &lt;div style&#x3D;&quot;background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #667eea;&quot;&gt;
+        &lt;h3 style&#x3D;&quot;color: #333; margin-top: 0; font-size: 16px;&quot;&gt;Your Position Details:&lt;/h3&gt;
+        &lt;ul style&#x3D;&quot;color: #555; margin: 10px 0; padding-left: 20px;&quot;&gt;
+          &lt;li&gt;&lt;strong&gt;Role:&lt;/strong&gt; ${formattedRole}&lt;/li&gt;
+          &lt;li&gt;&lt;strong&gt;School:&lt;/strong&gt; ${data.schoolName}&lt;/li&gt;
+          &lt;li&gt;&lt;strong&gt;Invited by:&lt;/strong&gt; ${data.inviterName}&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/div&gt;
+
+      ${this.getInstructionSteps(steps)}
+      ${this.getInvitationButton(invitationUrl, &#x27;Accept Invitation &amp; Join Team&#x27;)}
+      ${this.getExpirationNotice(7)}
+    &#x60;;
+
+    return {
+      subject: &#x60;Welcome to ${data.schoolName} - Staff Invitation (${formattedRole})&#x60;,
+      html: this.getBaseEmailTemplate(content, data.schoolName),
+    };
+  }
+
+  private async buildPasswordResetTemplate(
+    data: PasswordResetData,
+  ): Promise&lt;EmailTemplate&gt; {
+    const subdomain &#x3D; await this.getTenantSubdomain(data.tenantId);
+    const resetUrl &#x3D; &#x60;https://${subdomain}.squl.co.ke/reset-password?token&#x3D;${data.resetToken}&#x60;;
+
+    const steps &#x3D; [
+      &#x27;Click the reset link below&#x27;,
+      &#x27;Enter your new password&#x27;,
+      &#x27;Confirm your new password&#x27;,
+      &#x27;Sign in with your new password&#x27;,
+    ];
+
+    const content &#x3D; &#x60;
+      &lt;div style&#x3D;&quot;background: #f8f9fa; padding: 20px; border-radius: 10px 10px 0 0; text-align: center;&quot;&gt;
+        &lt;h2 style&#x3D;&quot;color: #2c3e50; margin: 0;&quot;&gt;Password Reset Request&lt;/h2&gt;
+      &lt;/div&gt;
+
+      &lt;div style&#x3D;&quot;padding: 20px;&quot;&gt;
+        &lt;p style&#x3D;&quot;font-size: 18px; color: #333; margin-bottom: 20px;&quot;&gt;Dear ${data.userName},&lt;/p&gt;
+
+        &lt;p style&#x3D;&quot;color: #555; line-height: 1.6; margin-bottom: 20px;&quot;&gt;
+          You have requested to reset your password for your &lt;strong&gt;${data.schoolName}&lt;/strong&gt; account.
+        &lt;/p&gt;
+
+        ${this.getInstructionSteps(steps)}
+        ${this.getInvitationButton(resetUrl, &#x27;Reset Password&#x27;, &#x27;#e74c3c&#x27;)}
+
+        &lt;div style&#x3D;&quot;background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 8px; margin: 25px 0;&quot;&gt;
+          &lt;p style&#x3D;&quot;color: #856404; margin: 0; font-size: 14px;&quot;&gt;
+            &lt;strong&gt;⏰ Important:&lt;/strong&gt; This link will expire in 1 hour. If you didn&#x27;t request this password reset, please ignore this email.
+          &lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &#x60;;
+
+    return {
+      subject: &#x60;Password Reset Request - ${data.schoolName}&#x60;,
+      html: content,
+    };
+  }
+
+
+
+
+  private async sendEmail(to: string, template: EmailTemplate): Promise&lt;any&gt; {
+    const { data, error } &#x3D; await this.resend.emails.send({
+      from: this.resendConfiguration.fromEmail || &#x27;noreply@squl.co.ke&#x27;,
+      to,
+      subject: template.subject,
+      html: template.html,
+    });
+
+    if (error) {
+      console.error(&#x27;Resend error:&#x27;, error);
+      throw new Error(&#x27;Failed to send email&#x27;);
+    }
+
+    return data;
+  }
+
+  async sendTeacherInvitation(
+    email: string,
+    teacherName: string,
+    schoolName: string,
+    invitationToken: string,
+    inviterName: string,
+    tenantId: string,
+  ): Promise&lt;void&gt; {
+    try {
+      const template &#x3D; await this.buildTeacherInvitationTemplate({
+        email,
+        recipientName: teacherName,
+        schoolName,
+        invitationToken,
+        inviterName,
+        tenantId,
+      });
+
+      await this.sendEmail(email, template);
+      this.logger.log(&#x60;Teacher invitation sent to ${email}&#x60;);
+    } catch (error) {
+      this.logger.error(
+        &#x60;Failed to send teacher invitation to ${email}:&#x60;,
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async sendParentInvitation(
+    email: string,
+    parentName: string,
+    schoolName: string,
+    invitationToken: string,
+    tenantId: string,
+    students: {
+      id: string;
+      name: string;
+      admissionNumber: string;
+      grade: string;
+    }[],
+  ) {
+    const template &#x3D; await this.buildParentInvitationTemplate({
+      email,
+      recipientName: parentName,
+      schoolName,
+      invitationToken,
+      tenantId,
+      students,
+    });
+
+    return this.sendEmail(email, template);
+  }
+
+  async sendStaffInvitation(
+    email: string,
+    staffName: string,
+    schoolName: string,
+    invitationToken: string,
+    inviterName: string,
+    tenantId: string,
+    staffRole: string,
+  ) {
+    const template &#x3D; await this.buildStaffInvitationTemplate({
+      email,
+      recipientName: staffName,
+      schoolName,
+      invitationToken,
+      inviterName,
+      tenantId,
+      staffRole,
+    });
+
+    return this.sendEmail(email, template);
+  }
+
+  async sendPasswordResetEmail(
+    email: string,
+    userName: string,
+    schoolName: string,
+    resetToken: string,
+    tenantId: string,
+  ) {
+    const template &#x3D; await this.buildPasswordResetTemplate({
+      email,
+      userName,
+      schoolName,
+      resetToken,
+      tenantId,
+    });
+
+    return this.sendEmail(email, template);
+  }
+
+
+
+}
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'interface';
+            var COMPODOC_CURRENT_PAGE_URL = 'EmailTemplate.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

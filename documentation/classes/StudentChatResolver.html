@@ -1,0 +1,3088 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>skool documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">skool documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content class">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Classes</li>
+  <li class="breadcrumb-item" >StudentChatResolver</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/student/chat/chat.resolver.ts</code>
+        </p>
+
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#deleteStudentMessage" >deleteStudentMessage</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getChatRoomWithTeacher" >getChatRoomWithTeacher</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getMessageById" >getMessageById</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getStudentChatHistory" >getStudentChatHistory</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getStudentChatRooms" >getStudentChatRooms</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getStudentReadMessages" >getStudentReadMessages</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getStudentTeachers" >getStudentTeachers</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getStudentUnreadCount" >getStudentUnreadCount</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getStudentUnreadCountForRoom" >getStudentUnreadCountForRoom</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getStudentUnreadMessageCount" >getStudentUnreadMessageCount</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getStudentUnreadMessages" >getStudentUnreadMessages</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getStudentUnreadRooms" >getStudentUnreadRooms</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getTeacherLastSeen" >getTeacherLastSeen</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#isTeacherOnline" >isTeacherOnline</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#markStudentMessageAsRead" >markStudentMessageAsRead</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#markStudentMessagesAsRead" >markStudentMessagesAsRead</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#studentMarkMessagesAsRead" >studentMarkMessagesAsRead</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#studentMessageAdded" >studentMessageAdded</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#studentSendMessageToTeacher" >studentSendMessageToTeacher</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#studentSetTyping" >studentSetTyping</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                <a href="#studentUserTyping" >studentUserTyping</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(pubSub, studentChatService: <a href="../injectables/StudentChatService.html" target="_self">StudentChatService</a>, redisChatProvider: <a href="../injectables/RedisChatProvider.html" target="_self">RedisChatProvider</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/student/chat/chat.resolver.ts:14</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>pubSub</td>
+                                                  
+                                                        <td>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>studentChatService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/StudentChatService.html" target="_self" >StudentChatService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>redisChatProvider</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/RedisChatProvider.html" target="_self" >RedisChatProvider</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="deleteStudentMessage"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>deleteStudentMessage</b></span>
+                        <a href="#deleteStudentMessage"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>deleteStudentMessage(messageId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Mutation(undefined, {description: &#x27;Delete a message sent by the current student&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="298"
+                                    class="link-to-prism">src/student/chat/chat.resolver.ts:298</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>messageId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getChatRoomWithTeacher"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getChatRoomWithTeacher</b></span>
+                        <a href="#getChatRoomWithTeacher"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getChatRoomWithTeacher(teacherId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Query(undefined, {nullable: true, description: &#x27;Get chat room with a specific teacher (returns null if no conversation exists)&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="393"
+                                    class="link-to-prism">src/student/chat/chat.resolver.ts:393</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>GET CHAT ROOM WITH SPECIFIC TEACHER
+Find existing conversation with a specific teacher</p>
+<p>Example:
+query {
+  getChatRoomWithTeacher(teacherId: &quot;teacher-uuid-here&quot;) {
+    id
+    name
+    type
+    participantIds
+    createdAt
+    updatedAt
+  }
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>teacherId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatRoom.html" target="_self" >Promise&lt;ChatRoom | null&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getMessageById"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getMessageById</b></span>
+                        <a href="#getMessageById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getMessageById(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, currentUser?: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Query(undefined, {name: &#x27;getMessageById&#x27;, nullable: true})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="286"
+                                    class="link-to-prism">src/student/chat/chat.resolver.ts:286</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getStudentChatHistory"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getStudentChatHistory</b></span>
+                        <a href="#getStudentChatHistory"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getStudentChatHistory(chatRoomId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, limit: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, offset: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Query(undefined, {description: &#x27;Get chat history for a specific room - includes ALL messages (sent by student AND received from teacher)&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="165"
+                                    class="link-to-prism">src/student/chat/chat.resolver.ts:165</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>GET CHAT HISTORY
+Get all messages in a conversation with a teacher (includes messages FROM teacher)</p>
+<p>Example:
+query {
+  getStudentChatHistory(
+    chatRoomId: &quot;1a6f156b-84a7-4775-8818-35f778bc0798&quot;
+    limit: 50
+    offset: 0
+  ) {
+    id
+    message
+    subject
+    senderId
+    senderType
+    isRead
+    imageUrl
+    createdAt
+    chatRoom {
+      id
+      name
+      type
+      participantIds
+    }
+  }
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>chatRoomId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>limit</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>offset</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getStudentChatRooms"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getStudentChatRooms</b></span>
+                        <a href="#getStudentChatRooms"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getStudentChatRooms(currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Query(undefined, {description: &#x27;Get all chat rooms for the current student&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="278"
+                                    class="link-to-prism">src/student/chat/chat.resolver.ts:278</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>GET ALL CHAT ROOMS
+Get all chat rooms/conversations for the current student</p>
+<p>Example:
+query {
+  getStudentChatRooms {
+    id
+    name
+    type
+    participantIds
+    createdAt
+    updatedAt
+  }
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatRoom.html" target="_self" >Promise&lt;ChatRoom[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getStudentReadMessages"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getStudentReadMessages</b></span>
+                        <a href="#getStudentReadMessages"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getStudentReadMessages(limit: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Query(undefined, {description: &#x27;Get all read messages for the current student&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="557"
+                                    class="link-to-prism">src/student/chat/chat.resolver.ts:557</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Get read messages for student</p>
+<p>query {
+  getStudentReadMessages(limit: 50) {
+    id
+    message
+    subject
+    createdAt
+    isRead
+  }
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>limit</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getStudentTeachers"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getStudentTeachers</b></span>
+                        <a href="#getStudentTeachers"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getStudentTeachers(currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Query(undefined, {description: &#x27;Get all teachers that the student has chat conversations with&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="428"
+                                    class="link-to-prism">src/student/chat/chat.resolver.ts:428</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>GET ALL TEACHERS STUDENT HAS CHATTED WITH
+Get list of all teachers the student has conversations with</p>
+<p>Example:
+query {
+  getStudentTeachers {
+    id
+    fullName
+    firstName
+    lastName
+    email
+    department
+    phoneNumber
+    user {
+      id
+      name
+      email
+    }
+  }
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Teacher.html" target="_self" >Promise&lt;Teacher[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getStudentUnreadCount"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getStudentUnreadCount</b></span>
+                        <a href="#getStudentUnreadCount"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getStudentUnreadCount(currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Query(undefined, {description: &#x27;Get total unread message count for the current student&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="576"
+                                    class="link-to-prism">src/student/chat/chat.resolver.ts:576</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Get unread count for student</p>
+<p>query {
+  getStudentUnreadCount
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;number&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getStudentUnreadCountForRoom"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getStudentUnreadCountForRoom</b></span>
+                        <a href="#getStudentUnreadCountForRoom"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getStudentUnreadCountForRoom(chatRoomId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Query(undefined, {description: &#x27;Get unread message count for a specific room&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="343"
+                                    class="link-to-prism">src/student/chat/chat.resolver.ts:343</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>GET UNREAD COUNT FOR SPECIFIC ROOM
+Get unread message count for a specific conversation</p>
+<p>Example:
+query {
+  getStudentUnreadCountForRoom(chatRoomId: &quot;1a6f156b-84a7-4775-8818-35f778bc0798&quot;)
+}</p>
+<p>Returns: 3 (for example)</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>chatRoomId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;number&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getStudentUnreadMessageCount"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getStudentUnreadMessageCount</b></span>
+                        <a href="#getStudentUnreadMessageCount"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getStudentUnreadMessageCount(currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Query(undefined, {description: &#x27;Get total unread message count for the current student&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="323"
+                                    class="link-to-prism">src/student/chat/chat.resolver.ts:323</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>GET TOTAL UNREAD MESSAGE COUNT
+Get total number of unread messages across all conversations</p>
+<p>Example:
+query {
+  getStudentUnreadMessageCount
+}</p>
+<p>Returns: 5 (for example)</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;number&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getStudentUnreadMessages"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getStudentUnreadMessages</b></span>
+                        <a href="#getStudentUnreadMessages"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getStudentUnreadMessages(currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Query(undefined, {description: &#x27;Get all unread messages for the current student&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="535"
+                                    class="link-to-prism">src/student/chat/chat.resolver.ts:535</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getStudentUnreadRooms"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getStudentUnreadRooms</b></span>
+                        <a href="#getStudentUnreadRooms"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getStudentUnreadRooms(currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Query(undefined, {description: &#x27;Get all room IDs that have unread messages for the current student&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="367"
+                                    class="link-to-prism">src/student/chat/chat.resolver.ts:367</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>GET ROOMS WITH UNREAD MESSAGES
+Get list of room IDs that have unread messages</p>
+<p>Example:
+query {
+  getStudentUnreadRooms
+}</p>
+<p>Returns: [&quot;room-id-1&quot;, &quot;room-id-2&quot;, &quot;room-id-3&quot;]</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;string[]&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getTeacherLastSeen"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getTeacherLastSeen</b></span>
+                        <a href="#getTeacherLastSeen"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getTeacherLastSeen(teacherUserId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Query(undefined, {nullable: true, description: &#x27;Get teacher last seen timestamp (ISO format)&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="471"
+                                    class="link-to-prism">src/student/chat/chat.resolver.ts:471</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>GET TEACHER&#39;S LAST SEEN TIME
+Get when a teacher was last active</p>
+<p>Example:
+query {
+  getTeacherLastSeen(teacherUserId: &quot;teacher-user-uuid&quot;)
+}</p>
+<p>Returns: &quot;2024-10-24T10:30:00.000Z&quot; or null</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>teacherUserId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;string | null&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isTeacherOnline"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>isTeacherOnline</b></span>
+                        <a href="#isTeacherOnline"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>isTeacherOnline(teacherUserId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Query(undefined, {description: &#x27;Check if a specific teacher is currently online&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="450"
+                                    class="link-to-prism">src/student/chat/chat.resolver.ts:450</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>CHECK IF TEACHER IS ONLINE
+Check if a specific teacher is currently online</p>
+<p>Example:
+query {
+  isTeacherOnline(teacherUserId: &quot;teacher-user-uuid&quot;)
+}</p>
+<p>Returns: true or false</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>teacherUserId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="markStudentMessageAsRead"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>markStudentMessageAsRead</b></span>
+                        <a href="#markStudentMessageAsRead"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>markStudentMessageAsRead(messageId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Mutation(undefined, {description: &#x27;Mark a single message as read (student)&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="622"
+                                    class="link-to-prism">src/student/chat/chat.resolver.ts:622</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Mark single message as read (student)</p>
+<p>mutation {
+  markStudentMessageAsRead(messageId: &quot;msg-uuid&quot;)
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>messageId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="markStudentMessagesAsRead"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>markStudentMessagesAsRead</b></span>
+                        <a href="#markStudentMessagesAsRead"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>markStudentMessagesAsRead(chatRoomId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Mutation(undefined, {description: &#x27;Mark all messages in a chat room as read (student)&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="602"
+                                    class="link-to-prism">src/student/chat/chat.resolver.ts:602</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Mark messages as read for student</p>
+<p>mutation {
+  markStudentMessagesAsRead(chatRoomId: &quot;room-uuid&quot;)
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>chatRoomId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="studentMarkMessagesAsRead"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>studentMarkMessagesAsRead</b></span>
+                        <a href="#studentMarkMessagesAsRead"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>studentMarkMessagesAsRead(chatRoomId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Mutation(undefined, {description: &#x27;Mark all messages in a chat room as read (student marks teacher messages as read)&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="85"
+                                    class="link-to-prism">src/student/chat/chat.resolver.ts:85</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>MARK MESSAGES AS READ
+Mark all unread messages in a chat room as read</p>
+<p>Example:
+mutation {
+  studentMarkMessagesAsRead(chatRoomId: &quot;1a6f156b-84a7-4775-8818-35f778bc0798&quot;)
+}</p>
+<p>Returns: true</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>chatRoomId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="studentMessageAdded"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>studentMessageAdded</b></span>
+                        <a href="#studentMessageAdded"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>studentMessageAdded()</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Subscription(undefined, {description: &#x27;Subscribe to new messages in real-time (student)&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="675"
+                                    class="link-to-prism">src/student/chat/chat.resolver.ts:675</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Subscribe to new messages (student)</p>
+<p>subscription {
+  studentMessageAdded {
+    id
+    message
+    subject
+    senderId
+    senderType
+    createdAt
+    chatRoom {
+      id
+      name
+    }
+  }
+}</p>
+</div>
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="studentSendMessageToTeacher"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>studentSendMessageToTeacher</b></span>
+                        <a href="#studentSendMessageToTeacher"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>studentSendMessageToTeacher(input: <a href="../classes/SendMessageFromStudentToTeacherInput.html" target="_self">SendMessageFromStudentToTeacherInput</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Mutation(undefined, {nullable: true, description: &#x27;Send a message from student to a specific teacher&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="57"
+                                    class="link-to-prism">src/student/chat/chat.resolver.ts:57</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>SEND MESSAGE TO TEACHER
+Student sends a message to their teacher</p>
+<p>Example:
+mutation {
+  sendMessageToTeacher(input: {
+    recipientId: &quot;teacher-uuid-here&quot;
+    recipientType: &quot;TEACHER&quot;
+    subject: &quot;Question about homework&quot;
+    message: &quot;Could you please explain the math assignment?&quot;
+    imageUrl: &quot;<a href="https://example.com/image.jpg">https://example.com/image.jpg</a>&quot;
+  }) {
+    id
+    message
+    subject
+    senderId
+    senderType
+    isRead
+    imageUrl
+    createdAt
+    chatRoom {
+      id
+      name
+      type
+      participantIds
+    }
+  }
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/SendMessageFromStudentToTeacherInput.html" target="_self" >SendMessageFromStudentToTeacherInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/ChatMessage.html" target="_self" >Promise&lt;ChatMessage | null&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="studentSetTyping"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>studentSetTyping</b></span>
+                        <a href="#studentSetTyping"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>studentSetTyping(chatRoomId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, isTyping: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank">boolean</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Mutation(undefined, {description: &#x27;Set typing indicator for student in a chat room&#x27;})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="112"
+                                    class="link-to-prism">src/student/chat/chat.resolver.ts:112</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>SET TYPING INDICATOR
+Notify teacher that student is typing</p>
+<p>Example:
+mutation {
+  studentSetTyping(
+    chatRoomId: &quot;1a6f156b-84a7-4775-8818-35f778bc0798&quot;
+    isTyping: true
+  )
+}</p>
+<p>Returns: true</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>chatRoomId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>isTyping</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="studentUserTyping"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                        <span ><b>studentUserTyping</b></span>
+                        <a href="#studentUserTyping"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>studentUserTyping(roomId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Subscription(undefined, {description: &#x27;Subscribe to new messages in real-time (receives messages FROM teachers instantly)&#x27;})<br />@Subscription(undefined, {description: &#x27;Subscribe to typing indicators for a room (see when teacher is typing)&#x27;, resolve: payload &#x3D;&gt; payload})<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="524"
+                                    class="link-to-prism">src/student/chat/chat.resolver.ts:524</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>SUBSCRIBE TO NEW MESSAGES (REAL-TIME)
+Listen for new messages in real-time (both sent and received)</p>
+<p>Example:
+subscription {
+  studentMessageAdded {
+    id
+    message
+    subject
+    senderId
+    senderType
+    isRead
+    imageUrl
+    createdAt
+    chatRoom {
+      id
+      name
+    }
+  }
+}</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>roomId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+
+
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Resolver, Mutation, Query, Args, Subscription, Int } from &#x27;@nestjs/graphql&#x27;;
+import { Inject } from &#x27;@nestjs/common&#x27;;
+import { ActiveUserData } from &#x27;src/admin/auth/interface/active-user.interface&#x27;;
+import { Teacher } from &#x27;src/admin/teacher/entities/teacher.entity&#x27;;
+import { StudentChatService } from &#x27;./chat.service&#x27;;
+import { RedisChatProvider } from &#x27;src/messaging/providers/redis-chat.provider&#x27;;
+import { ChatMessage } from &#x27;src/messaging/entities/chat-message.entity&#x27;;
+import { SendMessageFromStudentToTeacherInput } from &#x27;./dtos/chat-message.dto.teacher&#x27;;
+import { ActiveUser } from &#x27;src/admin/auth/decorator/active-user.decorator&#x27;;
+import { ChatRoom } from &#x27;src/messaging/entities/chat-room.entity&#x27;;
+import { TypingIndicator } from &#x27;src/messaging/dtos/send-message.input&#x27;;
+
+@Resolver()
+export class StudentChatResolver {
+  constructor(
+    @Inject(&#x27;PUB_SUB&#x27;) private readonly pubSub,
+    private readonly studentChatService: StudentChatService,
+    private readonly redisChatProvider: RedisChatProvider,
+  ) {}
+
+  // &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D; MUTATIONS &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
+
+  /**
+   * SEND MESSAGE TO TEACHER
+   * Student sends a message to their teacher
+   * 
+   * Example:
+   * mutation {
+   *   sendMessageToTeacher(input: {
+   *     recipientId: &quot;teacher-uuid-here&quot;
+   *     recipientType: &quot;TEACHER&quot;
+   *     subject: &quot;Question about homework&quot;
+   *     message: &quot;Could you please explain the math assignment?&quot;
+   *     imageUrl: &quot;https://example.com/image.jpg&quot;
+   *   }) {
+   *     id
+   *     message
+   *     subject
+   *     senderId
+   *     senderType
+   *     isRead
+   *     imageUrl
+   *     createdAt
+   *     chatRoom {
+   *       id
+   *       name
+   *       type
+   *       participantIds
+   *     }
+   *   }
+   * }
+   */
+  @Mutation(() &#x3D;&gt; ChatMessage, {
+    nullable: true, // optional if you want to suppress schema errors
+    description: &#x27;Send a message from student to a specific teacher&#x27;,
+  })
+  async studentSendMessageToTeacher(
+    @Args(&#x27;input&#x27;, { type: () &#x3D;&gt; SendMessageFromStudentToTeacherInput })
+    input: SendMessageFromStudentToTeacherInput,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;ChatMessage | null&gt; {
+    const message &#x3D; await this.studentChatService.sendMessageToTeacher(
+      currentUser,
+      input,
+    );
+  
+    if (!message) return null; 
+    this.pubSub.publish(&#x27;messageAdded&#x27;, { messageAdded: message });
+    return message;
+  }
+  /**
+   * MARK MESSAGES AS READ
+   * Mark all unread messages in a chat room as read
+   * 
+   * Example:
+   * mutation {
+   *   studentMarkMessagesAsRead(chatRoomId: &quot;1a6f156b-84a7-4775-8818-35f778bc0798&quot;)
+   * }
+   * 
+   * Returns: true
+   */
+  @Mutation(() &#x3D;&gt; Boolean, {
+    description: &#x27;Mark all messages in a chat room as read (student marks teacher messages as read)&#x27;,
+  })
+  async studentMarkMessagesAsRead(
+    @Args(&#x27;chatRoomId&#x27;) chatRoomId: string,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;boolean&gt; {
+    return await this.studentChatService.markMessagesAsRead(
+      currentUser,
+      chatRoomId,
+    );
+  }
+
+  /**
+   * SET TYPING INDICATOR
+   * Notify teacher that student is typing
+   * 
+   * Example:
+   * mutation {
+   *   studentSetTyping(
+   *     chatRoomId: &quot;1a6f156b-84a7-4775-8818-35f778bc0798&quot;
+   *     isTyping: true
+   *   )
+   * }
+   * 
+   * Returns: true
+   */
+  @Mutation(() &#x3D;&gt; Boolean, {
+    description: &#x27;Set typing indicator for student in a chat room&#x27;,
+  })
+  async studentSetTyping(
+    @Args(&#x27;chatRoomId&#x27;) chatRoomId: string,
+    @Args(&#x27;isTyping&#x27;) isTyping: boolean,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;boolean&gt; {
+    await this.redisChatProvider.setTypingIndicator(
+      currentUser,
+      chatRoomId,
+      isTyping,
+    );
+
+    this.pubSub.publish(&#x60;typing:${chatRoomId}&#x60;, {
+      userId: currentUser.sub,
+      roomId: chatRoomId,
+      isTyping,
+    });
+
+    return true;
+  }
+
+  // &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D; QUERIES &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
+
+  /**
+   * GET CHAT HISTORY
+   * Get all messages in a conversation with a teacher (includes messages FROM teacher)
+   * 
+   * Example:
+   * query {
+   *   getStudentChatHistory(
+   *     chatRoomId: &quot;1a6f156b-84a7-4775-8818-35f778bc0798&quot;
+   *     limit: 50
+   *     offset: 0
+   *   ) {
+   *     id
+   *     message
+   *     subject
+   *     senderId
+   *     senderType
+   *     isRead
+   *     imageUrl
+   *     createdAt
+   *     chatRoom {
+   *       id
+   *       name
+   *       type
+   *       participantIds
+   *     }
+   *   }
+   * }
+   */
+  @Query(() &#x3D;&gt; [ChatMessage], {
+    description: &#x27;Get chat history for a specific room - includes ALL messages (sent by student AND received from teacher)&#x27;,
+  })
+  async getStudentChatHistory(
+    @Args(&#x27;chatRoomId&#x27;) chatRoomId: string,
+    @Args(&#x27;limit&#x27;, { type: () &#x3D;&gt; Int, defaultValue: 50 }) limit: number,
+    @Args(&#x27;offset&#x27;, { type: () &#x3D;&gt; Int, defaultValue: 0 }) offset: number,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;ChatMessage[]&gt; {
+    return await this.studentChatService.getChatHistory(
+      currentUser,
+      chatRoomId,
+      limit,
+      offset,
+    );
+  }
+
+  /**
+   * GET RECEIVED MESSAGES
+   * Get only messages received FROM teachers (not sent by student)
+   * 
+   * Example:
+   * query {
+   *   getReceivedMessages(
+   *     chatRoomId: &quot;1a6f156b-84a7-4775-8818-35f778bc0798&quot;
+   *     limit: 50
+   *     offset: 0
+   *   ) {
+   *     id
+   *     message
+   *     subject
+   *     senderId
+   *     senderType
+   *     isRead
+   *     imageUrl
+   *     createdAt
+   *     chatRoom {
+   *       id
+   *       name
+   *     }
+   *   }
+   * }
+   */
+  // @Query(() &#x3D;&gt; [ChatMessage], {
+  //   description: &#x27;Get only messages RECEIVED from teachers (excludes student\&#x27;s own messages)&#x27;,
+  // })
+  // async getReceivedMessages(
+  //   @Args(&#x27;chatRoomId&#x27;, { nullable: true }) chatRoomId?: string,
+  //   @Args(&#x27;limit&#x27;, { type: () &#x3D;&gt; Int, defaultValue: 50 }) limit?: number,
+  //   @Args(&#x27;offset&#x27;, { type: () &#x3D;&gt; Int, defaultValue: 0 }) offset?: number,
+  //   @ActiveUser() currentUser?: ActiveUserData,
+  // ): Promise&lt;ChatMessage[]&gt; {
+  //   return await this.studentChatService.getReceivedMessages(
+  //     currentUser.sub,
+  //     chatRoomId,
+  //     limit,
+  //     offset,
+  //   );
+  // }
+
+  /**
+   * GET ALL RECEIVED MESSAGES (ACROSS ALL ROOMS)
+   * Get messages from ALL teachers across all chat rooms
+   * 
+   * Example:
+   * query {
+   *   getAllReceivedMessages(limit: 100, offset: 0) {
+   *     id
+   *     message
+   *     subject
+   *     senderId
+   *     senderType
+   *     isRead
+   *     createdAt
+   *     chatRoom {
+   *       id
+   *       name
+   *     }
+   *   }
+   * }
+   */
+  // @Query(() &#x3D;&gt; [ChatMessage], {
+  //   description: &#x27;Get ALL messages received from teachers across all chat rooms&#x27;,
+  // })
+  // async getAllReceivedMessages(
+  //   @Args(&#x27;limit&#x27;, { type: () &#x3D;&gt; Int, defaultValue: 50 }) limit: number,
+  //   @Args(&#x27;offset&#x27;, { type: () &#x3D;&gt; Int, defaultValue: 0 }) offset: number,
+  //   @ActiveUser() currentUser: ActiveUserData,
+  // ): Promise&lt;ChatMessage[]&gt; {
+  //   return await this.studentChatService.getAllReceivedMessages(
+  //     currentUser.sub,
+  //     currentUser.tenantId,
+  //     limit,
+  //     offset,
+  //   );
+  // }
+
+  /**
+   * GET ALL CHAT ROOMS
+   * Get all chat rooms/conversations for the current student
+   * 
+   * Example:
+   * query {
+   *   getStudentChatRooms {
+   *     id
+   *     name
+   *     type
+   *     participantIds
+   *     createdAt
+   *     updatedAt
+   *   }
+   * }
+   */
+  @Query(() &#x3D;&gt; [ChatRoom], {
+    description: &#x27;Get all chat rooms for the current student&#x27;,
+  })
+  async getStudentChatRooms(
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;ChatRoom[]&gt; {
+    return await this.studentChatService.getStudentChatRooms(currentUser.sub);
+  }
+
+
+  @Query(() &#x3D;&gt; ChatMessage, { name: &#x27;getMessageById&#x27;, nullable: true })
+  async getMessageById(
+    @Args(&#x27;id&#x27;) id: string,
+    @ActiveUser() currentUser?: ActiveUserData, // optional: will be undefined if called internally
+  ): Promise&lt;ChatMessage&gt; {
+    // pass currentUser.sub to service so permission check runs
+    const userId &#x3D; currentUser?.sub;
+    return await this.studentChatService.getMessageById(id, userId);
+  }
+
+  @Mutation(() &#x3D;&gt; Boolean, {
+    description: &#x27;Delete a message sent by the current student&#x27;,
+  })
+  async deleteStudentMessage(
+    @Args(&#x27;messageId&#x27;) messageId: string,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;boolean&gt; {
+    return await this.studentChatService.deleteMessage(
+      currentUser,
+      messageId,
+    );
+  }
+
+  
+  /**
+   * GET TOTAL UNREAD MESSAGE COUNT
+   * Get total number of unread messages across all conversations
+   * 
+   * Example:
+   * query {
+   *   getStudentUnreadMessageCount
+   * }
+   * 
+   * Returns: 5 (for example)
+   */
+  @Query(() &#x3D;&gt; Int, {
+    description: &#x27;Get total unread message count for the current student&#x27;,
+  })
+  async getStudentUnreadMessageCount(
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;number&gt; {
+    return await this.studentChatService.getUnreadCount(currentUser.sub);
+  }
+
+  /**
+   * GET UNREAD COUNT FOR SPECIFIC ROOM
+   * Get unread message count for a specific conversation
+   * 
+   * Example:
+   * query {
+   *   getStudentUnreadCountForRoom(chatRoomId: &quot;1a6f156b-84a7-4775-8818-35f778bc0798&quot;)
+   * }
+   * 
+   * Returns: 3 (for example)
+   */
+  @Query(() &#x3D;&gt; Int, {
+    description: &#x27;Get unread message count for a specific room&#x27;,
+  })
+  async getStudentUnreadCountForRoom(
+    @Args(&#x27;chatRoomId&#x27;) chatRoomId: string,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;number&gt; {
+    return await this.redisChatProvider.getUnreadCount(
+      currentUser.sub,
+      chatRoomId,
+    );
+  }
+
+  /**
+   * GET ROOMS WITH UNREAD MESSAGES
+   * Get list of room IDs that have unread messages
+   * 
+   * Example:
+   * query {
+   *   getStudentUnreadRooms
+   * }
+   * 
+   * Returns: [&quot;room-id-1&quot;, &quot;room-id-2&quot;, &quot;room-id-3&quot;]
+   */
+  @Query(() &#x3D;&gt; [String], {
+    description: &#x27;Get all room IDs that have unread messages for the current student&#x27;,
+  })
+  async getStudentUnreadRooms(
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;string[]&gt; {
+    return await this.redisChatProvider.getUnreadRooms(currentUser.sub);
+  }
+
+  /**
+   * GET CHAT ROOM WITH SPECIFIC TEACHER
+   * Find existing conversation with a specific teacher
+   * 
+   * Example:
+   * query {
+   *   getChatRoomWithTeacher(teacherId: &quot;teacher-uuid-here&quot;) {
+   *     id
+   *     name
+   *     type
+   *     participantIds
+   *     createdAt
+   *     updatedAt
+   *   }
+   * }
+   */
+  @Query(() &#x3D;&gt; ChatRoom, { 
+    nullable: true,
+    description: &#x27;Get chat room with a specific teacher (returns null if no conversation exists)&#x27; 
+  })
+  async getChatRoomWithTeacher(
+    @Args(&#x27;teacherId&#x27;) teacherId: string,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;ChatRoom | null&gt; {
+    return await this.studentChatService.getChatRoomWithTeacher(
+      currentUser,
+      teacherId
+    );
+  }
+
+  /**
+   * GET ALL TEACHERS STUDENT HAS CHATTED WITH
+   * Get list of all teachers the student has conversations with
+   * 
+   * Example:
+   * query {
+   *   getStudentTeachers {
+   *     id
+   *     fullName
+   *     firstName
+   *     lastName
+   *     email
+   *     department
+   *     phoneNumber
+   *     user {
+   *       id
+   *       name
+   *       email
+   *     }
+   *   }
+   * }
+   */
+  @Query(() &#x3D;&gt; [Teacher], {
+    description: &#x27;Get all teachers that the student has chat conversations with&#x27;,
+  })
+  async getStudentTeachers(
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;Teacher[]&gt; {
+    return await this.studentChatService.getStudentTeachers(
+      currentUser
+    );
+  }
+
+  /**
+   * CHECK IF TEACHER IS ONLINE
+   * Check if a specific teacher is currently online
+   * 
+   * Example:
+   * query {
+   *   isTeacherOnline(teacherUserId: &quot;teacher-user-uuid&quot;)
+   * }
+   * 
+   * Returns: true or false
+   */
+  @Query(() &#x3D;&gt; Boolean, {
+    description: &#x27;Check if a specific teacher is currently online&#x27;,
+  })
+  async isTeacherOnline(
+    @Args(&#x27;teacherUserId&#x27;) teacherUserId: string,
+  ): Promise&lt;boolean&gt; {
+    return await this.redisChatProvider.isUserOnline(teacherUserId);
+  }
+
+  /**
+   * GET TEACHER&#x27;S LAST SEEN TIME
+   * Get when a teacher was last active
+   * 
+   * Example:
+   * query {
+   *   getTeacherLastSeen(teacherUserId: &quot;teacher-user-uuid&quot;)
+   * }
+   * 
+   * Returns: &quot;2024-10-24T10:30:00.000Z&quot; or null
+   */
+  @Query(() &#x3D;&gt; String, { 
+    nullable: true, 
+    description: &#x27;Get teacher last seen timestamp (ISO format)&#x27; 
+  })
+  async getTeacherLastSeen(
+    @Args(&#x27;teacherUserId&#x27;) teacherUserId: string,
+  ): Promise&lt;string | null&gt; {
+    const timestamp &#x3D; await this.redisChatProvider.getUserLastSeen(teacherUserId);
+    return timestamp ? new Date(timestamp).toISOString() : null;
+  }
+
+  // &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D; SUBSCRIPTIONS &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
+
+  /**
+   * SUBSCRIBE TO NEW MESSAGES (REAL-TIME)
+   * Listen for new messages in real-time (both sent and received)
+   * 
+   * Example:
+   * subscription {
+   *   studentMessageAdded {
+   *     id
+   *     message
+   *     subject
+   *     senderId
+   *     senderType
+   *     isRead
+   *     imageUrl
+   *     createdAt
+   *     chatRoom {
+   *       id
+   *       name
+   *     }
+   *   }
+   * }
+   */
+  @Subscription(() &#x3D;&gt; ChatMessage, {
+    description: &#x27;Subscribe to new messages in real-time (receives messages FROM teachers instantly)&#x27;,
+  })
+  
+
+  /**
+   * SUBSCRIBE TO TYPING INDICATORS (REAL-TIME)
+   * Listen for when teacher is typing
+   * 
+   * Example:
+   * subscription {
+   *   studentUserTyping(roomId: &quot;1a6f156b-84a7-4775-8818-35f778bc0798&quot;) {
+   *     userId
+   *     roomId
+   *     isTyping
+   *   }
+   * }
+   */
+  @Subscription(() &#x3D;&gt; TypingIndicator, {
+    description: &#x27;Subscribe to typing indicators for a room (see when teacher is typing)&#x27;,
+    resolve: (payload) &#x3D;&gt; payload,
+  })
+  studentUserTyping(@Args(&#x27;roomId&#x27;) roomId: string) {
+    return this.pubSub.asyncIterator(&#x60;typing:${roomId}&#x60;);
+  }
+
+
+
+
+  
+  @Query(() &#x3D;&gt; [ChatMessage], {
+    description: &#x27;Get all unread messages for the current student&#x27;,
+  })
+  async getStudentUnreadMessages(
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;ChatMessage[]&gt; {
+    return await this.studentChatService.getUnreadMessages(currentUser.sub);
+  }
+ 
+  /**
+   * Get read messages for student
+   * 
+   * query {
+   *   getStudentReadMessages(limit: 50) {
+   *     id
+   *     message
+   *     subject
+   *     createdAt
+   *     isRead
+   *   }
+   * }
+   */
+  @Query(() &#x3D;&gt; [ChatMessage], {
+    description: &#x27;Get all read messages for the current student&#x27;,
+  })
+  async getStudentReadMessages(
+    @Args(&#x27;limit&#x27;, { type: () &#x3D;&gt; Int, defaultValue: 50 }) limit: number,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;ChatMessage[]&gt; {
+    return await this.studentChatService.getReadMessages(currentUser.sub, limit);
+  }
+
+ 
+
+  /**
+   * Get unread count for student
+   * 
+   * query {
+   *   getStudentUnreadCount
+   * }
+   */
+  @Query(() &#x3D;&gt; Int, {
+    description: &#x27;Get total unread message count for the current student&#x27;,
+  })
+  async getStudentUnreadCount(
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;number&gt; {
+    return await this.studentChatService.getUnreadCount(currentUser.sub);
+  }
+
+  /**
+   * Get unread count for a specific room
+   * 
+   * query {
+   *   getStudentUnreadCountForRoom(chatRoomId: &quot;room-uuid&quot;)
+   * }
+   */
+ 
+
+
+  /**
+   * Mark messages as read for student
+   * 
+   * mutation {
+   *   markStudentMessagesAsRead(chatRoomId: &quot;room-uuid&quot;)
+   * }
+   */
+  @Mutation(() &#x3D;&gt; Boolean, {
+    description: &#x27;Mark all messages in a chat room as read (student)&#x27;,
+  })
+  async markStudentMessagesAsRead(
+    @Args(&#x27;chatRoomId&#x27;) chatRoomId: string,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;boolean&gt; {
+    return await this.studentChatService.markMessagesAsRead(
+      currentUser,
+      chatRoomId,
+    );
+  }
+  
+  /**
+   * Mark single message as read (student)
+   * 
+   * mutation {
+   *   markStudentMessageAsRead(messageId: &quot;msg-uuid&quot;)
+   * }
+   */
+  @Mutation(() &#x3D;&gt; Boolean, {
+    description: &#x27;Mark a single message as read (student)&#x27;,
+  })
+  async markStudentMessageAsRead(
+    @Args(&#x27;messageId&#x27;) messageId: string,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;boolean&gt; {
+    return await this.studentChatService.markMessageAsRead(
+      currentUser.sub,
+      messageId,
+    );
+  }
+
+  /**
+   * Delete student message
+   * 
+   * mutation {
+   *   deleteStudentMessage(messageId: &quot;msg-uuid&quot;)
+   * }
+   */
+  // @Mutation(() &#x3D;&gt; Boolean, {
+  //   description: &#x27;Delete a message sent by the current student&#x27;,
+  // })
+  // async deleteStudentMessage(
+  //   @Args(&#x27;messageId&#x27;) messageId: string,
+  //   @ActiveUser() currentUser: ActiveUserData,
+  // ): Promise&lt;boolean&gt; {
+  //   return await this.studentChatService.deleteMessage(
+  //     currentUser.sub,
+  //     messageId,
+  //   );
+  // }
+
+  // &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D; SUBSCRIPTIONS &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
+
+  /**
+   * Subscribe to new messages (student)
+   * 
+   * subscription {
+   *   studentMessageAdded {
+   *     id
+   *     message
+   *     subject
+   *     senderId
+   *     senderType
+   *     createdAt
+   *     chatRoom {
+   *       id
+   *       name
+   *     }
+   *   }
+   * }
+   */
+  @Subscription(() &#x3D;&gt; ChatMessage, {
+    description: &#x27;Subscribe to new messages in real-time (student)&#x27;,
+  })
+  studentMessageAdded() {
+    return this.pubSub.asyncIterator(&#x27;messageAdded&#x27;);
+  }
+
+
+
+
+
+}</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'class';
+            var COMPODOC_CURRENT_PAGE_URL = 'StudentChatResolver.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

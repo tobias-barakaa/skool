@@ -1,0 +1,4338 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>skool documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">skool documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >TeacherService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/admin/teacher/providers/teacher.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#logger" >logger</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#acceptInvitation" >acceptInvitation</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#assignGradeLevelClassTeacher" >assignGradeLevelClassTeacher</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#assignStreamClassTeacher" >assignStreamClassTeacher</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#cancelTeacherInvitation" >cancelTeacherInvitation</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#createTeacherProfile" >createTeacherProfile</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#deleteTeacher" >deleteTeacher</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#fetchClassTeacherGradeLevel" >fetchClassTeacherGradeLevel</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#fetchClassTeacherStream" >fetchClassTeacherStream</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#fetchTenantGradeLevels" >fetchTenantGradeLevels</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#fetchTenantStreams" >fetchTenantStreams</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#fetchTenantSubjects" >fetchTenantSubjects</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#findExistingAssignment" >findExistingAssignment</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#findInvitationById" >findInvitationById</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#findTeacherByUserId" >findTeacherByUserId</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getAllClassTeacherAssignmentsInTenant" >getAllClassTeacherAssignmentsInTenant</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getAllTeachersInTenant" >getAllTeachersInTenant</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getGradeLevelClassTeacher" >getGradeLevelClassTeacher</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getPendingInvitation" >getPendingInvitation</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getPendingInvitations" >getPendingInvitations</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getPendingTeacherInvitations" >getPendingTeacherInvitations</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getStreamClassTeacher" >getStreamClassTeacher</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getTeacherByIdForTenant" >getTeacherByIdForTenant</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getTeacherByUserId" >getTeacherByUserId</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getTeacherForCurrentUser" >getTeacherForCurrentUser</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getTeachersByTenants" >getTeachersByTenants</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getTeachersForTenant" >getTeachersForTenant</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#inviteTeacher" >inviteTeacher</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#resendTeacherInvitation" >resendTeacherInvitation</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#revokeInvitation" >revokeInvitation</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#unassignTeacherAsClassTeacher" >unassignTeacherAsClassTeacher</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#validateResendThrottling" >validateResendThrottling</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#validateTeacherData" >validateTeacherData</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(dataSource: DataSource, teacherRepository: <a href="../classes/Teacher.html" target="_self">Repository&lt;Teacher&gt;</a>, userRepository: <a href="../classes/User.html" target="_self">Repository&lt;User&gt;</a>, membershipRepository: <a href="../s/Tenant.html" target="_self">Repository&lt;UserTenantMembership&gt;</a>, emailService: <a href="../injectables/EmailService.html" target="_self">EmailService</a>, invitationService: <a href="../injectables/InvitationService.html" target="_self">InvitationService</a>, invitationRepository: Repository<UserInvitation>, classTeacherProvider: <a href="../injectables/ClassTeacherProvider.html" target="_self">ClassTeacherProvider</a>, classTeacherAssignmentRepository: Repository<ClassTeacherAssignment>, schoolSetupGuardService: <a href="../injectables/SchoolSetupGuardService.html" target="_self">SchoolSetupGuardService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="30" class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:30</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>dataSource</td>
+                                                  
+                                                        <td>
+                                                                    <code>DataSource</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>teacherRepository</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/Teacher.html" target="_self" >Repository&lt;Teacher&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>userRepository</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/User.html" target="_self" >Repository&lt;User&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>membershipRepository</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../miscellaneous/variables.html#Tenant" target="_self" >Repository&lt;UserTenantMembership&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>emailService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/EmailService.html" target="_self" >EmailService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>invitationService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/InvitationService.html" target="_self" >InvitationService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>invitationRepository</td>
+                                                  
+                                                        <td>
+                                                                    <code>Repository&lt;UserInvitation&gt;</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>classTeacherProvider</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ClassTeacherProvider.html" target="_self" >ClassTeacherProvider</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>classTeacherAssignmentRepository</td>
+                                                  
+                                                        <td>
+                                                                    <code>Repository&lt;ClassTeacherAssignment&gt;</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>schoolSetupGuardService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/SchoolSetupGuardService.html" target="_self" >SchoolSetupGuardService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="acceptInvitation"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>acceptInvitation</b></span>
+                        <a href="#acceptInvitation"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>acceptInvitation(token: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, password: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="480"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:480</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>token</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>password</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="assignGradeLevelClassTeacher"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>assignGradeLevelClassTeacher</b></span>
+                        <a href="#assignGradeLevelClassTeacher"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>assignGradeLevelClassTeacher(input: <a href="../classes/AssignGradeLevelClassTeacherInput.html" target="_self">AssignGradeLevelClassTeacherInput</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="829"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:829</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/AssignGradeLevelClassTeacherInput.html" target="_self" >AssignGradeLevelClassTeacherInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;ClassTeacherAssignment&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="assignStreamClassTeacher"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>assignStreamClassTeacher</b></span>
+                        <a href="#assignStreamClassTeacher"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>assignStreamClassTeacher(input: <a href="../classes/AssignStreamClassTeacherInput.html" target="_self">AssignStreamClassTeacherInput</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="812"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:812</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/AssignStreamClassTeacherInput.html" target="_self" >AssignStreamClassTeacherInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;ClassTeacherAssignment&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="cancelTeacherInvitation"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>cancelTeacherInvitation</b></span>
+                        <a href="#cancelTeacherInvitation"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>cancelTeacherInvitation(invitationId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="602"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:602</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>invitationId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createTeacherProfile"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>createTeacherProfile</b></span>
+                        <a href="#createTeacherProfile"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createTeacherProfile(dto: <a href="../classes/CreateTeacherInvitationDto.html" target="_self">CreateTeacherInvitationDto</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="92"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:92</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>dto</td>
+                                            <td>
+                                                            <code><a href="../classes/CreateTeacherInvitationDto.html" target="_self" >CreateTeacherInvitationDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="deleteTeacher"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>deleteTeacher</b></span>
+                        <a href="#deleteTeacher"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>deleteTeacher(teacherId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, currentUserId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="661"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:661</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>teacherId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUserId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="fetchClassTeacherGradeLevel"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>fetchClassTeacherGradeLevel</b></span>
+                        <a href="#fetchClassTeacherGradeLevel"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>fetchClassTeacherGradeLevel(gradeLevelId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tenantGradeLevelRepo: <a href="../s/Tenant.html" target="_self">Repository&lt;TenantGradeLevel&gt;</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="299"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:299</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>gradeLevelId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantGradeLevelRepo</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/variables.html#Tenant" target="_self" >Repository&lt;TenantGradeLevel&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../miscellaneous/variables.html#Tenant" target="_self" >Promise&lt;TenantGradeLevel&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="fetchClassTeacherStream"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>fetchClassTeacherStream</b></span>
+                        <a href="#fetchClassTeacherStream"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>fetchClassTeacherStream(streamId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tenantStreamRepo: <a href="../s/Tenant.html" target="_self">Repository&lt;TenantStream&gt;</a>, assignedGradeLevelIds: string[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="439"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:439</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>streamId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantStreamRepo</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/variables.html#Tenant" target="_self" >Repository&lt;TenantStream&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>assignedGradeLevelIds</td>
+                                            <td>
+                                                        <code>string[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../miscellaneous/variables.html#Tenant" target="_self" >Promise&lt;TenantStream&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="fetchTenantGradeLevels"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>fetchTenantGradeLevels</b></span>
+                        <a href="#fetchTenantGradeLevels"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>fetchTenantGradeLevels(gradeLevelIds: string[] | undefined, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tenantGradeLevelRepo: <a href="../s/Tenant.html" target="_self">Repository&lt;TenantGradeLevel&gt;</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="346"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:346</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>gradeLevelIds</td>
+                                            <td>
+                                                        <code>string[] | undefined</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantGradeLevelRepo</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/variables.html#Tenant" target="_self" >Repository&lt;TenantGradeLevel&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../miscellaneous/variables.html#Tenant" target="_self" >Promise&lt;TenantGradeLevel[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="fetchTenantStreams"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>fetchTenantStreams</b></span>
+                        <a href="#fetchTenantStreams"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>fetchTenantStreams(streamIds: string[] | undefined, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tenantStreamRepo: <a href="../s/Tenant.html" target="_self">Repository&lt;TenantStream&gt;</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="380"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:380</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>streamIds</td>
+                                            <td>
+                                                        <code>string[] | undefined</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantStreamRepo</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/variables.html#Tenant" target="_self" >Repository&lt;TenantStream&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../miscellaneous/variables.html#Tenant" target="_self" >Promise&lt;TenantStream[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="fetchTenantSubjects"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>fetchTenantSubjects</b></span>
+                        <a href="#fetchTenantSubjects"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>fetchTenantSubjects(subjectIds: string[] | undefined, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tenantSubjectRepo: <a href="../s/Tenant.html" target="_self">Repository&lt;TenantSubject&gt;</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="410"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:410</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>subjectIds</td>
+                                            <td>
+                                                        <code>string[] | undefined</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantSubjectRepo</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/variables.html#Tenant" target="_self" >Repository&lt;TenantSubject&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../miscellaneous/variables.html#Tenant" target="_self" >Promise&lt;TenantSubject[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findExistingAssignment"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>findExistingAssignment</b></span>
+                        <a href="#findExistingAssignment"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findExistingAssignment(input: literal type)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="846"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:846</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                        <code>literal type</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;ClassTeacherAssignment | null&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findInvitationById"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>findInvitationById</b></span>
+                        <a href="#findInvitationById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findInvitationById(invitationId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="701"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:701</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>invitationId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;UserInvitation | null&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findTeacherByUserId"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>findTeacherByUserId</b></span>
+                        <a href="#findTeacherByUserId"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>findTeacherByUserId(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="464"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:464</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Teacher.html" target="_self" >Promise&lt;Teacher | null&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAllClassTeacherAssignmentsInTenant"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getAllClassTeacherAssignmentsInTenant</b></span>
+                        <a href="#getAllClassTeacherAssignmentsInTenant"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getAllClassTeacherAssignmentsInTenant(currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="1006"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:1006</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;ClassTeacherAssignment[]&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAllTeachersInTenant"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getAllTeachersInTenant</b></span>
+                        <a href="#getAllTeachersInTenant"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getAllTeachersInTenant(currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="980"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:980</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Teacher.html" target="_self" >Promise&lt;Teacher[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getGradeLevelClassTeacher"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getGradeLevelClassTeacher</b></span>
+                        <a href="#getGradeLevelClassTeacher"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getGradeLevelClassTeacher(gradeLevelId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="1057"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:1057</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>gradeLevelId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;ClassTeacherAssignment | null&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getPendingInvitation"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getPendingInvitation</b></span>
+                        <a href="#getPendingInvitation"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getPendingInvitation(email: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="680"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:680</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>email</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getPendingInvitations"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getPendingInvitations</b></span>
+                        <a href="#getPendingInvitations"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getPendingInvitations(tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="691"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:691</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getPendingTeacherInvitations"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getPendingTeacherInvitations</b></span>
+                        <a href="#getPendingTeacherInvitations"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getPendingTeacherInvitations(tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="591"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:591</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getStreamClassTeacher"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getStreamClassTeacher</b></span>
+                        <a href="#getStreamClassTeacher"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getStreamClassTeacher(streamId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="1033"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:1033</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>streamId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;ClassTeacherAssignment | null&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getTeacherByIdForTenant"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getTeacherByIdForTenant</b></span>
+                        <a href="#getTeacherByIdForTenant"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getTeacherByIdForTenant(teacherId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="951"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:951</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>teacherId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Teacher.html" target="_self" >Promise&lt;Teacher&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getTeacherByUserId"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getTeacherByUserId</b></span>
+                        <a href="#getTeacherByUserId"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getTeacherByUserId(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="787"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:787</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Teacher.html" target="_self" >Promise&lt;Teacher&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getTeacherForCurrentUser"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getTeacherForCurrentUser</b></span>
+                        <a href="#getTeacherForCurrentUser"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getTeacherForCurrentUser(currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="888"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:888</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Teacher.html" target="_self" >Promise&lt;Teacher&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getTeachersByTenants"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getTeachersByTenants</b></span>
+                        <a href="#getTeachersByTenants"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getTeachersByTenants(tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="638"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:638</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../entitys/Teacher.html" target="_self" >Promise&lt;TeacherDto[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getTeachersForTenant"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getTeachersForTenant</b></span>
+                        <a href="#getTeachersForTenant"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getTeachersForTenant(currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="923"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:923</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Teacher.html" target="_self" >Promise&lt;Teacher[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="inviteTeacher"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>inviteTeacher</b></span>
+                        <a href="#inviteTeacher"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>inviteTeacher(dto: <a href="../classes/CreateTeacherInvitationDto.html" target="_self">CreateTeacherInvitationDto</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="50"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:50</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>dto</td>
+                                            <td>
+                                                            <code><a href="../classes/CreateTeacherInvitationDto.html" target="_self" >CreateTeacherInvitationDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="resendTeacherInvitation"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>resendTeacherInvitation</b></span>
+                        <a href="#resendTeacherInvitation"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>resendTeacherInvitation(invitationId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="725"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:725</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>invitationId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="revokeInvitation"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>revokeInvitation</b></span>
+                        <a href="#revokeInvitation"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>revokeInvitation(invitationId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="614"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:614</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>invitationId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="unassignTeacherAsClassTeacher"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>unassignTeacherAsClassTeacher</b></span>
+                        <a href="#unassignTeacherAsClassTeacher"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>unassignTeacherAsClassTeacher(input: <a href="../classes/UnassignClassTeacherInput.html" target="_self">UnassignClassTeacherInput</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="872"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:872</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/UnassignClassTeacherInput.html" target="_self" >UnassignClassTeacherInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="validateResendThrottling"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>validateResendThrottling</b></span>
+                        <a href="#validateResendThrottling"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>validateResendThrottling(email: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="714"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:714</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>email</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="validateTeacherData"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>validateTeacherData</b></span>
+                        <a href="#validateTeacherData"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>validateTeacherData(dto: <a href="../classes/CreateTeacherInvitationDto.html" target="_self">CreateTeacherInvitationDto</a>, tenantGradeLevels: <a href="../s/Tenant.html" target="_self">TenantGradeLevel[]</a>, tenantStreams: <a href="../s/Tenant.html" target="_self">TenantStream[]</a>, tenantSubjects: <a href="../s/Tenant.html" target="_self">TenantSubject[]</a>, classTeacherStream?: <a href="../classes/TenantStream.html" target="_self">TenantStream</a>, classTeacherGradeLevel?: <a href="../classes/TenantGradeLevel.html" target="_self">TenantGradeLevel</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="247"
+                                    class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:247</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>dto</td>
+                                            <td>
+                                                            <code><a href="../classes/CreateTeacherInvitationDto.html" target="_self" >CreateTeacherInvitationDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantGradeLevels</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/variables.html#Tenant" target="_self" >TenantGradeLevel[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantStreams</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/variables.html#Tenant" target="_self" >TenantStream[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantSubjects</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/variables.html#Tenant" target="_self" >TenantSubject[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>classTeacherStream</td>
+                                            <td>
+                                                            <code><a href="../classes/TenantStream.html" target="_self" >TenantStream</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>classTeacherGradeLevel</td>
+                                            <td>
+                                                            <code><a href="../classes/TenantGradeLevel.html" target="_self" >TenantGradeLevel</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="logger"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>logger</b></span>
+                        <a href="#logger"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new Logger(TeacherService.name)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="30" class="link-to-prism">src/admin/teacher/providers/teacher.service.ts:30</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {  BadRequestException, HttpStatus, Injectable, Logger, NotFoundException } from &#x27;@nestjs/common&#x27;;
+import { InjectRepository } from &#x27;@nestjs/typeorm&#x27;;
+import { In, Repository, DataSource } from &#x27;typeorm&#x27;;
+import { Teacher } from &#x27;../entities/teacher.entity&#x27;;
+import { User } from &#x27;src/admin/users/entities/user.entity&#x27;;
+import { InvitationStatus, InvitationType, UserInvitation } from &#x27;src/admin/invitation/entities/user-iInvitation.entity&#x27;;
+import { MembershipRole, UserTenantMembership } from &#x27;src/admin/user-tenant-membership/entities/user-tenant-membership.entity&#x27;;
+import { ActiveUserData } from &#x27;src/admin/auth/interface/active-user.interface&#x27;;
+import { AcceptInvitationResponse } from &#x27;../dtos/accept-teacher-invitation-response.dto&#x27;;
+import { CreateTeacherInvitationDto } from &#x27;../dtos/create-teacher-invitation.dto&#x27;;
+import { EmailService } from &#x27;src/admin/email/providers/email.service&#x27;;
+import { InvitationService } from &#x27;src/admin/invitation/providers/invitation.service&#x27;;
+import { validateMembershipAccess } from &#x27;src/admin/shared/utils/access.utils&#x27;;
+import { Subject } from &#x27;src/admin/subject/entities/subject.entity&#x27;;
+import { GradeLevel } from &#x27;src/admin/level/entities/grade-level.entity&#x27;;
+import { Stream } from &#x27;src/admin/streams/entities/streams.entity&#x27;;
+import { TenantGradeLevel } from &#x27;src/admin/school-type/entities/tenant-grade-level&#x27;;
+import { TenantStream } from &#x27;src/admin/school-type/entities/tenant-stream&#x27;;
+import { TenantSubject } from &#x27;src/admin/school-type/entities/tenant-specific-subject&#x27;;
+import { TeacherDto } from &#x27;../dtos/teacher-query.dto&#x27;;
+import { handleInvitationResendLogic } from &#x27;src/admin/shared/utils/invitation.utils&#x27;;
+import { ClassTeacherProvider } from &#x27;./class-teacher-assign.provider&#x27;;
+import { ClassTeacherAssignment } from &#x27;../entities/class_teacher_assignments.entity&#x27;;
+import { AssignGradeLevelClassTeacherInput, AssignStreamClassTeacherInput, UnassignClassTeacherInput } from &#x27;../dtos/assign/assign-classTeacher.dto&#x27;;
+import { SchoolSetupGuardService } from &#x27;src/admin/config/school-config.guard&#x27;;
+import { BusinessException } from &#x27;src/admin/common/exceptions/business.exception&#x27;;
+
+@Injectable()
+export class TeacherService {
+  private readonly logger &#x3D; new Logger(TeacherService.name);
+
+  constructor(
+    private readonly dataSource: DataSource,
+    @InjectRepository(Teacher)
+    private readonly teacherRepository: Repository&lt;Teacher&gt;,
+    @InjectRepository(User)
+    private readonly userRepository: Repository&lt;User&gt;,
+    @InjectRepository(UserTenantMembership)
+    private readonly membershipRepository: Repository&lt;UserTenantMembership&gt;,
+    private readonly emailService: EmailService,
+    private readonly invitationService: InvitationService,
+    @InjectRepository(UserInvitation)
+    private invitationRepository: Repository&lt;UserInvitation&gt;,
+    private readonly classTeacherProvider: ClassTeacherProvider,
+    @InjectRepository(ClassTeacherAssignment)
+    private readonly classTeacherAssignmentRepository: Repository&lt;ClassTeacherAssignment&gt;,
+     private readonly schoolSetupGuardService: SchoolSetupGuardService,
+  ) {}
+
+  async inviteTeacher(
+    dto: CreateTeacherInvitationDto,
+    currentUser: ActiveUserData,
+    tenantId: string,
+  ) {
+    this.logger.log(&#x60;Inviting teacher: ${dto.email} to tenant: ${tenantId}&#x60;);
+
+    await this.schoolSetupGuardService.validateSchoolIsConfigured(tenantId);
+
+    try {
+      const inviter &#x3D; await this.userRepository.findOne({
+        where: { id: currentUser.sub },
+        select: [&#x27;id&#x27;, &#x27;name&#x27;, &#x27;email&#x27;],
+      });
+
+      if (!inviter) {
+        throw new BadRequestException(&#x27;Inviter not found&#x27;);
+      }
+
+      console.log(&#x60;Inviting teacher: ${dto.email} to tenant: ${tenantId}&#x60;);
+
+      return await this.invitationService.inviteUser(
+        currentUser,
+        tenantId,
+        dto,
+        InvitationType.TEACHER,
+        (email, fullName, schoolName, token, _inviterId, tenantId) &#x3D;&gt;
+          this.emailService.sendTeacherInvitation(
+            email,
+            fullName,
+            schoolName,
+            token,
+            inviter.name || inviter.email,
+            tenantId,
+          ),
+        () &#x3D;&gt; this.createTeacherProfile(dto, tenantId),
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  private async createTeacherProfile(
+    dto: CreateTeacherInvitationDto,
+    tenantId: string,
+  ): Promise&lt;void&gt; {
+    const existingTeacher &#x3D; await this.teacherRepository.findOne({
+      where: { email: dto.email, tenantId },
+    });
+  
+    if (existingTeacher) {
+      this.logger.log(&#x60;Teacher profile already exists for ${dto.email}&#x60;);
+      return;
+    }
+  
+    await this.dataSource.transaction(async (manager) &#x3D;&gt; {
+      const teacherRepo &#x3D; manager.getRepository(Teacher);
+      const tenantGradeLevelRepo &#x3D; manager.getRepository(TenantGradeLevel);
+      const tenantStreamRepo &#x3D; manager.getRepository(TenantStream);
+      const tenantSubjectRepo &#x3D; manager.getRepository(TenantSubject);
+      const classTeacherAssignmentRepo &#x3D; manager.getRepository(ClassTeacherAssignment);
+  
+      const [tenantGradeLevels, tenantSubjects] &#x3D; await Promise.all([
+        this.fetchTenantGradeLevels(
+          dto.tenantGradeLevelIds,
+          tenantId,
+          tenantGradeLevelRepo,
+        ),
+        this.fetchTenantSubjects(
+          dto.tenantSubjectIds,
+          tenantId,
+          tenantSubjectRepo,
+        ),
+        
+      ]);
+  
+      // Automatically fetch all streams for the assigned grade levels
+      let tenantStreams: TenantStream[] &#x3D; [];
+      if (tenantGradeLevels.length &gt; 0) {
+        tenantStreams &#x3D; await tenantStreamRepo.find({
+          where: {
+            tenantGradeLevel: { id: In(tenantGradeLevels.map(gl &#x3D;&gt; gl.id)) },
+            tenant: { id: tenantId },
+            isActive: true,
+          },
+          relations: [&#x27;stream&#x27;, &#x27;tenantGradeLevel&#x27;],
+        });
+      }
+  
+      let classTeacherStream: TenantStream | undefined &#x3D; undefined;
+      let classTeacherGradeLevel: TenantGradeLevel | undefined &#x3D; undefined;
+  
+      if (dto.classTeacherTenantStreamId) {
+        classTeacherStream &#x3D; await this.fetchClassTeacherStream(
+          dto.classTeacherTenantStreamId,
+          tenantId,
+          tenantStreamRepo,
+          tenantGradeLevels.map(gl &#x3D;&gt; gl.id),
+        );
+      }
+  
+      if (dto.classTeacherTenantGradeLevelId) {
+        classTeacherGradeLevel &#x3D; await this.fetchClassTeacherGradeLevel(
+          dto.classTeacherTenantGradeLevelId,
+          tenantId,
+          tenantGradeLevelRepo,
+        );
+      }
+  
+      this.validateTeacherData(
+        dto,
+        tenantGradeLevels,
+        tenantStreams,
+        tenantSubjects,
+        classTeacherStream,
+        classTeacherGradeLevel,
+      );
+  
+      const teacher &#x3D; teacherRepo.create({
+        fullName: dto.fullName,
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+        email: dto.email,
+        gender: dto.gender,
+        department: dto.department,
+        phoneNumber: dto.phoneNumber,
+        role: dto.role,
+        address: dto.address,
+        employeeId: dto.employeeId,
+        dateOfBirth: dto.dateOfBirth ? new Date(dto.dateOfBirth) : undefined,
+        qualifications: dto.qualifications,
+        isActive: false,
+        hasCompletedProfile: false,
+        tenantId,
+        tenant: { id: tenantId },
+      });
+  
+      teacher.tenantGradeLevels &#x3D; tenantGradeLevels;
+      teacher.tenantStreams &#x3D; tenantStreams;
+      teacher.tenantSubjects &#x3D; tenantSubjects;
+  
+      const savedTeacher &#x3D; await teacherRepo.save(teacher);
+  
+      if (classTeacherStream) {
+        const existingStreamAssignment &#x3D; await classTeacherAssignmentRepo.findOne({
+          where: { 
+            stream: { id: classTeacherStream.id }, 
+            active: true 
+          },
+        });
+  
+        if (existingStreamAssignment) {
+          await classTeacherAssignmentRepo.update(
+            { id: existingStreamAssignment.id },
+            { active: false, endDate: new Date() },
+          );
+        }
+  
+        const streamAssignment &#x3D; classTeacherAssignmentRepo.create({
+          tenant: { id: tenantId },
+          teacher: { id: savedTeacher.id },
+          stream: { id: classTeacherStream.id },
+          active: true,
+          startDate: new Date(),
+        });
+        await classTeacherAssignmentRepo.save(streamAssignment);
+      }
+  
+      if (classTeacherGradeLevel) {
+        const existingGradeLevelAssignment &#x3D; await classTeacherAssignmentRepo.findOne({
+          where: { 
+            gradeLevel: { id: classTeacherGradeLevel.id }, 
+            active: true 
+          },
+        });
+  
+        if (existingGradeLevelAssignment) {
+          await classTeacherAssignmentRepo.update(
+            { id: existingGradeLevelAssignment.id },
+            { active: false, endDate: new Date() },
+          );
+        }
+  
+        const gradeLevelAssignment &#x3D; classTeacherAssignmentRepo.create({
+          tenant: { id: tenantId },
+          teacher: { id: savedTeacher.id },
+          gradeLevel: { id: classTeacherGradeLevel.id },
+          active: true,
+          startDate: new Date(),
+        });
+        await classTeacherAssignmentRepo.save(gradeLevelAssignment);
+      }
+  
+      this.logger.log(&#x60;Teacher profile created for ${dto.email}&#x60;);
+    });
+  }
+  
+  private validateTeacherData(
+    dto: CreateTeacherInvitationDto,
+    tenantGradeLevels: TenantGradeLevel[],
+    tenantStreams: TenantStream[],
+    tenantSubjects: TenantSubject[],
+    classTeacherStream?: TenantStream,
+    classTeacherGradeLevel?: TenantGradeLevel,
+  ): void {
+    if (classTeacherStream &amp;&amp; classTeacherGradeLevel) {
+      throw new BadRequestException(
+        &#x27;Teacher cannot be class teacher of both a stream and grade level&#x27;,
+      );
+    }
+  
+    if (dto.tenantSubjectIds?.length &amp;&amp; tenantSubjects.length &#x3D;&#x3D;&#x3D; 0) {
+      throw new BadRequestException(&#x27;No valid subjects found&#x27;);
+    }
+  
+    if (dto.tenantGradeLevelIds?.length &amp;&amp; tenantGradeLevels.length &#x3D;&#x3D;&#x3D; 0) {
+      throw new BadRequestException(&#x27;No valid grade levels found&#x27;);
+    }
+  
+    if (classTeacherStream &amp;&amp; tenantGradeLevels.length &gt; 0) {
+      const streamGradeLevelIds &#x3D; tenantStreams
+        .filter(ts &#x3D;&gt; ts.id &#x3D;&#x3D;&#x3D; classTeacherStream.id)
+        .map(ts &#x3D;&gt; ts.tenantGradeLevel.id);
+      
+      const assignedGradeLevelIds &#x3D; tenantGradeLevels.map(gl &#x3D;&gt; gl.id);
+      const hasValidGradeLevel &#x3D; streamGradeLevelIds.some(id &#x3D;&gt; 
+        assignedGradeLevelIds.includes(id)
+      );
+  
+      if (!hasValidGradeLevel) {
+        throw new BadRequestException(
+          &#x27;Class teacher stream must belong to one of the assigned grade levels&#x27;,
+        );
+      }
+    }
+  
+    if (classTeacherGradeLevel &amp;&amp; tenantGradeLevels.length &gt; 0) {
+      const isGradeLevelAssigned &#x3D; tenantGradeLevels.some(
+        (gradeLevel) &#x3D;&gt; gradeLevel.id &#x3D;&#x3D;&#x3D; classTeacherGradeLevel.id,
+      );
+      if (!isGradeLevelAssigned) {
+        throw new BadRequestException(
+          &#x27;Class teacher grade level must be included in assigned grade levels&#x27;,
+        );
+      }
+    }
+  }
+
+
+  private async fetchClassTeacherGradeLevel(
+    gradeLevelId: string,
+    tenantId: string,
+    tenantGradeLevelRepo: Repository&lt;TenantGradeLevel&gt;,
+  ): Promise&lt;TenantGradeLevel&gt; {
+    const gradeLevel &#x3D; await tenantGradeLevelRepo.findOne({
+      where: { id: gradeLevelId, tenant: { id: tenantId } },
+    });
+  
+    if (!gradeLevel) {
+      throw new BadRequestException(
+        &#x60;Class teacher grade level with ID ${gradeLevelId} not found in tenant ${tenantId}&#x60;
+      );
+    }
+  
+    return gradeLevel;
+  }
+
+
+  // private async fetchTenantGradeLevels(
+  //   gradeLevelIds: string[] | undefined,
+  //   tenantId: string,
+  //   tenantGradeLevelRepo: Repository&lt;TenantGradeLevel&gt;,
+  // ): Promise&lt;TenantGradeLevel[]&gt; {
+  //   if (!gradeLevelIds || gradeLevelIds.length &#x3D;&#x3D;&#x3D; 0) {
+  //     return [];
+  //   }
+  
+  //   const gradeLevels &#x3D; await tenantGradeLevelRepo.find({
+  //     where: { 
+  //       id: In(gradeLevelIds), 
+  //       tenant: { id: tenantId }
+  //     },
+  //   });
+  
+  //   const foundIds &#x3D; gradeLevels.map(gl &#x3D;&gt; gl.id);
+  //   const missingIds &#x3D; gradeLevelIds.filter(id &#x3D;&gt; !foundIds.includes(id));
+    
+  //   if (missingIds.length &gt; 0) {
+  //     throw new BadRequestException(
+  //       &#x60;Grade level(s) with ID(s) ${missingIds.join(&#x27;, &#x27;)} not found in tenant ${tenantId}&#x60;
+  //     );
+  //   }
+  
+  //   return gradeLevels;
+  // }
+
+  private async fetchTenantGradeLevels(
+    gradeLevelIds: string[] | undefined,
+    tenantId: string,
+    tenantGradeLevelRepo: Repository&lt;TenantGradeLevel&gt;,
+  ): Promise&lt;TenantGradeLevel[]&gt; {
+    if (!gradeLevelIds || gradeLevelIds.length &#x3D;&#x3D;&#x3D; 0) {
+      return [];
+    }
+  
+    const gradeLevels &#x3D; await tenantGradeLevelRepo.find({
+      where: { 
+        id: In(gradeLevelIds), 
+        tenant: { id: tenantId }
+      },
+    });
+  
+    const foundIds &#x3D; gradeLevels.map(gl &#x3D;&gt; gl.id);
+    const missingIds &#x3D; gradeLevelIds.filter(id &#x3D;&gt; !foundIds.includes(id));
+    
+    if (missingIds.length &gt; 0) {
+      throw new BusinessException(
+        &#x60;Grade level(s) not found in your school&#x60;,
+        &#x27;GRADE_LEVEL_NOT_FOUND&#x27;,
+        HttpStatus.BAD_REQUEST,
+        { 
+          missingGradeLevelIds: missingIds,
+          tenantId 
+        }
+      );
+    }
+  
+    return gradeLevels;
+  }
+
+  private async fetchTenantStreams(
+    streamIds: string[] | undefined,
+    tenantId: string,
+    tenantStreamRepo: Repository&lt;TenantStream&gt;,
+  ): Promise&lt;TenantStream[]&gt; {
+    if (!streamIds || streamIds.length &#x3D;&#x3D;&#x3D; 0) {
+      return [];
+    }
+  
+    const streams &#x3D; await tenantStreamRepo.find({
+      where: { 
+        id: In(streamIds), 
+        tenant: { id: tenantId }
+      },
+    });
+  
+    
+    const foundIds &#x3D; streams.map(s &#x3D;&gt; s.id);
+    const missingIds &#x3D; streamIds.filter(id &#x3D;&gt; !foundIds.includes(id));
+    
+    if (missingIds.length &gt; 0) {
+      throw new BadRequestException(
+        &#x60;Stream(s) with ID(s) ${missingIds.join(&#x27;, &#x27;)} not found in tenant ${tenantId}&#x60;
+      );
+    }
+  
+    return streams;
+  }
+
+
+  private async fetchTenantSubjects(
+    subjectIds: string[] | undefined,
+    tenantId: string,
+    tenantSubjectRepo: Repository&lt;TenantSubject&gt;,
+  ): Promise&lt;TenantSubject[]&gt; {
+    if (!subjectIds || subjectIds.length &#x3D;&#x3D;&#x3D; 0) {
+      return [];
+    }
+  
+    const subjects &#x3D; await tenantSubjectRepo.find({
+      where: { 
+        id: In(subjectIds), 
+        tenant: { id: tenantId }
+      },
+    });
+  
+    const foundIds &#x3D; subjects.map(s &#x3D;&gt; s.id);
+    const missingIds &#x3D; subjectIds.filter(id &#x3D;&gt; !foundIds.includes(id));
+    
+    if (missingIds.length &gt; 0) {
+      throw new BadRequestException(
+        &#x60;Subject(s) with ID(s) ${missingIds.join(&#x27;, &#x27;)} not found in tenant ${tenantId}&#x60;
+      );
+    }
+  
+    return subjects;
+  }
+
+ 
+  private async fetchClassTeacherStream(
+    streamId: string,
+    tenantId: string,
+    tenantStreamRepo: Repository&lt;TenantStream&gt;,
+    assignedGradeLevelIds: string[],
+  ): Promise&lt;TenantStream&gt; {
+    const stream &#x3D; await tenantStreamRepo.findOne({
+      where: { id: streamId, tenant: { id: tenantId } },
+    });
+  
+    if (!stream) {
+      throw new BadRequestException(
+        &#x60;Class teacher stream with ID ${streamId} not found in tenant ${tenantId}&#x60;
+      );
+    }
+
+    // if (!assignedGradeLevelIds.includes(stream.tenantGradeLevel.id)) {
+    //   throw new BadRequestException(
+    //     &#x27;Stream does not belong to the assigned grade level&#x27;
+    //   );
+    // }
+  
+    return stream;
+  }
+
+  async findTeacherByUserId(
+    userId: string,
+    tenantId: string,
+  ): Promise&lt;Teacher | null&gt; {
+    return this.teacherRepository.findOne({
+      where: { user: { id: userId }, tenantId },
+
+      relations: [
+        &#x27;tenantGradeLevels&#x27;,
+        &#x27;tenantStreams&#x27;,
+        &#x27;tenantSubjects&#x27;,
+        &#x27;classTeacherOf&#x27;,
+      ],
+    });
+  }
+
+  async acceptInvitation(
+  token: string,
+  password: string,
+) {
+  const result &#x3D; await this.invitationService.acceptInvitation(
+    token,
+    password,
+    async (user: User, invitation: UserInvitation) &#x3D;&gt; {
+      let teacher &#x3D; await this.teacherRepository.findOne({
+        where: { email: invitation.email },
+        relations: [&#x27;user&#x27;, &#x27;tenant&#x27;],
+      });
+
+      if (teacher) {
+        teacher.isActive &#x3D; true;
+        teacher.hasCompletedProfile &#x3D; true;
+        teacher.user &#x3D; user;
+        teacher.tenantId &#x3D; invitation.tenantId;  
+        await this.teacherRepository.save(teacher);
+      } else {
+        teacher &#x3D; this.teacherRepository.create({
+          email: invitation.email,
+          fullName: invitation.name,
+          isActive: true,
+          hasCompletedProfile: true,
+          user,
+          tenantId: invitation.tenantId,  
+        });
+        await this.teacherRepository.save(teacher);
+      }
+    },
+  );
+
+  // Correct relation
+  const teacher &#x3D; await this.teacherRepository.findOne({
+    where: { email: result.user.email },
+    relations: [&#x27;user&#x27;, &#x27;tenant&#x27;],
+  });
+
+  return {
+    message: result.message,
+    user: result.user,
+    tokens: result.tokens,
+    teacher: teacher
+      ? {
+          id: teacher.id,
+          name: teacher.fullName,
+          tenantId: teacher.tenantId,   
+        }
+      : null,
+    invitation: result.invitation,
+    role: result.role,
+    tenant: teacher?.tenant ?? null,     
+  };
+}
+
+
+  // async acceptInvitation(
+  //   token: string,
+  //   password: string,
+  // ): Promise&lt;AcceptInvitationResponse&gt; {
+  //   const result &#x3D; await this.invitationService.acceptInvitation(
+  //     token,
+  //     password,
+  //     async (user: User, invitation: UserInvitation) &#x3D;&gt; {
+  //       let teacher &#x3D; await this.teacherRepository.findOne({
+  //         where: { email: invitation.email },
+  //         relations: [&#x27;user&#x27;],
+  //       });
+
+  //       if (teacher) {
+  //         teacher.isActive &#x3D; true;
+  //         teacher.hasCompletedProfile &#x3D; true;
+
+
+
+  //         teacher.user &#x3D; user; 
+  //         await this.teacherRepository.save(teacher);
+  //       } else {
+  //         teacher &#x3D; this.teacherRepository.create({
+  //           email: invitation.email,
+  //           fullName: invitation.name,
+  //           isActive: true,
+  //           hasCompletedProfile: true,
+  //           user,
+  //         });
+  //         await this.teacherRepository.save(teacher);
+  //       }
+  //     },
+  //   );
+
+  //   const teacher &#x3D; await this.teacherRepository.findOne({
+  //     where: { email: result.user.email },
+  //     relations: [&#x27;user&#x27;, &#x27;tenantId&#x27;],
+  //   });
+
+  //   return {
+  //     message: result.message,
+  //     user: result.user,
+  //     tokens: result.tokens,
+  //     teacher: teacher
+  //       ? {
+  //           id: teacher.id,
+  //           name: teacher.fullName,
+  //         }
+  //       : null,
+  //     invitation: result.invitation,
+  //     role: result.role,
+  //   };
+  // }
+
+  async getPendingTeacherInvitations(
+    tenantId: string,
+    currentUser: ActiveUserData,
+  ) {
+    return this.invitationService.getPendingInvitationsByType(
+      tenantId,
+      currentUser,
+      InvitationType.TEACHER,
+    );
+  }
+
+  async cancelTeacherInvitation(
+    invitationId: string,
+    currentUser: ActiveUserData,
+    tenantId: string,
+  ) {
+    return this.invitationService.cancelInvitation(
+      invitationId,
+      currentUser,
+      tenantId,
+    );
+  }
+
+  async revokeInvitation(invitationId: string, currentUser: ActiveUserData) {
+    const invitation &#x3D; await this.invitationRepository.findOne({
+      where: { id: invitationId },
+      relations: [&#x27;tenant&#x27;],
+    });
+
+    if (!invitation) {
+      throw new NotFoundException(&#x27;Invitation not found&#x27;);
+    }
+
+    await validateMembershipAccess(
+      this.membershipRepository,
+      currentUser.sub,
+      invitation.tenant.id,
+      [MembershipRole.SCHOOL_ADMIN],
+    );
+
+    await this.invitationRepository.update(invitationId, {
+      status: InvitationStatus.REVOKED,
+    });
+
+    return { message: &#x27;Invitation revoked successfully&#x27; };
+  }
+
+  async getTeachersByTenants(tenantId: string): Promise&lt;TeacherDto[]&gt; {
+    const teachers &#x3D; await this.teacherRepository.find({
+      where: { tenant: { id: tenantId } },
+      relations: [&#x27;tenant&#x27;],
+    });
+  
+    return teachers.map((teacher) &#x3D;&gt; ({
+      id: teacher.id,
+      fullName: &#x60;${teacher.firstName} ${teacher.lastName}&#x60;,
+      firstName: teacher.firstName,
+      lastName: teacher.lastName,
+      email: teacher.email,
+      phoneNumber: teacher.phoneNumber,
+      gender: teacher.gender,
+      department: teacher.department,
+      address: teacher.address,
+      employeeId: teacher.employeeId,
+      dateOfBirth: teacher.dateOfBirth ? new Date(teacher.dateOfBirth) : undefined,
+      isActive: teacher.isActive,
+      hasCompletedProfile: teacher.hasCompletedProfile,
+    }));
+  }
+
+  async deleteTeacher(
+    teacherId: string,
+    currentUserId: string,
+    tenantId: string,
+  ) {
+    return this.invitationService.deleteEntity(
+      this.teacherRepository,
+      teacherId,
+      currentUserId,
+      tenantId,
+      {
+        roles: [MembershipRole.SCHOOL_ADMIN],
+        userIdField: &#x27;userId&#x27;,
+        deleteUserIfOrphaned: true,
+        
+      },
+    );
+  }
+
+  async getPendingInvitation(email: string, tenantId: string) {
+    return await this.invitationRepository.findOne({
+      where: {
+        email,
+        tenant: { id: tenantId },
+        status: InvitationStatus.PENDING,
+      },
+      order: { createdAt: &#x27;DESC&#x27; },
+    });
+  }
+
+  async getPendingInvitations(tenantId: string) {
+    return await this.invitationRepository.find({
+      where: {
+        tenant: { id: tenantId },
+        status: InvitationStatus.PENDING,
+      },
+      order: { createdAt: &#x27;DESC&#x27; },
+    });
+  }
+
+  async findInvitationById(
+    invitationId: string,
+    tenantId: string,
+  ): Promise&lt;UserInvitation | null&gt; {
+    return await this.invitationRepository.findOne({
+      where: {
+        id: invitationId,
+        tenant: { id: tenantId },
+        status: InvitationStatus.PENDING,
+      },
+    });
+  }
+
+  async validateResendThrottling(
+    email: string,
+    tenantId: string,
+  ): Promise&lt;void&gt; {
+    await handleInvitationResendLogic(
+      email,
+      tenantId,
+      this.invitationRepository,
+    );
+  }
+
+  async resendTeacherInvitation(
+    invitationId: string,
+    currentUser: ActiveUserData,
+    tenantId: string,
+  ) {
+    this.logger.log(&#x60;Resending teacher invitation with ID: ${invitationId}&#x60;);
+
+    try {
+      const invitation &#x3D; await this.findInvitationById(invitationId, tenantId);
+
+      if (!invitation) {
+        throw new BadRequestException(
+          &#x27;Invitation not found or already processed&#x27;,
+        );
+      }
+
+      if (invitation.type !&#x3D;&#x3D; InvitationType.TEACHER) {
+        throw new BadRequestException(
+          &#x27;Invalid invitation type for teacher resend&#x27;,
+        );
+      }
+
+      await this.validateResendThrottling(invitation.email, tenantId);
+
+      const inviter &#x3D; await this.userRepository.findOne({
+        where: { id: currentUser.sub },
+        select: [&#x27;id&#x27;, &#x27;name&#x27;, &#x27;email&#x27;],
+      });
+
+      if (!inviter) {
+        throw new BadRequestException(&#x27;Inviter not found&#x27;);
+      }
+
+      const dto &#x3D; invitation.userData as CreateTeacherInvitationDto;
+
+      return await this.invitationService.inviteUser(
+        currentUser,
+        tenantId,
+        dto,
+        InvitationType.TEACHER,
+        (email, fullName, schoolName, token, _inviterId, tenantId) &#x3D;&gt;
+          this.emailService.sendTeacherInvitation(
+            email,
+            fullName,
+            schoolName,
+            token,
+            inviter.name || inviter.email,
+            tenantId,
+          ),
+        () &#x3D;&gt; Promise.resolve(),
+      );
+    } catch (error) {
+      this.logger.error(
+        &#x60;Failed to resend teacher invitation ${invitationId}:&#x60;,
+        error,
+      );
+      throw error;
+    }
+  }
+
+ 
+
+  async getTeacherByUserId(userId: string): Promise&lt;Teacher&gt; {
+    const teacher &#x3D; await this.teacherRepository.findOne({
+      where: { user: { id: userId } },
+      relations: [
+        &#x27;tenantSubjects&#x27;,
+        &#x27;tenantGradeLevels&#x27;,
+        &#x27;tenantStreams&#x27;,
+        &#x27;classTeacherAssignments&#x27;,
+        &#x27;classTeacherAssignments.stream&#x27;,
+        &#x27;classTeacherAssignments.gradeLevel&#x27;,
+        &#x27;user&#x27;,
+        &#x27;tenant&#x27;,
+      ],
+    });
+
+    if (!teacher) {
+      throw new Error(&#x27;Teacher profile not found for this user&#x27;);
+    }
+
+    return teacher;
+  }
+
+
+
+
+  async assignStreamClassTeacher(
+    input: AssignStreamClassTeacherInput,
+    currentUser: ActiveUserData,
+  ): Promise&lt;ClassTeacherAssignment&gt; {
+    const tenantId &#x3D; currentUser.tenantId;
+    if (!tenantId) {
+      throw new BadRequestException(&#x27;Tenant information not found for current user&#x27;);
+    }
+  
+    return this.classTeacherProvider.assign({
+      teacherId: input.teacherId,
+      streamId: input.streamId,
+      tenantId,
+    });
+  }
+
+
+  async assignGradeLevelClassTeacher(
+    input: AssignGradeLevelClassTeacherInput,
+    currentUser: ActiveUserData,
+  ): Promise&lt;ClassTeacherAssignment&gt; {
+    const tenantId &#x3D; currentUser.tenantId;
+  
+    if (!tenantId) {
+      throw new BadRequestException(&#x27;Tenant information not found for current user&#x27;);
+    }
+  
+    return this.classTeacherProvider.assign({
+      teacherId: input.teacherId,
+      gradeLevelId: input.gradeLevelId,
+      tenantId,
+    });
+  }
+  
+  async findExistingAssignment(input: {
+    teacherId: string;
+    streamId?: string;
+    gradeLevelId?: string;
+    tenantId: string;
+  }): Promise&lt;ClassTeacherAssignment | null&gt; {
+    const whereCondition: any &#x3D; {
+      teacher: { id: input.teacherId },
+      tenant: { id: input.tenantId },
+      active: true,
+    };
+  
+    if (input.streamId) {
+      whereCondition.stream &#x3D; { id: input.streamId };
+    }
+  
+    if (input.gradeLevelId) {
+      whereCondition.gradeLevel &#x3D; { id: input.gradeLevelId };
+    }
+  
+    return await this.classTeacherAssignmentRepository.findOne({
+      where: whereCondition,
+      relations: [&#x27;teacher&#x27;, &#x27;stream&#x27;, &#x27;gradeLevel&#x27;],
+    });
+  }
+  
+  async unassignTeacherAsClassTeacher(
+    input: UnassignClassTeacherInput,
+    currentUser: ActiveUserData,
+  ): Promise&lt;void&gt; {
+    const tenantId &#x3D; currentUser.tenantId;
+    
+    if (!tenantId) {
+      throw new BadRequestException(&#x27;Tenant information not found for current user&#x27;);
+    }
+  
+    return this.classTeacherProvider.unassign({
+      teacherId: input.teacherId,
+      tenantId,
+    });
+  }
+  
+  async getTeacherForCurrentUser(currentUser: ActiveUserData): Promise&lt;Teacher&gt; {
+    const tenantId &#x3D; currentUser.tenantId;
+    const userId &#x3D; currentUser.sub;
+  
+    if (!tenantId) {
+      throw new BadRequestException(&#x27;Tenant information not found for current user&#x27;);
+    }
+  
+    const teacher &#x3D; await this.teacherRepository.findOne({
+      where: { user: { id: userId }, tenantId },
+      relations: [
+        &#x27;tenantSubjects&#x27;,
+        &#x27;tenantGradeLevels&#x27;,
+        &#x27;tenantStreams&#x27;,
+        &#x27;classTeacherAssignments&#x27;,
+        &#x27;classTeacherAssignments.stream&#x27;,
+        &#x27;classTeacherAssignments.stream.stream&#x27;,
+        &#x27;classTeacherAssignments.gradeLevel&#x27;,
+        &#x27;classTeacherAssignments.gradeLevel.gradeLevel&#x27;,
+        &#x27;user&#x27;,
+        &#x27;tenant&#x27;,
+      ],
+    });
+  
+    if (!teacher) {
+      throw new BadRequestException(
+        &#x60;No teacher record found for user &#x27;${userId}&#x27; in tenant &#x27;${tenantId}&#x27;&#x60;
+      );
+    }
+  
+    return teacher;
+  };
+
+
+
+  async getTeachersForTenant(currentUser: ActiveUserData): Promise&lt;Teacher[]&gt; {
+    console.log(&#x27;what the helly.........&#x27;)
+  if (!currentUser.tenantId) {
+    throw new BadRequestException(&#x27;Tenant information not found&#x27;);
+  }
+
+  return this.teacherRepository.find({
+    where: { tenantId: currentUser.tenantId },
+    relations: [
+      &#x27;tenantSubjects&#x27;,
+      &#x27;tenantGradeLevels&#x27;,
+      &#x27;tenantStreams&#x27;,
+      &#x27;classTeacherAssignments&#x27;,
+      &#x27;classTeacherAssignments.stream&#x27;,
+      &#x27;classTeacherAssignments.stream.stream&#x27;,
+      &#x27;classTeacherAssignments.gradeLevel&#x27;,
+      &#x27;classTeacherAssignments.gradeLevel.gradeLevel&#x27;,
+      &#x27;user&#x27;,
+      &#x27;tenant&#x27;,
+    ],
+    order: {
+      user: { name: &#x27;ASC&#x27; }, 
+    },
+  });
+}
+
+
+
+  async getTeacherByIdForTenant(teacherId: string, tenantId: string): Promise&lt;Teacher&gt; {
+  const teacher &#x3D; await this.teacherRepository.findOne({
+    where: { id: teacherId, tenantId },
+    relations: [
+      &#x27;tenantSubjects&#x27;,
+      &#x27;tenantGradeLevels&#x27;,
+      &#x27;tenantStreams&#x27;,
+      &#x27;classTeacherAssignments&#x27;,
+      &#x27;classTeacherAssignments.stream&#x27;,
+      &#x27;classTeacherAssignments.stream.stream&#x27;,
+      &#x27;classTeacherAssignments.gradeLevel&#x27;,
+      &#x27;classTeacherAssignments.gradeLevel.gradeLevel&#x27;,
+      &#x27;user&#x27;,
+      &#x27;tenant&#x27;,
+    ]
+  });
+
+  if (!teacher) {
+    throw new BadRequestException(
+      &#x60;Teacher &#x27;${teacherId}&#x27; not found in tenant &#x27;${tenantId}&#x27;&#x60;
+    );
+  }
+
+  return teacher;
+}
+
+  
+  
+  
+  async getAllTeachersInTenant(
+    currentUser: ActiveUserData,
+  ): Promise&lt;Teacher[]&gt; {
+    const tenantId &#x3D; currentUser.tenantId;
+    
+    if (!tenantId) {
+      throw new BadRequestException(&#x27;Tenant information not found for current user&#x27;);
+    }
+  
+    return this.teacherRepository.find({
+      where: { tenantId },
+      relations: [
+        &#x27;classTeacherAssignments&#x27;,
+        &#x27;classTeacherAssignments.stream&#x27;,
+        &#x27;classTeacherAssignments.stream.stream&#x27;,
+        &#x27;classTeacherAssignments.gradeLevel&#x27;,
+        &#x27;classTeacherAssignments.gradeLevel.gradeLevel&#x27;,
+        &#x27;user&#x27;,
+      ],
+      order: {
+        fullName: &#x27;ASC&#x27;,
+      },
+    });
+  }
+
+
+  async getAllClassTeacherAssignmentsInTenant(
+    currentUser: ActiveUserData,
+  ): Promise&lt;ClassTeacherAssignment[]&gt; {
+    const tenantId &#x3D; currentUser.tenantId;
+    console.log(tenantId, &#x27;this is the tenantId;:::::::::::::::::::::::::::::::::&#x27;)
+    
+    if (!tenantId) {
+      throw new BadRequestException(&#x27;Tenant information not found for current user&#x27;);
+    }
+  
+    return this.classTeacherAssignmentRepository.find({
+      where: {
+        tenant: { id: tenantId },
+        active: true,
+      },
+      relations: [
+        &#x27;teacher&#x27;,
+        &#x27;stream&#x27;,
+        &#x27;stream.stream&#x27;,
+        &#x27;gradeLevel&#x27;,
+      ],
+      order: {
+        createdAt: &#x27;DESC&#x27;,
+      },
+    });
+  }
+  
+  async getStreamClassTeacher(
+    streamId: string,
+    currentUser: ActiveUserData,
+  ): Promise&lt;ClassTeacherAssignment | null&gt; {
+    const tenantId &#x3D; currentUser.tenantId;
+    
+    if (!tenantId) {
+      throw new BadRequestException(&#x27;Tenant information not found for current user&#x27;);
+    }
+  
+    return this.classTeacherAssignmentRepository.findOne({
+      where: {
+        stream: { id: streamId },
+        tenant: { id: tenantId },
+        active: true,
+      },
+      relations: [
+        &#x27;teacher&#x27;,
+        &#x27;stream&#x27;,
+        &#x27;stream.stream&#x27;,
+      ],
+    });
+  }
+  
+  async getGradeLevelClassTeacher(
+    gradeLevelId: string,
+    currentUser: ActiveUserData,
+  ): Promise&lt;ClassTeacherAssignment | null&gt; {
+    const tenantId &#x3D; currentUser.tenantId;
+    
+    if (!tenantId) {
+      throw new BadRequestException(&#x27;Tenant information not found for current user&#x27;);
+    }
+  
+    return this.classTeacherAssignmentRepository.findOne({
+      where: {
+        gradeLevel: { id: gradeLevelId },
+        tenant: { id: tenantId },
+        active: true,
+      },
+      relations: [
+        &#x27;teacher&#x27;,
+        &#x27;gradeLevel&#x27;,
+        &#x27;gradeLevel.gradeLevel&#x27;,
+      ],
+    });
+  }
+
+}</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'TeacherService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

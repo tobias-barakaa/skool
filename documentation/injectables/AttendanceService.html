@@ -1,0 +1,1748 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>skool documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">skool documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >AttendanceService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/teacher/attendance/providers/attendance.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#logger" >logger</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#debugTeacherGradeAssignments" >debugTeacherGradeAssignments</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getAttendanceByDate" >getAttendanceByDate</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getAttendanceByGradeAndDate" >getAttendanceByGradeAndDate</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getStudentsByGrade" >getStudentsByGrade</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#isValidDate" >isValidDate</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#markAttendance" >markAttendance</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#validateAttendanceInput" >validateAttendanceInput</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#validateGrade" >validateGrade</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#validateStudentAccess" >validateStudentAccess</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#validateStudents" >validateStudents</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#validateTeacherPermissions" >validateTeacherPermissions</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(attendanceRepository: <a href="../classes/Attendance.html" target="_self">Repository&lt;Attendance&gt;</a>, studentRepository: <a href="../interfaces/Student.html" target="_self">Repository&lt;Student&gt;</a>, userTenantMembershipRepository: <a href="../s/Tenant.html" target="_self">Repository&lt;UserTenantMembership&gt;</a>, schoolSetupGuardService: <a href="../injectables/SchoolSetupGuardService.html" target="_self">SchoolSetupGuardService</a>, dataSource: DataSource)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/teacher/attendance/providers/attendance.service.ts:16</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>attendanceRepository</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/Attendance.html" target="_self" >Repository&lt;Attendance&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>studentRepository</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../interfaces/Student.html" target="_self" >Repository&lt;Student&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>userTenantMembershipRepository</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../miscellaneous/variables.html#Tenant" target="_self" >Repository&lt;UserTenantMembership&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>schoolSetupGuardService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/SchoolSetupGuardService.html" target="_self" >SchoolSetupGuardService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>dataSource</td>
+                                                  
+                                                        <td>
+                                                                    <code>DataSource</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="debugTeacherGradeAssignments"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>debugTeacherGradeAssignments</b></span>
+                        <a href="#debugTeacherGradeAssignments"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>debugTeacherGradeAssignments(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="285"
+                                    class="link-to-prism">src/teacher/attendance/providers/attendance.service.ts:285</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAttendanceByDate"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getAttendanceByDate</b></span>
+                        <a href="#getAttendanceByDate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getAttendanceByDate(date: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, gradeId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="259"
+                                    class="link-to-prism">src/teacher/attendance/providers/attendance.service.ts:259</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>date</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>gradeId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAttendanceByGradeAndDate"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getAttendanceByGradeAndDate</b></span>
+                        <a href="#getAttendanceByGradeAndDate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getAttendanceByGradeAndDate(gradeId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, date: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="228"
+                                    class="link-to-prism">src/teacher/attendance/providers/attendance.service.ts:228</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>gradeId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>date</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Attendance.html" target="_self" >Promise&lt;Attendance[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getStudentsByGrade"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getStudentsByGrade</b></span>
+                        <a href="#getStudentsByGrade"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getStudentsByGrade(gradeId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="266"
+                                    class="link-to-prism">src/teacher/attendance/providers/attendance.service.ts:266</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>gradeId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isValidDate"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>isValidDate</b></span>
+                        <a href="#isValidDate"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>isValidDate(dateString: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="220"
+                                    class="link-to-prism">src/teacher/attendance/providers/attendance.service.ts:220</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>dateString</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="markAttendance"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>markAttendance</b></span>
+                        <a href="#markAttendance"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>markAttendance(markAttendanceInput: <a href="../classes/CreateAttendanceInput.html" target="_self">CreateAttendanceInput</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="31"
+                                    class="link-to-prism">src/teacher/attendance/providers/attendance.service.ts:31</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>markAttendanceInput</td>
+                                            <td>
+                                                            <code><a href="../classes/CreateAttendanceInput.html" target="_self" >CreateAttendanceInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Attendance.html" target="_self" >Promise&lt;Attendance[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="validateAttendanceInput"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>validateAttendanceInput</b></span>
+                        <a href="#validateAttendanceInput"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>validateAttendanceInput(input: <a href="../classes/CreateAttendanceInput.html" target="_self">CreateAttendanceInput</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="96"
+                                    class="link-to-prism">src/teacher/attendance/providers/attendance.service.ts:96</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/CreateAttendanceInput.html" target="_self" >CreateAttendanceInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="validateGrade"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>validateGrade</b></span>
+                        <a href="#validateGrade"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>validateGrade(gradeId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, gradeRepo: <a href="../s/Tenant.html" target="_self">Repository&lt;TenantGradeLevel&gt;</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="170"
+                                    class="link-to-prism">src/teacher/attendance/providers/attendance.service.ts:170</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>gradeId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>gradeRepo</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/variables.html#Tenant" target="_self" >Repository&lt;TenantGradeLevel&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../miscellaneous/variables.html#Tenant" target="_self" >Promise&lt;TenantGradeLevel&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="validateStudentAccess"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>validateStudentAccess</b></span>
+                        <a href="#validateStudentAccess"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>validateStudentAccess(studentId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, gradeId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="241"
+                                    class="link-to-prism">src/teacher/attendance/providers/attendance.service.ts:241</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>studentId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>gradeId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="validateStudents"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>validateStudents</b></span>
+                        <a href="#validateStudents"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>validateStudents(studentIds: string[], gradeId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, studentRepo: <a href="../interfaces/Student.html" target="_self">Repository&lt;Student&gt;</a>, membershipRepo: <a href="../s/Tenant.html" target="_self">Repository&lt;UserTenantMembership&gt;</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="189"
+                                    class="link-to-prism">src/teacher/attendance/providers/attendance.service.ts:189</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>studentIds</td>
+                                            <td>
+                                                        <code>string[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>gradeId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>studentRepo</td>
+                                            <td>
+                                                            <code><a href="../interfaces/Student.html" target="_self" >Repository&lt;Student&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>membershipRepo</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/variables.html#Tenant" target="_self" >Repository&lt;UserTenantMembership&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/Student.html" target="_self" >Promise&lt;Student[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="validateTeacherPermissions"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>validateTeacherPermissions</b></span>
+                        <a href="#validateTeacherPermissions"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>validateTeacherPermissions(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, gradeId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, teacherRepo: <a href="../classes/Teacher.html" target="_self">Repository&lt;Teacher&gt;</a>, membershipRepo: <a href="../s/Tenant.html" target="_self">Repository&lt;UserTenantMembership&gt;</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="117"
+                                    class="link-to-prism">src/teacher/attendance/providers/attendance.service.ts:117</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>gradeId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>teacherRepo</td>
+                                            <td>
+                                                            <code><a href="../classes/Teacher.html" target="_self" >Repository&lt;Teacher&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>membershipRepo</td>
+                                            <td>
+                                                            <code><a href="../miscellaneous/variables.html#Tenant" target="_self" >Repository&lt;UserTenantMembership&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Teacher.html" target="_self" >Promise&lt;Teacher&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="logger"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>logger</b></span>
+                        <a href="#logger"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new Logger(AttendanceService.name)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/teacher/attendance/providers/attendance.service.ts:16</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, BadRequestException, Logger } from &#x27;@nestjs/common&#x27;;
+import { InjectRepository } from &#x27;@nestjs/typeorm&#x27;;
+import { DataSource, In, Repository } from &#x27;typeorm&#x27;;
+import { Attendance } from &#x27;../entities/attendance.entity&#x27;;
+import { CreateAttendanceInput } from &#x27;../dtos/attendance.input&#x27;;
+import { Student } from &#x27;src/admin/student/entities/student.entity&#x27;;
+import { MembershipRole, UserTenantMembership } from &#x27;src/admin/user-tenant-membership/entities/user-tenant-membership.entity&#x27;;
+import { TenantGradeLevel } from &#x27;src/admin/school-type/entities/tenant-grade-level&#x27;;
+import { SchoolSetupGuardService } from &#x27;src/admin/config/school-config.guard&#x27;;
+import { Teacher } from &#x27;src/admin/teacher/entities/teacher.entity&#x27;;
+import { ActiveUserData } from &#x27;src/admin/auth/interface/active-user.interface&#x27;;
+
+@Injectable()
+export class AttendanceService {
+  private readonly logger &#x3D; new Logger(AttendanceService.name);
+
+  constructor(
+    @InjectRepository(Attendance)
+    private attendanceRepository: Repository&lt;Attendance&gt;,
+    @InjectRepository(Student)
+    private studentRepository: Repository&lt;Student&gt;,
+    @InjectRepository(UserTenantMembership)
+    private userTenantMembershipRepository: Repository&lt;UserTenantMembership&gt;,
+    private readonly schoolSetupGuardService: SchoolSetupGuardService,
+    private readonly dataSource: DataSource,
+
+  ) {}
+
+
+ async markAttendance(
+    markAttendanceInput: CreateAttendanceInput,
+    currentUser: ActiveUserData,
+  ): Promise&lt;Attendance[]&gt; {
+    const { date, gradeId, attendanceRecords } &#x3D; markAttendanceInput;
+    const userId &#x3D; currentUser.sub;
+    const tenantId &#x3D; currentUser.tenantId;
+
+    if(!tenantId) {
+      throw new BadRequestException(&#x27;Tenant ID is missing in user data&#x27;);
+    }
+
+    if (!gradeId) {
+      throw new BadRequestException(&#x27;Grade ID is missing in attendance input&#x27;);
+    }
+
+    this.logger.log(&#x60;Marking attendance for grade ${gradeId} on ${date} by user ${userId}&#x60;);
+
+    try {
+      // Validate input
+      this.validateAttendanceInput(markAttendanceInput);
+
+      // Use transaction for data consistency
+      return await this.dataSource.transaction(async (manager) &#x3D;&gt; {
+        const attendanceRepo &#x3D; manager.getRepository(Attendance);
+        const teacherRepo &#x3D; manager.getRepository(Teacher);
+        const studentRepo &#x3D; manager.getRepository(Student);
+        const gradeRepo &#x3D; manager.getRepository(TenantGradeLevel);
+        const membershipRepo &#x3D; manager.getRepository(UserTenantMembership);
+
+        // Validate permissions and relationships
+        const [teacher, grade, students] &#x3D; await Promise.all([
+          this.validateTeacherPermissions(userId, tenantId, gradeId, teacherRepo, membershipRepo),
+          this.validateGrade(gradeId, tenantId, gradeRepo),
+          this.validateStudents(attendanceRecords.map(r &#x3D;&gt; r.studentId), gradeId, tenantId, studentRepo, membershipRepo),
+        ]);
+
+        // Delete existing attendance for this date and grade
+        await attendanceRepo.delete({ date, gradeId, tenantId });
+
+        // Create new attendance records
+        const attendanceEntities &#x3D; attendanceRecords.map((record) &#x3D;&gt;
+          attendanceRepo.create({
+            studentId: record.studentId,
+            teacherId: teacher.id,
+            tenantId,
+            gradeId,
+            date,
+            status: record.status,
+          }),
+        );
+
+        const savedAttendance &#x3D; await attendanceRepo.save(attendanceEntities);
+
+        return attendanceRepo.find({
+          where: { id: In(savedAttendance.map(a &#x3D;&gt; a.id)) },
+          relations: [&#x27;student&#x27;],
+        });
+      });
+    } catch (error) {
+      this.logger.error(&#x60;Failed to mark attendance:&#x60;, error);
+      throw error;
+    }
+  }
+
+  private validateAttendanceInput(input: CreateAttendanceInput): void {
+    if (!input.date || !this.isValidDate(input.date)) {
+      throw new BadRequestException(&#x27;Invalid date format. Use YYYY-MM-DD&#x27;);
+    }
+
+    if (!input.gradeId) {
+      throw new BadRequestException(&#x27;Grade ID is required&#x27;);
+    }
+
+    if (!input.attendanceRecords || input.attendanceRecords.length &#x3D;&#x3D;&#x3D; 0) {
+      throw new BadRequestException(&#x27;At least one attendance record is required&#x27;);
+    }
+
+    // Check for duplicate student IDs
+    const studentIds &#x3D; input.attendanceRecords.map(r &#x3D;&gt; r.studentId);
+    const uniqueStudentIds &#x3D; [...new Set(studentIds)];
+    if (studentIds.length !&#x3D;&#x3D; uniqueStudentIds.length) {
+      throw new BadRequestException(&#x27;Duplicate student IDs found in attendance records&#x27;);
+    }
+  }
+
+  private async validateTeacherPermissions(
+    userId: string,
+    tenantId: string,
+    gradeId: string,
+    teacherRepo: Repository&lt;Teacher&gt;,
+    membershipRepo: Repository&lt;UserTenantMembership&gt;,
+  ): Promise&lt;Teacher&gt; {
+    // Check user membership
+    const membership &#x3D; await membershipRepo.findOne({
+      where: { userId, tenantId, role: MembershipRole.TEACHER },
+    });
+
+    if (!membership) {
+      throw new BadRequestException(&#x27;User is not authorized as a teacher in this tenant&#x27;);
+    }
+
+    console.log(&#x27;Membership found:&#x27;, membership);
+    console.log(&#x27;Membership found:&#x27;, membership);
+    console.log(userId,&#x27;userrdkjfijd...&#x27;)
+    this.logger.log(&#x60;Membership found for user ${userId} in tenant ${tenantId}&#x60;);
+
+    // Find teacher profile
+    const teacher &#x3D; await teacherRepo.findOne({
+      where: { user: { id: userId }, tenantId },
+      relations: [&#x27;tenantGradeLevels&#x27;, &#x27;user&#x27;],
+    });
+
+    if (!teacher) {
+      throw new BadRequestException(&#x27;Teacher profile not found for this user&#x27;);
+    }
+
+    if (!teacher.isActive) {
+      throw new BadRequestException(&#x27;Teacher profile is not active&#x27;);
+    }
+
+    // Check grade assignment
+    const isAssignedToGrade &#x3D; teacher.tenantGradeLevels?.some(
+      (grade) &#x3D;&gt; grade.id &#x3D;&#x3D;&#x3D; gradeId,
+    );
+
+    if (!isAssignedToGrade) {
+      this.logger.warn(
+        &#x60;Teacher ${teacher.id} (user: ${userId}) not assigned to grade ${gradeId}. &#x60; +
+        &#x60;Assigned grades: ${teacher.tenantGradeLevels?.map(g &#x3D;&gt; g.id).join(&#x27;, &#x27;)}&#x60;
+      );
+      throw new BadRequestException(
+        &#x60;Teacher is not assigned to grade ${gradeId} in this tenant&#x60;,
+      );
+    }
+
+    return teacher;
+  }
+
+  private async validateGrade(
+    gradeId: string,
+    tenantId: string,
+    gradeRepo: Repository&lt;TenantGradeLevel&gt;,
+  ): Promise&lt;TenantGradeLevel&gt; {
+    const grade &#x3D; await gradeRepo.findOne({
+      where: { id: gradeId, tenant: { id: tenantId } },
+      relations: [&#x27;tenant&#x27;],
+    });
+
+    if (!grade) {
+      throw new BadRequestException(
+        &#x60;Grade level ${gradeId} does not exist in tenant ${tenantId}&#x60;,
+      );
+    }
+
+    return grade;
+  }
+
+  private async validateStudents(
+    studentIds: string[],
+    gradeId: string,
+    tenantId: string,
+    studentRepo: Repository&lt;Student&gt;,
+    membershipRepo: Repository&lt;UserTenantMembership&gt;,
+  ): Promise&lt;Student[]&gt; {
+    const students &#x3D; await studentRepo
+      .createQueryBuilder(&#x27;student&#x27;)
+      .innerJoin(&#x27;student.user&#x27;, &#x27;user&#x27;)
+      .innerJoin(&#x27;user.memberships&#x27;, &#x27;membership&#x27;)
+      .where(&#x27;student.id IN (:...studentIds)&#x27;, { studentIds })
+      .andWhere(&#x27;student.grade &#x3D; :gradeId&#x27;, { gradeId })
+      .andWhere(&#x27;membership.tenantId &#x3D; :tenantId&#x27;, { tenantId })
+      .andWhere(&#x27;membership.role &#x3D; :role&#x27;, { role: MembershipRole.STUDENT })
+      .select([&#x27;student.id&#x27;, &#x27;student.grade&#x27;, &#x27;user.id&#x27;, &#x27;user.name&#x27;])
+      .getMany();
+
+    const foundStudentIds &#x3D; students.map(s &#x3D;&gt; s.id);
+    const missingStudentIds &#x3D; studentIds.filter(id &#x3D;&gt; !foundStudentIds.includes(id));
+
+    if (missingStudentIds.length &gt; 0) {
+      throw new BadRequestException(
+        &#x60;Invalid student IDs: ${missingStudentIds.join(&#x27;, &#x27;)}. &#x60; +
+        &#x60;Students must belong to grade ${gradeId} and tenant ${tenantId}&#x60;,
+      );
+    }
+
+    return students;
+  }
+
+  private isValidDate(dateString: string): boolean {
+    const regex &#x3D; /^\d{4}-\d{2}-\d{2}$/;
+    if (!regex.test(dateString)) return false;
+
+    const date &#x3D; new Date(dateString);
+    return date instanceof Date &amp;&amp; !isNaN(date.getTime());
+  }
+
+  async getAttendanceByGradeAndDate(
+    gradeId: string,
+    date: string,
+    tenantId: string,
+  ): Promise&lt;Attendance[]&gt; {
+    return this.attendanceRepository.find({
+      where: { gradeId, date, tenantId },
+      relations: [&#x27;student&#x27;, &#x27;teacher&#x27;],
+      order: { createdAt: &#x27;DESC&#x27; },
+    });
+  }
+
+
+  private async validateStudentAccess(
+    studentId: string,
+    gradeId: string,
+    currentUser: ActiveUserData,
+  ): Promise&lt;boolean&gt; {
+    const student &#x3D; await this.studentRepository
+      .createQueryBuilder(&#x27;student&#x27;)
+      .innerJoin(&#x27;student.user&#x27;, &#x27;user&#x27;)
+      .innerJoin(&#x27;user.memberships&#x27;, &#x27;membership&#x27;)
+      .where(&#x27;student.id &#x3D; :studentId&#x27;, { studentId })
+      .andWhere(&#x27;student.grade &#x3D; :gradeId&#x27;, { gradeId })
+      .andWhere(&#x27;membership.tenantId &#x3D; :tenantId&#x27;, { tenantId: currentUser.tenantId })
+      .andWhere(&#x27;membership.role &#x3D; :role&#x27;, { role: MembershipRole.STUDENT })
+      .getOne();
+
+    return !!student;
+  }
+
+  async getAttendanceByDate(date: string, gradeId: string, currentUser: ActiveUserData) {
+    return this.attendanceRepository.find({
+      where: { date, gradeId, tenantId: currentUser.tenantId },
+      relations: [&#x27;student&#x27;, &#x27;teacher&#x27;],
+    });
+  }
+
+  async getStudentsByGrade(gradeId: string, currentUser: ActiveUserData) {
+    return this.studentRepository
+      .createQueryBuilder(&#x27;student&#x27;)
+      .innerJoin(&#x27;student.user&#x27;, &#x27;user&#x27;)
+      .innerJoin(&#x27;user.memberships&#x27;, &#x27;membership&#x27;)
+      .where(&#x27;student.grade &#x3D; :gradeId&#x27;, { gradeId })
+      .andWhere(&#x27;membership.tenantId &#x3D; :tenantId&#x27;, { tenantId: currentUser.tenantId })
+      .andWhere(&#x27;membership.role &#x3D; :role&#x27;, { role: MembershipRole.STUDENT })
+      .select([
+        &#x27;student.id&#x27;,
+        &#x27;student.admissionNumber&#x27;,
+        &#x27;student.grade&#x27;,
+        &#x27;user.id&#x27;,
+        &#x27;user.name&#x27;,
+      ])
+      .getMany();
+  }
+
+
+  async debugTeacherGradeAssignments(userId: string, tenantId: string) {
+  const teacherRepo &#x3D; this.dataSource.getRepository(Teacher);
+
+  const teacher &#x3D; await teacherRepo.findOne({
+    where: {
+        user: { id: userId },
+        tenantId: tenantId,
+      },
+    relations: [&#x27;tenantGradeLevels&#x27;, &#x27;user&#x27;],
+  });
+
+  console.log(&#x27;&#x3D;&#x3D;&#x3D; Teacher Debug Info &#x3D;&#x3D;&#x3D;&#x27;);
+  console.log(&#x27;User ID:&#x27;, userId);
+  console.log(&#x27;Tenant ID:&#x27;, tenantId);
+  console.log(&#x27;Teacher found:&#x27;, !!teacher);
+
+  if (teacher) {
+    console.log(&#x27;Teacher ID:&#x27;, teacher.id);
+    console.log(&#x27;Teacher User ID:&#x27;, teacher.user?.id);
+    console.log(&#x27;Teacher Email:&#x27;, teacher.email);
+    console.log(&#x27;Teacher Active:&#x27;, teacher.isActive);
+    console.log(&#x27;Grade Level Assignments:&#x27;);
+    teacher.tenantGradeLevels?.forEach((grade, index) &#x3D;&gt; {
+      console.log(&#x60;  ${index + 1}. Grade ID: ${grade.id}&#x60;);
+    });
+  }
+
+  return teacher;
+}
+
+
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'AttendanceService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

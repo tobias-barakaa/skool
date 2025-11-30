@@ -1,0 +1,1503 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>skool documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">skool documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >ParentPortalService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/parent/services/parent-portal.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getChildAttendanceDetails" >getChildAttendanceDetails</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getChildAttendanceSummary" >getChildAttendanceSummary</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getChildFeeBalance" >getChildFeeBalance</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getChildProfile" >getChildProfile</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getChildReportCard" >getChildReportCard</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getMyChildren" >getMyChildren</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getParentByUserId" >getParentByUserId</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#verifyParentStudentRelationship" >verifyParentStudentRelationship</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(parentRepo: <a href="../classes/Parent.html" target="_self">Repository&lt;Parent&gt;</a>, parentStudentRepo: <a href="../interfaces/Student.html" target="_self">Repository&lt;ParentStudent&gt;</a>, studentRepo: <a href="../interfaces/Student.html" target="_self">Repository&lt;Student&gt;</a>, attendanceRepo: <a href="../classes/Attendance.html" target="_self">Repository&lt;Attendance&gt;</a>, studentFeeAssignmentRepo: <a href="../interfaces/Student.html" target="_self">Repository&lt;StudentFeeAssignment&gt;</a>, studentFeeItemRepo: <a href="../interfaces/Student.html" target="_self">Repository&lt;StudentFeeItem&gt;</a>, paymentRepo: <a href="../classes/Payment.html" target="_self">Repository&lt;Payment&gt;</a>, assessmentMarkRepo: Repository<AssessmentMark>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">src/parent/services/parent-portal.service.ts:16</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>parentRepo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/Parent.html" target="_self" >Repository&lt;Parent&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>parentStudentRepo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../interfaces/Student.html" target="_self" >Repository&lt;ParentStudent&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>studentRepo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../interfaces/Student.html" target="_self" >Repository&lt;Student&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>attendanceRepo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/Attendance.html" target="_self" >Repository&lt;Attendance&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>studentFeeAssignmentRepo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../interfaces/Student.html" target="_self" >Repository&lt;StudentFeeAssignment&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>studentFeeItemRepo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../interfaces/Student.html" target="_self" >Repository&lt;StudentFeeItem&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>paymentRepo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/Payment.html" target="_self" >Repository&lt;Payment&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>assessmentMarkRepo</td>
+                                                  
+                                                        <td>
+                                                                    <code>Repository&lt;AssessmentMark&gt;</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getChildAttendanceDetails"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getChildAttendanceDetails</b></span>
+                        <a href="#getChildAttendanceDetails"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getChildAttendanceDetails(studentId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, startDate: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, endDate: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="152"
+                                    class="link-to-prism">src/parent/services/parent-portal.service.ts:152</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>studentId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>startDate</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>endDate</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getChildAttendanceSummary"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getChildAttendanceSummary</b></span>
+                        <a href="#getChildAttendanceSummary"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getChildAttendanceSummary(studentId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, startDate: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, endDate: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="119"
+                                    class="link-to-prism">src/parent/services/parent-portal.service.ts:119</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>studentId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>startDate</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>endDate</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getChildFeeBalance"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getChildFeeBalance</b></span>
+                        <a href="#getChildFeeBalance"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getChildFeeBalance(studentId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="172"
+                                    class="link-to-prism">src/parent/services/parent-portal.service.ts:172</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>studentId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getChildProfile"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getChildProfile</b></span>
+                        <a href="#getChildProfile"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getChildProfile(studentId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="90"
+                                    class="link-to-prism">src/parent/services/parent-portal.service.ts:90</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>studentId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getChildReportCard"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getChildReportCard</b></span>
+                        <a href="#getChildReportCard"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getChildReportCard(studentId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, term: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, academicYear: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="295"
+                                    class="link-to-prism">src/parent/services/parent-portal.service.ts:295</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>studentId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>term</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>academicYear</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getMyChildren"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getMyChildren</b></span>
+                        <a href="#getMyChildren"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getMyChildren(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="51"
+                                    class="link-to-prism">src/parent/services/parent-portal.service.ts:51</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getParentByUserId"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getParentByUserId</b></span>
+                        <a href="#getParentByUserId"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getParentByUserId(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="37"
+                                    class="link-to-prism">src/parent/services/parent-portal.service.ts:37</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/Parent.html" target="_self" >Promise&lt;Parent&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="verifyParentStudentRelationship"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>verifyParentStudentRelationship</b></span>
+                        <a href="#verifyParentStudentRelationship"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>verifyParentStudentRelationship(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, studentId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="68"
+                                    class="link-to-prism">src/parent/services/parent-portal.service.ts:68</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>studentId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, NotFoundException, ForbiddenException } from &#x27;@nestjs/common&#x27;;
+import { InjectRepository } from &#x27;@nestjs/typeorm&#x27;;
+import { ActiveUserData } from &#x27;src/admin/auth/interface/active-user.interface&#x27;;
+import { StudentFeeAssignment } from &#x27;src/admin/finance/fee-assignment/entities/student_fee_assignments.entity&#x27;;
+import { StudentFeeItem } from &#x27;src/admin/finance/fee-assignment/entities/student_fee_items.entity&#x27;;
+import { Payment } from &#x27;src/admin/finance/payment/entities/payment.entity&#x27;;
+import { ParentStudent } from &#x27;src/admin/parent/entities/parent-student.entity&#x27;;
+import { Parent } from &#x27;src/admin/parent/entities/parent.entity&#x27;;
+import { Student } from &#x27;src/admin/student/entities/student.entity&#x27;;
+import { Attendance, AttendanceStatus } from &#x27;src/teacher/attendance/entities/attendance.entity&#x27;;
+import { AssessmentMark } from &#x27;src/teacher/marksheet/entities/assessment_marks-entity&#x27;;
+import { Repository, Between } from &#x27;typeorm&#x27;;
+
+@Injectable()
+export class ParentPortalService {
+  constructor(
+    @InjectRepository(Parent)
+    private parentRepo: Repository&lt;Parent&gt;,
+    @InjectRepository(ParentStudent)
+    private parentStudentRepo: Repository&lt;ParentStudent&gt;,
+    @InjectRepository(Student)
+    private studentRepo: Repository&lt;Student&gt;,
+    @InjectRepository(Attendance)
+    private attendanceRepo: Repository&lt;Attendance&gt;,
+    @InjectRepository(StudentFeeAssignment)
+    private studentFeeAssignmentRepo: Repository&lt;StudentFeeAssignment&gt;,
+    @InjectRepository(StudentFeeItem)
+    private studentFeeItemRepo: Repository&lt;StudentFeeItem&gt;,
+    @InjectRepository(Payment)
+    private paymentRepo: Repository&lt;Payment&gt;,
+    @InjectRepository(AssessmentMark)
+    private assessmentMarkRepo: Repository&lt;AssessmentMark&gt;,
+  ) {}
+
+  // Get parent by userId
+  async getParentByUserId(user: ActiveUserData): Promise&lt;Parent&gt; {
+    const parent &#x3D; await this.parentRepo.findOne({
+      where: { userId: user.sub, tenantId: user.tenantId, isActive: true },
+      relations: [&#x27;parentStudents&#x27;, &#x27;parentStudents.student&#x27;, &#x27;parentStudents.student.user&#x27;, &#x27;parentStudents.student.grade&#x27;],
+    });
+
+    if (!parent) {
+      throw new NotFoundException(&#x27;Parent profile not found&#x27;);
+    }
+
+    return parent;
+  }
+
+  // Get all children for a parent
+  async getMyChildren(user: ActiveUserData) {
+    const parent &#x3D; await this.getParentByUserId(user);
+    
+    return parent.parentStudents.map(ps &#x3D;&gt; ({
+      id: ps.student.id,
+      name: ps.student.user.name,
+      admissionNumber: ps.student.admission_number,
+      grade: ps.student.grade,
+      relationship: ps.relationship,
+      isPrimary: ps.isPrimary,
+      phone: ps.student.phone,
+      gender: ps.student.gender,
+      isActive: ps.student.isActive,
+    }));
+  }
+
+  // Helper method to verify parent-student relationship
+  private async verifyParentStudentRelationship(
+    user: ActiveUserData,
+    studentId: string,
+  ): Promise&lt;void&gt; {
+    const parent &#x3D; await this.parentRepo.findOne({
+      where: { userId: user.sub, tenantId: user.tenantId, isActive: true },
+    });
+
+    if (!parent) {
+      throw new NotFoundException(&#x27;Parent profile not found&#x27;);
+    }
+
+    const relationship &#x3D; await this.parentStudentRepo.findOne({
+      where: { parentId: parent.id, studentId, tenantId: user.tenantId },
+    });
+
+    if (!relationship) {
+      throw new ForbiddenException(&#x27;You do not have access to this student&#x27;);
+    }
+  }
+
+  // Get child profile
+  async getChildProfile(studentId: string, user: ActiveUserData) {
+    await this.verifyParentStudentRelationship(user, studentId);
+
+    const student &#x3D; await this.studentRepo.findOne({
+      where: { id: studentId, tenant_id: user.tenantId },
+      relations: [&#x27;user&#x27;, &#x27;grade&#x27;, &#x27;stream&#x27;, &#x27;tenant&#x27;],
+    });
+
+    if (!student) {
+      throw new NotFoundException(&#x27;Student not found&#x27;);
+    }
+
+    return {
+      id: student.id,
+      name: student.user.name,
+      admissionNumber: student.admission_number,
+      phone: student.phone,
+      gender: student.gender,
+      grade: student.grade,
+      stream: student.stream,
+      schoolType: student.schoolType,
+      feesOwed: student.feesOwed,
+      totalFeesPaid: student.totalFeesPaid,
+      isActive: student.isActive,
+      createdAt: student.createdAt,
+    };
+  }
+
+  // Get attendance summary for a child
+  async getChildAttendanceSummary(
+    studentId: string,
+    startDate: string,
+    endDate: string,
+    user: ActiveUserData,
+  ) {
+    await this.verifyParentStudentRelationship(user, studentId);
+
+    const attendances &#x3D; await this.attendanceRepo.find({
+      where: {
+        studentId,
+        tenantId: user.tenantId,
+        date: Between(startDate, endDate),
+      },
+    });
+
+    const summary &#x3D; {
+      totalDays: attendances.length,
+      present: attendances.filter(a &#x3D;&gt; a.status &#x3D;&#x3D;&#x3D; AttendanceStatus.PRESENT).length,
+      absent: attendances.filter(a &#x3D;&gt; a.status &#x3D;&#x3D;&#x3D; AttendanceStatus.ABSENT).length,
+      late: attendances.filter(a &#x3D;&gt; a.status &#x3D;&#x3D;&#x3D; AttendanceStatus.LATE).length,
+      suspended: attendances.filter(a &#x3D;&gt; a.status &#x3D;&#x3D;&#x3D; AttendanceStatus.SUSPENDED).length,
+    };
+
+    return {
+      ...summary,
+      attendanceRate: summary.totalDays &gt; 0 
+        ? ((summary.present + summary.late) / summary.totalDays * 100).toFixed(2) 
+        : &#x27;0&#x27;,
+    };
+  }
+
+  // Get detailed attendance records
+  async getChildAttendanceDetails(
+    studentId: string,
+    startDate: string,
+    endDate: string,
+    user: ActiveUserData,
+  ) {
+    await this.verifyParentStudentRelationship(user, studentId);
+
+    return this.attendanceRepo.find({
+      where: {
+        studentId,
+        tenantId: user.tenantId,
+        date: Between(startDate, endDate),
+      },
+      relations: [&#x27;teacher&#x27;, &#x27;teacher.user&#x27;],
+      order: { date: &#x27;DESC&#x27; },
+    });
+  }
+
+  // Get fee balance and details
+  async getChildFeeBalance(studentId: string, user: ActiveUserData) {
+    await this.verifyParentStudentRelationship(user, studentId);
+
+    const student &#x3D; await this.studentRepo.findOne({
+      where: { id: studentId, tenant_id: user.tenantId },
+    });
+
+    if (!student) {
+      throw new NotFoundException(&#x27;Student not found&#x27;);
+    }
+
+    const feeAssignments &#x3D; await this.studentFeeAssignmentRepo.find({
+      where: { studentId, tenantId: user.tenantId, isActive: true },
+      relations: [&#x27;feeAssignment&#x27;, &#x27;feeAssignment.feeStructure&#x27;, &#x27;feeItems&#x27;, &#x27;feeItems.feeStructureItem&#x27;, &#x27;feeItems.feeStructureItem.feeBucket&#x27;],
+    });
+
+    let totalDue &#x3D; 0;
+    const itemsBreakdown: Array&lt;{
+      id: string;
+      bucketName: string;
+      itemName: any;
+      amount: number;
+      amountPaid: number;
+      balance: number;
+      isMandatory: boolean;
+    }&gt; &#x3D; [];
+
+    for (const assignment of feeAssignments) {
+      for (const item of assignment.feeItems) {
+        const balance &#x3D; item.amount - item.amountPaid;
+        totalDue +&#x3D; balance;
+        
+        itemsBreakdown.push({
+          id: item.id,
+          bucketName: item.feeStructureItem.feeBucket.name,
+          itemName: (item.feeStructureItem as any).name ?? (item.feeStructureItem as any).title ?? null,
+          amount: item.amount,
+          amountPaid: item.amountPaid,
+          balance,
+          isMandatory: item.isMandatory,
+        });
+      }
+    }
+
+    return {
+      studentId,
+      totalDue,
+      totalPaid: student.totalFeesPaid,
+      feesOwed: student.feesOwed,
+      items: itemsBreakdown,
+    };
+  }
+
+//   // Get payment history
+//   async getChildPaymentHistory(studentId: string, user: ActiveUserData) {
+//     await this.verifyParentStudentRelationship(user.sub, studentId, user.tenantId);
+
+//     return this.paymentRepo.find({
+//       where: { studentId, tenantId: user.tenantId },
+//       relations: [&#x27;invoice&#x27;, &#x27;receivedByUser&#x27;],
+//       order: { paymentDate: &#x27;DESC&#x27; },
+//     });
+//   }
+
+//   // Get academic performance
+//   async getChildPerformance(
+//     studentId: string,
+//     term?: number,
+//     academicYear?: string,
+//     user?: ActiveUserData,
+//   ) {
+//     await this.verifyParentStudentRelationship(user.sub, studentId, user.tenantId);
+
+//     const queryBuilder &#x3D; this.assessmentMarkRepo
+//       .createQueryBuilder(&#x27;mark&#x27;)
+//       .leftJoinAndSelect(&#x27;mark.assessment&#x27;, &#x27;assessment&#x27;)
+//       .leftJoinAndSelect(&#x27;assessment.subject&#x27;, &#x27;subject&#x27;)
+//       .leftJoinAndSelect(&#x27;assessment.assessmentType&#x27;, &#x27;assessmentType&#x27;)
+//       .where(&#x27;mark.studentId &#x3D; :studentId&#x27;, { studentId });
+
+//     if (term) {
+//       queryBuilder.andWhere(&#x27;assessment.term &#x3D; :term&#x27;, { term });
+//     }
+
+//     if (academicYear) {
+//       queryBuilder.andWhere(&#x27;assessment.academicYear &#x3D; :academicYear&#x27;, { academicYear });
+//     }
+
+//     const marks &#x3D; await queryBuilder.orderBy(&#x27;assessment.createdAt&#x27;, &#x27;DESC&#x27;).getMany();
+
+//     // Group by subject
+//     const bySubject &#x3D; marks.reduce((acc, mark) &#x3D;&gt; {
+//       const subjectId &#x3D; mark.assessment.subject.id;
+//       if (!acc[subjectId]) {
+//         acc[subjectId] &#x3D; {
+//           subjectId,
+//           subjectName: mark.assessment.subject.name,
+//           marks: [],
+//           average: 0,
+//         };
+//       }
+//       acc[subjectId].marks.push({
+//         id: mark.id,
+//         score: mark.score,
+//         maxScore: mark.assessment.maxScore,
+//         assessmentType: mark.assessment.assessmentType.name,
+//         term: mark.assessment.term,
+//         academicYear: mark.assessment.academicYear,
+//         date: mark.createdAt,
+//       });
+//       return acc;
+//     }, {});
+
+//     // Calculate averages
+//     Object.values(bySubject).forEach((subject: any) &#x3D;&gt; {
+//       const total &#x3D; subject.marks.reduce((sum, m) &#x3D;&gt; sum + m.score, 0);
+//       subject.average &#x3D; subject.marks.length &gt; 0 ? total / subject.marks.length : 0;
+//     });
+
+//     return Object.values(bySubject);
+//   }
+
+//   // Get report card data
+  async getChildReportCard(
+    studentId: string,
+    term: number,
+    academicYear: string,
+    user: ActiveUserData,
+  ) {
+    await this.verifyParentStudentRelationship(user, studentId);
+
+    const student &#x3D; await this.studentRepo.findOne({
+      where: { id: studentId, tenant_id: user.tenantId },
+      relations: [&#x27;user&#x27;, &#x27;grade&#x27;, &#x27;stream&#x27;],
+    });
+
+    if (!student) {
+      throw new NotFoundException(&#x27;Student not found&#x27;);
+    }
+
+    const marks &#x3D; await this.assessmentMarkRepo
+  .createQueryBuilder(&#x27;mark&#x27;)
+  .leftJoinAndSelect(&#x27;mark.assessment&#x27;, &#x27;assessment&#x27;)
+  .leftJoinAndSelect(&#x27;assessment.curriculumSubject&#x27;, &#x27;curriculumSubject&#x27;)
+  .leftJoinAndSelect(&#x27;curriculumSubject.subject&#x27;, &#x27;subject&#x27;)
+  .leftJoinAndSelect(&#x27;assessment.assessmentType&#x27;, &#x27;assessmentType&#x27;)
+  .where(&#x27;mark.studentId &#x3D; :studentId&#x27;, { studentId })
+  .andWhere(&#x27;assessment.term &#x3D; :term&#x27;, { term })
+  .andWhere(&#x27;assessment.academicYear &#x3D; :academicYear&#x27;, { academicYear })
+  .getMany();
+
+
+    const subjectResults &#x3D; marks.reduce((acc, mark) &#x3D;&gt; {
+      const assessment &#x3D; mark.assessment as any;
+      // const subject &#x3D; assessment.subject;
+    const subject &#x3D; assessment.curriculumSubject.subject;
+
+      const subjectId &#x3D; subject.id;
+      if (!acc[subjectId]) {
+        acc[subjectId] &#x3D; {
+          subject: subject.name,
+          scores: [],
+          total: 0,
+          average: 0,
+        };
+      }
+      acc[subjectId].scores.push({
+        type: assessment.assessmentType.name,
+        score: mark.score,
+        maxScore: assessment.maxScore,
+      });
+      return acc;
+    }, {});
+
+    // Calculate totals and averages
+    Object.values(subjectResults).forEach((result: any) &#x3D;&gt; {
+      result.total &#x3D; result.scores.reduce((sum, s) &#x3D;&gt; sum + s.score, 0);
+      result.average &#x3D; result.scores.length &gt; 0 ? result.total / result.scores.length : 0;
+    });
+
+    const subjectResultsArray &#x3D; Object.values(subjectResults) as Array&lt;{ average: number }&gt;;
+    const overallAverage &#x3D; subjectResultsArray.length &gt; 0
+      ? subjectResultsArray.reduce((sum, r) &#x3D;&gt; sum + (r.average ?? 0), 0) / subjectResultsArray.length
+      : 0;
+
+    return {
+      student: {
+        name: student.user.name,
+        admissionNumber: student.admission_number,
+        grade: student.grade.gradeLevel.name,
+        stream: student.stream?.name,
+      },
+      term,
+      academicYear,
+      subjects: Object.values(subjectResults),
+      overallAverage,
+      totalSubjects: Object.keys(subjectResults).length,
+    };
+  }
+
+//   // Helper method to verify parent-student relationship
+//   private async verifyParentStudentRelationship(
+//     userId: string,
+//     studentId: string,
+//     tenantId: string,
+//   ): Promise&lt;void&gt; {
+//     const parent &#x3D; await this.parentRepo.findOne({
+//       where: { userId, tenantId, isActive: true },
+//     });
+
+//     if (!parent) {
+//       throw new NotFoundException(&#x27;Parent profile not found&#x27;);
+//     }
+
+//     const relationship &#x3D; await this.parentStudentRepo.findOne({
+//       where: { parentId: parent.id, studentId, tenantId },
+//     });
+
+//     if (!relationship) {
+//       throw new ForbiddenException(&#x27;You do not have access to this student&#x27;);
+//     }
+//   }
+}</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'ParentPortalService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

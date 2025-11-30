@@ -1,0 +1,1109 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>skool documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">skool documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content class">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Classes</li>
+  <li class="breadcrumb-item" >StaffResolver</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/admin/staff/staff.resolver.ts</code>
+        </p>
+
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#acceptStaffInvitation" >acceptStaffInvitation</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#deleteStaff" >deleteStaff</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getAllStaff" >getAllStaff</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#getStaffById" >getStaffById</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#inviteStaff" >inviteStaff</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Async</span>
+                                <a href="#updateStaff" >updateStaff</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(staffService: <a href="../injectables/StaffService.html" target="_self">StaffService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">src/admin/staff/staff.resolver.ts:21</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>staffService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/StaffService.html" target="_self" >StaffService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="acceptStaffInvitation"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>acceptStaffInvitation</b></span>
+                        <a href="#acceptStaffInvitation"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>acceptStaffInvitation(input: <a href="../classes/AcceptInvitationInput.html" target="_self">AcceptInvitationInput</a>, context: GraphQLExecutionContext)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Mutation(undefined)<br />@Auth(AuthType.None)<br />@SkipTenantValidation()<br />@SetMetadata(&#x27;isPublic&#x27;, undefined)<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="41"
+                                    class="link-to-prism">src/admin/staff/staff.resolver.ts:41</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/AcceptInvitationInput.html" target="_self" >AcceptInvitationInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>context</td>
+                                            <td>
+                                                        <code>GraphQLExecutionContext</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../entitys/Staff.html" target="_self" >Promise&lt;AcceptStaffInvitationResponse&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="deleteStaff"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>deleteStaff</b></span>
+                        <a href="#deleteStaff"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>deleteStaff(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Mutation(undefined)<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="85"
+                                    class="link-to-prism">src/admin/staff/staff.resolver.ts:85</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAllStaff"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getAllStaff</b></span>
+                        <a href="#getAllStaff"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getAllStaff(currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Query(undefined)<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="62"
+                                    class="link-to-prism">src/admin/staff/staff.resolver.ts:62</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../entitys/Staff.html" target="_self" >Promise&lt;StaffDto[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getStaffById"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>getStaffById</b></span>
+                        <a href="#getStaffById"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getStaffById(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Query(undefined)<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="69"
+                                    class="link-to-prism">src/admin/staff/staff.resolver.ts:69</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../entitys/Staff.html" target="_self" >Promise&lt;StaffDto&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="inviteStaff"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>inviteStaff</b></span>
+                        <a href="#inviteStaff"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>inviteStaff(createStaffDto: <a href="../classes/CreateStaffInvitationDto.html" target="_self">CreateStaffInvitationDto</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Mutation(undefined)<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="25"
+                                    class="link-to-prism">src/admin/staff/staff.resolver.ts:25</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>createStaffDto</td>
+                                            <td>
+                                                            <code><a href="../classes/CreateStaffInvitationDto.html" target="_self" >CreateStaffInvitationDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../entitys/Staff.html" target="_self" >Promise&lt;InviteStaffResponse&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateStaff"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier">Async</span>
+                        <span ><b>updateStaff</b></span>
+                        <a href="#updateStaff"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>updateStaff(updateInput: <a href="../classes/UpdateStaffInput.html" target="_self">UpdateStaffInput</a>, currentUser: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <b>Decorators : </b>
+                    <br />
+                    <code>@Mutation(undefined)<br /></code>
+                </td>
+            </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="77"
+                                    class="link-to-prism">src/admin/staff/staff.resolver.ts:77</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>updateInput</td>
+                                            <td>
+                                                            <code><a href="../classes/UpdateStaffInput.html" target="_self" >UpdateStaffInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>currentUser</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../entitys/Staff.html" target="_self" >Promise&lt;StaffDto&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+
+
+
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Args, Context, GraphQLExecutionContext, ID, Mutation, Query, Resolver } from &#x27;@nestjs/graphql&#x27;;
+import { ActiveUser } from &#x27;src/admin/auth/decorator/active-user.decorator&#x27;;
+import { Auth } from &#x27;src/admin/auth/decorator/auth.decorator&#x27;;
+import { AuthType } from &#x27;src/admin/auth/enums/auth-type.enum&#x27;;
+import { StaffService } from &#x27;./providers/staff.service&#x27;;
+import { ActiveUserData } from &#x27;src/admin/auth/interface/active-user.interface&#x27;;
+import { AcceptStaffInvitationInput, AcceptStaffInvitationResponse, CreateStaffInvitationDto, InviteStaffResponse, StaffDto, UpdateStaffInput } from &#x27;./dtos/create-staff-invitation.dto&#x27;;
+import { User } from &#x27;src/admin/users/entities/user.entity&#x27;;
+import { AcceptInvitationInput } from &#x27;src/admin/teacher/dtos/accept-teacher-invitation.dto&#x27;;
+import { setAuthCookies } from &#x27;../auth/utils/set-auth-cookies&#x27;;
+import { SetMetadata } from &#x27;@nestjs/common&#x27;;
+import { SkipTenantValidation } from &#x27;../auth/decorator/skip-tenant-validation.decorator&#x27;;
+import { Roles } from &#x27;src/iam/decorators/roles.decorator&#x27;;
+import { MembershipRole } from &#x27;../user-tenant-membership/entities/user-tenant-membership.entity&#x27;;
+
+@Resolver()
+@Roles(
+  MembershipRole.SUPER_ADMIN,
+  MembershipRole.SCHOOL_ADMIN,
+)
+export class StaffResolver {
+  constructor(private readonly staffService: StaffService) {}
+
+  @Mutation(() &#x3D;&gt; InviteStaffResponse)
+  async inviteStaff(
+    @Args(&#x27;createStaffDto&#x27;) createStaffDto: CreateStaffInvitationDto,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;InviteStaffResponse&gt; {
+    console.log(Object.keys(createStaffDto), &#x27;DTO keys&#x27;);
+    console.log(currentUser.tenantId, &#x27;Current user tenant ID&#x27;);
+    console.log(createStaffDto, &#x27;Received createStaffDto&#x27;);
+
+    return await this.staffService.inviteStaff(createStaffDto, currentUser);
+  }
+
+  
+  @Mutation(() &#x3D;&gt; AcceptStaffInvitationResponse)
+  @Auth(AuthType.None)
+  @SkipTenantValidation()
+  @SetMetadata(&#x27;isPublic&#x27;, true)
+  async acceptStaffInvitation(
+    @Args(&#x27;acceptInvitationInput&#x27;, { type: () &#x3D;&gt; AcceptStaffInvitationInput })
+    input: AcceptInvitationInput,
+    @Context() context: GraphQLExecutionContext,
+  ): Promise&lt;AcceptStaffInvitationResponse&gt; {
+    const { message, user, tokens, staff, invitation, role } &#x3D;
+      await this.staffService.acceptInvitation(input.token, input.password);
+
+    setAuthCookies(context, tokens, invitation.tenant.id);
+
+    return {
+      message,
+      user,
+      tokens,
+      staff: staff || undefined,
+      invitation,
+      role,
+    };
+  }
+
+  @Query(() &#x3D;&gt; [StaffDto])
+  async getAllStaff(
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;StaffDto[]&gt; {
+    return await this.staffService.getAllStaff(currentUser);
+  }
+
+  @Query(() &#x3D;&gt; StaffDto)
+  async getStaffById(
+    @Args(&#x27;id&#x27;, { type: () &#x3D;&gt; ID }) id: string,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;StaffDto&gt; {
+    return await this.staffService.getStaffById(id, currentUser);
+  }
+
+  @Mutation(() &#x3D;&gt; StaffDto)
+  async updateStaff(
+    @Args(&#x27;updateInput&#x27;) updateInput: UpdateStaffInput,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;StaffDto&gt; {
+    return await this.staffService.updateStaff(updateInput, currentUser);
+  }
+
+  @Mutation(() &#x3D;&gt; Boolean)
+  async deleteStaff(
+    @Args(&#x27;id&#x27;, { type: () &#x3D;&gt; ID }) id: string,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise&lt;boolean&gt; {
+    return await this.staffService.deleteStaff(id, currentUser);
+  }
+}
+// export class StaffResolver {
+//   constructor(private staffService: StaffService) {}
+
+//   @Mutation(() &#x3D;&gt; InviteStaffResponse)
+//   async inviteStaff(
+//     @Args(&#x27;createStaffDto&#x27;) createStaffDto: CreateStaffInvitationDto,
+//     @Args(&#x27;tenantId&#x27;) tenantId: string,
+//     @ActiveUser() currentUser: ActiveUserData,
+//   ) {
+//     console.log(Object.keys(createStaffDto), &#x27;DTO keys&#x27;);
+//     console.log(tenantId, &#x27;this is the tenant id&#x27;);
+//     console.log(currentUser.tenantId, &#x27;this is the user tenant id&#x27;);
+//     console.log(createStaffDto, &#x27;received createStaffDto&#x27;);
+
+//     return await this.staffService.inviteStaff(
+//       createStaffDto,
+//       currentUser,
+//       tenantId,
+//     );
+//   }
+
+//   @Mutation(() &#x3D;&gt; AcceptStaffInvitationResponse)
+//   @Auth(AuthType.None)
+//   @SkipTenantValidation()
+//   @SetMetadata(&#x27;isPublic&#x27;, true)
+//   async acceptStaffInvitation(
+//     @Args(&#x27;acceptInvitationInput&#x27;, { type: () &#x3D;&gt; AcceptStaffInvitationInput })
+//     input: AcceptInvitationInput,
+//     @Context() context: GraphQLExecutionContext,
+//   ): Promise&lt;AcceptStaffInvitationResponse&gt; {
+//     const { message, user, tokens, staff, invitation, role } &#x3D;
+//       await this.staffService.acceptInvitation(input.token, input.password);
+
+//     setAuthCookies(context, tokens, invitation.tenant.id);
+
+//     return {
+//       message,
+//       user,
+//       tokens,
+//       staff: staff || undefined,
+//       invitation,
+//       role,
+//     };
+//   }
+
+//   @Query(() &#x3D;&gt; [StaffDto])
+//   async getStaffByTenant(
+//     @Args(&#x27;tenantId&#x27;) tenantId: string,
+//     @ActiveUser() currentUser: User,
+//   ) {
+//     return this.staffService.getStaffByTenant(tenantId);
+//   }
+
+//   @Query(() &#x3D;&gt; StaffDto)
+//   async getStaffById(
+//     @Args(&#x27;id&#x27;) id: string,
+//     @Args(&#x27;tenantId&#x27;) tenantId: string,
+//     @ActiveUser() currentUser: User,
+//   ) {
+//     console.log(&#x60;Fetching staff with ID: ${id} for tenant: ${tenantId}&#x60;);
+
+//     return this.staffService.getStaffById(id, tenantId);
+//   }
+
+
+//   @Mutation(() &#x3D;&gt; StaffDto)
+//   async updateStaff(
+//     @Args(&#x27;updateStaffInput&#x27;) updateStaffInput: UpdateStaffInput,
+//     @Args(&#x27;tenantId&#x27;) tenantId: string,
+//     @ActiveUser() currentUser: User,
+//   ) {
+//     return this.staffService.updateStaff(
+//       updateStaffInput,
+//       currentUser,
+//       tenantId,
+//     );
+//   }
+
+//   @Mutation(() &#x3D;&gt; String)
+//   async deleteStaff(
+//     @Args(&#x27;id&#x27;) id: string,
+//     @Args(&#x27;tenantId&#x27;) tenantId: string,
+//     @ActiveUser() currentUser: User,
+//   ) {
+//     const result &#x3D; await this.staffService.deleteStaff(
+//       id,
+//       currentUser,
+//       tenantId,
+//     );
+//     return JSON.stringify(result);
+//   }
+
+//   @Query(() &#x3D;&gt; String)
+//   async getPendingStaffInvitations(
+//     @Args(&#x27;tenantId&#x27;) tenantId: string,
+//     @ActiveUser() currentUser: User,
+//   ) {
+//     const result &#x3D; await this.staffService.getPendingInvitations(
+//       tenantId,
+//       currentUser,
+//     );
+//     return JSON.stringify(result);
+//   }
+
+//   @Mutation(() &#x3D;&gt; String)
+//   async revokeStaffInvitation(
+//     @Args(&#x27;invitationId&#x27;) invitationId: string,
+//     @ActiveUser() currentUser: User,
+//   ) {
+//     const result &#x3D; await this.staffService.revokeInvitation(
+//       invitationId,
+//       currentUser,
+//     );
+//     return JSON.stringify(result);
+//   }
+
+//   // @Query(() &#x3D;&gt; [String])
+//   // async getStaffRoles() {
+//   //   return Object.values(StaffRole);
+//   // }
+
+//   @Query(() &#x3D;&gt; [StaffDto])
+//   async getActiveStaffByTenant(
+//     @Args(&#x27;tenantId&#x27;) tenantId: string,
+//     @ActiveUser() currentUser: User,
+//   ) {
+//     return this.staffService.getActiveStaffByTenant(tenantId);
+//   }
+
+//   @Query(() &#x3D;&gt; [StaffDto])
+//   async getStaffByDepartment(
+//     @Args(&#x27;department&#x27;) department: string,
+//     @Args(&#x27;tenantId&#x27;) tenantId: string,
+//     @ActiveUser() currentUser: User,
+//   ) {
+//     return this.staffService.getStaffByDepartment(department, tenantId);
+//   }
+
+//   @Query(() &#x3D;&gt; Number)
+//   async getStaffCount(
+//     @Args(&#x27;tenantId&#x27;) tenantId: string,
+//     @ActiveUser() currentUser: User,
+//   ) {
+//     return this.staffService.getStaffCount(tenantId);
+//   }
+
+//   @Query(() &#x3D;&gt; [StaffDto])
+//   async searchStaff(
+//     @Args(&#x27;searchTerm&#x27;) searchTerm: string,
+//     @Args(&#x27;tenantId&#x27;) tenantId: string,
+//     @ActiveUser() currentUser: User,
+//   ) {
+//     return this.staffService.searchStaff(searchTerm, tenantId);
+//   }
+// }
+
+
+
+</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'class';
+            var COMPODOC_CURRENT_PAGE_URL = 'StaffResolver.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

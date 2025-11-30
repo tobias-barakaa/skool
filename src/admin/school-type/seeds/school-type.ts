@@ -171,19 +171,57 @@ export class SeedingService {
   }
 
   // Generate subject code from name
-  private generateSubjectCode(name: string): string {
-    return name
-      .replace(/[^a-zA-Z0-9\s]/g, '') // Remove special characters
-      .split(' ')
-      .map(word => word.substring(0, 3).toUpperCase())
-      .join('_')
-      .substring(0, 20); // Limit length
+  // private generateSubjectCode(name: string): string {
+  //   return name
+  //     .replace(/[^a-zA-Z0-9\s]/g, '') // Remove special characters
+  //     .split(' ')
+  //     .map(word => word.substring(0, 3).toUpperCase())
+  //     .join('_')
+  //     .substring(0, 20); // Limit length
+  // }
+private generateSubjectCode(name: string): string {
+  // clean unwanted chars
+  const clean = name.replace(/[^a-zA-Z0-9\s]/g, '').trim();
+
+  const words = clean.split(/\s+/);
+
+  // 1. ONE WORD → first 3 letters
+  if (words.length === 1) {
+    return words[0].substring(0, 3).toUpperCase();
   }
 
-  // Find subject by name
-  private findSubjectByName(subjects: Subject[], name: string): Subject | undefined {
-    return subjects.find(s => s.name === name);
+  // 2. TWO WORDS → first letter of each + next meaningful letter(s)
+  if (words.length === 2) {
+    const [w1, w2] = words;
+
+    const first = w1[0];
+    const second = w2[0];
+
+    // find next meaningful letter from first word
+    const next = w1.length > 1 ? w1[1] : '';
+
+    return (first + second + next).toUpperCase();
   }
+
+  // 3. MORE THAN TWO WORDS → use first two words only (your examples match this)
+  const [w1, w2] = words;
+
+  const first = w1[0];
+  const second = w2[0];
+  const next = w1.length > 1 ? w1[1] : '';
+
+  return (first + second + next).toUpperCase();
+}
+
+  // // Find subject by name
+  // private findSubjectByName(subjects: Subject[], name: string): Subject | undefined {
+  //   return subjects.find(s => s.name === name);
+  // }
+
+  private findSubjectByName(subjects: Subject[], name: string): Subject | undefined {
+  const generatedCode = this.generateSubjectCode(name);
+  return subjects.find(s => s.code === generatedCode);
+}
 
   // CBC School Seeding
 

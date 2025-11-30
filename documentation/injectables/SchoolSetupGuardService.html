@@ -1,0 +1,1152 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>skool documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">skool documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >SchoolSetupGuardService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/admin/config/school-config.guard.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#logger" >logger</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getSchoolConfig" >getSchoolConfig</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#isSchoolConfigured" >isSchoolConfigured</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#validateGradeLevelBelongsToTenant" >validateGradeLevelBelongsToTenant</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#validateSchoolConfigExists" >validateSchoolConfigExists</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#validateSchoolIsConfigured" >validateSchoolIsConfigured</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#validateSchoolIsConfiguredForUser" >validateSchoolIsConfiguredForUser</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#validateTenantExists" >validateTenantExists</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(schoolConfigRepo: Repository<SchoolConfig>, configLevelRepo: Repository<SchoolConfigLevel>, tenantGradeLevelRepo: <a href="../s/Tenant.html" target="_self">Repository&lt;TenantGradeLevel&gt;</a>, dataSource: DataSource)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">src/admin/config/school-config.guard.ts:12</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>schoolConfigRepo</td>
+                                                  
+                                                        <td>
+                                                                    <code>Repository&lt;SchoolConfig&gt;</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>configLevelRepo</td>
+                                                  
+                                                        <td>
+                                                                    <code>Repository&lt;SchoolConfigLevel&gt;</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>tenantGradeLevelRepo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../miscellaneous/variables.html#Tenant" target="_self" >Repository&lt;TenantGradeLevel&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>dataSource</td>
+                                                  
+                                                        <td>
+                                                                    <code>DataSource</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getSchoolConfig"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getSchoolConfig</b></span>
+                        <a href="#getSchoolConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getSchoolConfig(tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="108"
+                                    class="link-to-prism">src/admin/config/school-config.guard.ts:108</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Gets the school configuration if it exists</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The tenant/school ID</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;SchoolConfig | null&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>SchoolConfig or null if not found</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isSchoolConfigured"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>isSchoolConfigured</b></span>
+                        <a href="#isSchoolConfigured"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>isSchoolConfigured(tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="94"
+                                    class="link-to-prism">src/admin/config/school-config.guard.ts:94</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Checks if a school is configured without throwing an error</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The tenant/school ID to check</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                <p>true if configured, false otherwise</p>
+
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="validateGradeLevelBelongsToTenant"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>validateGradeLevelBelongsToTenant</b></span>
+                        <a href="#validateGradeLevelBelongsToTenant"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>validateGradeLevelBelongsToTenant(tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, tenantGradeLevelId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="26"
+                                    class="link-to-prism">src/admin/config/school-config.guard.ts:26</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>tenantGradeLevelId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="validateSchoolConfigExists"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>validateSchoolConfigExists</b></span>
+                        <a href="#validateSchoolConfigExists"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>validateSchoolConfigExists(tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="43"
+                                    class="link-to-prism">src/admin/config/school-config.guard.ts:43</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="validateSchoolIsConfigured"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>validateSchoolIsConfigured</b></span>
+                        <a href="#validateSchoolIsConfigured"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>validateSchoolIsConfigured(tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="52"
+                                    class="link-to-prism">src/admin/config/school-config.guard.ts:52</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="validateSchoolIsConfiguredForUser"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>validateSchoolIsConfiguredForUser</b></span>
+                        <a href="#validateSchoolIsConfiguredForUser"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>validateSchoolIsConfiguredForUser(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="77"
+                                    class="link-to-prism">src/admin/config/school-config.guard.ts:77</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Validates if a school is configured using user data</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Description</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                            <td>
+                                                    <ul>
+<li>The active user data containing tenant information</li>
+</ul>
+
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="validateTenantExists"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>validateTenantExists</b></span>
+                        <a href="#validateTenantExists"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>validateTenantExists(tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="36"
+                                    class="link-to-prism">src/admin/config/school-config.guard.ts:36</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="logger"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>logger</b></span>
+                        <a href="#logger"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new Logger(SchoolSetupGuardService.name)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">src/admin/config/school-config.guard.ts:12</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { BadRequestException, ForbiddenException, Injectable, Logger } from &#x27;@nestjs/common&#x27;;
+import { InjectRepository } from &#x27;@nestjs/typeorm&#x27;;
+import { DataSource, Repository } from &#x27;typeorm&#x27;;
+import { SchoolConfig } from &#x27;../school-type/entities/school-config.entity&#x27;;
+import { SchoolConfigLevel } from &#x27;../school-type/entities/school_config_level&#x27;;
+import { SchoolConfigGradeLevel } from &#x27;../school-type/entities/school_config_grade_level&#x27;;
+import { TenantGradeLevel } from &#x27;../school-type/entities/tenant-grade-level&#x27;;
+import { ActiveUserData } from &#x27;../auth/interface/active-user.interface&#x27;;
+
+@Injectable()
+export class SchoolSetupGuardService {
+  private readonly logger &#x3D; new Logger(SchoolSetupGuardService.name);
+
+  constructor(
+    @InjectRepository(SchoolConfig)
+    private readonly schoolConfigRepo: Repository&lt;SchoolConfig&gt;,
+    @InjectRepository(SchoolConfigLevel)
+    private readonly configLevelRepo: Repository&lt;SchoolConfigLevel&gt;,
+    @InjectRepository(TenantGradeLevel)
+    private readonly tenantGradeLevelRepo: Repository&lt;TenantGradeLevel&gt;,
+    private readonly dataSource: DataSource,
+  ) {}
+
+
+
+  async validateGradeLevelBelongsToTenant(
+    tenantId: string,
+    tenantGradeLevelId: string,
+  ): Promise&lt;boolean&gt; {
+    const count &#x3D; await this.tenantGradeLevelRepo.count({
+      where: { id: tenantGradeLevelId, tenant: { id: tenantId } },
+    });
+    return count &gt; 0;
+  }
+
+  async validateTenantExists(tenantId: string): Promise&lt;boolean&gt; {
+    const tenant &#x3D; await this.tenantGradeLevelRepo.findOne({
+      where: { id: tenantId },
+    });
+    return !!tenant;
+  }
+
+  async validateSchoolConfigExists(tenantId: string): Promise&lt;boolean&gt; {
+    const config &#x3D; await this.schoolConfigRepo.findOne({
+      where: { tenant: { id: tenantId } },
+    });
+    return !!config;
+  }
+
+
+
+  async validateSchoolIsConfigured(tenantId: string): Promise&lt;void&gt; {
+    this.logger.debug(&#x60;Validating school configuration for tenant: ${tenantId}&#x60;);
+
+    const schoolConfigRepository &#x3D; this.dataSource.getRepository(SchoolConfig);
+
+    const config &#x3D; await schoolConfigRepository.findOne({
+      where: { tenant: { id: tenantId } },
+    });
+
+    if (!config) {
+      this.logger.warn(&#x60;Action denied for unconfigured school. Tenant ID: ${tenantId}&#x60;);
+      throw new ForbiddenException({
+        message: &#x27;School setup is not complete. Please configure the school before proceeding.&#x27;,
+        error: &#x27;SCHOOL_NOT_CONFIGURED&#x27;,
+      });
+    }
+
+    this.logger.debug(&#x60;School is configured for tenant: ${tenantId}. Validation successful.&#x60;);
+  }
+
+  /**
+   * Validates if a school is configured using user data
+   * @param user - The active user data containing tenant information
+   * @throws ForbiddenException if school is not configured or user has no tenant
+   */
+  async validateSchoolIsConfiguredForUser(user: ActiveUserData): Promise&lt;void&gt; {
+    if (!user.tenantId) {
+      this.logger.warn(&#x60;User ${user.email} has no tenant ID&#x60;);
+      throw new ForbiddenException({
+        message: &#x27;No school association found for this user.&#x27;,
+        error: &#x27;NO_TENANT&#x27;,
+      });
+    }
+
+    await this.validateSchoolIsConfigured(user.tenantId);
+  }
+
+  /**
+   * Checks if a school is configured without throwing an error
+   * @param tenantId - The tenant/school ID to check
+   * @returns true if configured, false otherwise
+   */
+  async isSchoolConfigured(tenantId: string): Promise&lt;boolean&gt; {
+    try {
+      await this.validateSchoolIsConfigured(tenantId);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  /**
+   * Gets the school configuration if it exists
+   * @param tenantId - The tenant/school ID
+   * @returns SchoolConfig or null if not found
+   */
+  async getSchoolConfig(tenantId: string): Promise&lt;SchoolConfig | null&gt; {
+    this.logger.debug(&#x60;Fetching school configuration for tenant: ${tenantId}&#x60;);
+
+    const schoolConfigRepository &#x3D; this.dataSource.getRepository(SchoolConfig);
+
+    const config &#x3D; await schoolConfigRepository.findOne({
+      where: { tenant: { id: tenantId } },
+      relations: [&#x27;tenant&#x27;], // Include tenant details if needed
+    });
+
+    return config;
+  }
+  // async validateSchoolIsConfigured(teacher: ActiveUserData) {
+  //   const tenantId &#x3D; teacher.tenantId;
+  //   this.logger.debug(&#x60;Validating school configuration for tenant: ${tenantId}&#x60;);
+
+  //   const schoolConfigRepository &#x3D; this.dataSource.getRepository(SchoolConfig);
+
+  //   const config &#x3D; await schoolConfigRepository.findOneBy({
+  //     tenant: { id: tenantId }
+  //   });
+
+  //   if (!config) {
+  //     this.logger.warn(&#x60;Action denied for unconfigured school. Tenant ID: ${tenantId}&#x60;);
+  //     throw new ForbiddenException({
+  //       message: &#x27;School setup is not complete. Please configure the school before proceeding.&#x27;,
+  //       error: &#x27;SCHOOL_NOT_CONFIGURED&#x27;,
+  //     });
+  //   }
+
+  //   this.logger.debug(&#x60;School is configured for tenant: ${tenantId}. Validation successful.&#x60;);
+  // }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import { Injectable, Logger, ForbiddenException } from &#x27;@nestjs/common&#x27;;
+// import { DataSource } from &#x27;typeorm&#x27;;
+// import { SchoolConfig } from &#x27;src/admin/school-config/entities/school-config.entity&#x27;;
+// import { TenantGradeLevel } from &#x27;src/path/to/tenant-grade-level.entity&#x27;; // &lt;-- UPDATE IMPORT PATH
+
+// @Injectable()
+// export class SchoolSetupGuardService {
+//   private readonly logger &#x3D; new Logger(SchoolSetupGuardService.name);
+
+//   constructor(private readonly dataSource: DataSource) {}
+
+//   /**
+//    * Checks if a school configuration exists for the given tenant.
+//    * Throws a ForbiddenException if the school is not configured.
+//    * @param tenantId The UUID of the tenant to validate.
+//    */
+//   async validateSchoolIsConfigured(tenantId: string): Promise&lt;void&gt; {
+//     this.logger.debug(&#x60;Validating school configuration for tenant: ${tenantId}&#x60;);
+
+//     // Use DataSource to get the repository without direct injection
+//     const schoolConfigRepository &#x3D; this.dataSource.getRepository(SchoolConfig);
+
+//     const config &#x3D; await schoolConfigRepository.findOneBy({
+//       tenant_id: tenantId, // Assuming the column in SchoolConfig is tenant_id
+//     });
+
+//     if (!config) {
+//       this.logger.warn(&#x60;Action denied for unconfigured school. Tenant ID: ${tenantId}&#x60;);
+//       throw new ForbiddenException({
+//         message: &#x27;School setup is not complete. Please configure the school before proceeding.&#x27;,
+//         error: &#x27;SCHOOL_NOT_CONFIGURED&#x27;,
+//       });
+//     }
+
+//     this.logger.debug(&#x60;School is configured for tenant: ${tenantId}. Validation successful.&#x60;);
+//   }
+
+//   /**
+//    * Checks if a specific TenantGradeLevel ID is valid and belongs to the tenant.
+//    * Throws a BadRequestException if invalid.
+//    * @param tenantId The UUID of the tenant.
+//    * @param tenantGradeLevelId The UUID of the TenantGradeLevel to check.
+//    * @returns The validated TenantGradeLevel entity.
+//    */
+//   async validateGradeLevelBelongsToTenant(
+//     tenantId: string,
+//     tenantGradeLevelId: string,
+//   ): Promise&lt;TenantGradeLevel&gt; {
+//       const tenantGradeLevelRepository &#x3D; this.dataSource.getRepository(TenantGradeLevel);
+
+//       const gradeLevel &#x3D; await tenantGradeLevelRepository.findOneBy({
+//           id: tenantGradeLevelId,
+//           tenant_id: tenantId, // Assuming TenantGradeLevel has a tenant_id foreign key
+//       });
+
+//       if (!gradeLevel) {
+//           throw new BadRequestException(
+//               &#x60;Grade level with ID ${tenantGradeLevelId} is not part of the configured school for this tenant.&#x60;,
+//           );
+//       }
+
+//       return gradeLevel;
+//   }
+// }
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'SchoolSetupGuardService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

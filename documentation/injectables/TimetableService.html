@@ -1,0 +1,4048 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>skool documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">skool documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >TimetableService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/timetable/services/timetable.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#bulkCreateEntries" >bulkCreateEntries</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#calculateActualTimes" >calculateActualTimes</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#calculateDuration" >calculateDuration</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#createBreak" >createBreak</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#createEntry" >createEntry</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#createTimeSlot" >createTimeSlot</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#deleteAllBreaks" >deleteAllBreaks</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#deleteAllTimeSlots" >deleteAllTimeSlots</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#deleteBreak" >deleteBreak</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#deleteEntry" >deleteEntry</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#deleteTimeSlot" >deleteTimeSlot</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#format12Hour" >format12Hour</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#formatTime" >formatTime</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getAllTeachersWithLoad" >getAllTeachersWithLoad</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getBreaks" >getBreaks</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getCompleteTimetable" >getCompleteTimetable</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getEntriesForGrade" >getEntriesForGrade</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getMultipleGradeTimetables" >getMultipleGradeTimetables</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getMyTimetable" >getMyTimetable</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getMyTimetableAsTeacher" >getMyTimetableAsTeacher</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getTeacherConflicts" >getTeacherConflicts</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getTeacherSchedule" >getTeacherSchedule</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getTeacherTimetableData" >getTeacherTimetableData</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getTeacherWeeklySummary" >getTeacherWeeklySummary</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getTimeSlots" >getTimeSlots</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getWholeSchoolTimetable" >getWholeSchoolTimetable</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#isTeacherAvailable" >isTeacherAvailable</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#parseTime" >parseTime</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#updateBreak" >updateBreak</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#updateEntry" >updateEntry</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#updateTimeSlot" >updateTimeSlot</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(timeSlotRepo: <a href="../classes/TimeSlot.html" target="_self">Repository&lt;TimeSlot&gt;</a>, breakRepo: <a href="../classes/TimetableBreak.html" target="_self">Repository&lt;TimetableBreak&gt;</a>, entryRepo: <a href="../classes/TimetableEntry.html" target="_self">Repository&lt;TimetableEntry&gt;</a>, dataSource: DataSource)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="17" class="link-to-prism">src/timetable/services/timetable.service.ts:17</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>timeSlotRepo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/TimeSlot.html" target="_self" >Repository&lt;TimeSlot&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>breakRepo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/TimetableBreak.html" target="_self" >Repository&lt;TimetableBreak&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>entryRepo</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../classes/TimetableEntry.html" target="_self" >Repository&lt;TimetableEntry&gt;</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>dataSource</td>
+                                                  
+                                                        <td>
+                                                                    <code>DataSource</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="bulkCreateEntries"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>bulkCreateEntries</b></span>
+                        <a href="#bulkCreateEntries"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>bulkCreateEntries(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, input: <a href="../classes/BulkCreateTimetableEntryInput.html" target="_self">BulkCreateTimetableEntryInput</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="456"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:456</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/BulkCreateTimetableEntryInput.html" target="_self" >BulkCreateTimetableEntryInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/TimetableEntry.html" target="_self" >Promise&lt;TimetableEntry[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="calculateActualTimes"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>calculateActualTimes</b></span>
+                        <a href="#calculateActualTimes"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>calculateActualTimes(slots: <a href="../classes/TimeSlot.html" target="_self">TimeSlot[]</a>, breaks: <a href="../classes/TimetableBreak.html" target="_self">TimetableBreak[]</a>, dayOfWeek?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="76"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:76</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>slots</td>
+                                            <td>
+                                                            <code><a href="../classes/TimeSlot.html" target="_self" >TimeSlot[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>breaks</td>
+                                            <td>
+                                                            <code><a href="../classes/TimetableBreak.html" target="_self" >TimetableBreak[]</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>dayOfWeek</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/TimeSlot.html" target="_self" >TimeSlot[]</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="calculateDuration"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>calculateDuration</b></span>
+                        <a href="#calculateDuration"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>calculateDuration(startTime: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, endTime: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="117"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:117</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>startTime</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>endTime</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createBreak"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>createBreak</b></span>
+                        <a href="#createBreak"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createBreak(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, input: <a href="../classes/CreateTimetableBreakInput.html" target="_self">CreateTimetableBreakInput</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="198"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:198</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/CreateTimetableBreakInput.html" target="_self" >CreateTimetableBreakInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/TimetableBreak.html" target="_self" >Promise&lt;TimetableBreak&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createEntry"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>createEntry</b></span>
+                        <a href="#createEntry"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createEntry(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, input: <a href="../classes/CreateTimetableEntryInput.html" target="_self">CreateTimetableEntryInput</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="338"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:338</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/CreateTimetableEntryInput.html" target="_self" >CreateTimetableEntryInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/TimetableEntry.html" target="_self" >Promise&lt;TimetableEntry&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createTimeSlot"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>createTimeSlot</b></span>
+                        <a href="#createTimeSlot"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>createTimeSlot(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, input: <a href="../classes/CreateTimeSlotInput.html" target="_self">CreateTimeSlotInput</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="29"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:29</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/CreateTimeSlotInput.html" target="_self" >CreateTimeSlotInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/TimeSlot.html" target="_self" >Promise&lt;TimeSlot&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="deleteAllBreaks"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>deleteAllBreaks</b></span>
+                        <a href="#deleteAllBreaks"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>deleteAllBreaks(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="270"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:270</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="deleteAllTimeSlots"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>deleteAllTimeSlots</b></span>
+                        <a href="#deleteAllTimeSlots"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>deleteAllTimeSlots(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="181"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:181</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="deleteBreak"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>deleteBreak</b></span>
+                        <a href="#deleteBreak"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>deleteBreak(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="263"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:263</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="deleteEntry"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>deleteEntry</b></span>
+                        <a href="#deleteEntry"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>deleteEntry(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="647"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:647</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="deleteTimeSlot"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>deleteTimeSlot</b></span>
+                        <a href="#deleteTimeSlot"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>deleteTimeSlot(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="176"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:176</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="format12Hour"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>format12Hour</b></span>
+                        <a href="#format12Hour"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>format12Hour(time: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="134"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:134</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>time</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="formatTime"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>formatTime</b></span>
+                        <a href="#formatTime"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>formatTime(minutes: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="128"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:128</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>minutes</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getAllTeachersWithLoad"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getAllTeachersWithLoad</b></span>
+                        <a href="#getAllTeachersWithLoad"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getAllTeachersWithLoad(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, termId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="820"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:820</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>termId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;Array&lt;literal type&gt;&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getBreaks"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getBreaks</b></span>
+                        <a href="#getBreaks"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getBreaks(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, dayOfWeek?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="230"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:230</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>dayOfWeek</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/TimetableBreak.html" target="_self" >Promise&lt;TimetableBreak[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getCompleteTimetable"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getCompleteTimetable</b></span>
+                        <a href="#getCompleteTimetable"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getCompleteTimetable(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, termId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, gradeId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="654"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:654</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>termId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>gradeId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../entitys/Grade.html" target="_self" >Promise&lt;GradeTimetableResponse&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getEntriesForGrade"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getEntriesForGrade</b></span>
+                        <a href="#getEntriesForGrade"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getEntriesForGrade(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, termId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, gradeId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="608"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:608</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>termId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>gradeId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/TimetableEntry.html" target="_self" >Promise&lt;TimetableEntry[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getMultipleGradeTimetables"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getMultipleGradeTimetables</b></span>
+                        <a href="#getMultipleGradeTimetables"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getMultipleGradeTimetables(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, termId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, gradeIds: string[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="925"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:925</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>termId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>gradeIds</td>
+                                            <td>
+                                                        <code>string[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/TimetableEntry.html" target="_self" >Promise&lt;TimetableEntry[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getMyTimetable"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getMyTimetable</b></span>
+                        <a href="#getMyTimetable"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getMyTimetable(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, termId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="945"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:945</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>termId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/TimetableData.html" target="_self" >Promise&lt;TimetableData&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getMyTimetableAsTeacher"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getMyTimetableAsTeacher</b></span>
+                        <a href="#getMyTimetableAsTeacher"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getMyTimetableAsTeacher(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, termId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="987"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:987</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>termId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/TimetableData.html" target="_self" >Promise&lt;TimetableData&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getTeacherConflicts"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getTeacherConflicts</b></span>
+                        <a href="#getTeacherConflicts"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getTeacherConflicts(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, termId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="872"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:872</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>termId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;Array&lt;literal type&gt;&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getTeacherSchedule"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getTeacherSchedule</b></span>
+                        <a href="#getTeacherSchedule"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getTeacherSchedule(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, termId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, teacherId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="619"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:619</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>termId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>teacherId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/TimetableEntry.html" target="_self" >Promise&lt;TimetableEntry[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getTeacherTimetableData"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getTeacherTimetableData</b></span>
+                        <a href="#getTeacherTimetableData"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getTeacherTimetableData(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, termId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, teacherId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="725"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:725</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>termId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>teacherId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/TimetableData.html" target="_self" >Promise&lt;TimetableData&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getTeacherWeeklySummary"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getTeacherWeeklySummary</b></span>
+                        <a href="#getTeacherWeeklySummary"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getTeacherWeeklySummary(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, termId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, teacherId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="761"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:761</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>termId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>teacherId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;literal type&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getTimeSlots"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getTimeSlots</b></span>
+                        <a href="#getTimeSlots"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getTimeSlots(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, dayOfWeek?: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="58"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:58</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>dayOfWeek</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    Yes
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/TimeSlot.html" target="_self" >Promise&lt;TimeSlot[]&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getWholeSchoolTimetable"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getWholeSchoolTimetable</b></span>
+                        <a href="#getWholeSchoolTimetable"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getWholeSchoolTimetable(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, termId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="418"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:418</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>termId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/TimetableData.html" target="_self" >Promise&lt;TimetableData&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isTeacherAvailable"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>isTeacherAvailable</b></span>
+                        <a href="#isTeacherAvailable"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>isTeacherAvailable(tenantId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, termId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, teacherId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, dayOfWeek: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, timeSlotId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="798"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:798</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>tenantId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>termId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>teacherId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>dayOfWeek</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>timeSlotId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;boolean&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="parseTime"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>parseTime</b></span>
+                        <a href="#parseTime"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>parseTime(time: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="123"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:123</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>time</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateBreak"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>updateBreak</b></span>
+                        <a href="#updateBreak"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>updateBreak(user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, input: <a href="../classes/UpdateTimetableBreakInput.html" target="_self">UpdateTimetableBreakInput</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="242"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:242</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/UpdateTimetableBreakInput.html" target="_self" >UpdateTimetableBreakInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/TimetableBreak.html" target="_self" >Promise&lt;TimetableBreak&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateEntry"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>updateEntry</b></span>
+                        <a href="#updateEntry"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>updateEntry(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, input: <a href="../entitys/TimetableEntry.html" target="_self">Partial&lt;CreateTimetableEntryInput&gt;</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="630"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:630</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../entitys/TimetableEntry.html" target="_self" >Partial&lt;CreateTimetableEntryInput&gt;</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/TimetableEntry.html" target="_self" >Promise&lt;TimetableEntry&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateTimeSlot"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>updateTimeSlot</b></span>
+                        <a href="#updateTimeSlot"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>updateTimeSlot(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, user: <a href="../interfaces/ActiveUserData.html" target="_self">ActiveUserData</a>, input: <a href="../classes/UpdateTimeSlotInput.html" target="_self">UpdateTimeSlotInput</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="141"
+                                    class="link-to-prism">src/timetable/services/timetable.service.ts:141</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>user</td>
+                                            <td>
+                                                            <code><a href="../interfaces/ActiveUserData.html" target="_self" >ActiveUserData</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>input</td>
+                                            <td>
+                                                            <code><a href="../classes/UpdateTimeSlotInput.html" target="_self" >UpdateTimeSlotInput</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../classes/TimeSlot.html" target="_self" >Promise&lt;TimeSlot&gt;</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable, NotFoundException, ConflictException, BadRequestException } from &#x27;@nestjs/common&#x27;;
+import { InjectRepository } from &#x27;@nestjs/typeorm&#x27;;
+import { DataSource, In, QueryRunner, Repository } from &#x27;typeorm&#x27;;
+import { TimeSlot } from &#x27;../entities/time_slots.entity&#x27;;
+import { TimetableBreak } from &#x27;../entities/timetable_break.entity&#x27;;
+import { TimetableEntry } from &#x27;../entities/timetable_entries.entity&#x27;;
+import { CreateTimeSlotInput } from &#x27;../dtos/create_time_slot&#x27;;
+import { UpdateTimeSlotInput } from &#x27;../dtos/update_time_slot.dto&#x27;;
+import { CreateTimetableBreakInput } from &#x27;../dtos/create_timetable_break.dto&#x27;;
+import { ActiveUserData } from &#x27;src/admin/auth/interface/active-user.interface&#x27;;
+import { GradeTimetableResponse, TimetableCell } from &#x27;../dtos/timetable-response.dto&#x27;;
+import { BulkCreateTimetableEntryInput, CreateTimetableEntryInput, SingleEntryInput } from &#x27;../dtos/create-timetable-entry.input&#x27;;
+import { GradeInfo, TimetableData } from &#x27;../dtos/timetable_response.dto&#x27;;
+import { UpdateTimetableBreakInput } from &#x27;../dtos/update-timetable-break.input&#x27;;
+
+@Injectable()
+export class TimetableService {
+  constructor(
+    @InjectRepository(TimeSlot)
+    private timeSlotRepo: Repository&lt;TimeSlot&gt;,
+    @InjectRepository(TimetableBreak)
+    private breakRepo: Repository&lt;TimetableBreak&gt;,
+    @InjectRepository(TimetableEntry)
+    private entryRepo: Repository&lt;TimetableEntry&gt;,
+    private readonly dataSource: DataSource,
+  ) {}
+
+  // &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D; TIME SLOTS &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
+  async createTimeSlot(
+    user: ActiveUserData,
+    input: CreateTimeSlotInput,
+  ): Promise&lt;TimeSlot&gt; {
+    const existing &#x3D; await this.timeSlotRepo.findOne({
+      where: { tenantId: user.tenantId, periodNumber: input.periodNumber },
+    });
+
+    if (existing) {
+      throw new ConflictException(
+        &#x60;Time slot for period ${input.periodNumber} already exists&#x60;,
+      );
+    }
+
+    const timeSlot &#x3D; this.timeSlotRepo.create({
+      ...input,
+      tenantId: user.tenantId,
+    });
+
+    return this.timeSlotRepo.save(timeSlot);
+  }
+
+  // async getTimeSlots(user: ActiveUserData): Promise&lt;TimeSlot[]&gt; {
+  //   return this.timeSlotRepo.find({
+  //     where: { tenantId: user.tenantId, isActive: true },
+  //     order: { periodNumber: &#x27;ASC&#x27; },
+  //   });
+  // }
+
+  async getTimeSlots(
+  user: ActiveUserData,
+  dayOfWeek?: number
+): Promise&lt;TimeSlot[]&gt; {
+  const slots &#x3D; await this.timeSlotRepo.find({
+    where: { tenantId: user.tenantId, isActive: true },
+    order: { periodNumber: &#x27;ASC&#x27; }
+  });
+
+  if (slots.length &#x3D;&#x3D;&#x3D; 0) {
+    return [];
+  }
+
+  const breaks &#x3D; await this.getBreaks(user, dayOfWeek);
+  
+  return this.calculateActualTimes(slots, breaks, dayOfWeek);
+}
+
+private calculateActualTimes(
+  slots: TimeSlot[],
+  breaks: TimetableBreak[],
+  dayOfWeek?: number
+): TimeSlot[] {
+  // Find the first period to determine school start time and duration
+  const firstPeriod &#x3D; slots[0];
+  
+  // Calculate period duration from the first period
+  const schoolStartTime &#x3D; firstPeriod.startTime;
+  const periodDuration &#x3D; this.calculateDuration(
+    firstPeriod.startTime,
+    firstPeriod.endTime
+  );
+  
+  let currentTime &#x3D; this.parseTime(schoolStartTime);
+  
+  return slots.map(slot &#x3D;&gt; {
+    const startTime &#x3D; this.formatTime(currentTime);
+    currentTime +&#x3D; periodDuration;
+    const endTime &#x3D; this.formatTime(currentTime);
+    
+    // Check for breaks
+    const breakAfter &#x3D; breaks.find(b &#x3D;&gt; 
+      b.afterPeriod &#x3D;&#x3D;&#x3D; slot.periodNumber &amp;&amp;
+      (b.dayOfWeek &#x3D;&#x3D;&#x3D; 0 || b.dayOfWeek &#x3D;&#x3D;&#x3D; dayOfWeek)
+    );
+    
+    if (breakAfter) {
+      currentTime +&#x3D; breakAfter.durationMinutes;
+    }
+    
+    return {
+      ...slot,
+      startTime,
+      endTime,
+      displayTime: &#x60;${this.format12Hour(startTime)} – ${this.format12Hour(endTime)}&#x60;
+    };
+  });
+}
+
+private calculateDuration(startTime: string, endTime: string): number {
+  const start &#x3D; this.parseTime(startTime);
+  const end &#x3D; this.parseTime(endTime);
+  return end - start;
+}
+
+private parseTime(time: string): number {
+  const [hours, minutes] &#x3D; time.split(&#x27;:&#x27;).map(Number);
+  return hours * 60 + minutes;
+}
+
+private formatTime(minutes: number): string {
+  const h &#x3D; Math.floor(minutes / 60);
+  const m &#x3D; minutes % 60;
+  return &#x60;${h.toString().padStart(2, &#x27;0&#x27;)}:${m.toString().padStart(2, &#x27;0&#x27;)}&#x60;;
+}
+
+private format12Hour(time: string): string {
+  const [hours, minutes] &#x3D; time.split(&#x27;:&#x27;).map(Number);
+  const period &#x3D; hours &gt;&#x3D; 12 ? &#x27;PM&#x27; : &#x27;AM&#x27;;
+  const hour12 &#x3D; hours % 12 || 12;
+  return &#x60;${hour12}:${minutes.toString().padStart(2, &#x27;0&#x27;)} ${period}&#x60;;
+}
+
+  async updateTimeSlot(
+    id: string,
+    user: ActiveUserData,
+    input: UpdateTimeSlotInput,
+  ): Promise&lt;TimeSlot&gt; {
+    const timeSlot &#x3D; await this.timeSlotRepo.findOne({
+      where: { id, tenantId: user.tenantId },
+    });
+
+    if (!timeSlot) {
+      throw new NotFoundException(&#x27;Time slot not found&#x27;);
+    }
+
+    Object.assign(timeSlot, input);
+    return this.timeSlotRepo.save(timeSlot);
+  }
+
+//   async updateTimeSlot(user: ActiveUserData, input: UpdateTimeSlotInput): Promise&lt;TimeSlot&gt; {
+//     const timeSlot &#x3D; await this.timeSlotRepo.findOne({
+//       where: { id: input.id, tenantId: user.tenantId },
+//     });
+  
+//     if (!timeSlot) throw new NotFoundException(&#x27;Time slot not found&#x27;);
+  
+//     if (input.periodNumber &amp;&amp; input.periodNumber !&#x3D;&#x3D; timeSlot.periodNumber) {
+//       const conflict &#x3D; await this.timeSlotRepo.findOne({
+//         where: { tenantId: user.tenantId, periodNumber: input.periodNumber },
+//       });
+//       if (conflict) throw new ConflictException(&#x60;Time slot for period ${input.periodNumber} already exists&#x60;);
+//     }
+  
+//     Object.assign(timeSlot, input);
+//     return this.timeSlotRepo.save(timeSlot);
+//   }
+
+  async deleteTimeSlot(id: string, user: ActiveUserData): Promise&lt;boolean&gt; {
+    const result &#x3D; await this.timeSlotRepo.delete({ id, tenantId: user.tenantId });
+    return (result.affected ?? 0) &gt; 0;
+  }
+
+  async deleteAllTimeSlots(user: ActiveUserData): Promise&lt;boolean&gt; {
+  // Delete all entries that reference timeslots
+  await this.entryRepo.delete({
+    tenantId: user.tenantId,
+  });
+
+  // Now delete the timeslots
+  const result &#x3D; await this.timeSlotRepo.delete({
+    tenantId: user.tenantId,
+  });
+
+  return (result.affected ?? 0) &gt; 0;
+}
+
+
+
+  // &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D; BREAKS &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
+  async createBreak(
+    user: ActiveUserData,
+    input: CreateTimetableBreakInput,
+  ): Promise&lt;TimetableBreak&gt; {
+    const existingBreak &#x3D; await this.breakRepo.findOne({
+      where: {
+        tenantId: user.tenantId,
+        dayOfWeek: input.dayOfWeek,
+        afterPeriod: input.afterPeriod,
+      },
+    });
+  
+    if (existingBreak) {
+      throw new ConflictException(
+        &#x60;A break already exists after period ${input.afterPeriod} for day ${
+          input.dayOfWeek &#x3D;&#x3D;&#x3D; 0 ? &#x27;all days&#x27; : input.dayOfWeek
+        }&#x60;,
+      );
+    }
+  
+    const breakEntity &#x3D; this.breakRepo.create({
+      ...input,
+      tenantId: user.tenantId,
+    });
+  
+    return this.breakRepo.save(breakEntity);
+  }
+
+
+
+  
+
+  async getBreaks(user: ActiveUserData, dayOfWeek?: number): Promise&lt;TimetableBreak[]&gt; {
+    const where: any &#x3D; { tenantId: user.tenantId, isActive: true };
+    if (dayOfWeek !&#x3D;&#x3D; undefined) {
+      where.dayOfWeek &#x3D; dayOfWeek;
+    }
+
+    return this.breakRepo.find({
+      where,
+      order: { dayOfWeek: &#x27;ASC&#x27;, afterPeriod: &#x27;ASC&#x27; },
+    });
+  }
+
+  async updateBreak(user: ActiveUserData, input: UpdateTimetableBreakInput): Promise&lt;TimetableBreak&gt; {
+    const breakEntity &#x3D; await this.breakRepo.findOne({
+      where: { id: input.id, tenantId: user.tenantId },
+    });
+  
+    if (!breakEntity) throw new NotFoundException(&#x27;Break not found&#x27;);
+  
+    if ((input.dayOfWeek &amp;&amp; input.afterPeriod) &amp;&amp;
+        (input.dayOfWeek !&#x3D;&#x3D; breakEntity.dayOfWeek || input.afterPeriod !&#x3D;&#x3D; breakEntity.afterPeriod)) {
+      const conflict &#x3D; await this.breakRepo.findOne({
+        where: { tenantId: user.tenantId, dayOfWeek: input.dayOfWeek, afterPeriod: input.afterPeriod },
+      });
+      if (conflict) throw new ConflictException(
+        &#x60;A break already exists after period ${input.afterPeriod} for day ${input.dayOfWeek}&#x60;,
+      );
+    }
+  
+    Object.assign(breakEntity, input);
+    return this.breakRepo.save(breakEntity);
+  }
+
+  async deleteBreak(id: string, user: ActiveUserData): Promise&lt;boolean&gt; {
+    const result &#x3D; await this.breakRepo.delete({ id, tenantId: user.tenantId });
+    return (result.affected ?? 0) &gt; 0;
+  }
+
+
+
+  async deleteAllBreaks(user: ActiveUserData): Promise&lt;boolean&gt; {
+  const result &#x3D; await this.breakRepo.delete({
+    tenantId: user.tenantId,
+  });
+
+  return (result.affected ?? 0) &gt; 0;
+}
+
+
+
+
+  // &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D; TIMETABLE ENTRIES &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
+  // async createEntry(
+  //   user: ActiveUserData,
+  //   input: CreateTimetableEntryInput,
+  // ): Promise&lt;TimetableEntry&gt; {
+  //   const termRepo &#x3D; this.dataSource.getRepository(&#x27;Term&#x27;);
+  //   const gradeRepo &#x3D; this.dataSource.getRepository(&#x27;TenantGradeLevel&#x27;);
+  //   const subjectRepo &#x3D; this.dataSource.getRepository(&#x27;TenantSubject&#x27;);
+  //   const teacherRepo &#x3D; this.dataSource.getRepository(&#x27;Teacher&#x27;);
+  //   const timeSlotRepo &#x3D; this.dataSource.getRepository(&#x27;TimeSlot&#x27;);
+  
+  //   const [term, grade, subject, teacher, timeSlot] &#x3D; await Promise.all([
+  //     termRepo.findOne({ where: { id: input.termId, tenantId: user.tenantId } }),
+  //     gradeRepo.findOne({ where: { id: input.gradeId, tenant: { id: user.tenantId } } }),
+  //     subjectRepo.findOne({ where: { id: input.subjectId, tenant: { id: user.tenantId } } }),
+  //     teacherRepo.findOne({ where: { id: input.teacherId, tenant: { id: user.tenantId } } }),
+  //     timeSlotRepo.findOne({ where: { id: input.timeSlotId, tenant: { id: user.tenantId } } }),
+  //   ]);
+  
+  //   if (!term || !grade || !subject || !teacher || !timeSlot) {
+  //     throw new BadRequestException(&#x27;One or more IDs are invalid for your tenant&#x27;);
+  //   }
+  
+  //   // Prevent duplicate slot for same grade/day/time
+  //   const existing &#x3D; await this.entryRepo.findOne({
+  //     where: {
+  //       tenantId: user.tenantId,
+  //       term: { id: term.id },
+  //       grade: { id: grade.id },
+  //       dayOfWeek: input.dayOfWeek,
+  //       timeSlot: { id: timeSlot.id },
+  //     },
+  //   });
+  
+  //   if (existing) {
+  //     throw new ConflictException(
+  //       &#x27;A class is already scheduled for this grade at this time&#x27;,
+  //     );
+  //   }
+  
+  //   // ✅ Attach relations properly
+  //   const entry &#x3D; this.entryRepo.create({
+  //       tenantId: user.tenantId,
+  //       dayOfWeek: input.dayOfWeek,
+  //       roomNumber: input.roomNumber,
+  //       term: term,           
+  //       grade: grade,         
+  //       subject: subject,     
+  //       teacher: teacher,     
+  //       timeSlot: timeSlot,   
+        
+  //     });
+    
+  //     return await this.entryRepo.save(entry);
+  // }
+  
+
+  async createEntry(
+  user: ActiveUserData,
+  input: CreateTimetableEntryInput,
+): Promise&lt;TimetableEntry&gt; {
+  const termRepo &#x3D; this.dataSource.getRepository(&#x27;Term&#x27;);
+  const gradeRepo &#x3D; this.dataSource.getRepository(&#x27;TenantGradeLevel&#x27;);
+  const subjectRepo &#x3D; this.dataSource.getRepository(&#x27;TenantSubject&#x27;);
+  const teacherRepo &#x3D; this.dataSource.getRepository(&#x27;Teacher&#x27;);
+  const timeSlotRepo &#x3D; this.dataSource.getRepository(&#x27;TimeSlot&#x27;);
+
+  // Fetch all relations in parallel
+  const [term, grade, subject, teacher, timeSlot] &#x3D; await Promise.all([
+    termRepo.findOne({
+      where: { id: input.termId, tenantId: user.tenantId },
+    }),
+    gradeRepo.findOne({
+      where: { id: input.gradeId, tenant: { id: user.tenantId } },
+    }),
+    subjectRepo.findOne({
+      where: { id: input.subjectId, tenant: { id: user.tenantId } },
+    }),
+    teacherRepo.findOne({
+      where: { id: input.teacherId, tenant: { id: user.tenantId } },
+    }),
+    timeSlotRepo.findOne({
+      where: { id: input.timeSlotId, tenant: { id: user.tenantId } },
+    }),
+  ]);
+
+  // One-by-one validation — clear, explicit errors
+  if (!term) {
+    throw new BadRequestException(&#x60;Invalid termId: ${input.termId}&#x60;);
+  }
+  if (!grade) {
+    throw new BadRequestException(&#x60;Invalid gradeId: ${input.gradeId}&#x60;);
+  }
+  if (!subject) {
+    throw new BadRequestException(&#x60;Invalid subjectId: ${input.subjectId}&#x60;);
+  }
+  if (!teacher) {
+    throw new BadRequestException(&#x60;Invalid teacherId: ${input.teacherId}&#x60;);
+  }
+  if (!timeSlot) {
+    throw new BadRequestException(&#x60;Invalid timeSlotId: ${input.timeSlotId}&#x60;);
+  }
+
+  // Prevent duplicate timetable entry for the same (grade + day + time + term)
+  const existing &#x3D; await this.entryRepo.findOne({
+    where: {
+      tenantId: user.tenantId,
+      term: { id: term.id },
+      grade: { id: grade.id },
+      dayOfWeek: input.dayOfWeek,
+      timeSlot: { id: timeSlot.id },
+    },
+  });
+
+  if (existing) {
+    throw new ConflictException(
+      &#x27;A class is already scheduled for this grade at this time&#x27;,
+    );
+  }
+
+  // Create the entry with proper relations
+  const entry &#x3D; this.entryRepo.create({
+    tenantId: user.tenantId,
+    dayOfWeek: input.dayOfWeek,
+    roomNumber: input.roomNumber,
+
+    term,
+    grade,
+    subject,
+    teacher,
+    timeSlot,
+  });
+
+  return await this.entryRepo.save(entry);
+}
+
+
+  async getWholeSchoolTimetable(
+    user: ActiveUserData,
+    termId: string,
+  ): Promise&lt;TimetableData&gt; {
+    // Get all components
+    const gradeRepo &#x3D; this.dataSource.getRepository(&#x27;TenantGradeLevel&#x27;);
+    const [timeSlots, breaks, entries, grades] &#x3D; await Promise.all([
+      this.getTimeSlots(user),
+      this.getBreaks(user),
+      this.entryRepo.find({
+        where: { tenantId: user.tenantId, termId, isActive: true },
+        order: { dayOfWeek: &#x27;ASC&#x27; },
+      }),
+      
+      gradeRepo.find({
+        where: { tenant: { id: user.tenantId }, isActive: true },
+        order: { sortOrder: &#x27;ASC&#x27; },
+      }),
+    ]);
+
+  
+    const gradeInfos: GradeInfo[] &#x3D; grades.map((g, index) &#x3D;&gt; ({
+      id: g.id,
+      name: g.gradeLevel?.name || g.name || &#x60;Grade ${index + 1}&#x60;,
+      displayName: g.shortName || g.gradeLevel?.name || g.name || &#x60;G${index + 1}&#x60;,
+      level: g.sortOrder || index + 1,
+    }));
+
+    return {
+      timeSlots,
+      breaks,
+      entries,
+      grades: gradeInfos,
+      lastUpdated: new Date().toISOString(),
+    };
+  }
+  
+
+   async bulkCreateEntries(
+    user: ActiveUserData,
+    input: BulkCreateTimetableEntryInput,
+  ): Promise&lt;TimetableEntry[]&gt; {
+    const termRepo &#x3D; this.dataSource.getRepository(&#x27;Term&#x27;);
+    const gradeRepo &#x3D; this.dataSource.getRepository(&#x27;TenantGradeLevel&#x27;);
+    const subjectRepo &#x3D; this.dataSource.getRepository(&#x27;TenantSubject&#x27;);
+    const teacherRepo &#x3D; this.dataSource.getRepository(&#x27;Teacher&#x27;);
+    const timeSlotRepo &#x3D; this.dataSource.getRepository(&#x27;TimeSlot&#x27;);
+    const entryRepo &#x3D; this.dataSource.getRepository(&#x27;TimetableEntry&#x27;);
+
+    // Basic checks
+    if (!Array.isArray(input.entries) || input.entries.length &#x3D;&#x3D;&#x3D; 0) {
+      throw new BadRequestException(&#x27;entries must be a non-empty array&#x27;);
+    }
+
+    // Validate term &amp; grade (tenant-scoped)
+    const [term, grade] &#x3D; await Promise.all([
+      termRepo.findOne({ where: { id: input.termId, tenantId: user.tenantId } }),
+      gradeRepo.findOne({ where: { id: input.gradeId, tenant: { id: user.tenantId } } }),
+    ]);
+
+    if (!term) {
+      throw new BadRequestException(&#x60;Invalid termId: ${input.termId}&#x60;);
+    }
+    if (!grade) {
+      throw new BadRequestException(&#x60;Invalid gradeId: ${input.gradeId}&#x60;);
+    }
+
+    // Collect unique ids from payload
+    const subjectIds &#x3D; Array.from(new Set(input.entries.map((e) &#x3D;&gt; e.subjectId)));
+    const teacherIds &#x3D; Array.from(new Set(input.entries.map((e) &#x3D;&gt; e.teacherId)));
+    const timeSlotIds &#x3D; Array.from(new Set(input.entries.map((e) &#x3D;&gt; e.timeSlotId)));
+
+    // Fetch referenced entities (tenant-scoped)
+    const [subjects, teachers, timeSlots] &#x3D; await Promise.all([
+      subjectRepo.find({ where: { id: In(subjectIds), tenant: { id: user.tenantId } } }),
+      teacherRepo.find({ where: { id: In(teacherIds), tenant: { id: user.tenantId } } }),
+      timeSlotRepo.find({ where: { id: In(timeSlotIds), tenant: { id: user.tenantId } } }),
+    ]);
+
+    const subjectMap &#x3D; new Map(subjects.map((s: any) &#x3D;&gt; [s.id, s]));
+    const teacherMap &#x3D; new Map(teachers.map((t: any) &#x3D;&gt; [t.id, t]));
+    const timeSlotMap &#x3D; new Map(timeSlots.map((ts: any) &#x3D;&gt; [ts.id, ts]));
+
+    // Per-entry validation &amp; batch-duplicate detection
+    const errors: string[] &#x3D; [];
+    const batchKeys &#x3D; new Set&lt;string&gt;(); // key &#x3D; &#x60;${dayOfWeek}:${timeSlotId}&#x60;
+    const batchEntriesToCreate: { input: SingleEntryInput; idx: number; key: string }[] &#x3D; [];
+
+    input.entries.forEach((entry, idx) &#x3D;&gt; {
+      // Validate UUID presence (you already have class-validator on DTOs, but double-check here for clarity)
+      if (!entry.subjectId) errors.push(&#x60;Entry ${idx}: missing subjectId&#x60;);
+      if (!entry.teacherId) errors.push(&#x60;Entry ${idx}: missing teacherId&#x60;);
+      if (!entry.timeSlotId) errors.push(&#x60;Entry ${idx}: missing timeSlotId&#x60;);
+
+      // Existence checks (tenant-scoped lookups done above)
+      if (entry.subjectId &amp;&amp; !subjectMap.has(entry.subjectId)) {
+        errors.push(&#x60;Entry ${idx}: Invalid subjectId: ${entry.subjectId}&#x60;);
+      }
+      if (entry.teacherId &amp;&amp; !teacherMap.has(entry.teacherId)) {
+        errors.push(&#x60;Entry ${idx}: Invalid teacherId: ${entry.teacherId}&#x60;);
+      }
+      if (entry.timeSlotId &amp;&amp; !timeSlotMap.has(entry.timeSlotId)) {
+        errors.push(&#x60;Entry ${idx}: Invalid timeSlotId: ${entry.timeSlotId}&#x60;);
+      }
+
+      // dayOfWeek validation (should match your DTO: 1..5)
+      if (typeof entry.dayOfWeek !&#x3D;&#x3D; &#x27;number&#x27; || entry.dayOfWeek &lt; 1 || entry.dayOfWeek &gt; 7) {
+        errors.push(&#x60;Entry ${idx}: dayOfWeek must be an integer (1-7). Got: ${entry.dayOfWeek}&#x60;);
+      }
+
+      const key &#x3D; &#x60;${entry.dayOfWeek}:${entry.timeSlotId}&#x60;;
+      if (batchKeys.has(key)) {
+        errors.push(&#x60;Entry ${idx}: duplicate slot in the provided batch (day ${entry.dayOfWeek}, timeSlot ${entry.timeSlotId})&#x60;);
+      } else {
+        batchKeys.add(key);
+        batchEntriesToCreate.push({ input: entry, idx, key });
+      }
+    });
+
+    if (errors.length &gt; 0) {
+      throw new BadRequestException({ message: &#x27;Validation failed&#x27;, details: errors });
+    }
+
+    // Check for conflicts with existing DB entries for same tenant/term/grade
+    // We query all existing entries for this tenant + term + grade where dayOfWeek/timeSlot intersects with our batch
+    const days &#x3D; Array.from(new Set(input.entries.map((e) &#x3D;&gt; e.dayOfWeek)));
+    const timeSlotIdsInBatch &#x3D; Array.from(batchKeys).map(k &#x3D;&gt; k.split(&#x27;:&#x27;)[1]);
+    const existingEntries &#x3D; await entryRepo.find({
+      where: {
+        tenantId: user.tenantId,
+        term: { id: term.id },
+        grade: { id: grade.id },
+        dayOfWeek: In(days),
+        timeSlot: { id: In(timeSlotIdsInBatch) },
+      },
+      relations: [&#x27;timeSlot&#x27;],
+    });
+
+    // Build existing key set
+    const existingKeys &#x3D; new Set(existingEntries.map((ex: any) &#x3D;&gt; &#x60;${ex.dayOfWeek}:${ex.timeSlot.id}&#x60;));
+    const conflictErrors: string[] &#x3D; [];
+    batchEntriesToCreate.forEach(({ input: e, idx }) &#x3D;&gt; {
+      const k &#x3D; &#x60;${e.dayOfWeek}:${e.timeSlotId}&#x60;;
+      if (existingKeys.has(k)) {
+        conflictErrors.push(&#x60;Entry ${idx}: conflict with existing timetable for day ${e.dayOfWeek}, timeSlot ${e.timeSlotId}&#x60;);
+      }
+    });
+
+    if (conflictErrors.length &gt; 0) {
+      throw new ConflictException({ message: &#x27;Some entries conflict with existing timetable&#x27;, details: conflictErrors });
+    }
+
+    // All validation passed — create entries inside a transaction
+    const queryRunner: QueryRunner &#x3D; this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const toSave: any[] &#x3D; [];
+
+      for (const { input: e } of batchEntriesToCreate) {
+        const ent &#x3D; entryRepo.create({
+          tenantId: user.tenantId,
+          dayOfWeek: e.dayOfWeek,
+          roomNumber: e.roomNumber ?? null,
+          term: term,
+          grade: grade,
+          subject: subjectMap.get(e.subjectId),
+          teacher: teacherMap.get(e.teacherId),
+          timeSlot: timeSlotMap.get(e.timeSlotId),
+        });
+        toSave.push(ent);
+      }
+
+      // Use the transaction manager to save
+      const saved &#x3D; await queryRunner.manager.save(toSave);
+
+      await queryRunner.commitTransaction();
+
+      return saved;
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      // rethrow — keep original error if possible
+      throw err;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+
+  async getEntriesForGrade(
+    user: ActiveUserData,
+    termId: string,
+    gradeId: string,
+  ): Promise&lt;TimetableEntry[]&gt; {
+    return this.entryRepo.find({
+      where: { tenantId: user.tenantId, termId, gradeId, isActive: true },
+      order: { dayOfWeek: &#x27;ASC&#x27;, timeSlotId: &#x27;ASC&#x27; },
+    });
+  }
+
+  async getTeacherSchedule(
+    user: ActiveUserData,
+    termId: string,
+    teacherId: string,
+  ): Promise&lt;TimetableEntry[]&gt; {
+    return this.entryRepo.find({
+      where: { tenantId: user.tenantId, termId, teacherId, isActive: true },
+      order: { dayOfWeek: &#x27;ASC&#x27;, timeSlotId: &#x27;ASC&#x27; },
+    });
+  }
+
+  async updateEntry(
+    id: string,
+    user: ActiveUserData,
+    input: Partial&lt;CreateTimetableEntryInput&gt;,
+  ): Promise&lt;TimetableEntry&gt; {
+    const entry &#x3D; await this.entryRepo.findOne({
+      where: { id, tenantId: user.tenantId },
+    });
+
+    if (!entry) {
+      throw new NotFoundException(&#x27;Timetable entry not found&#x27;);
+    }
+
+    Object.assign(entry, input);
+    return this.entryRepo.save(entry);
+  }
+
+  async deleteEntry(id: string, user: ActiveUserData): Promise&lt;boolean&gt; {
+    const result &#x3D; await this.entryRepo.delete({ id, tenantId: user.tenantId });
+    return (result.affected ?? 0) &gt; 0;
+  }
+
+
+
+  async getCompleteTimetable(
+    user: ActiveUserData,
+    termId: string,
+    gradeId: string,
+  ): Promise&lt;GradeTimetableResponse&gt; {
+    const tenantId &#x3D; user.tenantId;
+    
+    if (!tenantId) {
+      throw new BadRequestException(&#x27;Tenant ID is required&#x27;);
+    }
+    const gradeLevelRepo &#x3D; this.dataSource.getRepository(&#x27;TenantGradeLevel&#x27;);
+
+    const [timeSlots, breaks, entries, grade] &#x3D; await Promise.all([
+      this.getTimeSlots(user),
+      this.getBreaks(user),
+      this.getEntriesForGrade(user, termId, gradeId),
+      // Fetch grade details - adjust based on your repository
+      gradeLevelRepo.findOne({ where: { id: gradeId } }),
+    ]);
+
+    // Build cells matrix
+    const cells: TimetableCell[] &#x3D; [];
+
+    for (let day &#x3D; 1; day &lt;&#x3D; 5; day++) {
+      for (const timeSlot of timeSlots) {
+        // Check if there&#x27;s a break after this period
+        const breakAfter &#x3D; breaks.find(
+          (b) &#x3D;&gt;
+            (b.dayOfWeek &#x3D;&#x3D;&#x3D; day || b.dayOfWeek &#x3D;&#x3D;&#x3D; 0) &amp;&amp;
+            b.afterPeriod &#x3D;&#x3D;&#x3D; timeSlot.periodNumber,
+        );
+
+        if (breakAfter) {
+          cells.push({
+            dayOfWeek: day,
+            periodNumber: timeSlot.periodNumber,
+            isBreak: true,
+            breakData: breakAfter,
+            entryData: undefined
+          });
+        }
+
+        // Find the actual entry
+        const entry &#x3D; entries.find(
+          (e) &#x3D;&gt;
+            e.dayOfWeek &#x3D;&#x3D;&#x3D; day &amp;&amp; e.timeSlot.periodNumber &#x3D;&#x3D;&#x3D; timeSlot.periodNumber,
+        );
+
+        cells.push({
+          dayOfWeek: day,
+          periodNumber: timeSlot.periodNumber,
+          isBreak: false,
+          breakData: undefined,
+          entryData: entry || undefined,
+        });
+      }
+    }
+    
+
+    return {
+      gradeId,
+      gradeName: grade?.name || &#x27;Unknown&#x27;,
+      timeSlots,
+      cells,
+    };
+  }
+
+
+
+
+
+  async getTeacherTimetableData(
+    user: ActiveUserData,
+    termId: string,
+    teacherId: string,
+  ): Promise&lt;TimetableData&gt; {
+    const gradeRepo &#x3D; this.dataSource.getRepository(&#x27;TenantGradeLevel&#x27;);
+    const [timeSlots, breaks, entries, grades] &#x3D; await Promise.all([
+      this.getTimeSlots(user),
+      this.getBreaks(user),
+      this.entryRepo.find({
+        where: { tenantId: user.tenantId, termId, teacherId, isActive: true },
+        order: { dayOfWeek: &#x27;ASC&#x27; },
+      }),
+      gradeRepo.find({
+        where: { tenant: { id: user.tenantId }, isActive: true },
+        order: { sortOrder: &#x27;ASC&#x27; },
+      }),
+    ]);
+
+    const gradeInfos: GradeInfo[] &#x3D; grades.map((g, index) &#x3D;&gt; ({
+      id: g.id,
+      name: g.gradeLevel?.name || g.name || &#x60;Grade ${index + 1}&#x60;,
+      displayName: g.shortName || g.gradeLevel?.name || g.name || &#x60;G${index + 1}&#x60;,
+      level: g.sortOrder || index + 1,
+    }));
+
+    return {
+      timeSlots,
+      breaks,
+      entries, 
+      grades: gradeInfos,
+      lastUpdated: new Date().toISOString(),
+    };
+  }
+
+  // Get teacher&#x27;s weekly schedule summary
+  async getTeacherWeeklySummary(
+    user: ActiveUserData,
+    termId: string,
+    teacherId: string,
+  ): Promise&lt;{
+    totalClasses: number;
+    classesByDay: Record&lt;number, number&gt;;
+    classesByGrade: Record&lt;string, number&gt;;
+    classesBySubject: Record&lt;string, number&gt;;
+    entries: TimetableEntry[];
+  }&gt; {
+    const entries &#x3D; await this.getTeacherSchedule(user, termId, teacherId);
+
+    const classesByDay: Record&lt;number, number&gt; &#x3D; { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    const classesByGrade: Record&lt;string, number&gt; &#x3D; {};
+    const classesBySubject: Record&lt;string, number&gt; &#x3D; {};
+
+    entries.forEach((entry) &#x3D;&gt; {
+      classesByDay[entry.dayOfWeek]++;
+      
+      const gradeName &#x3D; entry.grade?.name || &#x27;Unknown&#x27;;
+      classesByGrade[gradeName] &#x3D; (classesByGrade[gradeName] || 0) + 1;
+      
+      const subjectName &#x3D; entry.subject?.name || &#x27;Unknown&#x27;;
+      classesBySubject[subjectName] &#x3D; (classesBySubject[subjectName] || 0) + 1;
+    });
+
+    return {
+      totalClasses: entries.length,
+      classesByDay,
+      classesByGrade,
+      classesBySubject,
+      entries,
+    };
+  }
+
+  // Check if teacher is available at a specific time
+  async isTeacherAvailable(
+    tenantId: string,
+    termId: string,
+    teacherId: string,
+    dayOfWeek: number,
+    timeSlotId: string,
+  ): Promise&lt;boolean&gt; {
+    const existing &#x3D; await this.entryRepo.findOne({
+      where: {
+        tenantId,
+        termId,
+        teacherId,
+        dayOfWeek,
+        timeSlotId,
+        isActive: true,
+      },
+    });
+
+    return !existing; // Available if no entry found
+  }
+
+  // Get all teachers with their teaching load for a term
+  async getAllTeachersWithLoad(
+    user: ActiveUserData,
+    termId: string,
+  ): Promise&lt;Array&lt;{
+    teacherId: string;
+    teacherName: string;
+    totalClasses: number;
+    subjects: string[];
+    grades: string[];
+  }&gt;&gt; {
+    const entries &#x3D; await this.entryRepo.find({
+      where: { tenantId: user.tenantId, termId, isActive: true },
+    });
+
+    const teacherMap &#x3D; new Map&lt;string, {
+      teacherId: string;
+      teacherName: string;
+      totalClasses: number;
+      subjects: Set&lt;string&gt;;
+      grades: Set&lt;string&gt;;
+    }&gt;();
+
+    entries.forEach((entry) &#x3D;&gt; {
+      const teacherId &#x3D; entry.teacherId;
+      const teacherName &#x3D; entry.teacher.fullName || &#x27;Unknown&#x27;;
+      
+      if (!teacherMap.has(teacherId)) {
+        teacherMap.set(teacherId, {
+          teacherId,
+          teacherName,
+          totalClasses: 0,
+          subjects: new Set(),
+          grades: new Set(),
+        });
+      }
+
+      const data &#x3D; teacherMap.get(teacherId)!;
+      data.totalClasses++;
+      data.subjects.add(entry.subject?.name || &#x27;Unknown&#x27;);
+      data.grades.add(entry.grade?.name || &#x27;Unknown&#x27;);
+    });
+
+    return Array.from(teacherMap.values()).map((data) &#x3D;&gt; ({
+      teacherId: data.teacherId,
+      teacherName: data.teacherName,
+      totalClasses: data.totalClasses,
+      subjects: Array.from(data.subjects),
+      grades: Array.from(data.grades),
+    }));
+  }
+
+  // Get teacher conflicts (same time, different classes)
+  async getTeacherConflicts(
+    user: ActiveUserData,
+    termId: string,
+  ): Promise&lt;Array&lt;{
+    teacherId: string;
+    teacherName: string;
+    dayOfWeek: number;
+    timeSlotId: string;
+    conflictingEntries: TimetableEntry[];
+  }&gt;&gt; {
+    const entries &#x3D; await this.entryRepo.find({
+      where: { tenantId: user.tenantId, termId, isActive: true },
+    });
+
+    const conflicts: Array&lt;{
+      teacherId: string;
+      teacherName: string;
+      dayOfWeek: number;
+      timeSlotId: string;
+      conflictingEntries: TimetableEntry[];
+    }&gt; &#x3D; [];
+
+    // Group by teacher + day + timeSlot
+    const groupKey &#x3D; (entry: TimetableEntry) &#x3D;&gt;
+      &#x60;${entry.teacherId}-${entry.dayOfWeek}-${entry.timeSlotId}&#x60;;
+
+    const grouped &#x3D; new Map&lt;string, TimetableEntry[]&gt;();
+    entries.forEach((entry) &#x3D;&gt; {
+      const key &#x3D; groupKey(entry);
+      if (!grouped.has(key)) {
+        grouped.set(key, []);
+      }
+      grouped.get(key)!.push(entry);
+    });
+
+    // Find conflicts (more than 1 class at same time)
+    grouped.forEach((entries, key) &#x3D;&gt; {
+      if (entries.length &gt; 1) {
+        const [teacherId, dayOfWeek, timeSlotId] &#x3D; key.split(&#x27;-&#x27;);
+        conflicts.push({
+          teacherId,
+          teacherName: entries[0].teacher?.fullName || &#x27;Unknown&#x27;,
+          dayOfWeek: parseInt(dayOfWeek),
+          timeSlotId,
+          conflictingEntries: entries,
+        });
+      }
+    });
+
+    return conflicts;
+  }
+
+  // Helper to get entries for specific grades
+  async getMultipleGradeTimetables(
+    user: ActiveUserData,
+    termId: string,
+    gradeIds: string[],
+  ): Promise&lt;TimetableEntry[]&gt; {
+    return this.entryRepo.find({
+      where: {
+        tenantId: user.tenantId,
+        termId,
+        gradeId: In(gradeIds),
+        isActive: true,
+      },
+      order: { dayOfWeek: &#x27;ASC&#x27; },
+    });
+  }
+
+
+
+  // timetable.service.ts
+
+async getMyTimetable(
+  user: ActiveUserData,
+  termId: string,
+): Promise&lt;TimetableData&gt; {
+  if (!user.tenantId) {
+    throw new BadRequestException(&#x27;Tenant ID is required&#x27;);
+  }
+
+  // Get all grades the user teaches (or has access to)
+  const gradeRepo &#x3D; this.dataSource.getRepository(&#x27;TenantGradeLevel&#x27;);
+  const grades &#x3D; await gradeRepo.find({
+    where: { teacherId: user.sub, tenant: { id: user.tenantId }, isActive: true },
+    order: { sortOrder: &#x27;ASC&#x27; },
+  });
+
+  // Fetch all necessary data
+  const [timeSlots, breaks, entries] &#x3D; await Promise.all([
+    this.getTimeSlots(user),
+    this.getBreaks(user),
+    this.entryRepo.find({
+      where: { tenantId: user.tenantId, termId, teacherId: user.sub, isActive: true },
+      order: { dayOfWeek: &#x27;ASC&#x27;, timeSlotId: &#x27;ASC&#x27; },
+    }),
+  ]);
+
+  const gradeInfos: GradeInfo[] &#x3D; grades.map((g, index) &#x3D;&gt; ({
+    id: g.id,
+    name: g.gradeLevel?.name || g.name || &#x60;Grade ${index + 1}&#x60;,
+    displayName: g.shortName || g.gradeLevel?.name || g.name || &#x60;G${index + 1}&#x60;,
+    level: g.sortOrder || index + 1,
+  }));
+
+  return {
+    timeSlots,
+    breaks,
+    entries,
+    grades: gradeInfos,
+    lastUpdated: new Date().toISOString(),
+  };
+}
+
+
+async getMyTimetableAsTeacher(
+  user: ActiveUserData,
+  termId: string
+): Promise&lt;TimetableData&gt; {
+  return this.getTeacherTimetableData(user, termId, user.sub);
+}
+
+
+}
+
+// AIzaSyB3QdbcO-mLCQVhg9lA7ygmP53uWH0bM1Q</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'TimetableService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

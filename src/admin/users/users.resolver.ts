@@ -9,6 +9,9 @@ import { GraphQLExceptionsFilter } from '../common/filter/graphQLException.filte
 import { MembershipRole } from '../user-tenant-membership/entities/user-tenant-membership.entity';
 import { TenantUserSummary } from './dtos/tenant-user-summary.output';
 import { Public } from '../auth/decorator/public.decorator';
+import { Roles } from 'src/iam/decorators/roles.decorator';
+import { ActiveUser } from '../auth/decorator/active-user.decorator';
+import { ActiveUserData } from '../auth/interface/active-user.interface';
 
 
 @Resolver(() => User)
@@ -75,6 +78,16 @@ export class UsersResolver {
     return await this.usersService.findAll();
   }
 
+  @Roles(MembershipRole.SCHOOL_ADMIN)
+  @Mutation(() => Boolean)
+  async deleteUser(
+    @ActiveUser() user: ActiveUserData,
+    @Args('userId') userId: string,
+  ) {
+    
+    return this.usersService.deleteUser(userId, user);
+  }
+
   @Query(() => [User], { name: 'usersByTenant' })
   async usersByTenant(
     @Args('tenantId') tenantId: string,
@@ -90,3 +103,5 @@ export class UsersResolver {
     return await this.usersService.findAllUsersOfTenant(tenantId);
   }
 }
+
+

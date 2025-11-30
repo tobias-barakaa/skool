@@ -1,0 +1,951 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>skool documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">skool documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content entity">
+                   <div class="content-data">
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Entities</li>
+  <li class="breadcrumb-item" >FeeStructure</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/admin/finance/fee-structure/entities/fee-structure.entity.ts</code>
+        </p>
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                <a href="#academicYear" >academicYear</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                <a href="#academicYearId" >academicYearId</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                <a href="#createdAt" >createdAt</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Optional</span>
+                                <a href="#gradeLevels" >gradeLevels</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                <a href="#id" >id</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                <a href="#isActive" >isActive</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier">Optional</span>
+                                <a href="#items" >items</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                <a href="#name" >name</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                <a href="#tenantId" >tenantId</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                <a href="#terms" >terms</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                    <span class="modifier"></span>
+                                <a href="#updatedAt" >updatedAt</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="academicYear"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                        <span ><b>academicYear</b></span>
+                        <a href="#academicYear"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../classes/AcademicYear.html" target="_self" >AcademicYear</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @Field(undefined)<br />@ManyToOne(undefined)<br />@JoinColumn({name: &#x27;academicYearId&#x27;})<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="31" class="link-to-prism">src/admin/finance/fee-structure/entities/fee-structure.entity.ts:31</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="academicYearId"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                        <span ><b>academicYearId</b></span>
+                        <a href="#academicYearId"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @Field()<br />@Column()<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="26" class="link-to-prism">src/admin/finance/fee-structure/entities/fee-structure.entity.ts:26</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createdAt"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                        <span ><b>createdAt</b></span>
+                        <a href="#createdAt"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @Field(undefined)<br />@CreateDateColumn()<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="61" class="link-to-prism">src/admin/finance/fee-structure/entities/fee-structure.entity.ts:61</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="gradeLevels"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier">Optional</span>
+                        <span ><b>gradeLevels</b></span>
+                        <a href="#gradeLevels"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../miscellaneous/variables.html#Tenant" target="_self" >TenantGradeLevel[]</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @Field(undefined, {nullable: true})<br />@ManyToMany(undefined)<br />@JoinTable({name: &#x27;fee_structure_grade_levels&#x27;, joinColumn: undefined, inverseJoinColumn: undefined})<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="49" class="link-to-prism">src/admin/finance/fee-structure/entities/fee-structure.entity.ts:49</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="id"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                        <span ><b>id</b></span>
+                        <a href="#id"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @Field(undefined)<br />@PrimaryGeneratedColumn(&#x27;uuid&#x27;)<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/admin/finance/fee-structure/entities/fee-structure.entity.ts:14</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="isActive"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                        <span ><b>isActive</b></span>
+                        <a href="#isActive"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @Field()<br />@Column({default: true})<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="57" class="link-to-prism">src/admin/finance/fee-structure/entities/fee-structure.entity.ts:57</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="items"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier">Optional</span>
+                        <span ><b>items</b></span>
+                        <a href="#items"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>FeeStructureItem[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @Field(undefined, {nullable: true})<br />@OneToMany(undefined, item &#x3D;&gt; item.feeStructure)<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="53" class="link-to-prism">src/admin/finance/fee-structure/entities/fee-structure.entity.ts:53</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="name"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                        <span ><b>name</b></span>
+                        <a href="#name"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @Field()<br />@Column()<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">src/admin/finance/fee-structure/entities/fee-structure.entity.ts:18</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="tenantId"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                        <span ><b>tenantId</b></span>
+                        <a href="#tenantId"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @Field()<br />@Column()<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">src/admin/finance/fee-structure/entities/fee-structure.entity.ts:22</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="terms"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                        <span ><b>terms</b></span>
+                        <a href="#terms"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../classes/Term.html" target="_self" >Term[]</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @Field(undefined)<br />@ManyToMany(undefined)<br />@JoinTable({name: &#x27;fee_structure_terms&#x27;, joinColumn: undefined, inverseJoinColumn: undefined})<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="40" class="link-to-prism">src/admin/finance/fee-structure/entities/fee-structure.entity.ts:40</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updatedAt"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                            <span class="modifier"></span>
+                        <span ><b>updatedAt</b></span>
+                        <a href="#updatedAt"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date" target="_blank" >Date</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @Field(undefined)<br />@UpdateDateColumn()<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="65" class="link-to-prism">src/admin/finance/fee-structure/entities/fee-structure.entity.ts:65</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { ObjectType, Field, ID } from &#x27;@nestjs/graphql&#x27;;
+import { AcademicYear } from &#x27;src/admin/academic_years/entities/academic_years.entity&#x27;;
+import { Term } from &#x27;src/admin/academic_years/entities/terms.entity&#x27;;
+import { TenantGradeLevel } from &#x27;src/admin/school-type/entities/tenant-grade-level&#x27;;
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, JoinTable, OneToMany, JoinColumn, CreateDateColumn, UpdateDateColumn } from &#x27;typeorm&#x27;;
+import { FeeStructureItem } from &#x27;../../fee-structure-item/entities/fee-structure-item.entity&#x27;;
+
+
+@Entity(&#x27;fee_structures&#x27;)
+@ObjectType()
+export class FeeStructure {
+  @Field(() &#x3D;&gt; ID)
+  @PrimaryGeneratedColumn(&#x27;uuid&#x27;)
+  id: string;
+
+  @Field()
+  @Column()
+  name: string;
+
+  @Field()
+  @Column()
+  tenantId: string;
+
+  @Field()
+  @Column()
+  academicYearId: string;
+
+  @Field(() &#x3D;&gt; AcademicYear)
+  @ManyToOne(() &#x3D;&gt; AcademicYear)
+  @JoinColumn({ name: &#x27;academicYearId&#x27; })
+  academicYear: AcademicYear;
+
+  @Field(() &#x3D;&gt; [Term])
+  @ManyToMany(() &#x3D;&gt; Term)
+  @JoinTable({
+    name: &#x27;fee_structure_terms&#x27;,
+    joinColumn: { name: &#x27;fee_structure_id&#x27; },
+    inverseJoinColumn: { name: &#x27;term_id&#x27; }
+  })
+  terms: Term[];
+
+  @Field(() &#x3D;&gt; [TenantGradeLevel], { nullable: true })
+  @ManyToMany(() &#x3D;&gt; TenantGradeLevel)
+  @JoinTable({
+    name: &#x27;fee_structure_grade_levels&#x27;,
+    joinColumn: { name: &#x27;fee_structure_id&#x27; },
+    inverseJoinColumn: { name: &#x27;grade_level_id&#x27; }
+  })
+  gradeLevels?: TenantGradeLevel[];
+
+  @Field(() &#x3D;&gt; [FeeStructureItem], { nullable: true })
+  @OneToMany(() &#x3D;&gt; FeeStructureItem, item &#x3D;&gt; item.feeStructure)
+  items?: FeeStructureItem[];
+
+  @Field()
+  @Column({ default: true })
+  isActive: boolean;
+
+  @Field(() &#x3D;&gt; Date)
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @Field(() &#x3D;&gt; Date)
+  @UpdateDateColumn()
+  updatedAt: Date;
+}
+
+// import { Field, ID, ObjectType, GraphQLISODateTime } from &quot;@nestjs/graphql&quot;;
+// import {
+//   Column,
+//   Entity,
+//   PrimaryGeneratedColumn,
+//   OneToMany,
+//   ManyToOne,
+//   JoinColumn,
+//   CreateDateColumn,
+//   UpdateDateColumn,
+//   Index,
+//   Unique,
+//   ManyToMany,
+//   JoinTable
+// } from &quot;typeorm&quot;;
+// import { AcademicYear } from &quot;src/admin/academic_years/entities/academic_years.entity&quot;;
+// import { Term } from &quot;src/admin/academic_years/entities/terms.entity&quot;;
+// import { TenantGradeLevel } from &quot;src/admin/school-type/entities/tenant-grade-level&quot;;
+// import { FeeStructureItem } from &quot;../../fee-structure-item/entities/fee-structure-item.entity&quot;;
+
+// @Entity(&#x27;fee_structures&#x27;)
+// @ObjectType({ description: &#x27;Represents a fee structure for specific grades, terms and academic year&#x27; })
+// @Unique([&#x27;tenantId&#x27;, &#x27;academicYearId&#x27;, &#x27;name&#x27;]) 
+// export class FeeStructure {
+//   @Field(() &#x3D;&gt; ID, { description: &#x27;The unique identifier of the fee structure&#x27; })
+//   @PrimaryGeneratedColumn(&#x27;uuid&#x27;)
+//   id: string;
+
+//   @Field({ description: &#x27;The ID of the tenant this fee structure belongs to&#x27; })
+//   @Column()
+//   tenantId: string;
+
+//   @Field({ description: &#x27;The name of the fee structure&#x27; })
+//   @Column()
+//   name: string;
+
+//   @Field(() &#x3D;&gt; ID, { description: &#x27;The ID of the academic year&#x27; })
+//   @Column()
+//   academicYearId: string;
+
+//   @Field(() &#x3D;&gt; AcademicYear, { description: &#x27;The academic year this fee structure belongs to&#x27; })
+//   @ManyToOne(() &#x3D;&gt; AcademicYear, { eager: true })
+//   @JoinColumn({ name: &#x27;academicYearId&#x27; })
+//   academicYear: AcademicYear;
+
+
+//   @Field(() &#x3D;&gt; [Term], { description: &#x27;The terms this fee structure applies to&#x27; })
+//   @ManyToMany(() &#x3D;&gt; Term, { eager: true })
+//   @JoinTable({
+//     name: &#x27;fee_structure_terms&#x27;,
+//     joinColumn: { name: &#x27;fee_structure_id&#x27;, referencedColumnName: &#x27;id&#x27; },
+//     inverseJoinColumn: { name: &#x27;term_id&#x27;, referencedColumnName: &#x27;id&#x27; },
+//   })
+//   terms: Term[];
+
+//   @Field(() &#x3D;&gt; [TenantGradeLevel], {
+//     description: &#x27;The grade levels this fee structure applies to&#x27;,
+//     nullable: true,
+//   })
+//   @ManyToMany(() &#x3D;&gt; TenantGradeLevel, { eager: true })
+//   @JoinTable({
+//     name: &#x27;fee_structure_grade_levels&#x27;,
+//     joinColumn: { name: &#x27;fee_structure_id&#x27;, referencedColumnName: &#x27;id&#x27; },
+//     inverseJoinColumn: { name: &#x27;grade_level_id&#x27;, referencedColumnName: &#x27;id&#x27; },
+//   })
+//   gradeLevels?: TenantGradeLevel[];
+
+//   @Field({ description: &#x27;Indicates if the fee structure is currently active&#x27; })
+//   @Column({ default: true })
+//   isActive: boolean;
+
+//   @Field(() &#x3D;&gt; [FeeStructureItem], { description: &#x27;The fee items in this structure&#x27; })
+//   @OneToMany(() &#x3D;&gt; FeeStructureItem, (item) &#x3D;&gt; item.feeStructure, { cascade: true })
+//   items: FeeStructureItem[];
+
+//   @Field(() &#x3D;&gt; GraphQLISODateTime, { description: &#x27;The date and time when the fee structure was created&#x27; })
+//   @CreateDateColumn()
+//   createdAt: Date;
+
+//   @Field(() &#x3D;&gt; GraphQLISODateTime, { description: &#x27;The date and time when the fee structure was last updated&#x27; })
+//   @UpdateDateColumn()
+//   updatedAt: Date;
+// }
+
+
+
+// import { Field, ID, ObjectType, GraphQLISODateTime } from &quot;@nestjs/graphql&quot;;
+// import {
+//   Column,
+//   Entity,
+//   PrimaryGeneratedColumn,
+//   OneToMany,
+//   ManyToOne,
+//   JoinColumn,
+//   CreateDateColumn,
+//   UpdateDateColumn,
+//   Index,
+//   Unique,
+//   ManyToMany,
+//   JoinTable
+// } from &quot;typeorm&quot;;
+// import { AcademicYear } from &quot;src/admin/academic_years/entities/academic_years.entity&quot;;
+// import { Term } from &quot;src/admin/academic_years/entities/terms.entity&quot;;
+// import { TenantGradeLevel } from &quot;src/admin/school-type/entities/tenant-grade-level&quot;;
+// import { FeeStructureItem } from &quot;../../fee-structure-item/entities/fee-structure-item.entity&quot;;
+
+// @Entity(&#x27;fee_structures&#x27;)
+// @ObjectType({ description: &#x27;Represents a fee structure for specific grades, terms and academic year&#x27; })
+// @Unique([&#x27;tenantId&#x27;, &#x27;academicYearId&#x27;, &#x27;name&#x27;]) 
+// export class FeeStructure {
+//   @Field(() &#x3D;&gt; ID, { description: &#x27;The unique identifier of the fee structure&#x27; })
+//   @PrimaryGeneratedColumn(&#x27;uuid&#x27;)
+//   id: string;
+
+//   @Field({ description: &#x27;The ID of the tenant this fee structure belongs to&#x27; })
+//   @Column()
+//   tenantId: string;
+
+//   @Field({ description: &#x27;The name of the fee structure&#x27; })
+//   @Column()
+//   name: string;
+
+//   @Field(() &#x3D;&gt; ID, { description: &#x27;The ID of the academic year&#x27; })
+//   @Column()
+//   academicYearId: string;
+
+//   @Field(() &#x3D;&gt; AcademicYear, { description: &#x27;The academic year this fee structure belongs to&#x27; })
+//   @ManyToOne(() &#x3D;&gt; AcademicYear)
+//   @JoinColumn({ name: &#x27;academicYearId&#x27; })
+//   academicYear: AcademicYear;
+
+//   @Field(() &#x3D;&gt; [Term], { description: &#x27;The terms this fee structure applies to&#x27; })
+//   @ManyToMany(() &#x3D;&gt; Term)
+//   @JoinTable({
+//     name: &#x27;fee_structure_terms&#x27;,
+//     joinColumn: { name: &#x27;fee_structure_id&#x27;, referencedColumnName: &#x27;id&#x27; },
+//     inverseJoinColumn: { name: &#x27;term_id&#x27;, referencedColumnName: &#x27;id&#x27; },
+//   })
+//   terms: Term[];
+
+//   @Field(() &#x3D;&gt; [TenantGradeLevel], {
+//     description: &#x27;The grade levels this fee structure applies to&#x27;,
+//     nullable: true,
+//   })
+//   @ManyToMany(() &#x3D;&gt; TenantGradeLevel)
+//   @JoinTable({
+//     name: &#x27;fee_structure_grade_levels&#x27;,
+//     joinColumn: { name: &#x27;fee_structure_id&#x27;, referencedColumnName: &#x27;id&#x27; },
+//     inverseJoinColumn: { name: &#x27;grade_level_id&#x27;, referencedColumnName: &#x27;id&#x27; },
+//   })
+//   gradeLevels?: TenantGradeLevel[];
+
+//   @Field({ description: &#x27;Indicates if the fee structure is currently active&#x27; })
+//   @Column({ default: true })
+//   isActive: boolean;
+
+//   @Field(() &#x3D;&gt; [FeeStructureItem], { description: &#x27;The fee items in this structure&#x27; })
+//   @OneToMany(() &#x3D;&gt; FeeStructureItem, (item) &#x3D;&gt; item.feeStructure, { cascade: true })
+//   items: FeeStructureItem[];
+
+//   @Field(() &#x3D;&gt; GraphQLISODateTime, { description: &#x27;The date and time when the fee structure was created&#x27; })
+//   @CreateDateColumn()
+//   createdAt: Date;
+
+//   @Field(() &#x3D;&gt; GraphQLISODateTime, { description: &#x27;The date and time when the fee structure was last updated&#x27; })
+//   @UpdateDateColumn()
+//   updatedAt: Date;
+// }</code></pre>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'entity';
+            var COMPODOC_CURRENT_PAGE_URL = 'FeeStructure.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
