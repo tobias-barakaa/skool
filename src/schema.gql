@@ -727,40 +727,31 @@ input EnterStudentMarksInput {
 Represents bulk assignment of fee structure to students in specific grade levels
 """
 type FeeAssignment {
-  """The ID of the user who created this assignment"""
   assignedBy: ID!
   assignedByUser: User!
-
-  """The date and time when the fee assignment was created"""
   createdAt: DateTime!
-
-  """Optional description or notes about this assignment"""
   description: String
-
-  """The fee structure being assigned"""
   feeStructure: FeeStructure!
-
-  """The ID of the fee structure being assigned"""
   feeStructureId: ID!
 
-  """Indicates if the fee assignment has any student assignments"""
+  """Grade levels this assignment applies to"""
+  gradeLevels: [FeeAssignmentGradeLevel!]!
   hasItems: Boolean!
-
-  """The unique identifier of the fee assignment"""
   id: ID!
-
-  """Indicates if the fee assignment is currently active"""
   isActive: Boolean!
-
-  """Individual student assignments created from this bulk assignment"""
   studentAssignments: [StudentFeeAssignment!]!
   studentsAssignedCount: Int!
-
-  """The ID of the tenant this fee assignment belongs to"""
+  tenantGradeLevelIds: [String!]!
   tenantId: String!
-
-  """The date and time when the fee assignment was last updated"""
   updatedAt: DateTime!
+}
+
+"""Junction table for fee assignments and grade levels"""
+type FeeAssignmentGradeLevel {
+  feeAssignmentId: ID!
+  id: ID!
+  tenantGradeLevel: TenantGradeLevel!
+  tenantGradeLevelId: ID!
 }
 
 """Fee assignment with detailed student information and fee items"""

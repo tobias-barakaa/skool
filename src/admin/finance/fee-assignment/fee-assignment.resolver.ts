@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, ID, Parent, ResolveField } from '@nestjs/graphql';
 import { FeeAssignment } from './entities/fee-assignment.entity';
 import { FeeAssignmentService } from './fee-assignment.service';
 import { CreateFeeAssignmentInput } from './dtos/assignment-structure.input';
@@ -189,10 +189,38 @@ async studentFeeSummary(
   async getFeeAssignmentsByGradeLevels(
     @Args('input') input: GetFeeAssignmentsByGradeLevelsInput,
     @ActiveUser() user: ActiveUserData,
-  ): Promise<FeeAssignmentWithStudents[]> {
+  ) {
     return this.feeAssignmentService.getFeeAssignmentsByGradeLevels(input, user);
   }
+
+  @ResolveField(() => [String], { 
+    name: 'tenantGradeLevelIds',
+    description: 'Array of tenant grade level IDs this assignment applies to' 
+  })
+  resolveTenantGradeLevelIds(@Parent() feeAssignment: FeeAssignment): string[] {
+    if (!feeAssignment.gradeLevels || feeAssignment.gradeLevels.length === 0) {
+      return [];
+    }
+    return feeAssignment.gradeLevels.map(gl => gl.tenantGradeLevelId);
+  }
   
+
+
+
+  @ResolveField(() => [String])
+  tenantGradeLevelIds(@Parent() feeAssignment: FeeAssignment): string[] {
+    if (!feeAssignment.gradeLevels || feeAssignment.gradeLevels.length === 0) {
+      return [];
+    }
+    return feeAssignment.gradeLevels.map(gl => gl.tenantGradeLevelId);
+  }
+
+
+
+
+
+
+
   @Query(() => TenantFeeAssignmentSummary, {
     description: 'Get all fee assignments for the current tenant with complete student and grade level data'
   })

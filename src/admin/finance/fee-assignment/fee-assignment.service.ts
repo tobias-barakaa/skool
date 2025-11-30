@@ -658,73 +658,144 @@ export class FeeAssignmentService {
   }
 
 
-  async getFeeAssignmentsByGradeLevels(
-    input: GetFeeAssignmentsByGradeLevelsInput,
-    user: ActiveUserData,
-  ): Promise<FeeAssignmentWithStudents[]> {
-    const { tenantGradeLevelIds, feeStructureId } = input;
-    const tenantId = user.tenantId;
-  
-    console.log('=== FETCHING FEE ASSIGNMENTS BY GRADE LEVELS ===');
-    console.log('Tenant ID:', tenantId);
-    console.log('Target Tenant GradeLevel IDs:', tenantGradeLevelIds);
-    console.log('Fee Structure Filter:', feeStructureId);
-  
-    const queryBuilder = this.feeAssignmentRepo
-      .createQueryBuilder('fa')
-      .innerJoinAndSelect('fa.feeStructure', 'fs')
-      .innerJoinAndSelect('fa.assignedByUser', 'abu')
-      .innerJoin('fa.gradeLevels', 'fagl')
-      .where('fa.tenantId = :tenantId', { tenantId })
-      .andWhere('fa.isActive = true')
-      .andWhere('fagl.tenantGradeLevelId IN (:...tenantGradeLevelIds)', { tenantGradeLevelIds });
-  
-    if (feeStructureId) {
-      queryBuilder.andWhere('fa.feeStructureId = :feeStructureId', { feeStructureId });
-    }
-  
-    const feeAssignments = await queryBuilder.getMany();
-  
-    if (!feeAssignments.length) return [];
-  
-    const assignmentIds = feeAssignments.map(fa => fa.id);
-  
-    const studentAssignments = await this.studentFeeAssignmentRepo.find({
-      where: {
-        tenantId,
-        feeAssignmentId: In(assignmentIds),
-        isActive: true,
-      },
-      relations: [
-        'student',
-        'student.grade',           
-        'student.grade.gradeLevel',
-        'feeItems',
-        'feeItems.feeStructureItem',
-      ],
-    });
-  
-    const result: FeeAssignmentWithStudents[] = [];
-  
-    for (const fa of feeAssignments) {
-      const students = studentAssignments.filter(
-        sa =>
-          sa.feeAssignmentId === fa.id &&
-          sa.student.grade?.id &&
-          tenantGradeLevelIds.includes(sa.student.grade.id),
-      );
-  
-      result.push({
-        feeAssignment: fa,
-        studentAssignments: students,
-        totalStudents: students.length,
-      });
-    }
-  
-    console.log(`Found ${result.length} fee assignments with students`);
-    
-    return result;
+  // fee-assignment.service.ts
+
+async getFeeAssignmentsByGradeLevels(
+  input: GetFeeAssignmentsByGradeLevelsInput,
+  user: ActiveUserData,
+) {
+  const { tenantGradeLevelIds, feeStructureId } = input;
+  const tenantId = user.tenantId;
+
+  console.log('=== FETCHING FEE ASSIGNMENTS BY GRADE LEVELS ===');
+  console.log('Tenant ID:', tenantId);
+  console.log('Target Tenant GradeLevel IDs:', tenantGradeLevelIds);
+  console.log('Fee Structure Filter:', feeStructureId);
+
+  // ✅ Build query with proper joins
+  const queryBuilder = this.feeAssignmentRepo
+    .createQueryBuilder('fa')
+    .leftJoinAndSelect('fa.feeStructure', 'fs')
+    .leftJoinAndSelect('fa.assignedByUser', 'abu')
+    .leftJoinAndSelect('fa.gradeLevels', 'fagl')  // ✅ Changed to leftJoinAndSelect
+    .leftJoinAndSelect('fagl.tenantGradeLevel', 'tgl')  // ✅ Load full TenantGradeLevel
+    .where('fa.tenantId = :tenantId', { tenantId })
+    .andWhere('fa.isActive = true')
+    .andWhere('fagl.tenantGradeLevelId IN (:...tenantGradeLevelIds)', { tenantGradeLevelIds });
+
+  if (feeStructureId) {
+    queryBuilder.andWhere('fa.feeStructureId = :feeStructureId', { feeStructureId });
   }
+
+  const feeAssignments = await queryBuilder.getMany();
+
+  if (!feeAssignments.length) return [];
+
+  const assignmentIds = feeAssignments.map(fa => fa.id);
+
+  // ✅ Load student assignments with all relations
+  const studentAssignments = await this.studentFeeAssignmentRepo.find({
+    where: {
+      tenantId,
+      feeAssignmentId: In(assignmentIds),
+      isActive: true,
+    },
+    relations: [
+      'student',
+      'student.user',  // ✅ Added user relation
+      'student.grade',           
+      'student.grade.gradeLevel',
+      'feeItems',
+      'feeItems.feeStructureItem',
+      'feeItems.feeStructureItem.feeBucket',  // ✅ Added feeBucket relation
+    ],
+  });
+
+  const result: FeeAssignmentWithStudents[] = [];
+
+  for (const fa of feeAssignments) {
+    // ✅ Filter students that belong to this assignment
+    const students = studentAssignments.filter(sa => sa.feeAssignmentId === fa.id);
+
+    result.push({
+      feeAssignment: fa,
+      studentAssignments: students,
+      totalStudents: students.length,
+    });
+  }
+
+  console.log(`Found ${result.length} fee assignments with ${studentAssignments.length} total student assignments`);
+  
+  return result;
+}
+
+  // async getFeeAssignmentsByGradeLevels(
+  //   input: GetFeeAssignmentsByGradeLevelsInput,
+  //   user: ActiveUserData,
+  // ): Promise<FeeAssignmentWithStudents[]> {
+  //   const { tenantGradeLevelIds, feeStructureId } = input;
+  //   const tenantId = user.tenantId;
+  
+  //   console.log('=== FETCHING FEE ASSIGNMENTS BY GRADE LEVELS ===');
+  //   console.log('Tenant ID:', tenantId);
+  //   console.log('Target Tenant GradeLevel IDs:', tenantGradeLevelIds);
+  //   console.log('Fee Structure Filter:', feeStructureId);
+  
+  //   const queryBuilder = this.feeAssignmentRepo
+  //     .createQueryBuilder('fa')
+  //     .innerJoinAndSelect('fa.feeStructure', 'fs')
+  //     .innerJoinAndSelect('fa.assignedByUser', 'abu')
+  //     .innerJoin('fa.gradeLevels', 'fagl')
+  //     .where('fa.tenantId = :tenantId', { tenantId })
+  //     .andWhere('fa.isActive = true')
+  //     .andWhere('fagl.tenantGradeLevelId IN (:...tenantGradeLevelIds)', { tenantGradeLevelIds });
+  
+  //   if (feeStructureId) {
+  //     queryBuilder.andWhere('fa.feeStructureId = :feeStructureId', { feeStructureId });
+  //   }
+  
+  //   const feeAssignments = await queryBuilder.getMany();
+  
+  //   if (!feeAssignments.length) return [];
+  
+  //   const assignmentIds = feeAssignments.map(fa => fa.id);
+  
+  //   const studentAssignments = await this.studentFeeAssignmentRepo.find({
+  //     where: {
+  //       tenantId,
+  //       feeAssignmentId: In(assignmentIds),
+  //       isActive: true,
+  //     },
+  //     relations: [
+  //       'student',
+  //       'student.grade',           
+  //       'student.grade.gradeLevel',
+  //       'feeItems',
+  //       'feeItems.feeStructureItem',
+  //     ],
+  //   });
+  
+  //   const result: FeeAssignmentWithStudents[] = [];
+  
+  //   for (const fa of feeAssignments) {
+  //     const students = studentAssignments.filter(
+  //       sa =>
+  //         sa.feeAssignmentId === fa.id &&
+  //         sa.student.grade?.id &&
+  //         tenantGradeLevelIds.includes(sa.student.grade.id),
+  //     );
+  
+  //     result.push({
+  //       feeAssignment: fa,
+  //       studentAssignments: students,
+  //       totalStudents: students.length,
+  //     });
+  //   }
+  
+  //   console.log(`Found ${result.length} fee assignments with students`);
+    
+  //   return result;
+  // }
   
   // async getFeeAssignmentsByGradeLevels(
   //   input: GetFeeAssignmentsByGradeLevelsInput,

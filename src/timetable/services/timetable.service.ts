@@ -279,61 +279,141 @@ private format12Hour(time: string): string {
 
 
   // ========== TIMETABLE ENTRIES ==========
-  async createEntry(
-    user: ActiveUserData,
-    input: CreateTimetableEntryInput,
-  ): Promise<TimetableEntry> {
-    const termRepo = this.dataSource.getRepository('Term');
-    const gradeRepo = this.dataSource.getRepository('TenantGradeLevel');
-    const subjectRepo = this.dataSource.getRepository('TenantSubject');
-    const teacherRepo = this.dataSource.getRepository('Teacher');
-    const timeSlotRepo = this.dataSource.getRepository('TimeSlot');
+  // async createEntry(
+  //   user: ActiveUserData,
+  //   input: CreateTimetableEntryInput,
+  // ): Promise<TimetableEntry> {
+  //   const termRepo = this.dataSource.getRepository('Term');
+  //   const gradeRepo = this.dataSource.getRepository('TenantGradeLevel');
+  //   const subjectRepo = this.dataSource.getRepository('TenantSubject');
+  //   const teacherRepo = this.dataSource.getRepository('Teacher');
+  //   const timeSlotRepo = this.dataSource.getRepository('TimeSlot');
   
-    const [term, grade, subject, teacher, timeSlot] = await Promise.all([
-      termRepo.findOne({ where: { id: input.termId, tenantId: user.tenantId } }),
-      gradeRepo.findOne({ where: { id: input.gradeId, tenant: { id: user.tenantId } } }),
-      subjectRepo.findOne({ where: { id: input.subjectId, tenant: { id: user.tenantId } } }),
-      teacherRepo.findOne({ where: { id: input.teacherId, tenant: { id: user.tenantId } } }),
-      timeSlotRepo.findOne({ where: { id: input.timeSlotId, tenant: { id: user.tenantId } } }),
-    ]);
+  //   const [term, grade, subject, teacher, timeSlot] = await Promise.all([
+  //     termRepo.findOne({ where: { id: input.termId, tenantId: user.tenantId } }),
+  //     gradeRepo.findOne({ where: { id: input.gradeId, tenant: { id: user.tenantId } } }),
+  //     subjectRepo.findOne({ where: { id: input.subjectId, tenant: { id: user.tenantId } } }),
+  //     teacherRepo.findOne({ where: { id: input.teacherId, tenant: { id: user.tenantId } } }),
+  //     timeSlotRepo.findOne({ where: { id: input.timeSlotId, tenant: { id: user.tenantId } } }),
+  //   ]);
   
-    if (!term || !grade || !subject || !teacher || !timeSlot) {
-      throw new BadRequestException('One or more IDs are invalid for your tenant');
-    }
+  //   if (!term || !grade || !subject || !teacher || !timeSlot) {
+  //     throw new BadRequestException('One or more IDs are invalid for your tenant');
+  //   }
   
-    // Prevent duplicate slot for same grade/day/time
-    const existing = await this.entryRepo.findOne({
-      where: {
-        tenantId: user.tenantId,
-        term: { id: term.id },
-        grade: { id: grade.id },
-        dayOfWeek: input.dayOfWeek,
-        timeSlot: { id: timeSlot.id },
-      },
-    });
+  //   // Prevent duplicate slot for same grade/day/time
+  //   const existing = await this.entryRepo.findOne({
+  //     where: {
+  //       tenantId: user.tenantId,
+  //       term: { id: term.id },
+  //       grade: { id: grade.id },
+  //       dayOfWeek: input.dayOfWeek,
+  //       timeSlot: { id: timeSlot.id },
+  //     },
+  //   });
   
-    if (existing) {
-      throw new ConflictException(
-        'A class is already scheduled for this grade at this time',
-      );
-    }
+  //   if (existing) {
+  //     throw new ConflictException(
+  //       'A class is already scheduled for this grade at this time',
+  //     );
+  //   }
   
-    // ✅ Attach relations properly
-    const entry = this.entryRepo.create({
-        tenantId: user.tenantId,
-        dayOfWeek: input.dayOfWeek,
-        roomNumber: input.roomNumber,
-        term: term,           
-        grade: grade,         
-        subject: subject,     
-        teacher: teacher,     
-        timeSlot: timeSlot,   
+  //   // ✅ Attach relations properly
+  //   const entry = this.entryRepo.create({
+  //       tenantId: user.tenantId,
+  //       dayOfWeek: input.dayOfWeek,
+  //       roomNumber: input.roomNumber,
+  //       term: term,           
+  //       grade: grade,         
+  //       subject: subject,     
+  //       teacher: teacher,     
+  //       timeSlot: timeSlot,   
         
-      });
+  //     });
     
-      return await this.entryRepo.save(entry);
-  }
+  //     return await this.entryRepo.save(entry);
+  // }
   
+
+  async createEntry(
+  user: ActiveUserData,
+  input: CreateTimetableEntryInput,
+): Promise<TimetableEntry> {
+  const termRepo = this.dataSource.getRepository('Term');
+  const gradeRepo = this.dataSource.getRepository('TenantGradeLevel');
+  const subjectRepo = this.dataSource.getRepository('TenantSubject');
+  const teacherRepo = this.dataSource.getRepository('Teacher');
+  const timeSlotRepo = this.dataSource.getRepository('TimeSlot');
+
+  // Fetch all relations in parallel
+  const [term, grade, subject, teacher, timeSlot] = await Promise.all([
+    termRepo.findOne({
+      where: { id: input.termId, tenantId: user.tenantId },
+    }),
+    gradeRepo.findOne({
+      where: { id: input.gradeId, tenant: { id: user.tenantId } },
+    }),
+    subjectRepo.findOne({
+      where: { id: input.subjectId, tenant: { id: user.tenantId } },
+    }),
+    teacherRepo.findOne({
+      where: { id: input.teacherId, tenant: { id: user.tenantId } },
+    }),
+    timeSlotRepo.findOne({
+      where: { id: input.timeSlotId, tenant: { id: user.tenantId } },
+    }),
+  ]);
+
+  // One-by-one validation — clear, explicit errors
+  if (!term) {
+    throw new BadRequestException(`Invalid termId: ${input.termId}`);
+  }
+  if (!grade) {
+    throw new BadRequestException(`Invalid gradeId: ${input.gradeId}`);
+  }
+  if (!subject) {
+    throw new BadRequestException(`Invalid subjectId: ${input.subjectId}`);
+  }
+  if (!teacher) {
+    throw new BadRequestException(`Invalid teacherId: ${input.teacherId}`);
+  }
+  if (!timeSlot) {
+    throw new BadRequestException(`Invalid timeSlotId: ${input.timeSlotId}`);
+  }
+
+  // Prevent duplicate timetable entry for the same (grade + day + time + term)
+  const existing = await this.entryRepo.findOne({
+    where: {
+      tenantId: user.tenantId,
+      term: { id: term.id },
+      grade: { id: grade.id },
+      dayOfWeek: input.dayOfWeek,
+      timeSlot: { id: timeSlot.id },
+    },
+  });
+
+  if (existing) {
+    throw new ConflictException(
+      'A class is already scheduled for this grade at this time',
+    );
+  }
+
+  // Create the entry with proper relations
+  const entry = this.entryRepo.create({
+    tenantId: user.tenantId,
+    dayOfWeek: input.dayOfWeek,
+    roomNumber: input.roomNumber,
+
+    term,
+    grade,
+    subject,
+    teacher,
+    timeSlot,
+  });
+
+  return await this.entryRepo.save(entry);
+}
+
 
   async getWholeSchoolTimetable(
     user: ActiveUserData,
