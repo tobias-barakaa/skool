@@ -108,7 +108,7 @@ async adminChangeUserPassword(
   @Args('userId') userId: string,
   @Args('newPassword') newPassword: string,
 ): Promise<boolean> {
-  return this.usersService.adminChangeUserPassword(currentUser, userId, newPassword);
+  return this.usersService.adminChangeUserPassword(userId, newPassword);
 }
 
 
@@ -128,14 +128,24 @@ async adminChangeUserPassword(
   }
 
 
-  @Mutation(() => Boolean, { name: 'adminChangeUserEmail' })
+  @Mutation(() => Boolean, { name: 'setTeacherStatus' })
   @Roles(MembershipRole.SCHOOL_ADMIN)
+  async setTeacherStatus(
+    @ActiveUser() currentUser: ActiveUserData,
+    @Args('teacherId') teacherId: string,
+    @Args('isActive') isActive: boolean,
+  ): Promise<boolean> {
+    return this.usersService.setTeacherStatus(currentUser, teacherId, isActive);
+  }
+
+  @Mutation(() => Boolean, { name: 'adminChangeUserEmail' })
+  @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.SUPER_ADMIN)
   async adminChangeUserEmail(
     @ActiveUser() currentUser: ActiveUserData,
     @Args('userId') userId: string,
     @Args('newEmail') newEmail: string,
   ): Promise<boolean> {
-    return this.usersService.adminChangeUserEmail(currentUser, newEmail);
+    return this.usersService.adminChangeUserEmail(userId, newEmail);
   }
 
   @Query(() => [User], { name: 'users' })

@@ -1445,6 +1445,7 @@ type Mutation {
 
   """Mark a term as the current one for its academic year"""
   setCurrentTerm(id: ID!): Term!
+  setTeacherStatus(isActive: Boolean!, teacherId: String!): Boolean!
   signIn(signInInput: SignInInput!): AuthResponse!
 
   """

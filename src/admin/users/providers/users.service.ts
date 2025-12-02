@@ -52,8 +52,8 @@ export class UsersService {
 
 
 
-  async adminChangeUserPassword(currentUser: ActiveUserData, oldPassword: string, newPassword: string) {
-    return this.usersCreateProvider.changePassword(currentUser, oldPassword, newPassword)
+  async adminChangeUserPassword(userId: string, newPassword: string) {
+    return this.usersCreateProvider.adminChangeUserPassword(userId, newPassword)
   }
 
 
@@ -70,8 +70,12 @@ export class UsersService {
   
 
 
-  async adminChangeUserEmail(currentUser: ActiveUserData, newEmail: string): Promise<boolean> {
-    return this.usersCreateProvider.changeEmail(currentUser, newEmail)
+  async adminChangeUserEmail(userId: string, newEmail: string): Promise<boolean> {
+    return this.usersCreateProvider.adminChangeUserEmail(userId, newEmail)
+  }
+
+  async setTeacherStatus(currentUser: ActiveUserData, teacherId: string, isActive: boolean) {
+    return this.usersCreateProvider.setTeacherStatus(currentUser, teacherId, isActive)
   }
   
 

@@ -12,6 +12,7 @@ import { SchoolAlreadyExistsException, UserAlreadyExistsException } from 'src/ad
 import { TokenProvider } from 'src/admin/auth/providers/token.provider';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { UserInvitation } from 'src/admin/invitation/entities/user-iInvitation.entity';
+import { Teacher } from 'src/admin/teacher/entities/teacher.entity';
 
 @Injectable()
 export class UsersCreateProvider {
@@ -115,48 +116,48 @@ export class UsersCreateProvider {
 
 
 
-    async adminChangeUserPassword(
-  currentUser: ActiveUserData,
-  targetUserId: string,
-  newPassword: string
-): Promise<boolean> {
-  const userRepo = this.dataSource.getRepository(User);
-  const targetUser = await userRepo.findOne({
-    where: { id: targetUserId },
-    relations: ['memberships'],
-  });
+//     async adminChangeUserPassword(
+//   currentUser: ActiveUserData,
+//   targetUserId: string,
+//   newPassword: string
+// ): Promise<boolean> {
+//   const userRepo = this.dataSource.getRepository(User);
+//   const targetUser = await userRepo.findOne({
+//     where: { id: targetUserId },
+//     relations: ['memberships'],
+//   });
 
-  if (!targetUser) throw new Error('User not found');
+//   if (!targetUser) throw new Error('User not found');
 
-  // Tenant check only applies if current user is a School Admin
-  if (currentUser.role === MembershipRole.SCHOOL_ADMIN) {
-    const isSameTenant = targetUser.memberships.some(
-      (m) => m.tenantId === currentUser.tenantId
-    );
-    if (!isSameTenant)
-      throw new Error('Cannot change password for user outside your tenant');
-  }
+//   // Tenant check only applies if current user is a School Admin
+//   if (currentUser.role === MembershipRole.SCHOOL_ADMIN) {
+//     const isSameTenant = targetUser.memberships.some(
+//       (m) => m.tenantId === currentUser.tenantId
+//     );
+//     if (!isSameTenant)
+//       throw new Error('Cannot change password for user outside your tenant');
+//   }
 
-  // Hash the new password
-  targetUser.password = await this.hashingProvider.hashPassword(newPassword);
-  await userRepo.save(targetUser);
+//   // Hash the new password
+//   targetUser.password = await this.hashingProvider.hashPassword(newPassword);
+//   await userRepo.save(targetUser);
 
-  // Invalidate old tokens
-  await this.invalidateTokensForUser(targetUser.id);
+//   // Invalidate old tokens
+//   await this.invalidateTokensForUser(targetUser.id);
 
-  // Optional: log this action
-  // await this.auditLogService.log({
-  //   performedBy: currentUser.userId,
-  //   action: 'ADMIN_CHANGE_PASSWORD',
-  //   targetUserId: targetUser.id,
-  //   tenantId:
-  //     currentUser.role === MembershipRole.SCHOOL_ADMIN
-  //       ? currentUser.tenantId
-  //       : null, // Super admin may not have a tenant
-  // });
+//   // Optional: log this action
+//   // await this.auditLogService.log({
+//   //   performedBy: currentUser.userId,
+//   //   action: 'ADMIN_CHANGE_PASSWORD',
+//   //   targetUserId: targetUser.id,
+//   //   tenantId:
+//   //     currentUser.role === MembershipRole.SCHOOL_ADMIN
+//   //       ? currentUser.tenantId
+//   //       : null, // Super admin may not have a tenant
+//   // });
 
-  return true;
-}
+//   return true;
+// }
 
   
 
@@ -186,6 +187,24 @@ console.log('Compare result:', await this.hashingProvider.comparePassword(oldPas
   
     return true;
   }
+
+  async adminChangeUserPassword(userId: string, newPassword: string): Promise<boolean> {
+    const repo = this.dataSource.getRepository(User);
+  
+    // Fetch the target user
+    const user = await repo.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException("User not found");
+  
+    // Hash and save the new password
+    user.password = await this.hashingProvider.hashPassword(newPassword);
+    await repo.save(user);
+  
+    // Invalidate all existing tokens for that user
+    await repo.increment({ id: user.id }, 'tokenVersion', 1);
+  
+    return true;
+  }
+  
 
 
   private async invalidateTokensForUser(userId: string): Promise<void> {
@@ -240,40 +259,57 @@ async changeEmail(currentUser: ActiveUserData, newEmail: string): Promise<boolea
 
 
 
-   async adminChangeUserEmail(
-      currentUser: ActiveUserData,
-      targetUserId: string,
-      newEmail: string,
-    ): Promise<boolean> {
-  const userRepository = this.dataSource.getRepository(User)
+async adminChangeUserEmail(userId: string, newEmail: string): Promise<boolean> {
+  const userRepo = this.dataSource.getRepository(User);
+  const invitationRepo = this.dataSource.getRepository(UserInvitation);
 
-      const targetUser = await userRepository.findOne({
-        where: { id: targetUserId },
-        relations: ['memberships'],
-      });
-      if (!targetUser) throw new NotFoundException('User not found');
-  
-      if (currentUser.role === MembershipRole.SCHOOL_ADMIN) {
-        const isSameTenant = targetUser.memberships.some(
-          (m) => m.tenantId === currentUser.tenantId
-        );
-        if (!isSameTenant)
-          throw new ForbiddenException('Cannot change email for user outside your tenant');
-      }
-  
-      targetUser.email = newEmail;
-      await userRepository.save(targetUser);
-  
-      await this.invalidateTokensForUser(targetUser.id);
-  
-      // await this.auditLogService.log({
-      //   performedBy: currentUser.userId,
-      //   action: 'ADMIN_CHANGE_EMAIL',
-      //   targetUserId: targetUser.id,
-      //   tenantId: currentUser.role === MembershipRole.SCHOOL_ADMIN ? currentUser.tenantId : null,
-      // });
-  
-      return true;
+  const user = await userRepo.findOne({ where: { id: userId } });
+  if (!user) throw new NotFoundException('User not found');
+
+  const existing = await userRepo.findOne({ where: { email: newEmail } });
+  if (existing) throw new BadRequestException('Email already in use');
+
+  const oldEmail = user.email;
+
+  user.email = newEmail;
+  await userRepo.save(user);
+
+  // Update invitations sent by this user
+  const invitations = await invitationRepo.find({ where: { invitedById: user.id } });
+  for (const inv of invitations) {
+    inv.email = newEmail;
+    await invitationRepo.save(inv);
+  }
+
+  // Invalidate all existing tokens
+  await userRepo.increment({ id: user.id }, 'tokenVersion', 1);
+
+  return true;
+}
+
+  /**
+   * Activate or deactivate a teacher
+   * @param currentUser - currently logged-in admin
+   * @param teacherId - teacher's UUID
+   * @param isActive - desired status (true = active, false = inactive)
+   */
+  async setTeacherStatus(
+    currentUser: ActiveUserData,
+    teacherId: string,
+    isActive: boolean,
+  ): Promise<boolean> {
+    const teacherRepo = this.dataSource.getRepository(Teacher);
+
+    const teacher = await teacherRepo.findOne({ where: { id: teacherId } });
+    if (!teacher) throw new NotFoundException('Teacher not found');
+
+    // Ensure the teacher belongs to the admin's tenant
+    if (teacher.tenantId !== currentUser.tenantId) {
+      throw new ForbiddenException('You cannot modify teachers outside your tenant');
     }
 
+    teacher.isActive = isActive;
+    await teacherRepo.save(teacher);
+    return true;
+  }
 }
