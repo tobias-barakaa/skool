@@ -9,7 +9,7 @@ import { CreateUserInput } from '../dtos/create-user.input';
 import { SignupInput } from '../dtos/signUp-input';
 import { MembershipRole, UserTenantMembership } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
-import { ActivateTeacherInput } from '../dtos/activate-teacher-password.input';
+import { ActivateTeacherInput, StudentCredentials } from '../dtos/activate-teacher-password.input';
 import { Student } from 'src/admin/student/entities/student.entity';
 
 @Injectable()
@@ -101,6 +101,28 @@ export class UsersService {
       password: student.admission_number,
       name: student.user.name,
     }));
+  }
+  
+
+
+  async getStudentCredentialsById(
+    studentId: string,
+    currentUser: ActiveUserData,
+  ): Promise<StudentCredentials | null> {
+    const studentRepository = this.dataSource.getRepository(Student);
+
+    const student = await studentRepository.findOne({
+      where: { id: studentId, tenant_id: currentUser.tenantId },
+      relations: ['user'],
+    });
+
+    if (!student) return null; // Return null instead of throwing error
+
+    return {
+      name: student.user.name,
+      email: student.user.email,
+      password: student.admission_number, // default password
+    };
   }
   
   

@@ -31,4 +31,6 @@ export class StudentCredentials {
 
   @Field({ nullable: true })
   name?: string;
-}
+};
+
+

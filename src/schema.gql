@@ -1864,6 +1864,7 @@ type Query {
 
   """Get all chat rooms for the current student"""
   getStudentChatRooms: [ChatRoom!]!
+  getStudentCredentialsById(studentId: String!): StudentCredentials
   getStudentGradeNotes: [TeacherNote!]!
   getStudentNoteById(id: String!): TeacherNote!
   getStudentNotesBySubject(subjectId: String!): [TeacherNote!]!

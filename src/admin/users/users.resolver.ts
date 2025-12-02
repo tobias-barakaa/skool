@@ -172,6 +172,16 @@ async adminChangeUserPassword(
     @ActiveUser() currentUser: ActiveUserData,
   ): Promise<StudentCredentials[]> {
     return this.usersService.getAllStudentCredentials(currentUser);
+  };
+
+
+  @Query(() => StudentCredentials, { name: 'getStudentCredentialsById', nullable: true })
+  @Roles(MembershipRole.SCHOOL_ADMIN)
+  async getStudentCredentialsById(
+    @Args('studentId') studentId: string,
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise<StudentCredentials | null> {
+    return this.usersService.getStudentCredentialsById(studentId, currentUser);
   }
 
   
