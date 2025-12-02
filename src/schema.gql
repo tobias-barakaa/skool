@@ -1776,6 +1776,7 @@ type Query {
   getAllClassTeacherAssignments: [ClassTeacherAssignment!]!
   getAllParents: [ParentDto!]!
   getAllStaff: [StaffDto!]!
+  getAllStudentCredentials: [StudentCredentials!]!
   getAllTeachers: [Teacher!]!
 
   """
@@ -2520,6 +2521,12 @@ type Student {
 type StudentAcademicProfile {
   academicSummary: AcademicSummary!
   student: Student!
+}
+
+type StudentCredentials {
+  email: String!
+  name: String
+  password: String!
 }
 
 """Represents the assignment of a fee structure to a specific student"""

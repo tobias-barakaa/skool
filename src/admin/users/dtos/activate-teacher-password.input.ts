@@ -18,4 +18,17 @@ export class ActivateTeacherOutput {
 
   @Field({ nullable: true })
   email?: string;
+};
+
+
+@ObjectType()
+export class StudentCredentials {
+  @Field()
+  email: string;
+
+  @Field()
+  password: string;
+
+  @Field({ nullable: true })
+  name?: string;
 }

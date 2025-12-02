@@ -10,6 +10,7 @@ import { SignupInput } from '../dtos/signUp-input';
 import { MembershipRole, UserTenantMembership } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { ActivateTeacherInput } from '../dtos/activate-teacher-password.input';
+import { Student } from 'src/admin/student/entities/student.entity';
 
 @Injectable()
 export class UsersService {
@@ -83,11 +84,28 @@ export class UsersService {
 
   async activateTeacher(input: ActivateTeacherInput, tenantId: string) {
     return this.usersCreateProvider.activateTeacher(input.teacherId,tenantId)
+  };
+
+
+  async getAllStudentCredentials(currentUser: ActiveUserData) {
+    const studentRepository = this.dataSource.getRepository(Student);
+  
+    const students = await studentRepository.find({
+      where: { tenant_id: currentUser.tenantId },
+      relations: ['user'],
+    });
+  
+    // Return an empty array if no students found
+    return students.map((student) => ({
+      email: student.user.email,
+      password: student.admission_number,
+      name: student.user.name,
+    }));
   }
   
+  
 
-  // ----------------- Admin/Super Admin change another user's email -----------------
- 
+  
 
   async findAll(): Promise<User[]> {
     return this.userRepository.find({ relations: ['school'] });

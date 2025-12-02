@@ -12,7 +12,7 @@ import { Public } from '../auth/decorator/public.decorator';
 import { Roles } from 'src/iam/decorators/roles.decorator';
 import { ActiveUser } from '../auth/decorator/active-user.decorator';
 import { ActiveUserData } from '../auth/interface/active-user.interface';
-import { ActivateTeacherInput, ActivateTeacherOutput } from './dtos/activate-teacher-password.input';
+import { ActivateTeacherInput, ActivateTeacherOutput, StudentCredentials } from './dtos/activate-teacher-password.input';
 
 
 @Resolver(() => User)
@@ -152,6 +152,7 @@ async adminChangeUserPassword(
 
 
   @Mutation(() => ActivateTeacherOutput)
+  @Roles(MembershipRole.SCHOOL_ADMIN)
   async activateTeacher(
     @Args('input') input: ActivateTeacherInput,
     @ActiveUser() user: ActiveUserData,
@@ -164,6 +165,14 @@ async adminChangeUserPassword(
     return this.usersService.activateTeacher(input, tenantId);
   }
 
+
+  @Query(() => [StudentCredentials], { name: 'getAllStudentCredentials' })
+  @Roles(MembershipRole.SCHOOL_ADMIN)
+  async getAllStudentCredentials(
+    @ActiveUser() currentUser: ActiveUserData,
+  ): Promise<StudentCredentials[]> {
+    return this.usersService.getAllStudentCredentials(currentUser);
+  }
 
   
 
