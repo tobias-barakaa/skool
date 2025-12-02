@@ -53,6 +53,11 @@ export class User {
   @Column({ type: 'enum', enum: GlobalRole, default: GlobalRole.NONE })
   globalRole: GlobalRole;
 
+
+  @Column({ type: 'int', default: 0 })
+tokenVersion: number;
+
+
   @CreateDateColumn()
   @Field(() => Date)
   createdAt: Date;
@@ -61,4 +66,7 @@ export class User {
   @Field(() => Date)
   updatedAt: Date;
 }
+
+
+
 

@@ -303,6 +303,11 @@ input ChangePasswordInput {
   newPassword: String!
 }
 
+input ChangePasswordsInput {
+  newPassword: String!
+  oldPassword: String!
+}
+
 type ChatMessage {
   chatRoom: ChatRoom!
   chatRoomId: String!
@@ -1232,6 +1237,8 @@ type Mutation {
   acceptTeacherInvitation(acceptInvitationInput: AcceptInvitationInput!): AcceptInvitationResponse!
   activateTenantSubject(tenantSubjectId: String!): Boolean!
   addStudentsToParent(parentId: String!, studentIds: [String!]!, tenantId: String!): String!
+  adminChangeUserEmail(newEmail: String!, userId: String!): Boolean!
+  adminChangeUserPassword(newPassword: String!, userId: String!): Boolean!
   assignClassTeacher(input: AssignStreamClassTeacherInput!): ClassTeacherAssignment!
   assignGradeLevelClassTeacher(input: AssignGradeLevelClassTeacherInput!): ClassTeacherAssignment!
   assignScholarship(input: AssignScholarshipInput!): StudentScholarship!
@@ -1266,6 +1273,8 @@ type Mutation {
 
   """Bulk activate or deactivate multiple student fee items"""
   bulkToggleStudentFeeItems(bulkToggleInput: BulkToggleStudentFeeItemsInput!): [StudentFeeItem!]!
+  changeEmail(newEmail: String!): Boolean!
+  changeMyPassword(changePasswordsInput: ChangePasswordsInput!): PasswordResetsResponse!
   changePassword(changePasswordInput: ChangePasswordInput!): PasswordResetResponse!
   configureSchoolLevelsByNames(levelNames: [String!]!): SchoolConfigurationResponse!
 
@@ -1578,6 +1587,11 @@ type ParentStudent {
 
 type PasswordResetResponse {
   message: String!
+}
+
+type PasswordResetsResponse {
+  message: String
+  success: Boolean!
 }
 
 """Represents a payment made towards an invoice"""

@@ -1,7 +1,7 @@
 // src/users/services/users.service.ts
 import { BadRequestException, ForbiddenException, Injectable, Logger, NotFoundException, RequestTimeoutException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { UsersCreateProvider } from '../providers/users-create.provider';
 import { School } from '../../school/entities/school.entity';
@@ -13,6 +13,7 @@ import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 @Injectable()
 export class UsersService {
   private readonly logger = new Logger(UsersService.name);
+  
 
   constructor(
     private readonly usersCreateProvider: UsersCreateProvider,
@@ -21,6 +22,7 @@ export class UsersService {
 
     @InjectRepository(UserTenantMembership)
     private membershipRepository: Repository<UserTenantMembership>,
+    private readonly dataSource: DataSource
   ) {}
 
   async createUser(signupInput: SignupInput) {
@@ -47,6 +49,34 @@ export class UsersService {
 
     return user;
   }
+
+
+
+  async adminChangeUserPassword(currentUser: ActiveUserData, oldPassword: string, newPassword: string) {
+    return this.usersCreateProvider.changePassword(currentUser, oldPassword, newPassword)
+  }
+
+
+
+  async changePassword(currentUser: ActiveUserData, oldPassword: string, newPassword: string) {
+    return this.usersCreateProvider.changePassword(currentUser, oldPassword, newPassword)
+  }
+
+
+
+  async changeEmail(currentUser: ActiveUserData, newEmail: string): Promise<boolean> {
+    return this.usersCreateProvider.changeEmail(currentUser, newEmail)
+  }
+  
+
+
+  async adminChangeUserEmail(currentUser: ActiveUserData, newEmail: string): Promise<boolean> {
+    return this.usersCreateProvider.changeEmail(currentUser, newEmail)
+  }
+  
+
+  // ----------------- Admin/Super Admin change another user's email -----------------
+ 
 
   async findAll(): Promise<User[]> {
     return this.userRepository.find({ relations: ['school'] });

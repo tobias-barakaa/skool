@@ -1,9 +1,9 @@
 // src/users/users.resolver.ts
 import { Logger, UseFilters } from '@nestjs/common';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { CreateUserResponse } from './dtos/create-user-response';
+import { ChangePasswordsInput, CreateUserResponse, PasswordResetsResponse } from './dtos/create-user-response';
 import { AuthResponse, SignupInput } from './dtos/signUp-input';
-import { User } from './entities/user.entity';
+import { GlobalRole, User } from './entities/user.entity';
 import { UsersService } from './providers/users.service';
 import { GraphQLExceptionsFilter } from '../common/filter/graphQLException.filter';
 import { MembershipRole } from '../user-tenant-membership/entities/user-tenant-membership.entity';
@@ -71,6 +71,71 @@ export class UsersResolver {
       subdomainUrl,
       tenant,
     };
+  };
+
+
+  @Mutation(() => PasswordResetsResponse, { name: 'changeMyPassword' })
+  @Roles(
+    MembershipRole.SCHOOL_ADMIN,
+    MembershipRole.PARENT,
+    MembershipRole.STUDENT,
+    MembershipRole.TEACHER
+  )
+  async changeMyPassword(
+    @ActiveUser() currentUser: ActiveUserData,
+    @Args('changePasswordsInput', { type: () => ChangePasswordsInput }) input: ChangePasswordsInput
+
+
+  ): Promise<PasswordResetsResponse> {
+    const ok = await this.usersService.changePassword(
+      currentUser,
+      input.oldPassword,
+      input.newPassword,
+    );
+  
+    return {
+      success: ok,
+      message: ok ? 'Password changed successfully' : 'Failed to change password',
+    };
+  }
+  
+
+
+@Mutation(() => Boolean, { name: 'adminChangeUserPassword' })
+@Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.SUPER_ADMIN)
+async adminChangeUserPassword(
+  @ActiveUser() currentUser: ActiveUserData,
+  @Args('userId') userId: string,
+  @Args('newPassword') newPassword: string,
+): Promise<boolean> {
+  return this.usersService.adminChangeUserPassword(currentUser, userId, newPassword);
+}
+
+
+
+  @Mutation(() => Boolean, { name: 'changeEmail' })
+  @Roles(
+    MembershipRole.SCHOOL_ADMIN,
+    MembershipRole.PARENT,
+    MembershipRole.STUDENT,
+    MembershipRole.TEACHER
+  )
+  async changeEmail(
+    @ActiveUser() currentUser: ActiveUserData,
+    @Args('newEmail') newEmail: string,
+  ): Promise<boolean> {
+    return this.usersService.changeEmail(currentUser, newEmail);
+  }
+
+
+  @Mutation(() => Boolean, { name: 'adminChangeUserEmail' })
+  @Roles(MembershipRole.SCHOOL_ADMIN)
+  async adminChangeUserEmail(
+    @ActiveUser() currentUser: ActiveUserData,
+    @Args('userId') userId: string,
+    @Args('newEmail') newEmail: string,
+  ): Promise<boolean> {
+    return this.usersService.adminChangeUserEmail(currentUser, newEmail);
   }
 
   @Query(() => [User], { name: 'users' })
