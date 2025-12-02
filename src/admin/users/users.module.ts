@@ -11,6 +11,7 @@ import { UsersService } from './providers/users.service';
 import { UsersResolver } from './users.resolver';
 import { InvitationModule } from '../invitation/invitation.module';
 import { UserTenantMembershipModule } from '../user-tenant-membership/user-tenant-membership.module';
+import { EmailModule } from '../email/email.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { UserTenantMembershipModule } from '../user-tenant-membership/user-tenan
     UserTenantMembershipModule,
     ConfigModule.forFeature(profileConfig),
     forwardRef(() => AuthModule),
+    EmailModule
   ],
   providers: [UsersService, UsersCreateProvider, UsersResolver],
   exports: [TypeOrmModule, UsersService],

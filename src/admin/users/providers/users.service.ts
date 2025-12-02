@@ -9,6 +9,7 @@ import { CreateUserInput } from '../dtos/create-user.input';
 import { SignupInput } from '../dtos/signUp-input';
 import { MembershipRole, UserTenantMembership } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
+import { ActivateTeacherInput } from '../dtos/activate-teacher-password.input';
 
 @Injectable()
 export class UsersService {
@@ -76,6 +77,12 @@ export class UsersService {
 
   async setTeacherStatus(currentUser: ActiveUserData, teacherId: string, isActive: boolean) {
     return this.usersCreateProvider.setTeacherStatus(currentUser, teacherId, isActive)
+  };
+
+
+
+  async activateTeacher(input: ActivateTeacherInput, tenantId: string) {
+    return this.usersCreateProvider.activateTeacher(input.teacherId,tenantId)
   }
   
 

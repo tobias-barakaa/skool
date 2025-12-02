@@ -74,6 +74,16 @@ type AcceptStaffInvitationResponse {
   user: UserInfo!
 }
 
+input ActivateTeacherInput {
+  teacherId: String!
+}
+
+type ActivateTeacherOutput {
+  email: String
+  message: String!
+  success: Boolean!
+}
+
 """The status of assessment"""
 enum AssesStatus {
   COMPLETED
@@ -1235,6 +1245,7 @@ type Mutation {
   acceptParentInvitation(acceptInvitationInput: AcceptInvitationInput!): AcceptParentInvitationResponse!
   acceptStaffInvitation(acceptInvitationInput: AcceptStaffInvitationInput!): AcceptStaffInvitationResponse!
   acceptTeacherInvitation(acceptInvitationInput: AcceptInvitationInput!): AcceptInvitationResponse!
+  activateTeacher(input: ActivateTeacherInput!): ActivateTeacherOutput!
   activateTenantSubject(tenantSubjectId: String!): Boolean!
   addStudentsToParent(parentId: String!, studentIds: [String!]!, tenantId: String!): String!
   adminChangeUserEmail(newEmail: String!, userId: String!): Boolean!

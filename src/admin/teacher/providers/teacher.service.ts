@@ -976,7 +976,6 @@ export class TeacherService {
 
   
   
-  
   async getAllTeachersInTenant(
     currentUser: ActiveUserData,
   ): Promise<Teacher[]> {

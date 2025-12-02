@@ -13,6 +13,15 @@ interface BaseEmailData {
   tenantId: string;
 }
 
+
+interface TeacherActivationData {
+  recipientName: string;
+  schoolName: string;
+  email: string;
+  temporaryPassword: string;
+  subdomain: string;
+}
+
 interface TeacherInvitationData extends BaseEmailData {
   email: string;
   invitationToken: string;
@@ -115,28 +124,86 @@ export class EmailService {
   }
 
 
-  // private async sendEmail(to: string, template: EmailTemplate): Promise<any> {
-  //   const { data, error } = await this.resend.emails.send({
-  //     from: this.resendConfiguration.fromEmail || 'noreply@squl.co.ke',
-  //     to,
-  //     subject: template.subject,
-  //     html: template.html,
-  //   });
-
-  //   if (error) {
-  //     console.error('Resend error:', error);
-  //     throw new Error('Failed to send email');
-  //   }
-
-  //   return data;
-  // }
 
 
 
 
 
-
-
+  async sendTeacherActivationEmail(
+    to: string,
+    teacherName: string,
+    schoolName: string,
+    temporaryPassword: string,
+    subdomain: string,
+  ): Promise<void> {
+    try {
+      const template = this.buildTeacherActivationTemplate({
+        recipientName: teacherName,
+        schoolName,
+        email: to,
+        temporaryPassword,
+        subdomain,
+      });
+  
+      await this.sendEmail(to, template);
+      this.logger.log(`Teacher activation email sent to ${to}`);
+    } catch (error) {
+      this.logger.error(`Failed to send teacher activation email to ${to}:`, error);
+      throw error;
+    }
+  }
+  
+  private buildTeacherActivationTemplate(data: TeacherActivationData): EmailTemplate {
+    const loginUrl = `https://${data.subdomain}.squl.co.ke/login`;
+  
+    const steps = [
+      'Use your email and the temporary password provided below to login',
+      'You will be prompted to change your password on first login',
+      'Complete your profile information',
+      'Start using the school management system',
+    ];
+  
+    const content = `
+      <p style="font-size: 18px; color: #333; margin-bottom: 20px;">Dear ${data.recipientName},</p>
+  
+      <p style="color: #555; line-height: 1.6; margin-bottom: 20px;">
+        Your teacher account at <strong>${data.schoolName}</strong> has been activated! 
+        You can now access the school management system.
+      </p>
+  
+      <div style="background: #e8f5e8; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #27ae60;">
+        <h3 style="color: #333; margin-top: 0; font-size: 16px;">Your Login Credentials:</h3>
+        <ul style="color: #555; margin: 10px 0; padding-left: 20px; list-style: none;">
+          <li style="margin-bottom: 10px;"><strong>Email:</strong> ${data.email}</li>
+          <li style="margin-bottom: 10px;">
+            <strong>Temporary Password:</strong> 
+            <code style="background: #f8f9fa; padding: 5px 10px; border-radius: 4px; font-size: 16px; color: #e74c3c; font-weight: bold;">${data.temporaryPassword}</code>
+          </li>
+        </ul>
+      </div>
+  
+      <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 8px; margin: 25px 0;">
+        <p style="color: #856404; margin: 0; font-size: 14px;">
+          <strong>🔒 Security Note:</strong> This is a temporary password. Please change it immediately after your first login for security purposes.
+        </p>
+      </div>
+  
+      ${this.getInstructionSteps(steps)}
+      ${this.getInvitationButton(loginUrl, 'Login to Your Account', '#27ae60')}
+  
+      <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 25px 0;">
+        <p style="color: #555; margin: 0; font-size: 13px;">
+          <strong>Need Help?</strong> If you have any questions or issues logging in, 
+          please contact your school administrator.
+        </p>
+      </div>
+    `;
+  
+    return {
+      subject: `Your ${data.schoolName} Account Has Been Activated`,
+      html: this.getBaseEmailTemplate(content, data.schoolName),
+    };
+  }
 
 
 

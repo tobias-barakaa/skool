@@ -12,6 +12,7 @@ import { Public } from '../auth/decorator/public.decorator';
 import { Roles } from 'src/iam/decorators/roles.decorator';
 import { ActiveUser } from '../auth/decorator/active-user.decorator';
 import { ActiveUserData } from '../auth/interface/active-user.interface';
+import { ActivateTeacherInput, ActivateTeacherOutput } from './dtos/activate-teacher-password.input';
 
 
 @Resolver(() => User)
@@ -147,6 +148,24 @@ async adminChangeUserPassword(
   ): Promise<boolean> {
     return this.usersService.adminChangeUserEmail(userId, newEmail);
   }
+
+
+
+  @Mutation(() => ActivateTeacherOutput)
+  async activateTeacher(
+    @Args('input') input: ActivateTeacherInput,
+    @ActiveUser() user: ActiveUserData,
+    // Or however you get tenant context
+  ): Promise<ActivateTeacherOutput> {
+    const tenantId = user.tenantId
+    if(!tenantId) {
+      throw new Error('Tenant not found')
+    }
+    return this.usersService.activateTeacher(input, tenantId);
+  }
+
+
+  
 
   @Query(() => [User], { name: 'users' })
   async findAll(): Promise<User[]> {
