@@ -1,6 +1,6 @@
 import { InputType, Field, Int } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
-import { IsUUID, IsInt, IsString, Min, Max, ValidateNested } from 'class-validator';
+import { IsUUID, IsInt, IsString, Min, Max, ValidateNested, IsArray, ArrayMinSize, IsNotEmpty } from 'class-validator';
 
 @InputType()
 export class CreateTimetableEntryInput {
@@ -35,6 +35,7 @@ export class CreateTimetableEntryInput {
   roomNumber?: string;
 }
 
+
 @InputType()
 export class BulkCreateTimetableEntryInput {
   @Field()
@@ -46,8 +47,10 @@ export class BulkCreateTimetableEntryInput {
   gradeId: string;
 
   @Field(() => [SingleEntryInput])
-  @ValidateNested({ each: true })   
-  @Type(() => SingleEntryInput)     
+  @IsArray()
+  @ArrayMinSize(1)
+  @ValidateNested({ each: true })
+  @Type(() => SingleEntryInput)
   entries: SingleEntryInput[];
 }
 
@@ -55,14 +58,17 @@ export class BulkCreateTimetableEntryInput {
 export class SingleEntryInput {
   @Field()
   @IsUUID()
+  @IsNotEmpty()
   subjectId: string;
 
   @Field()
   @IsUUID()
+  @IsNotEmpty()
   teacherId: string;
 
   @Field()
   @IsUUID()
+  @IsNotEmpty()
   timeSlotId: string;
 
   @Field(() => Int)
