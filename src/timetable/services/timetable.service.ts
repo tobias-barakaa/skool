@@ -12,6 +12,7 @@ import { GradeTimetableResponse, TimetableCell } from '../dtos/timetable-respons
 import { BulkCreateTimetableEntryInput, CreateTimetableEntryInput, SingleEntryInput } from '../dtos/create-timetable-entry.input';
 import { GradeInfo, TimetableData } from '../dtos/timetable_response.dto';
 import { UpdateTimetableBreakInput } from '../dtos/update-timetable-break.input';
+import { User } from 'src/admin/users/entities/user.entity';
 
 @Injectable()
 export class TimetableService {
@@ -415,42 +416,51 @@ private format12Hour(time: string): string {
 }
 
 
-  async getWholeSchoolTimetable(
-    user: ActiveUserData,
-    termId: string,
-  ): Promise<TimetableData> {
-    // Get all components
-    const gradeRepo = this.dataSource.getRepository('TenantGradeLevel');
-    const [timeSlots, breaks, entries, grades] = await Promise.all([
-      this.getTimeSlots(user),
-      this.getBreaks(user),
-      this.entryRepo.find({
-        where: { tenantId: user.tenantId, termId, isActive: true },
-        order: { dayOfWeek: 'ASC' },
-      }),
-      
-      gradeRepo.find({
-        where: { tenant: { id: user.tenantId }, isActive: true },
-        order: { sortOrder: 'ASC' },
-      }),
-    ]);
+async getWholeSchoolTimetable(
+  user: ActiveUserData,
+  termId: string,
+): Promise<TimetableData> {
+  const gradeRepo = this.dataSource.getRepository('TenantGradeLevel');
 
-  
-    const gradeInfos: GradeInfo[] = grades.map((g, index) => ({
-      id: g.id,
-      name: g.gradeLevel?.name || g.name || `Grade ${index + 1}`,
-      displayName: g.shortName || g.gradeLevel?.name || g.name || `G${index + 1}`,
-      level: g.sortOrder || index + 1,
-    }));
+  // Fetch all components in parallel
+  const [timeSlots, breaks, entries, grades] = await Promise.all([
+    this.getTimeSlots(user),
+    this.getBreaks(user),
+    this.entryRepo.find({
+      where: { tenantId: user.tenantId, termId, isActive: true },
+      order: { dayOfWeek: 'ASC' },
+      relations: [
+        'grade',
+        'grade.gradeLevel',
+        'subject',
+        'teacher',
+        'teacher.user', 
+        'timeSlot',
+      ],
+    }),
+    gradeRepo.find({
+      where: { tenant: { id: user.tenantId }, isActive: true },
+      order: { sortOrder: 'ASC' },
+    }),
+  ]);
 
-    return {
-      timeSlots,
-      breaks,
-      entries,
-      grades: gradeInfos,
-      lastUpdated: new Date().toISOString(),
-    };
-  }
+  // Transform grades for frontend
+  const gradeInfos: GradeInfo[] = grades.map((g, index) => ({
+    id: g.id,
+    name: g.gradeLevel?.name || g.name || `Grade ${index + 1}`,
+    displayName: g.shortName || g.gradeLevel?.name || g.name || `G${index + 1}`,
+    level: g.sortOrder || index + 1,
+  }));
+
+  return {
+    timeSlots,
+    breaks,
+    entries,
+    grades: gradeInfos,
+    lastUpdated: new Date().toISOString(),
+  };
+}
+
   
 
    async bulkCreateEntries(
