@@ -370,10 +370,18 @@ async adminChangeUserEmail(userId: string, newEmail: string): Promise<boolean> {
 
       // 4. Create or update user
       let user: User;
-      
+
+      const existingUser = await queryRunner.manager.findOne(User, { where: { email: teacher.email } });
+
       if (teacher.user) {
-        // Update existing user
+        // Update existing user (prefer teacher.user if present)
         user = teacher.user;
+        user.password = hashedPassword;
+        user.name = teacher.fullName;
+        user.email = teacher.email;
+      } else if (existingUser) {
+        // Update existing user found by email
+        user = existingUser;
         user.password = hashedPassword;
         user.name = teacher.fullName;
         user.email = teacher.email;
