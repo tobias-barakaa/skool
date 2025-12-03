@@ -82,8 +82,8 @@ export class UsersService {
 
 
 
-  async activateTeacher(input: ActivateTeacherInput, tenantId: string) {
-    return this.usersCreateProvider.activateTeacher(input.teacherId,tenantId)
+  async activateTeacher(teacherId: string, tenantId: string) {
+    return this.usersCreateProvider.activateTeacher(teacherId,tenantId)
   };
 
 

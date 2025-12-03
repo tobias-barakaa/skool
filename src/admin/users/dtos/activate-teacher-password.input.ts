@@ -1,11 +1,12 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { IsUUID } from 'class-validator';
+import { IsNotEmpty, IsUUID } from 'class-validator';
 
 @InputType()
 export class ActivateTeacherInput {
-  @Field()
-  @IsUUID()
-  teacherId: string;
+    @Field()
+    @IsNotEmpty({ message: 'Teacher ID is required' })
+    @IsUUID('4', { message: 'Teacher ID must be a valid UUID' })
+    teacherId: string;
 }
 
 @ObjectType()

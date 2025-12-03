@@ -151,20 +151,35 @@ async adminChangeUserPassword(
 
 
 
+  // @Mutation(() => ActivateTeacherOutput)
+  // @Roles(MembershipRole.SCHOOL_ADMIN)
+  // async activateTeacher(
+  //   @Args('input') input: ActivateTeacherInput,
+  //   @ActiveUser() user: ActiveUserData,
+  //   // Or however you get tenant context
+  // ): Promise<ActivateTeacherOutput> {
+  //   const tenantId = user.tenantId
+  //   if(!tenantId) {
+  //     throw new Error('Tenant not found')
+  //   }
+  //   return this.usersService.activateTeacher(input, tenantId);
+  // }
+
+
   @Mutation(() => ActivateTeacherOutput)
-  @Roles(MembershipRole.SCHOOL_ADMIN)
-  async activateTeacher(
-    @Args('input') input: ActivateTeacherInput,
-    @ActiveUser() user: ActiveUserData,
-    // Or however you get tenant context
-  ): Promise<ActivateTeacherOutput> {
-    const tenantId = user.tenantId
-    if(!tenantId) {
-      throw new Error('Tenant not found')
-    }
-    return this.usersService.activateTeacher(input, tenantId);
+@Roles(MembershipRole.SCHOOL_ADMIN)
+async activateTeacher(
+  @Args('input') input: ActivateTeacherInput,
+  @ActiveUser() user: ActiveUserData,
+): Promise<ActivateTeacherOutput> {
+  const tenantId = user.tenantId;
+
+  if (!tenantId) {
+    throw new Error('Tenant not found');
   }
 
+  return this.usersService.activateTeacher(input.teacherId, tenantId);
+}
 
   @Query(() => [StudentCredentials], { name: 'getAllStudentCredentials' })
   @Roles(MembershipRole.SCHOOL_ADMIN)
