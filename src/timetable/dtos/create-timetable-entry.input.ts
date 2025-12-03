@@ -33,8 +33,8 @@ export class CreateTimetableEntryInput {
 
   @Field(() => Int)
   @IsInt()
-  @Min(0)
-  @Max(8)
+  @Min(1)  // Changed from 0
+@Max(7) 
   dayOfWeek: number;
 
   @Field({ nullable: true })
@@ -84,8 +84,8 @@ export class SingleEntryInput {
 
   @Field(() => Int)
   @IsInt()
-  @Min(0)
-  @Max(8)
+  @Min(1)  // Changed from 0
+@Max(7) 
   @LogValue() // Add logging
   dayOfWeek: number;
 
