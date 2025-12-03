@@ -463,6 +463,7 @@ async getWholeSchoolTimetable(
 
   
 
+
    async bulkCreateEntries(
     user: ActiveUserData,
     input: BulkCreateTimetableEntryInput,
@@ -531,7 +532,9 @@ async getWholeSchoolTimetable(
       }
 
       // dayOfWeek validation (should match your DTO: 1..5)
-      if (typeof entry.dayOfWeek !== 'number' || entry.dayOfWeek < 1 || entry.dayOfWeek > 7) {
+      if (typeof entry.dayOfWeek !== 'number') {
+      // if (typeof entry.dayOfWeek !== 'number' || entry.dayOfWeek < 1 || entry.dayOfWeek > 7) {
+
         errors.push(`Entry ${idx}: dayOfWeek must be an integer (1-7). Got: ${entry.dayOfWeek}`);
       }
 
