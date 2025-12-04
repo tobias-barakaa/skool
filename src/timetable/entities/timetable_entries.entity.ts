@@ -96,7 +96,7 @@ import { Teacher } from 'src/admin/teacher/entities/teacher.entity';
     // Room/Location
     @Field({ nullable: true })
     @Column({ type: 'varchar', length: 50, nullable: true })
-    roomNumber?: string;
+    roomNumber?: string | null;
   
     @Field()
     @Column({ default: true })

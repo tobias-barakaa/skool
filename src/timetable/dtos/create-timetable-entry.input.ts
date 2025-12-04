@@ -1,6 +1,6 @@
 import { InputType, Field, Int } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
-import { IsUUID, IsInt, IsString, Min, Max, ValidateNested, IsArray, ArrayMinSize, IsNotEmpty } from 'class-validator';
+import { IsUUID, IsInt, IsString, Min, Max, ValidateNested, IsArray, ArrayMinSize, IsNotEmpty, IsOptional } from 'class-validator';
 
 import { 
   
@@ -38,8 +38,9 @@ export class CreateTimetableEntryInput {
   dayOfWeek: number;
 
   @Field({ nullable: true })
+  @IsOptional()
   @IsString()
-  roomNumber?: string;
+  roomNumber?: string | null;
 }
 
 
@@ -89,9 +90,14 @@ export class SingleEntryInput {
   @LogValue() // Add logging
   dayOfWeek: number;
 
+  // @Field({ nullable: true })
+  // @IsString()
+  // roomNumber?: string;
+
   @Field({ nullable: true })
-  @IsString()
-  roomNumber?: string;
+@IsOptional()
+@IsString()
+roomNumber?: string | null;
 }
 
 @InputType()
