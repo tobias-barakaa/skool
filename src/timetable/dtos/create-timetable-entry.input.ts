@@ -37,7 +37,7 @@ export class CreateTimetableEntryInput {
 // @Max(7) 
   dayOfWeek: number;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()
   roomNumber?: string | null;
@@ -94,10 +94,10 @@ export class SingleEntryInput {
   // @IsString()
   // roomNumber?: string;
 
-  @Field({ nullable: true })
-@IsOptional()
-@IsString()
-roomNumber?: string | null;
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsString()
+  roomNumber?: string | null;
 }
 
 @InputType()

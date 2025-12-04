@@ -94,7 +94,7 @@ import { Teacher } from 'src/admin/teacher/entities/teacher.entity';
     dayOfWeek: number; // 1=Monday, 2=Tuesday, ..., 5=Friday
   
     // Room/Location
-    @Field({ nullable: true })
+    @Field(() => String, { nullable: true })
     @Column({ type: 'varchar', length: 50, nullable: true })
     roomNumber?: string | null;
   
