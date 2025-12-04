@@ -1,5 +1,5 @@
-import { InputType, Field, Int } from '@nestjs/graphql';
-import { IsInt, IsString, Min, Max, Matches, IsOptional } from 'class-validator';
+import { InputType, Field, Int, ID } from '@nestjs/graphql';
+import { IsInt, IsString, Min, Max, Matches, IsOptional, MaxLength, IsUUID } from 'class-validator';
 
 @InputType()
 export class CreateTimeSlotInput {
@@ -26,4 +26,49 @@ export class CreateTimeSlotInput {
   @IsOptional()
   @IsString()
   color?: string;
+}
+
+
+
+
+@InputType()
+export class UpdateTimetableEntryInput {
+  @Field(() => ID)
+  @IsUUID()
+  id: string;
+
+  @Field(() => ID, { nullable: true })
+  @IsUUID()
+  @IsOptional()
+  subjectId?: string;
+
+  @Field(() => ID, { nullable: true })
+  @IsUUID()
+  @IsOptional()
+  teacherId?: string;
+
+  @Field(() => ID, { nullable: true })
+  @IsUUID()
+  @IsOptional()
+  timeSlotId?: string;
+
+  @Field(() => Int, { nullable: true })
+  @IsInt()
+  @Min(1)
+  @Max(5)
+  @IsOptional()
+  dayOfWeek?: number;
+
+  @Field({ nullable: true })
+  @IsString()
+  @MaxLength(50)
+  @IsOptional()
+  roomNumber?: string;
+}
+
+@InputType()
+export class DeleteTimetableEntryInput {
+  @Field(() => ID)
+  @IsUUID()
+  id: string;
 }

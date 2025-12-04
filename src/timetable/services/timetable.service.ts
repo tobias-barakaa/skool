@@ -4,7 +4,7 @@ import { DataSource, In, QueryRunner, Repository } from 'typeorm';
 import { TimeSlot } from '../entities/time_slots.entity';
 import { TimetableBreak } from '../entities/timetable_break.entity';
 import { TimetableEntry } from '../entities/timetable_entries.entity';
-import { CreateTimeSlotInput } from '../dtos/create_time_slot';
+import { CreateTimeSlotInput, DeleteTimetableEntryInput, UpdateTimetableEntryInput } from '../dtos/create_time_slot';
 import { UpdateTimeSlotInput } from '../dtos/update_time_slot.dto';
 import { CreateTimetableBreakInput } from '../dtos/create_timetable_break.dto';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
@@ -194,6 +194,113 @@ private format12Hour(time: string): string {
 }
 
 
+
+async updateEntry(
+  user: ActiveUserData,
+  input: UpdateTimetableEntryInput,
+): Promise<TimetableEntry> {
+  // Find the existing entry
+  const entry = await this.entryRepo.findOne({
+    where: { id: input.id, tenantId: user.tenantId },
+    relations: ['term', 'grade', 'timeSlot'],
+  });
+
+  if (!entry) {
+    throw new NotFoundException(`Timetable entry not found`);
+  }
+
+  // Prepare arrays for parallel fetching (only fetch what's being updated)
+  const fetchPromises: Promise<any>[] = [];
+  const fetchKeys: string[] = [];
+
+  if (input.subjectId) {
+    fetchKeys.push('subject');
+    fetchPromises.push(
+      this.dataSource.getRepository('TenantSubject').findOne({
+        where: { id: input.subjectId, tenant: { id: user.tenantId } },
+      }),
+    );
+  }
+
+  if (input.teacherId) {
+    fetchKeys.push('teacher');
+    fetchPromises.push(
+      this.dataSource.getRepository('Teacher').findOne({
+        where: { id: input.teacherId, tenant: { id: user.tenantId } },
+      }),
+    );
+  }
+
+  if (input.timeSlotId) {
+    fetchKeys.push('timeSlot');
+    fetchPromises.push(
+      this.dataSource.getRepository('TimeSlot').findOne({
+        where: { id: input.timeSlotId, tenant: { id: user.tenantId } },
+      }),
+    );
+  }
+
+  // Fetch all relations in parallel
+  const results = await Promise.all(fetchPromises);
+
+  // Map results back and validate
+  const relations: Record<string, any> = {};
+  results.forEach((result, index) => {
+    const key = fetchKeys[index];
+    if (!result) {
+      throw new BadRequestException(`Invalid ${key}Id: ${input[`${key}Id`]}`);
+    }
+    relations[key] = result;
+  });
+
+  // Check for conflicts if day or time slot is being changed
+  if (input.dayOfWeek || input.timeSlotId) {
+    const newDayOfWeek = input.dayOfWeek ?? entry.dayOfWeek;
+    const newTimeSlotId = input.timeSlotId ?? entry.timeSlot.id;
+
+    const conflicting = await this.entryRepo.findOne({
+      where: {
+        tenantId: user.tenantId,
+        term: { id: entry.term.id },
+        grade: { id: entry.grade.id },
+        dayOfWeek: newDayOfWeek,
+        timeSlot: { id: newTimeSlotId },
+      },
+    });
+
+    if (conflicting && conflicting.id !== entry.id) {
+      throw new ConflictException(
+        'A class is already scheduled for this grade at this time',
+      );
+    }
+  }
+
+  // Update the entry
+  if (input.subjectId) entry.subject = relations.subject;
+  if (input.teacherId) entry.teacher = relations.teacher;
+  if (input.timeSlotId) entry.timeSlot = relations.timeSlot;
+  if (input.dayOfWeek !== undefined) entry.dayOfWeek = input.dayOfWeek;
+  if (input.roomNumber !== undefined) entry.roomNumber = input.roomNumber;
+
+  return await this.entryRepo.save(entry);
+}
+
+// ========== DELETE ==========
+async deleteEntry(
+  user: ActiveUserData,
+  input: DeleteTimetableEntryInput,
+): Promise<boolean> {
+  const entry = await this.entryRepo.findOne({
+    where: { id: input.id, tenantId: user.tenantId },
+  });
+
+  if (!entry) {
+    throw new NotFoundException(`Timetable entry not found`);
+  }
+
+  await this.entryRepo.remove(entry);
+  return true;
+}
 
   // ========== BREAKS ==========
   async createBreak(
@@ -640,27 +747,27 @@ async getWholeSchoolTimetable(
     });
   }
 
-  async updateEntry(
-    id: string,
-    user: ActiveUserData,
-    input: Partial<CreateTimetableEntryInput>,
-  ): Promise<TimetableEntry> {
-    const entry = await this.entryRepo.findOne({
-      where: { id, tenantId: user.tenantId },
-    });
+  // async updateEntry(
+  //   id: string,
+  //   user: ActiveUserData,
+  //   input: Partial<CreateTimetableEntryInput>,
+  // ): Promise<TimetableEntry> {
+  //   const entry = await this.entryRepo.findOne({
+  //     where: { id, tenantId: user.tenantId },
+  //   });
 
-    if (!entry) {
-      throw new NotFoundException('Timetable entry not found');
-    }
+  //   if (!entry) {
+  //     throw new NotFoundException('Timetable entry not found');
+  //   }
 
-    Object.assign(entry, input);
-    return this.entryRepo.save(entry);
-  }
+  //   Object.assign(entry, input);
+  //   return this.entryRepo.save(entry);
+  // }
 
-  async deleteEntry(id: string, user: ActiveUserData): Promise<boolean> {
-    const result = await this.entryRepo.delete({ id, tenantId: user.tenantId });
-    return (result.affected ?? 0) > 0;
-  }
+  // async deleteEntry(id: string, user: ActiveUserData): Promise<boolean> {
+  //   const result = await this.entryRepo.delete({ id, tenantId: user.tenantId });
+  //   return (result.affected ?? 0) > 0;
+  // }
 
 
 

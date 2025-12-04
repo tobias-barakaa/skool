@@ -733,6 +733,10 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+input DeleteTimetableEntryInput {
+  id: ID!
+}
+
 input EnterStudentMarksInput {
   marks: [StudentMarkInput!]!
   studentId: ID!
@@ -1376,7 +1380,7 @@ type Mutation {
   deleteTerm(id: ID!): Boolean!
   deleteTimeSlot(id: String!): Boolean!
   deleteTimetableBreak(id: String!): Boolean!
-  deleteTimetableEntry(id: String!): Boolean!
+  deleteTimetableEntry(input: DeleteTimetableEntryInput!): Boolean!
   deleteTransportRoute(id: ID!): Boolean!
   deleteUser(userId: String!): Boolean!
 
@@ -1510,7 +1514,7 @@ type Mutation {
   updateTerm(id: ID!, input: UpdateTermInput!): Term!
   updateTest(updateTestInput: UpdateTestInput!): Test!
   updateTimeSlot(id: String!, input: UpdateTimeSlotInput!): TimeSlot!
-  updateTimetableEntry(id: String!, input: CreateTimetableEntryInput!): TimetableEntry!
+  updateTimetableEntry(input: UpdateTimetableEntryInput!): TimetableEntry!
   updateTransportAssignment(input: UpdateTransportAssignmentInput!): TransportAssignment!
   updateTransportRoute(input: UpdateTransportRouteInput!): TransportRoute!
 
@@ -3460,6 +3464,15 @@ input UpdateTimeSlotInput {
   isActive: Boolean
   periodNumber: Int
   startTime: String
+}
+
+input UpdateTimetableEntryInput {
+  dayOfWeek: Int
+  id: ID!
+  roomNumber: String
+  subjectId: ID
+  teacherId: ID
+  timeSlotId: ID
 }
 
 input UpdateTransportAssignmentInput {

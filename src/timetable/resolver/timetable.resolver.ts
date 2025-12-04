@@ -2,7 +2,7 @@ import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { TimetableService } from '../services/timetable.service';
 import { TimeSlot } from '../entities/time_slots.entity';
-import { CreateTimeSlotInput } from '../dtos/create_time_slot';
+import { CreateTimeSlotInput, DeleteTimetableEntryInput, UpdateTimetableEntryInput } from '../dtos/create_time_slot';
 import { ActiveUserData } from 'src/admin/auth/interface/active-user.interface';
 import { ActiveUser } from 'src/admin/auth/decorator/active-user.decorator';
 import { UpdateTimeSlotInput } from '../dtos/update_time_slot.dto';
@@ -130,6 +130,24 @@ async deleteAllTimetableBreaks(
     @ActiveUser() user: ActiveUserData,
   ): Promise<TimetableEntry[]> {
     return this.timetableService.bulkCreateEntries(user, input);
+  };
+
+
+  @Mutation(() => TimetableEntry)
+  async updateTimetableEntry(
+    @Args('input') input: UpdateTimetableEntryInput,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<TimetableEntry> {
+    return this.timetableService.updateEntry(user, input);
+  }
+
+  // ========== DELETE ENTRY ==========
+  @Mutation(() => Boolean)
+  async deleteTimetableEntry(
+    @Args('input') input: DeleteTimetableEntryInput,
+    @ActiveUser() user: ActiveUserData,
+  ): Promise<boolean> {
+    return this.timetableService.deleteEntry(user, input);
   }
 
   @Query(() => [TimetableEntry])
@@ -172,22 +190,22 @@ async deleteAllTimetableBreaks(
     );
   }
 
-  @Mutation(() => TimetableEntry)
-  async updateTimetableEntry(
-    @Args('id') id: string,
-    @Args('input') input: CreateTimetableEntryInput,
-    @ActiveUser() user: ActiveUserData,
-  ): Promise<TimetableEntry> {
-    return this.timetableService.updateEntry(id, user, input);
-  }
+  // @Mutation(() => TimetableEntry)
+  // async updateTimetableEntry(
+  //   @Args('id') id: string,
+  //   @Args('input') input: CreateTimetableEntryInput,
+  //   @ActiveUser() user: ActiveUserData,
+  // ): Promise<TimetableEntry> {
+  //   return this.timetableService.updateEntry(id, user, input);
+  // }
 
-  @Mutation(() => Boolean)
-  async deleteTimetableEntry(
-    @Args('id') id: string,
-    @ActiveUser() user: ActiveUserData,
-  ): Promise<boolean> {
-    return this.timetableService.deleteEntry(id, user);
-  }
+  // @Mutation(() => Boolean)
+  // async deleteTimetableEntry(
+  //   @Args('id') id: string,
+  //   @ActiveUser() user: ActiveUserData,
+  // ): Promise<boolean> {
+  //   return this.timetableService.deleteEntry(id, user);
+  // }
 
   @Query(() => TimetableData, { 
     name: 'getWholeSchoolTimetable',
