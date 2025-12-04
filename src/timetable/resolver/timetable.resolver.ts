@@ -21,7 +21,8 @@ export class TimetableResolver {
 
   // ========== TIME SLOTS ==========
   @Mutation(() => TimeSlot)
-  @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER)
+  // @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER)
+  @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER, MembershipRole.STUDENT, MembershipRole.PARENT)
   async createTimeSlot(
     @Args('input') input: CreateTimeSlotInput,
     @ActiveUser() user: ActiveUserData,
@@ -30,6 +31,8 @@ export class TimetableResolver {
   }
 
   @Query(() => [TimeSlot])
+@Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER, MembershipRole.STUDENT, MembershipRole.PARENT)
+
   async getTimeSlots(
     @ActiveUser() user: ActiveUserData,
   ): Promise<TimeSlot[]> {
@@ -37,6 +40,7 @@ export class TimetableResolver {
   }
 
   @Mutation(() => TimeSlot)
+  @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER, MembershipRole.STUDENT, MembershipRole.PARENT)
   async updateTimeSlot(
     @Args('id') id: string,
     @Args('input') input: UpdateTimeSlotInput,
@@ -54,6 +58,7 @@ export class TimetableResolver {
 // }
 
   @Mutation(() => Boolean)
+@Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER, MembershipRole.STUDENT, MembershipRole.PARENT)
   async deleteTimeSlot(
     @Args('id') id: string,
     @ActiveUser() user: ActiveUserData,
@@ -64,6 +69,8 @@ export class TimetableResolver {
 
 
   @Mutation(() => Boolean)
+@Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER, MembershipRole.STUDENT, MembershipRole.PARENT)
+
 async deleteAllTimeSlots(
   @ActiveUser() user: ActiveUserData,
 ): Promise<boolean> {
@@ -73,6 +80,8 @@ async deleteAllTimeSlots(
 
   // ========== BREAKS ==========
   @Mutation(() => TimetableBreak)
+@Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER, MembershipRole.STUDENT, MembershipRole.PARENT)
+
   async createTimetableBreak(
     @Args('input') input: CreateTimetableBreakInput,
     @ActiveUser() user: ActiveUserData,
@@ -91,6 +100,8 @@ async deleteAllTimeSlots(
 // }
 
 @Mutation(() => Boolean)
+@Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER, MembershipRole.STUDENT, MembershipRole.PARENT)
+
 async deleteAllTimetableBreaks(
   @ActiveUser() user: ActiveUserData,
 ): Promise<boolean> {
@@ -99,7 +110,7 @@ async deleteAllTimetableBreaks(
 
 
   @Query(() => [TimetableBreak])
-  @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER)
+  @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER, MembershipRole.STUDENT, MembershipRole.PARENT)
   async getTimetableBreaks(
     @Args('dayOfWeek', { nullable: true }) dayOfWeek: number,
     @ActiveUser() user: ActiveUserData,
@@ -108,6 +119,7 @@ async deleteAllTimetableBreaks(
   }
 
   @Mutation(() => Boolean)
+@Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER, MembershipRole.STUDENT, MembershipRole.PARENT)
   async deleteTimetableBreak(
     @Args('id') id: string,
     @ActiveUser() user: ActiveUserData,
@@ -117,6 +129,7 @@ async deleteAllTimetableBreaks(
 
   // ========== TIMETABLE ENTRIES ==========
   @Mutation(() => TimetableEntry)
+@Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER, MembershipRole.STUDENT, MembershipRole.PARENT)
   async createTimetableEntry(
     @Args('input') input: CreateTimetableEntryInput,
     @ActiveUser() user: ActiveUserData,
@@ -125,6 +138,7 @@ async deleteAllTimetableBreaks(
   }
 
   @Mutation(() => [TimetableEntry])
+@Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER, MembershipRole.STUDENT, MembershipRole.PARENT)
   async bulkCreateTimetableEntries(
     @Args('input') input: BulkCreateTimetableEntryInput,
     @ActiveUser() user: ActiveUserData,
@@ -134,6 +148,8 @@ async deleteAllTimetableBreaks(
 
 
   @Mutation(() => TimetableEntry)
+@Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER, MembershipRole.STUDENT, MembershipRole.PARENT)
+
   async updateTimetableEntry(
     @Args('input') input: UpdateTimetableEntryInput,
     @ActiveUser() user: ActiveUserData,
@@ -150,7 +166,8 @@ async deleteAllTimetableBreaks(
     return this.timetableService.deleteEntry(user, input);
   }
 
-  @Query(() => [TimetableEntry], { name: 'timetableEntries' }) 
+
+@Query(() => [TimetableEntry], { name: 'timetableEntries' }) 
 @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER, MembershipRole.STUDENT, MembershipRole.PARENT)
 async getGradeTimetableEntries(
   @Args('termId') termId: string,
@@ -164,7 +181,9 @@ async getGradeTimetableEntries(
   );
 }
 
+
   @Query(() => [TimetableEntry])
+@Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER, MembershipRole.STUDENT, MembershipRole.PARENT)
   async getTeacherSchedule(
     @Args('termId') termId: string,
     @Args('teacherId') teacherId: string,
@@ -178,6 +197,8 @@ async getGradeTimetableEntries(
   }
 
   @Query(() => GradeTimetableResponse)
+@Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER, MembershipRole.STUDENT, MembershipRole.PARENT)
+
   async getCompleteTimetable(
     @Args('termId') termId: string,
     @Args('gradeId') gradeId: string,
@@ -189,6 +210,8 @@ async getGradeTimetableEntries(
       gradeId,
     );
   }
+
+  
 
   // @Mutation(() => TimetableEntry)
   // async updateTimetableEntry(
@@ -211,6 +234,8 @@ async getGradeTimetableEntries(
     name: 'getWholeSchoolTimetable',
     description: 'Get complete timetable data for entire school - matches frontend transformMockData() structure'
   })
+@Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER, MembershipRole.STUDENT, MembershipRole.PARENT)
+
   async getWholeSchoolTimetable(
     @Args('termId') termId: string,
     @ActiveUser() user: ActiveUserData,
@@ -222,6 +247,8 @@ async getGradeTimetableEntries(
     name: 'getTeacherTimetable',
     description: 'Get timetable data for a specific teacher for a given term',
   })
+@Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER, MembershipRole.STUDENT, MembershipRole.PARENT)
+
   async getTeacherTimetable(
     @Args('termId') termId: string,
     @Args('teacherId') teacherId: string,
@@ -239,6 +266,8 @@ async getGradeTimetableEntries(
     name: 'getTeacherWeeklySummary',
     description: 'Returns weekly class summary for a specific teacher',
   })
+@Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER, MembershipRole.STUDENT, MembershipRole.PARENT)
+
   async getTeacherWeeklySummary(
     @Args('termId') termId: string,
     @Args('teacherId') teacherId: string,
@@ -256,6 +285,8 @@ async getGradeTimetableEntries(
     name: 'getAllTeachersWithLoad',
     description: 'Get teaching load summary for all teachers in a tenant for a given term',
   })
+@Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER, MembershipRole.STUDENT, MembershipRole.PARENT)
+
   async getAllTeachersWithLoad(
     @Args('termId') termId: string,
     @ActiveUser() user: ActiveUserData,
@@ -285,6 +316,8 @@ async getGradeTimetableEntries(
     name: 'getMultipleGradeTimetables',
     description: 'Get timetable entries for multiple grades in a single query',
   })
+@Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER, MembershipRole.STUDENT, MembershipRole.PARENT)
+
   async getMultipleGradeTimetables(
     @Args('termId') termId: string,
     @Args({ name: 'gradeIds', type: () => [String] }) gradeIds: string[],
@@ -298,12 +331,12 @@ async getGradeTimetableEntries(
   }
   
   
-  // timetable.resolver.ts
 
   @Query(() => TimetableData, {
     name: 'getMyTimetable',
     description: 'Get timetable for the currently logged-in teacher'
   })
+@Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER, MembershipRole.STUDENT, MembershipRole.PARENT)
   async getMyTimetable(
     @Args('termId') termId: string,
     @ActiveUser() user: ActiveUserData,

@@ -94,3 +94,4 @@ deletedAt: Date;
 @Column({ type: 'uuid', nullable: true })
 deletedBy: string;
 }
+
