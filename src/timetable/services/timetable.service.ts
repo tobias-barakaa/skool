@@ -385,7 +385,6 @@ async deleteEntry(
 
 
 
-
   // ========== TIMETABLE ENTRIES ==========
   // async createEntry(
   //   user: ActiveUserData,
@@ -731,8 +730,16 @@ async getWholeSchoolTimetable(
     gradeId: string,
   ): Promise<TimetableEntry[]> {
     return this.entryRepo.find({
-      where: { tenantId: user.tenantId, termId, gradeId, isActive: true },
-      order: { dayOfWeek: 'ASC', timeSlotId: 'ASC' },
+      where: { 
+        tenantId: user.tenantId, 
+        term: { id: termId },     
+        grade: { id: gradeId },   
+        isActive: true 
+      },
+      order: { 
+        dayOfWeek: 'ASC', 
+        timeSlot: { periodNumber: 'ASC' }  // 👈 Fix: order by relation field
+      },
     });
   }
 

@@ -150,19 +150,19 @@ async deleteAllTimetableBreaks(
     return this.timetableService.deleteEntry(user, input);
   }
 
-  @Query(() => [TimetableEntry])
-  @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER, MembershipRole.STUDENT, MembershipRole.PARENT)
-  async getGradeTimetableEntries(
-    @Args('termId') termId: string,
-    @Args('gradeId') gradeId: string,
-    @ActiveUser() user: ActiveUserData,
-  ): Promise<TimetableEntry[]> {
-    return this.timetableService.getEntriesForGrade(
-      user,
-      termId,
-      gradeId,
-    );
-  }
+  @Query(() => [TimetableEntry], { name: 'timetableEntries' }) 
+@Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER, MembershipRole.STUDENT, MembershipRole.PARENT)
+async getGradeTimetableEntries(
+  @Args('termId') termId: string,
+  @Args('gradeId') gradeId: string,
+  @ActiveUser() user: ActiveUserData,
+): Promise<TimetableEntry[]> {
+  return this.timetableService.getEntriesForGrade(
+    user,
+    termId,
+    gradeId,
+  );
+}
 
   @Query(() => [TimetableEntry])
   async getTeacherSchedule(

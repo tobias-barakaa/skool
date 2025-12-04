@@ -1812,7 +1812,6 @@ type Query {
   """
   getFeeAssignmentsByGradeLevels(input: GetFeeAssignmentsByGradeLevelsInput!): [FeeAssignmentWithStudents!]!
   getGradeLevelClassTeacher(gradeLevelId: String!): ClassTeacherAssignment
-  getGradeTimetableEntries(gradeId: String!, termId: String!): [TimetableEntry!]!
   getMessageById(id: String!): ChatMessage
 
   """Get timetable entries for multiple grades in a single query"""
@@ -2121,6 +2120,7 @@ type Query {
   termsByAcademicYear(academicYearId: ID!): [Term!]!
   testById(id: String!): Test
   testSocket(scenario: String): String!
+  timetableEntries(gradeId: String!, termId: String!): [TimetableEntry!]!
   transportRoutes: [TransportRoute!]!
   users: [User!]!
   usersByTenant(role: String, tenantId: String!): [User!]!
