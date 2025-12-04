@@ -6,7 +6,7 @@ import { HashingProvider } from 'src/admin/auth/providers/hashing.provider';
 import { DataSource, Repository } from 'typeorm';
 import { AuthResponse, SignupInput } from '../dtos/signUp-input';
 import { User } from '../entities/user.entity';
-import { MembershipRole, UserTenantMembership } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
+import { MembershipRole, MembershipStatus, UserTenantMembership } from 'src/admin/user-tenant-membership/entities/user-tenant-membership.entity';
 import { Tenant } from 'src/admin/tenants/entities/tenant.entity';
 import { SchoolAlreadyExistsException, UserAlreadyExistsException } from 'src/admin/common/exceptions/business.exception';
 import { TokenProvider } from 'src/admin/auth/providers/token.provider';
@@ -326,23 +326,23 @@ async adminChangeUserEmail(userId: string, newEmail: string): Promise<boolean> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
-
+  
     try {
       // 1. Find teacher with relations
       const teacher = await queryRunner.manager.findOne(Teacher, {
         where: { id: teacherId },
         relations: ['user', 'tenant'],
       });
-
+  
       if (!teacher) {
         throw new NotFoundException(`Teacher with ID ${teacherId} not found`);
       }
-
+  
       // Check if already activated
       if (teacher.isActive) {
         throw new BadRequestException('Teacher is already activated');
       }
-
+  
       // 2. Find pending invitation
       const invitation = await queryRunner.manager.findOne(UserInvitation, {
         where: {
@@ -352,41 +352,38 @@ async adminChangeUserEmail(userId: string, newEmail: string): Promise<boolean> {
           type: 'TEACHER',
         },
       });
-
+  
       if (!invitation) {
         throw new NotFoundException('No pending invitation found for this teacher');
       }
-
+  
       // Check if invitation expired
       if (new Date() > invitation.expiresAt) {
         invitation.status = InvitationStatus.EXPIRED;
         await queryRunner.manager.save(invitation);
         throw new BadRequestException('Invitation has expired');
       }
-
+  
       // 3. Generate temporary password
       const temporaryPassword = this.generateTemporaryPassword();
       const hashedPassword = await this.hashingProvider.hashPassword(temporaryPassword);
-
+  
       // 4. Create or update user
       let user: User;
-
+  
       const existingUser = await queryRunner.manager.findOne(User, { where: { email: teacher.email } });
-
+  
       if (teacher.user) {
-        // Update existing user (prefer teacher.user if present)
         user = teacher.user;
         user.password = hashedPassword;
         user.name = teacher.fullName;
         user.email = teacher.email;
       } else if (existingUser) {
-        // Update existing user found by email
         user = existingUser;
         user.password = hashedPassword;
         user.name = teacher.fullName;
         user.email = teacher.email;
       } else {
-        // Create new user
         user = queryRunner.manager.create(User, {
           email: teacher.email,
           name: teacher.fullName,
@@ -395,22 +392,58 @@ async adminChangeUserEmail(userId: string, newEmail: string): Promise<boolean> {
           isGlobalAdmin: false,
         });
       }
-
+  
       await queryRunner.manager.save(User, user);
-
+  
+      // ==========================================================
+      // 4.5 [NEW] CREATE USER TENANT MEMBERSHIP
+      // This is the missing piece. We must link the User to the Tenant.
+      // ==========================================================
+      
+      // Check if membership already exists to avoid duplicates
+      const existingMembership = await queryRunner.manager.findOne(UserTenantMembership, {
+        where: { 
+          userId: user.id, 
+          tenantId: tenantId 
+        }
+      });
+  
+      if (!existingMembership) {
+        const membership = queryRunner.manager.create(UserTenantMembership, {
+          user: user,
+          tenant: teacher.tenant,
+          role: MembershipRole.TEACHER, // Or use invitation.role
+          status: MembershipStatus.ACTIVE,
+          joinedAt: new Date(),
+          // Add default permissions here if your logic requires them
+        });
+  
+        await queryRunner.manager.save(UserTenantMembership, membership);
+      } else {
+          // Optional: Ensure existing membership is ACTIVE
+          if(existingMembership.status !== MembershipStatus.ACTIVE) {
+              existingMembership.status = MembershipStatus.ACTIVE;
+              await queryRunner.manager.save(UserTenantMembership, existingMembership);
+          }
+      }
+  
+      // ==========================================================
+      // END NEW LOGIC
+      // ==========================================================
+  
       // 5. Update teacher
       teacher.isActive = true;
       teacher.user = user;
       await queryRunner.manager.save(Teacher, teacher);
-
+  
       // 6. Update invitation status
       invitation.status = InvitationStatus.ACCEPTED;
       await queryRunner.manager.save(UserInvitation, invitation);
-
+  
       // Commit transaction
       await queryRunner.commitTransaction();
-
-      // 7. Send activation email (outside transaction)
+  
+      // 7. Send activation email
       try {
         await this.emailService.sendTeacherActivationEmail(
           teacher.email,
@@ -419,27 +452,141 @@ async adminChangeUserEmail(userId: string, newEmail: string): Promise<boolean> {
           temporaryPassword,
           teacher.tenant.subdomain,
         );
-
-        // this.logger.log(`Teacher ${teacherId} activated and credentials sent to ${teacher.email}`);
       } catch (emailError) {
-        // this.logger.error(`Failed to send activation email to ${teacher.email}`, emailError);
-        // Don't rollback - teacher is activated, just log the email failure
+        // Log error but don't fail request
       }
-
+  
       return {
         success: true,
         message: 'Teacher activated successfully. Credentials sent via email.',
         email: teacher.email,
       };
-
+  
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      // this.logger.error(`Failed to activate teacher ${teacherId}:`, error);
       throw error;
     } finally {
       await queryRunner.release();
     }
   }
+  // async activateTeacher(teacherId: string, tenantId: string): Promise<ActivateTeacherOutput> {
+  //   const queryRunner = this.dataSource.createQueryRunner();
+  //   await queryRunner.connect();
+  //   await queryRunner.startTransaction();
+
+  //   try {
+  //     // 1. Find teacher with relations
+  //     const teacher = await queryRunner.manager.findOne(Teacher, {
+  //       where: { id: teacherId },
+  //       relations: ['user', 'tenant'],
+  //     });
+
+  //     if (!teacher) {
+  //       throw new NotFoundException(`Teacher with ID ${teacherId} not found`);
+  //     }
+
+  //     // Check if already activated
+  //     if (teacher.isActive) {
+  //       throw new BadRequestException('Teacher is already activated');
+  //     }
+
+  //     // 2. Find pending invitation
+  //     const invitation = await queryRunner.manager.findOne(UserInvitation, {
+  //       where: {
+  //         email: teacher.email,
+  //         tenantId: tenantId,
+  //         status: InvitationStatus.PENDING,
+  //         type: 'TEACHER',
+  //       },
+  //     });
+
+  //     if (!invitation) {
+  //       throw new NotFoundException('No pending invitation found for this teacher');
+  //     }
+
+  //     // Check if invitation expired
+  //     if (new Date() > invitation.expiresAt) {
+  //       invitation.status = InvitationStatus.EXPIRED;
+  //       await queryRunner.manager.save(invitation);
+  //       throw new BadRequestException('Invitation has expired');
+  //     }
+
+  //     // 3. Generate temporary password
+  //     const temporaryPassword = this.generateTemporaryPassword();
+  //     const hashedPassword = await this.hashingProvider.hashPassword(temporaryPassword);
+
+  //     // 4. Create or update user
+  //     let user: User;
+
+  //     const existingUser = await queryRunner.manager.findOne(User, { where: { email: teacher.email } });
+
+  //     if (teacher.user) {
+  //       // Update existing user (prefer teacher.user if present)
+  //       user = teacher.user;
+  //       user.password = hashedPassword;
+  //       user.name = teacher.fullName;
+  //       user.email = teacher.email;
+  //     } else if (existingUser) {
+  //       // Update existing user found by email
+  //       user = existingUser;
+  //       user.password = hashedPassword;
+  //       user.name = teacher.fullName;
+  //       user.email = teacher.email;
+  //     } else {
+  //       // Create new user
+  //       user = queryRunner.manager.create(User, {
+  //         email: teacher.email,
+  //         name: teacher.fullName,
+  //         password: hashedPassword,
+  //         schoolUrl: teacher.tenant.subdomain,
+  //         isGlobalAdmin: false,
+  //       });
+  //     }
+
+  //     await queryRunner.manager.save(User, user);
+
+  //     // 5. Update teacher
+  //     teacher.isActive = true;
+  //     teacher.user = user;
+  //     await queryRunner.manager.save(Teacher, teacher);
+
+  //     // 6. Update invitation status
+  //     invitation.status = InvitationStatus.ACCEPTED;
+  //     await queryRunner.manager.save(UserInvitation, invitation);
+
+  //     // Commit transaction
+  //     await queryRunner.commitTransaction();
+
+  //     // 7. Send activation email (outside transaction)
+  //     try {
+  //       await this.emailService.sendTeacherActivationEmail(
+  //         teacher.email,
+  //         teacher.fullName,
+  //         teacher.tenant.name,
+  //         temporaryPassword,
+  //         teacher.tenant.subdomain,
+  //       );
+
+  //       // this.logger.log(`Teacher ${teacherId} activated and credentials sent to ${teacher.email}`);
+  //     } catch (emailError) {
+  //       // this.logger.error(`Failed to send activation email to ${teacher.email}`, emailError);
+  //       // Don't rollback - teacher is activated, just log the email failure
+  //     }
+
+  //     return {
+  //       success: true,
+  //       message: 'Teacher activated successfully. Credentials sent via email.',
+  //       email: teacher.email,
+  //     };
+
+  //   } catch (error) {
+  //     await queryRunner.rollbackTransaction();
+  //     // this.logger.error(`Failed to activate teacher ${teacherId}:`, error);
+  //     throw error;
+  //   } finally {
+  //     await queryRunner.release();
+  //   }
+  // }
 
   private generateTemporaryPassword(): string {
     const randomPart = crypto.randomBytes(4).toString('hex').toUpperCase().slice(0, 6);
