@@ -1811,6 +1811,7 @@ type Query {
   Get fee assignments for specific tenant grade levels with all student details and fee items
   """
   getFeeAssignmentsByGradeLevels(input: GetFeeAssignmentsByGradeLevelsInput!): [FeeAssignmentWithStudents!]!
+  getFulltimetableEntries: [TimetableEntry!]!
   getGradeLevelClassTeacher(gradeLevelId: String!): ClassTeacherAssignment
   getMessageById(id: String!): ChatMessage
 

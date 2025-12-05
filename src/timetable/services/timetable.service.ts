@@ -1110,6 +1110,17 @@ async getMyTimetable(
   };
 }
 
+async getAllEntries(user: ActiveUserData): Promise<TimetableEntry[]> {
+  return await this.entryRepo.find({
+    where: { tenantId: user.tenantId },
+    relations: ['term', 'grade', 'subject', 'teacher', 'teacher.user', 'timeSlot'],
+    order: {
+      dayOfWeek: 'ASC',
+      timeSlot: { periodNumber: 'ASC' },
+    },
+  });
+}
+
 
 async getMyTimetableAsTeacher(
   user: ActiveUserData,

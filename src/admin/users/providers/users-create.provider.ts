@@ -395,10 +395,6 @@ async adminChangeUserEmail(userId: string, newEmail: string): Promise<boolean> {
   
       await queryRunner.manager.save(User, user);
   
-      // ==========================================================
-      // 4.5 [NEW] CREATE USER TENANT MEMBERSHIP
-      // This is the missing piece. We must link the User to the Tenant.
-      // ==========================================================
       
       // Check if membership already exists to avoid duplicates
       const existingMembership = await queryRunner.manager.findOne(UserTenantMembership, {

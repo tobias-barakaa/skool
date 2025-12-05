@@ -109,6 +109,15 @@ async deleteAllTimetableBreaks(
 }
 
 
+
+@Query(() => [TimetableEntry])
+@Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER, MembershipRole.STUDENT, MembershipRole.PARENT)
+async getFulltimetableEntries(
+  @ActiveUser() user: ActiveUserData,
+): Promise<TimetableEntry[]> {
+  return this.timetableService.getAllEntries(user);
+}
+
   @Query(() => [TimetableBreak])
   @Roles(MembershipRole.SCHOOL_ADMIN, MembershipRole.TEACHER, MembershipRole.STUDENT, MembershipRole.PARENT)
   async getTimetableBreaks(
@@ -350,8 +359,4 @@ async getGradeTimetableEntries(
 
   
 }
-
-
-
-
 
